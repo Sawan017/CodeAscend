@@ -24,8 +24,9 @@ import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
 import { FriendsPanel } from './features/friends/FriendsPanel'
-import { fetchIncomingFriendRequests, saveFriendsState } from './lib/api'
-import { Users } from 'lucide-react'
+import { ChatPanel } from './features/chat/ChatPanel'
+import { fetchIncomingFriendRequests, fetchIncomingMessages, saveFriendsState, saveChatState } from './lib/api'
+import { Users, MessageSquare } from 'lucide-react'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'profile', label: 'Profile', icon: House },
@@ -34,6 +35,7 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'goals', label: 'Goals', icon: Target },
   { id: 'achievements', label: 'Achievements', icon: Trophy },
   { id: 'friends', label: 'Network', icon: Users },
+  { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'future', label: 'Future', icon: Compass },
 ]
 
@@ -62,6 +64,7 @@ function App() {
       settings: stored.settings,
       profile: stored.profile,
       friends: stored.friends || { relationships: [] },
+      chat: stored.chat || { messages: [], lastRead: {} },
     }
   })
 
@@ -76,6 +79,9 @@ function App() {
   const [profileState, setProfileState] = useState<UserProfile>(initialData.profile)
   const [friendState, setFriendState] = useState<FriendState>(initialData.friends)
   const [incomingRequests, setIncomingRequests] = useState<string[]>([])
+  const [chatState, setChatState] = useState<import('./types').ChatState>(initialData.chat)
+  const [incomingMessages, setIncomingMessages] = useState<import('./types').ChatMessage[]>([])
+  const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
   const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? skills[0]?.id ?? '')
   const [selectedGoalId, setSelectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
@@ -102,8 +108,10 @@ function App() {
       if (remote.badges && remote.badges.length) setBadgeState(remote.badges)
       if (remote.settings) setSettings(remote.settings)
       if (remote.friends) setFriendState(remote.friends)
+      if (remote.chat) setChatState(remote.chat)
 
       fetchIncomingFriendRequests(user.id).then(reqs => setIncomingRequests(reqs))
+      fetchIncomingMessages(user.id).then(msgs => setIncomingMessages(msgs))
     })
   }, [user])
 
@@ -124,6 +132,7 @@ function App() {
   useEffect(() => { saveProgression(settings, 'settings') }, [settings])
   useEffect(() => { saveProgression(profileState, 'profile') }, [profileState])
   useEffect(() => { saveProgression(friendState, 'friends') }, [friendState])
+  useEffect(() => { saveProgression(chatState, 'chat') }, [chatState])
 
   // Push changes to Supabase when logged in (after remote hydration completes)
   useEffect(() => {
@@ -162,6 +171,10 @@ function App() {
     if (!user || !hydratedFromRemote.current) return
     saveFriendsState(user.id, friendState)
   }, [user, friendState])
+  useEffect(() => {
+    if (!user || !hydratedFromRemote.current) return
+    saveChatState(user.id, chatState)
+  }, [user, chatState])
 
   // Show a toast and sound when the player levels up or gains XP
   useEffect(() => {
@@ -414,6 +427,35 @@ function App() {
                           push('Friend removed.', 'info')
                         }}
                         onOpenProfile={(id) => { setViewingUserId(id) }}
+                        onMessage={(id) => {
+                          setActiveFriendIdForChat(id)
+                          setActiveSection('chat')
+                        }}
+                      />
+                    )}
+                    {activeSection === 'chat' && (
+                      <ChatPanel
+                        activeUserId={user?.id || ''}
+                        chatState={chatState}
+                        friendState={friendState}
+                        incomingMessages={incomingMessages}
+                        onSendMessage={(receiverId, content) => {
+                          const msg = {
+                            id: Math.random().toString(36).substring(7),
+                            conversationId: [user?.id || '', receiverId].sort().join('_'),
+                            senderId: user?.id || '',
+                            receiverId,
+                            content,
+                            timestamp: new Date().toISOString()
+                          }
+                          setChatState(prev => ({ ...prev, messages: [...prev.messages, msg] }))
+                        }}
+                        onMarkRead={(friendId, timestamp) => {
+                          setChatState(prev => ({ ...prev, lastRead: { ...prev.lastRead, [friendId]: timestamp } }))
+                        }}
+                        onOpenProfile={(id) => { setViewingUserId(id) }}
+                        activeFriendId={activeFriendIdForChat}
+                        onSetActiveFriendId={setActiveFriendIdForChat}
                       />
                     )}
                     {activeSection === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />}
@@ -441,6 +483,10 @@ function App() {
         onRemoveFriend={(id) => {
           setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
           push('Friend removed.', 'info')
+        }}
+        onMessage={(id) => {
+          setActiveFriendIdForChat(id)
+          setActiveSection('chat')
         }}
         onClose={() => setViewingUserId(null)}
       />

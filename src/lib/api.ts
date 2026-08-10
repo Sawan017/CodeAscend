@@ -1,4 +1,4 @@
-import type { Achievement, Badge, FriendState, Goal, Progression, Project, Settings, Skill, UserProfile } from '../types'
+import type { Achievement, Badge, ChatState, FriendState, Goal, Progression, Project, Settings, Skill, UserProfile } from '../types'
 import { isSupabaseConfigured, supabase } from './supabase'
 
 /**
@@ -49,7 +49,7 @@ async function fetchRow<T>(table: TableName, userId: string, key: string): Promi
 export async function fetchAllUserData(userId: string) {
   if (!isSupabaseConfigured()) return null
 
-  const [profile, progression, goals, projects, skills, achievements, badges, settings, friends] = await Promise.all([
+  const [profile, progression, goals, projects, skills, achievements, badges, settings, friends, chat] = await Promise.all([
     fetchRow<UserProfile>(TABLES.profile, userId, 'profile'),
     fetchRow<Progression>(TABLES.progression, userId, 'progression'),
     fetchRow<Goal[]>(TABLES.goals, userId, 'goals'),
@@ -59,9 +59,10 @@ export async function fetchAllUserData(userId: string) {
     fetchRow<Badge[]>(TABLES.badges, userId, 'badges'),
     fetchRow<Settings>(TABLES.settings, userId, 'settings'),
     fetchRow<FriendState>(TABLES.profile, userId, 'friends'),
+    fetchRow<ChatState>(TABLES.profile, userId, 'chat'),
   ])
 
-  return { profile, progression, goals, projects, skills, achievements, badges, settings, friends }
+  return { profile, progression, goals, projects, skills, achievements, badges, settings, friends, chat }
 }
 
 export async function saveProfile(userId: string, profile: UserProfile) {
@@ -220,5 +221,33 @@ export async function fetchIncomingFriendRequests(userId: string): Promise<strin
   }
 
   return incomingRequests
+}
+
+
+export async function saveChatState(userId: string, state: import("../types").ChatState) {
+  return upsertRow("profiles", userId, "chat", state)
+}
+
+export async function fetchIncomingMessages(userId: string): Promise<import("../types").ChatMessage[]> {
+  if (!isSupabaseConfigured() || !supabase) return []
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("data")
+    .eq("key", "chat")
+  
+  if (error) {
+    console.error("Failed to fetch incoming messages:", error.message)
+    return []
+  }
+  
+  const incoming: import("../types").ChatMessage[] = []
+  for (const row of data || []) {
+    const chatData = row.data as import("../types").ChatState
+    if (chatData && chatData.messages) {
+      const msgs = chatData.messages.filter((m) => m.receiverId === userId && !m.deleted)
+      incoming.push(...msgs)
+    }
+  }
+  return incoming
 }
 

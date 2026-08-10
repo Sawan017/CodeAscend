@@ -1,4 +1,4 @@
-export type SectionId = 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends'
+export type SectionId = 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat'
 
 export type SkillStatus = 'LOCKED' | 'LEARNING' | 'MASTERED'
 export type GoalStatus = 'ACTIVE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
@@ -195,4 +195,20 @@ export interface FriendRelationship {
 export interface FriendState {
   relationships: FriendRelationship[]
 }
+
+export interface ChatMessage {
+  id: string
+  conversationId: string
+  senderId: string
+  receiverId: string
+  content: string
+  timestamp: string
+  deleted?: boolean
+}
+
+export interface ChatState {
+  messages: ChatMessage[]
+  lastRead: Record<string, string> // friendId -> timestamp
+}
+
 
