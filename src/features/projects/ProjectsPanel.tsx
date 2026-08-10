@@ -58,6 +58,21 @@ export function ProjectsPanel({
     setShowForm(false)
   }
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0 }
+  }
+
   return (
     <div className="section-shell split-shell">
       <div className="panel">
@@ -92,11 +107,18 @@ export function ProjectsPanel({
           </div>
         )}
 
-        <div className="project-list">
+        <motion.div 
+          className="project-list"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
           {projects.map((project) => (
             <motion.button
               key={project.id}
+              variants={item}
               whileHover={{ y: -4, scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
               className={`project-card ${activeProject?.id === project.id ? 'active' : ''}`}
               onClick={() => onSelectProject(project)}
             >
@@ -112,7 +134,7 @@ export function ProjectsPanel({
               </div>
             </motion.button>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {activeProject && (

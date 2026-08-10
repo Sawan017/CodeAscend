@@ -4,6 +4,7 @@ import type { Progression, SectionId, UserProfile } from '../types'
 import { calculateLevel, calculateProgressToNextLevel } from '../lib/progression'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
+  { id: 'dashboard', label: 'Dashboard', icon: House },
   { id: 'profile', label: 'Profile', icon: House },
   { id: 'projects', label: 'Projects', icon: Layers3 },
   { id: 'learning', label: 'Learning', icon: GraduationCap },
@@ -15,6 +16,7 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
 // Node positions are anchored as percentages. The wrapper holds the centering
 // translate so hover transforms on the inner button never displace the node.
 const positions: Record<SectionId, { left: string; top: string }> = {
+  dashboard: { left: '10%', top: '10%' },
   profile: { left: '16%', top: '24%' },
   projects: { left: '78%', top: '20%' },
   learning: { left: '24%', top: '62%' },
