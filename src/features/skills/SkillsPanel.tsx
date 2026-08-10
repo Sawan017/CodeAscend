@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
-import { Plus, Edit2, Check, Trash2 } from 'lucide-react'
+import { Plus, Edit2, Check, Trash2, ChevronDown, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import type { Skill, SubtopicProgress, SubtopicDifficulty } from '../../types'
-import { SUBTOPIC_CONFIG } from '../../data/learningData'
+import { resolveSkill, formatEstimatedTime, DIFFICULTY_MULTIPLIERS } from '../../data/learningData'
 
 type SkillsPanelProps = {
   skills: Skill[]
@@ -36,13 +36,20 @@ export function SkillsPanel({
   // Subtopic modal state
   const [activeSubtopic, setActiveSubtopic] = useState<SubtopicProgress | null>(null)
   const [selectedDifficulty, setSelectedDifficulty] = useState<SubtopicDifficulty>('Normal')
+  const [expandedDomains, setExpandedDomains] = useState<Record<string, boolean>>({})
+
+  const toggleDomain = (domain: string) => {
+    setExpandedDomains(prev => ({ ...prev, [domain]: !prev[domain] }))
+  }
 
   const handleCreateSkill = () => {
     if (!name.trim()) return
-    const id = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '-')
+    const resolved = resolveSkill(name.trim())
     const newSkill: Skill = {
-      id,
-      name: name.trim(),
+      id: resolved.id,
+      name: resolved.canonicalName,
+      canonicalName: resolved.canonicalName,
+      type: resolved.type,
       progress: 0,
       status: 'LEARNING',
       started: new Date().toISOString().slice(0, 10),
@@ -70,9 +77,9 @@ export function SkillsPanel({
 
   const handleStartSubtopic = () => {
     if (!activeSubtopic || !selectedSkill || !onStartSubtopic) return
-    const config = SUBTOPIC_CONFIG[activeSubtopic.complexity]
-    const time = config.times[selectedDifficulty]
-    const xp = config.xp[selectedDifficulty]
+    const mults = DIFFICULTY_MULTIPLIERS[selectedDifficulty]
+    const time = Math.round((activeSubtopic.baseTime || 20) * mults.time)
+    const xp = Math.round((activeSubtopic.baseXP || 30) * mults.xp)
     onStartSubtopic(selectedSkill.id, activeSubtopic.id, selectedDifficulty, time, xp)
     setActiveSubtopic(null)
   }
@@ -159,7 +166,9 @@ export function SkillsPanel({
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
               {(['Easy', 'Normal', 'Hard'] as SubtopicDifficulty[]).map(diff => {
-                const config = SUBTOPIC_CONFIG[activeSubtopic.complexity]
+                const mults = DIFFICULTY_MULTIPLIERS[diff]
+                const time = Math.round((activeSubtopic.baseTime || 20) * mults.time)
+                const xp = Math.round((activeSubtopic.baseXP || 30) * mults.xp)
                 const isSelected = selectedDifficulty === diff
                 return (
                   <button 
@@ -180,9 +189,9 @@ export function SkillsPanel({
                   >
                     <div>
                       <strong style={{ display: 'block', color: isSelected ? 'var(--cyan)' : 'var(--text-main)', marginBottom: '0.25rem' }}>{diff}</strong>
-                      <span className="muted" style={{ fontSize: '0.85rem' }}>~{config.times[diff]} min</span>
+                      <span className="muted" style={{ fontSize: '0.85rem' }}>{formatEstimatedTime(time)}</span>
                     </div>
-                    <strong style={{ color: 'var(--accent-gamification)' }}>+{config.xp[diff]} XP</strong>
+                    <strong style={{ color: 'var(--accent-gamification)' }}>+{xp} XP</strong>
                   </button>
                 )
               })}
@@ -267,46 +276,85 @@ export function SkillsPanel({
             <span>Started: {selectedSkill.started}</span>
           </div>
 
-          <p className="eyebrow" style={{ marginBottom: '0.75rem' }}>SUBTOPICS</p>
+          <p className="eyebrow" style={{ marginBottom: '0.75rem' }}>ROADMAP</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {selectedSkill.subtopics?.map(topic => {
-              const isCompleted = topic.status === 'Completed'
-              const isLearning = topic.status === 'Learning'
-              const isNotStarted = topic.status === 'Not Started'
-              
-              return (
-                <div key={topic.id} className="goal-form" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.02)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ 
-                      width: '16px', height: '16px', borderRadius: '50%', 
-                      border: isCompleted ? 'none' : '1px solid var(--border-strong)',
-                      background: isCompleted ? 'var(--cyan)' : (isLearning ? 'var(--accent-gamification)' : 'transparent'),
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                      {isCompleted && <Check size={10} color="#000" />}
-                    </div>
-                    <div>
-                      <span style={{ color: isCompleted ? 'var(--text-muted)' : 'var(--text-main)', textDecoration: isCompleted ? 'line-through' : 'none' }}>{topic.title}</span>
-                      <div className="muted" style={{ fontSize: '0.75rem', marginTop: '0.2rem' }}>
-                        {isNotStarted ? `${topic.complexity} Complexity` : 
-                         isLearning ? `Learning (${topic.difficulty}) • ~${topic.estimatedTime}m` : 
-                         `Completed • +${topic.xpReward} XP`}
+            {(() => {
+              if (!selectedSkill.subtopics || selectedSkill.subtopics.length === 0) {
+                return <p className="muted" style={{ fontSize: '0.875rem' }}>No subtopics available.</p>
+              }
+
+              const grouped = selectedSkill.subtopics.reduce((acc, topic) => {
+                const domain = topic.domain || 'General'
+                if (!acc[domain]) acc[domain] = []
+                acc[domain].push(topic)
+                return acc
+              }, {} as Record<string, SubtopicProgress[]>)
+
+              return Object.entries(grouped).map(([domain, topics]) => {
+                const completedCount = topics.filter(t => t.status === 'Completed').length
+                const totalCount = topics.length
+                const isExpanded = expandedDomains[domain]
+
+                return (
+                  <div key={domain} className="goal-form" style={{ padding: '0', overflow: 'hidden', background: 'rgba(255,255,255,0.02)' }}>
+                    <button 
+                      onClick={() => toggleDomain(domain)}
+                      style={{ 
+                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '1rem', background: 'transparent', border: 'none', cursor: 'pointer',
+                        textAlign: 'left', color: 'var(--text-main)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        {isExpanded ? <ChevronDown size={16} className="muted" /> : <ChevronRight size={16} className="muted" />}
+                        <strong style={{ fontSize: '1rem' }}>{domain}</strong>
                       </div>
-                    </div>
+                      <span className="muted" style={{ fontSize: '0.875rem' }}>{completedCount} / {totalCount}</span>
+                    </button>
+
+                    {isExpanded && (
+                      <div style={{ padding: '0 1rem 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                        {topics.map(topic => {
+                          const isCompleted = topic.status === 'Completed'
+                          const isLearning = topic.status === 'Learning'
+                          const isNotStarted = topic.status === 'Not Started'
+                          
+                          return (
+                            <div key={topic.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div style={{ 
+                                  width: '16px', height: '16px', borderRadius: '50%', 
+                                  border: isCompleted ? 'none' : '1px solid var(--border-strong)',
+                                  background: isCompleted ? 'var(--cyan)' : (isLearning ? 'var(--accent-gamification)' : 'transparent'),
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}>
+                                  {isCompleted && <Check size={10} color="#000" />}
+                                </div>
+                                <div>
+                                  <span style={{ color: isCompleted ? 'var(--text-muted)' : 'var(--text-main)', textDecoration: isCompleted ? 'line-through' : 'none' }}>{topic.title}</span>
+                                  <div className="muted" style={{ fontSize: '0.75rem', marginTop: '0.2rem' }}>
+                                    {isNotStarted ? `${topic.size || 'Medium'} Topic (${topic.complexity})` : 
+                                     isLearning ? `Learning (${topic.difficulty}) • ${formatEstimatedTime(topic.estimatedTime || 20)}` : 
+                                     `Completed • +${topic.xpReward} XP`}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {isNotStarted && (
+                                <button className="secondary-btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => { setActiveSubtopic(topic); setSelectedDifficulty('Normal'); }}>Start</button>
+                              )}
+                              {isLearning && (
+                                <button className="primary-btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => onCompleteSubtopic?.(selectedSkill.id, topic.id)}>Complete</button>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
-                  
-                  {isNotStarted && (
-                    <button className="secondary-btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => { setActiveSubtopic(topic); setSelectedDifficulty('Normal'); }}>Start</button>
-                  )}
-                  {isLearning && (
-                    <button className="primary-btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => onCompleteSubtopic?.(selectedSkill.id, topic.id)}>Complete</button>
-                  )}
-                </div>
-              )
-            })}
-            {(!selectedSkill.subtopics || selectedSkill.subtopics.length === 0) && (
-              <p className="muted" style={{ fontSize: '0.875rem' }}>No subtopics available.</p>
-            )}
+                )
+              })
+            })()}
           </div>
         </motion.div>
       )}

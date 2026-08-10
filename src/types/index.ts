@@ -9,14 +9,21 @@ export type BadgeRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary'
 export type ThemeMode = 'dark' | 'light' | 'system' | 'midnight' | 'aurora'
 export type NameTier = 'Novice' | 'Adept' | 'Expert' | 'Veteran' | 'Master' | 'Legend' | 'Mythic'
 
+export type TopicSize = 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Very Large'
 export type TopicComplexity = 'Simple' | 'Medium' | 'Hard' | 'Very Hard'
 export type SubtopicDifficulty = 'Easy' | 'Normal' | 'Hard'
 export type SubtopicStatus = 'Not Started' | 'Learning' | 'Completed'
 
+export type SkillType = 'PROGRAMMING_LANGUAGE' | 'COMPUTER_SCIENCE' | 'DSA' | 'DAA' | 'DEVELOPMENT' | 'FRAMEWORK' | 'DATABASE' | 'DEVOPS_CLOUD' | 'AI_ML' | 'LANGUAGE_SPECIFIC' | 'OTHER'
+
 export interface SubtopicProgress {
   id: string
   title: string
+  domain?: string
+  size?: TopicSize
   complexity: TopicComplexity
+  baseTime?: number
+  baseXP?: number
   status: SubtopicStatus
   difficulty?: SubtopicDifficulty
   estimatedTime?: number
@@ -87,6 +94,8 @@ export interface Project {
 export interface Skill {
   id: string
   name: string
+  canonicalName?: string
+  type?: SkillType
   progress: number
   status: SkillStatus
   started: string
