@@ -22,6 +22,7 @@ import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile,
 import { Toasts } from './components/Toasts'
 import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
+import { PublicProfileViewer } from './components/PublicProfileViewer'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'profile', label: 'Profile', icon: House },
@@ -73,6 +74,7 @@ function App() {
   const [selectedGoalId, setSelectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [userSearchOpen, setUserSearchOpen] = useState(false)
+  const [viewingUserId, setViewingUserId] = useState<string | null>(null)
   const [languageState] = useState(languages)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const contentRef = useRef<HTMLDivElement>(null)
@@ -388,7 +390,8 @@ function App() {
         )}
       </AnimatePresence>
       <ProfileDrawer open={drawerOpen} profile={profileState} settings={settings} user={user} onClose={() => setDrawerOpen(false)} onSettingsChange={setSettings} onProfileChange={setProfileState} onSignOut={signOut} />
-      <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(p) => { push(`Viewing profile: @${p.username}`, 'info'); setUserSearchOpen(false) }} />
+      <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(userId) => { setViewingUserId(userId); setUserSearchOpen(false) }} />
+      <PublicProfileViewer userId={viewingUserId} onClose={() => setViewingUserId(null)} />
       <Toasts toasts={toasts} onDismiss={dismiss} />
     </div>
   )
