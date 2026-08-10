@@ -7,7 +7,7 @@ import { fetchPublicProfiles, fetchPublicProfileByUsername } from '../lib/api'
 type UserSearchProps = {
   open: boolean
   onClose: () => void
-  onSelectUser: (profile: UserProfile) => void
+  onSelectUser: (userId: string) => void
 }
 
 export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
@@ -40,6 +40,7 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
     if (profile) {
       setProfiles([profile])
       setSelectedProfile({
+        userId: profile.userId,
         username: profile.username,
         displayName: profile.displayName,
         avatar: profile.avatar,
@@ -68,8 +69,8 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
   }
 
   function handleViewFullProfile() {
-    if (selectedProfile) {
-      onSelectUser(selectedProfile)
+    if (selectedProfile && selectedProfile.userId) {
+      onSelectUser(selectedProfile.userId)
       onClose()
     }
   }
@@ -129,6 +130,7 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
                       className="user-card"
                       onClick={() =>
                         handleSelectProfile({
+                          userId: profile.userId,
                           username: profile.username,
                           displayName: profile.displayName,
                           avatar: profile.avatar,
