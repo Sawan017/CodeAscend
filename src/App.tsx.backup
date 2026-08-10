@@ -7,36 +7,28 @@ import { CareerWorld } from './components/CareerWorld'
 import { HUD } from './components/HUD'
 import { ProfileDrawer } from './components/ProfileDrawer'
 import { TopBar } from './components/TopBar'
-import { Toasts } from './components/Toasts'
-import { Celebration } from './components/Celebration'
 import { GoalsPanel } from './features/goals/GoalsPanel'
-import { Dashboard } from './features/dashboard/Dashboard'
-import { BadgeDetail } from './features/achievements/BadgeDetail'
 import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, milestones, projects, skillTree, skills, timelineEvents, languages, futureMilestones } from './data/journeyData'
-import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
+import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState } from './types'
 import { loadInitialState, saveProgression } from './utils/storage'
 import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills } from './lib/api'
+import { Toasts } from './components/Toasts'
 import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
 import { FriendsPanel } from './features/friends/FriendsPanel'
 import { ChatPanel } from './features/chat/ChatPanel'
-import { ProjectDetail } from './features/projects/ProjectDetail'
-import { GoalDetail } from './features/goals/GoalDetail'
-import { SkillDetail } from './features/skills/SkillDetail'
-import { AchievementDetail } from './features/achievements/AchievementDetail'
 import { fetchIncomingFriendRequests, fetchIncomingMessages, saveFriendsState, saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
-  { id: 'dashboard', label: 'Home', icon: House },
   { id: 'profile', label: 'Profile', icon: House },
   { id: 'projects', label: 'Projects', icon: Layers3 },
   { id: 'learning', label: 'Learning', icon: GraduationCap },
@@ -47,38 +39,12 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'future', label: 'Future', icon: Compass },
 ]
 
-const parseHash = (): Route => {
-  if (typeof window === 'undefined') return { view: 'dashboard' }
-  const hash = window.location.hash.replace('#', '')
-  const params = new URLSearchParams(hash)
-  const view = params.get('view') as any
-  const id = params.get('id')
-  if (!view) return { view: 'dashboard' }
-  if (id) return { view, id } as Route
-  return { view } as Route
-}
-
-const buildHash = (r: Route) => {
-  const params = new URLSearchParams()
-  params.set('view', r.view)
-  if ('id' in r && r.id) params.set('id', r.id)
-  return `#${params.toString()}`
-}
-
 function App() {
   const { user, signOut } = useAuth()
   const hydratedFromRemote = useRef(false)
   const { toasts, push, dismiss } = useToasts()
   const [entered, setEntered] = useState(false)
-  const [route, setRoute] = useState<Route>(parseHash)
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      setRoute(parseHash())
-    }
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
+  const [activeSection, setActiveSection] = useState<SectionId>('profile')
 
   const [initialData] = useState(() => {
     const stored = loadInitialState()
@@ -118,7 +84,7 @@ function App() {
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
   const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? skills[0]?.id ?? '')
-  const [selectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
+  const [selectedGoalId, setSelectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [userSearchOpen, setUserSearchOpen] = useState(false)
   const [viewingUserId, setViewingUserId] = useState<string | null>(null)
@@ -260,11 +226,6 @@ function App() {
   const masteredSkills = skillState.filter((skill) => skill.status === 'MASTERED').length
   const earnedBadges = badgeState.filter((badge) => badge.earned).length
 
-  const updateGoal = (updatedGoal: Goal) => {
-    setGoalState((prev) => prev.map(g => g.id === updatedGoal.id ? updatedGoal : g))
-    push('Goal updated successfully', 'info')
-  }
-
   const markGoalCompleted = (goalId: string) => {
     const now = new Date().toISOString().slice(0, 10)
     setGoalState((prev) => prev.map((goal) => {
@@ -285,6 +246,16 @@ function App() {
   const removeGoal = (goalId: string) => {
     setGoalState((prev) => prev.filter((goal) => goal.id !== goalId))
     playSoundEffect('click', settings.soundEffects)
+  }
+
+  const unlockAchievement = (id: string) => {
+    setAchievementState((prev) => prev.map((achievement) => {
+      if (achievement.id !== id || achievement.unlocked) return achievement
+      setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.achievement, achievements: p.achievements + 1 }))
+      push(`Achievement unlocked: ${achievement.title} +${XP_REWARDS.achievement} XP`, 'unlock')
+      playSoundEffect('unlock', settings.soundEffects)
+      return { ...achievement, unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10) }
+    }))
   }
 
   const toggleSkillMastery = (id: string) => {
@@ -328,9 +299,14 @@ function App() {
     }))
   }
 
-  const updateProject = (updatedProject: Project) => {
-    setProjectState((prev) => prev.map(p => p.id === updatedProject.id ? updatedProject : p))
-    push('Project updated successfully', 'info')
+  const earnBadge = (badgeId: string) => {
+    setBadgeState((prev) => prev.map((badge) => {
+      if (badge.id !== badgeId || badge.earned) return badge
+      setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.badge, badges: p.badges + 1 }))
+      push(`Badge earned: ${badge.title} +${XP_REWARDS.badge} XP`, 'badge')
+      playSoundEffect('badge', settings.soundEffects)
+      return { ...badge, earned: true, dateEarned: new Date().toISOString().slice(0, 10) }
+    }))
   }
 
   const addProject = (newProject: Project) => {
@@ -377,20 +353,11 @@ function App() {
   }
 
   const selectSection = (section: SectionId) => {
-    navigate({ view: section })
-  }
-
-  const navigate = (newRoute: Route) => {
-    window.location.hash = buildHash(newRoute)
+    setActiveSection(section)
     playSoundEffect('click', settings.soundEffects)
     requestAnimationFrame(() => {
       contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
-  }
-
-  const goBack = () => {
-    window.history.back()
-    playSoundEffect('click', settings.soundEffects)
   }
 
   return (
@@ -414,7 +381,7 @@ function App() {
                       key={section.id} 
                       whileHover={{ scale: 1.03, y: -2 }} 
                       whileTap={{ scale: 0.97 }} 
-                      className={`nav-item ${route.view === section.id || route.view.startsWith(section.id.replace('s', '')) ? 'active' : ''}`}
+                      className={`nav-item ${activeSection === section.id ? 'active' : ''}`}
                       onClick={() => selectSection(section.id)}
                       title={section.label}
                     >
@@ -459,24 +426,18 @@ function App() {
                 </div>
 
                 <div className="arena-grid">
-                  <CareerWorld activeSection={route.view as SectionId} onSelectSection={selectSection} progression={progression} profile={profileState} />
+                  <CareerWorld activeSection={activeSection} onSelectSection={selectSection} progression={progression} profile={profileState} />
                   <HUD progression={progression} completedGoals={completedGoals} masteredSkills={masteredSkills} earnedBadges={earnedBadges} />
                 </div>
 
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <AnimatePresence mode="wait">
-                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} languages={languageState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
-                    {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
-                    {route.view === 'project_detail' && <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} />}
-                    {route.view === 'learning' && <SkillsPanel skillTree={skillTree} skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={(id) => navigate({ view: 'skill_detail', id })} onMasterSkill={toggleSkillMastery} onIncrementSkill={incrementSkillProgress} onAddSkill={addSkill} onUpdateSkillNotes={updateSkillNotes} />}
-                    {route.view === 'skill_detail' && <SkillDetail skill={skillState.find(s => s.id === route.id)!} onBack={goBack} onMarkMastered={toggleSkillMastery} onUpdateNotes={updateSkillNotes} />}
-                    {route.view === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={(id) => navigate({ view: 'goal_detail', id })} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
-                    {route.view === 'goal_detail' && <GoalDetail goal={goalState.find(g => g.id === route.id)!} onBack={goBack} onMarkComplete={markGoalCompleted} onDeleteGoal={removeGoal} onUpdateGoal={updateGoal} />}
-                    {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
-                    {route.view === 'achievement_detail' && <AchievementDetail achievement={achievementState.find(a => a.id === route.id)!} onBack={goBack} />}
-                    {route.view === 'badge_detail' && <BadgeDetail badge={badgeState.find(b => b.id === route.id)!} onBack={goBack} />}
-                    {route.view === 'friends' && (
+                    {activeSection === 'profile' && <ProfilePanel profile={profileState} progression={progression} languages={languageState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
+                    {activeSection === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={setActiveProject} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
+                    {activeSection === 'learning' && <SkillsPanel skillTree={skillTree} skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={setSelectedSkillId} onMasterSkill={toggleSkillMastery} onIncrementSkill={incrementSkillProgress} onAddSkill={addSkill} onUpdateSkillNotes={updateSkillNotes} />}
+                    {activeSection === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={setSelectedGoalId} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
+                    {activeSection === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} onUnlockAchievement={unlockAchievement} onEarnBadge={earnBadge} />}
+                    {activeSection === 'friends' && (
                       <FriendsPanel
                         friendState={friendState}
                         incomingRequests={incomingRequests}
@@ -496,11 +457,11 @@ function App() {
                         onOpenProfile={(id) => { setViewingUserId(id) }}
                         onMessage={(id) => {
                           setActiveFriendIdForChat(id)
-                          navigate({ view: 'chat' })
+                          setActiveSection('chat')
                         }}
                       />
                     )}
-                    {route.view === 'chat' && (
+                    {activeSection === 'chat' && (
                       <ChatPanel
                         activeUserId={user?.id || ''}
                         chatState={chatState}
@@ -525,7 +486,7 @@ function App() {
                         onSetActiveFriendId={setActiveFriendIdForChat}
                       />
                     )}
-                    {route.view === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />}
+                    {activeSection === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />}
                   </AnimatePresence>
                 </motion.section>
               </div>
@@ -553,12 +514,11 @@ function App() {
         }}
         onMessage={(id) => {
           setActiveFriendIdForChat(id)
-          navigate({ view: 'chat' })
+          setActiveSection('chat')
         }}
         onClose={() => setViewingUserId(null)}
       />
       <Toasts toasts={toasts} onDismiss={dismiss} />
-      <Celebration xp={progression.xp} />
     </div>
   )
 }

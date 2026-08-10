@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Goal, Language, Progression, UserProfile } from '../../types'
 import { calculateLevel, getNameColorClass } from '../../lib/progression'
+import { XpProgressBar } from '../../components/XpProgressBar'
 
 type ProfilePanelProps = {
   profile: UserProfile
@@ -40,11 +41,23 @@ export function ProfilePanel({ profile, progression, languages, goals, goalsComp
   return (
     <div className="section-shell">
       <div className="panel hero-panel-card">
-        <p className="eyebrow">PROFILE</p>
+        <p className="eyebrow">PLAYER PROFILE</p>
         <div className="profile-grid">
           <div>
-            <h3 className={nameColorClass}>{profile.displayName || profile.username}</h3>
-            <p className="muted">{profile.title}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="avatar-badge" style={{ width: '80px', height: '80px', fontSize: '2.5rem' }}>
+                {profile.avatar ? <img src={profile.avatar} alt={profile.displayName} style={{ width: '100%', height: '100%', borderRadius: '16px', objectFit: 'cover' }} /> : profile.displayName?.[0] || 'U'}
+              </div>
+              <div>
+                <h3 className={nameColorClass} style={{ fontSize: '1.8rem', margin: 0 }}>{profile.displayName || profile.username}</h3>
+                <p className="muted">@{profile.username} • {profile.title}</p>
+              </div>
+            </div>
+            
+            <div style={{ marginBottom: '2rem' }}>
+              <XpProgressBar xp={progression.xp} />
+            </div>
+
             <p className="copy">{profile.introduction}</p>
 
             <div className="chip-section">
@@ -95,8 +108,8 @@ export function ProfilePanel({ profile, progression, languages, goals, goalsComp
       </div>
 
       <div className="panel compact-panel">
-        <p className="eyebrow">CURRENT STATE</p>
-        <div className="mini-grid">
+        <p className="eyebrow">CAREER STATS</p>
+        <div className="mini-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
           <div className="mini-card"><span>Level</span><strong>{level}</strong></div>
           <div className="mini-card"><span>XP</span><strong>{progression.xp}</strong></div>
           <div className="mini-card"><span>Projects</span><strong>{progression.projectsCompleted}</strong></div>

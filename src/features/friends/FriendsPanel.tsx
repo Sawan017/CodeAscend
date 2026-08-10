@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { User, Check, X, MessageSquare, UserMinus } from 'lucide-react'
+import { User, Check, X, MessageSquare, UserMinus, Users, UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { FriendRelationship } from '../../types'
 import { fetchPublicProfiles } from '../../lib/api'
@@ -47,6 +47,21 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
   const incoming = publicProfiles.filter(p => incomingRequests.includes(p.userId))
   const outgoing = publicProfiles.filter(p => pendingOutgoingIds.includes(p.userId))
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0 }
+  }
+
   return (
     <div className="section-shell">
       <div className="card-heading" style={{ marginBottom: '1.5rem' }}>
@@ -75,13 +90,23 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
         ) : activeTab === 'friends' ? (
           <div>
             {friends.length === 0 ? (
-              <p className="muted" style={{ textAlign: 'center', marginTop: '2rem' }}>You haven't added any friends yet. Use the search bar to find developers!</p>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 2rem', textAlign: 'center', background: 'var(--surface-sunken)', borderRadius: '16px', border: '1px dashed var(--border-strong)' }}>
+                <Users size={48} style={{ opacity: 0.2, marginBottom: '1rem', color: 'var(--text)' }} />
+                <h3 style={{ marginBottom: '0.5rem' }}>No friends yet</h3>
+                <p className="muted" style={{ maxWidth: '300px' }}>Use the search bar at the top to find other developers and build your network.</p>
+              </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+              <motion.div 
+                style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}
+                variants={container}
+                initial="hidden"
+                animate="show"
+              >
                 {friends.map(friend => (
-                  <motion.div key={friend.userId} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
-                    <div className="avatar-badge" style={{ width: '48px', height: '48px', flexShrink: 0, cursor: 'pointer' }} onClick={() => onOpenProfile(friend.userId)}>
+                  <motion.div key={friend.userId} variants={item} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
+                    <div className="avatar-badge" style={{ width: '48px', height: '48px', flexShrink: 0, cursor: 'pointer', position: 'relative' }} onClick={() => onOpenProfile(friend.userId)}>
                       {friend.avatar ? <img src={friend.avatar} alt={friend.displayName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={24} />}
+                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: '14px', height: '14px', background: '#10b981', borderRadius: '50%', border: '2px solid var(--surface-sunken)', zIndex: 2 }} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <h4 style={{ margin: 0, cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => onOpenProfile(friend.userId)}>{friend.displayName}</h4>
@@ -97,7 +122,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                     </div>
                   </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )}
           </div>
         ) : (
@@ -105,11 +130,19 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
             <div>
               <h4 style={{ marginBottom: '1rem' }}>Incoming Requests ({incoming.length})</h4>
               {incoming.length === 0 ? (
-                <p className="muted">No incoming friend requests.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 2rem', textAlign: 'center', background: 'var(--surface-sunken)', borderRadius: '16px', border: '1px dashed var(--border-strong)' }}>
+                  <UserPlus size={32} style={{ opacity: 0.2, marginBottom: '1rem', color: 'var(--text)' }} />
+                  <p className="muted">No incoming friend requests.</p>
+                </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                <motion.div 
+                  style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                >
                   {incoming.map(req => (
-                    <motion.div key={req.userId} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
+                    <motion.div key={req.userId} variants={item} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
                       <div className="avatar-badge" style={{ width: '48px', height: '48px', flexShrink: 0, cursor: 'pointer' }} onClick={() => onOpenProfile(req.userId)}>
                         {req.avatar ? <img src={req.avatar} alt={req.displayName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={24} />}
                       </div>
@@ -127,18 +160,26 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                       </div>
                     </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </div>
 
             <div>
               <h4 style={{ marginBottom: '1rem' }}>Sent Requests ({outgoing.length})</h4>
               {outgoing.length === 0 ? (
-                <p className="muted">No pending sent requests.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '3rem 2rem', textAlign: 'center', background: 'var(--surface-sunken)', borderRadius: '16px', border: '1px dashed var(--border-strong)' }}>
+                  <UserPlus size={32} style={{ opacity: 0.2, marginBottom: '1rem', color: 'var(--text)' }} />
+                  <p className="muted">No pending sent requests.</p>
+                </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+                <motion.div 
+                  style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                >
                   {outgoing.map(req => (
-                    <motion.div key={req.userId} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', opacity: 0.7 }}>
+                    <motion.div key={req.userId} variants={item} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', opacity: 0.7 }}>
                       <div className="avatar-badge" style={{ width: '40px', height: '40px', flexShrink: 0 }}>
                         {req.avatar ? <img src={req.avatar} alt={req.displayName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={20} />}
                       </div>
@@ -151,7 +192,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                       </button>
                     </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </div>
           </div>

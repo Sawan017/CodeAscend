@@ -102,6 +102,21 @@ export function ChatPanel({ activeUserId, chatState, friendState, incomingMessag
 
   const activeConversationMsgs = allMessages.filter(m => m.senderId === activeFriendId || m.receiverId === activeFriendId)
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, x: -10 },
+    show: { opacity: 1, x: 0 }
+  }
+
   return (
     <div className="section-shell" style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
       <div className="card-heading" style={{ marginBottom: '1.5rem' }}>
@@ -116,15 +131,16 @@ export function ChatPanel({ activeUserId, chatState, friendState, incomingMessag
           <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
             <h4 style={{ margin: 0 }}>Conversations</h4>
           </div>
-          <div style={{ flex: 1, overflowY: 'auto' }}>
+          <motion.div style={{ flex: 1, overflowY: 'auto' }} variants={container} initial="hidden" animate="show">
             {loading ? (
               <p className="muted" style={{ padding: '1.5rem', textAlign: 'center' }}>Loading friends...</p>
             ) : conversations.length === 0 ? (
               <p className="muted" style={{ padding: '1.5rem', textAlign: 'center' }}>No friends yet. Add some friends to start chatting!</p>
             ) : (
               conversations.map(conv => (
-                <div 
+                <motion.div 
                   key={conv.friend.userId} 
+                  variants={item}
                   className="chat-list-item"
                   onClick={() => onSetActiveFriendId(conv.friend.userId)}
                   style={{ 
@@ -160,10 +176,10 @@ export function ChatPanel({ activeUserId, chatState, friendState, incomingMessag
                       )}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))
             )}
-          </div>
+          </motion.div>
         </div>
 
         {/* Chat Window */}

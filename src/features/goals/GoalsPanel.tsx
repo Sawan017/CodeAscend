@@ -73,6 +73,21 @@ export function GoalsPanel({
   const deadlineInfo = selectedGoal ? daysUntilDeadline(selectedGoal) : null
   const overdue = selectedGoal ? isGoalOverdue(selectedGoal) : false
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0 }
+  }
+
   return (
     <div className="section-shell split-shell">
       <div className="panel">
@@ -111,18 +126,29 @@ export function GoalsPanel({
             </div>
           </div>
         )}
-        <div className="goal-list">
+        <motion.div 
+          className="goal-list"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
           {goals.map((goal) => (
-            <div key={goal.id} className={`goal-card ${selectedGoalId === goal.id ? 'active' : ''}`}>
+            <motion.div 
+              key={goal.id} 
+              variants={item}
+              whileHover={{ y: -4, scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className={`goal-card ${selectedGoalId === goal.id ? 'active' : ''}`}
+            >
               <button className="goal-card-main" onClick={() => onSelectGoal(goal.id)}>
                 <div className="goal-head"><strong>{goal.title}</strong><span>{goal.priority} · {goal.difficulty}</span></div>
                 <div className="progress-bar"><div style={{ width: `${goal.progress}%` }} /></div>
                 <small className="muted">{goal.status === 'COMPLETED' ? `Completed ${goal.completedDate ?? ''}` : `XP: ${goal.xpReward}`}</small>
               </button>
               <button className="goal-delete" onClick={() => onRemoveGoal(goal.id)} aria-label={`Delete ${goal.title}`}><Trash2 size={14} /></button>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
       <motion.div className="panel detail-panel" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
         <p className="eyebrow">ACTIVE TARGET</p>

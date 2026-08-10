@@ -62,6 +62,21 @@ export function SkillsPanel({
     setIsEditingNotes(true)
   }
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const item = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0 }
+  }
+
   return (
     <div className="section-shell split-shell">
       <div className="panel">
@@ -85,11 +100,16 @@ export function SkillsPanel({
           </div>
         )}
 
-        <div className="constellation-list">
+        <motion.div 
+          className="constellation-list"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
           {skills.map((skill) => {
             const treeNode = skillTree.find((t) => t.skillId === skill.id)
             return (
-              <div key={skill.id} className="constellation-node">
+              <motion.div key={skill.id} variants={item} className="constellation-node">
                 <button
                   className={`constellation-button ${selectedSkillId === skill.id ? 'active' : ''}`}
                   onClick={() => onSelectSkill(skill.id)}
@@ -104,10 +124,10 @@ export function SkillsPanel({
                     ))}
                   </div>
                 )}
-              </div>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       </div>
 
       {selectedSkill && (
