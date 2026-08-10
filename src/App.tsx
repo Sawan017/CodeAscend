@@ -19,9 +19,9 @@ import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
 import { milestones, futureMilestones, timelineEvents } from './data/journeyData'
-import { generateSubtopicsForSkill, calculateSkillProgress } from './data/learningData'
+import { resolveSkill, generateSubtopicsForSkill, calculateSkillProgress } from './data/learningData'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
-import { loadInitialState, saveProgression } from './utils/storage'
+import { loadInitialState, saveProgression, getEmptyState } from './utils/storage'
 import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
@@ -157,27 +157,45 @@ function App() {
 
   // Load remote data when a user logs in
   useEffect(() => {
-    if (!user) return
+    if (!user) {
+      if (isConfigured) {
+        hydratedFromRemote.current = false
+        const empty = getEmptyState()
+        setProfileState(empty.profile)
+        setProgression(empty.progression)
+        setGoalState(empty.goals)
+        setProjectState(empty.projects)
+        setSkillState(empty.skills)
+        setAchievementState(empty.achievements)
+        setBadgeState(empty.badges)
+        setSettings(empty.settings)
+        setFriendState(empty.friends)
+        setChatState(empty.chat)
+      }
+      return
+    }
+    
     hydratedFromRemote.current = false
     fetchAllUserData(user.id).then((remote) => {
       if (!remote) return
       hydratedFromRemote.current = true
       
-      setProfileState(remote.profile || initialData.profile)
-      setProgression(remote.progression || initialData.progression)
-      setGoalState(remote.goals || [])
-      setProjectState(remote.projects || [])
-      setSkillState(remote.skills || [])
-      setAchievementState(remote.achievements || [])
-      setBadgeState(remote.badges || [])
-      setSettings(remote.settings || initialData.settings)
-      setFriendState(remote.friends || { relationships: [] })
-      setChatState(remote.chat || { messages: [], lastRead: {} })
+      const empty = getEmptyState()
+      setProfileState(remote.profile || empty.profile)
+      setProgression(remote.progression || empty.progression)
+      setGoalState(remote.goals || empty.goals)
+      setProjectState(remote.projects || empty.projects)
+      setSkillState(remote.skills || empty.skills)
+      setAchievementState(remote.achievements || empty.achievements)
+      setBadgeState(remote.badges || empty.badges)
+      setSettings(remote.settings || empty.settings)
+      setFriendState(remote.friends || empty.friends)
+      setChatState(remote.chat || empty.chat)
 
       fetchIncomingFriendRequests(user.id).then(reqs => setIncomingRequests(reqs))
       fetchIncomingMessages(user.id).then(msgs => setIncomingMessages(msgs))
     })
-  }, [user])
+  }, [user, isConfigured])
 
   useEffect(() => {
     const onMove = (event: MouseEvent) => {
@@ -368,7 +386,8 @@ function App() {
   }
 
   const addSkill = (newSkill: Skill) => {
-    const subtopics = generateSubtopicsForSkill(newSkill.name)
+    const resolved = resolveSkill(newSkill.name)
+    const subtopics = generateSubtopicsForSkill(resolved)
     const skillWithSubtopics = { ...newSkill, subtopics }
     setSkillState((prev) => [...prev, skillWithSubtopics])
     setSelectedSkillId(skillWithSubtopics.id)

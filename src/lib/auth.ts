@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { isSupabaseConfigured, supabase } from './supabase'
 import { saveProfile, saveProgressionData, saveSettings } from './api'
+import { clearStorage } from '../utils/storage'
 import type { Progression, Settings, UserProfile } from '../types'
 
 export type AuthUser = {
@@ -161,6 +162,8 @@ export function useAuth() {
   const signOut = async (forgetAccount: boolean = false) => {
     if (!isSupabaseConfigured() || !supabase) return
     
+    clearStorage()
+
     if (forgetAccount) {
       window.localStorage.setItem('futureme-force-chooser', 'true')
     }

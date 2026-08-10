@@ -23,7 +23,7 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
   const [customLang, setCustomLang] = useState('')
 
   const skillProgressions = skills.map(skill => {
-    const xp = skill.subtopics?.filter(s => s.status === 'COMPLETED').reduce((acc, sub) => acc + (sub.xpReward || 0), 0) || 0;
+    const xp = skill.subtopics?.filter(s => s.status === 'Completed').reduce((acc, sub) => acc + (sub.xpReward || 0), 0) || 0;
     const { level: skillLevel, progress: levelProgress } = calculateProgressToNextLevel(xp)
     return {
       id: skill.id,
