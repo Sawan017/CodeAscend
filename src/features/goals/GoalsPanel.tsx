@@ -11,13 +11,22 @@ type GoalsPanelProps = {
   onCompleteGoal: (id: string) => void
   onAddGoal: (goal: Goal) => void
   onRemoveGoal: (id: string) => void
+  onAddMilestone?: (goalId: string, milestoneText: string) => void
 }
 
 function createId() {
   return `goal-${Date.now()}`
 }
 
-export function GoalsPanel({ goals, selectedGoalId, onSelectGoal, onCompleteGoal, onAddGoal, onRemoveGoal }: GoalsPanelProps) {
+export function GoalsPanel({
+  goals,
+  selectedGoalId,
+  onSelectGoal,
+  onCompleteGoal,
+  onAddGoal,
+  onRemoveGoal,
+  onAddMilestone,
+}: GoalsPanelProps) {
   const selectedGoal = goals.find((goal) => goal.id === selectedGoalId) ?? goals[0]
   const [showForm, setShowForm] = useState(false)
   const [title, setTitle] = useState('')
@@ -26,6 +35,7 @@ export function GoalsPanel({ goals, selectedGoalId, onSelectGoal, onCompleteGoal
   const [priority, setPriority] = useState<GoalPriority>('Medium')
   const [difficulty, setDifficulty] = useState<GoalDifficulty>('Normal')
   const [deadline, setDeadline] = useState('')
+  const [newMilestoneText, setNewMilestoneText] = useState('')
 
   const submitGoal = () => {
     if (!title.trim()) return
@@ -52,6 +62,12 @@ export function GoalsPanel({ goals, selectedGoalId, onSelectGoal, onCompleteGoal
     setDifficulty('Normal')
     setDeadline('')
     setShowForm(false)
+  }
+
+  const handleAddMilestone = () => {
+    if (!newMilestoneText.trim() || !selectedGoal) return
+    onAddMilestone?.(selectedGoal.id, newMilestoneText.trim())
+    setNewMilestoneText('')
   }
 
   const deadlineInfo = selectedGoal ? daysUntilDeadline(selectedGoal) : null
@@ -128,11 +144,44 @@ export function GoalsPanel({ goals, selectedGoalId, onSelectGoal, onCompleteGoal
             </span>
           )}
         </div>
-        {selectedGoal?.status === 'COMPLETED' ? (
-          <button className="secondary-btn" disabled>Completed ✓</button>
-        ) : (
-          <button className="secondary-btn" onClick={() => onCompleteGoal(selectedGoal?.id ?? '')}>Complete goal</button>
+
+        {selectedGoal && (
+          <div className="detail-list" style={{ marginTop: '1rem' }}>
+            <h4>Milestones Checklist</h4>
+            {selectedGoal.milestones.length > 0 ? (
+              <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+                {selectedGoal.milestones.map((m, idx) => (
+                  <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span style={{ color: selectedGoal.status === 'COMPLETED' ? '#22c55e' : '#a1a1aa' }}>✓</span>
+                    <span>{m}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="muted" style={{ fontSize: '0.85rem' }}>No sub-milestones added yet.</p>
+            )}
+
+            {selectedGoal.status !== 'COMPLETED' && onAddMilestone && (
+              <div className="lang-add" style={{ marginTop: '0.5rem' }}>
+                <input
+                  placeholder="Add a sub-milestone…"
+                  value={newMilestoneText}
+                  onChange={(e) => setNewMilestoneText(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddMilestone()}
+                />
+                <button className="secondary-btn" onClick={handleAddMilestone}>Add</button>
+              </div>
+            )}
+          </div>
         )}
+
+        <div style={{ marginTop: '1.5rem' }}>
+          {selectedGoal?.status === 'COMPLETED' ? (
+            <button className="secondary-btn" disabled>Completed ✓</button>
+          ) : (
+            <button className="secondary-btn" onClick={() => onCompleteGoal(selectedGoal?.id ?? '')}>Complete goal</button>
+          )}
+        </div>
       </motion.div>
     </div>
   )

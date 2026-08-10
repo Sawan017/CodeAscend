@@ -32,10 +32,7 @@ export function ProfileDrawer({ open, profile, settings, user, onClose, onSettin
 
   // Debounced username availability check
   useEffect(() => {
-    if (!open || !user) {
-      setUsernameStatus('idle')
-      return
-    }
+    if (!open || !user) return
 
     const timeout = setTimeout(async () => {
       const isAvailable = await checkUsernameAvailability(profile.username, user.id)

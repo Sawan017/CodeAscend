@@ -1,4 +1,4 @@
-import type { Goal, NameTier } from '../types'
+import type { Achievement, Badge, Goal, NameTier, Progression, Project, Skill } from '../types'
 
 /**
  * XP / Level system
@@ -152,4 +152,68 @@ export function formatDate(iso: string) {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return iso
   return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
+
+/**
+ * Checks rules for unlocked badges and achievements based on current progression state.
+ */
+export function evaluateAchievementsAndBadges(
+  progression: Progression,
+  goals: Goal[],
+  projects: Project[],
+  skills: Skill[],
+  achievements: Achievement[],
+  badges: Badge[]
+) {
+  const currentLevel = calculateLevel(progression.xp)
+  const completedGoalsCount = goals.filter((g) => g.status === 'COMPLETED').length
+  const completedProjectsCount = projects.filter((p) => p.completed || p.status === 'COMPLETED').length
+  const masteredSkillsCount = skills.filter((s) => s.status === 'MASTERED').length
+  const todayStr = new Date().toISOString().slice(0, 10)
+
+  const newUnlockedAchievements: Achievement[] = []
+  const newEarnedBadges: Badge[] = []
+
+  const updatedBadges = badges.map((badge) => {
+    if (badge.earned) return badge
+    let earnedNow = false
+
+    if (badge.id === 'first-step' && completedGoalsCount >= 1) earnedNow = true
+    if (badge.id === 'level-5' && currentLevel >= 5) earnedNow = true
+    if (badge.id === 'level-10' && currentLevel >= 10) earnedNow = true
+    if (badge.id === 'project-master' && completedProjectsCount >= 3) earnedNow = true
+    if (badge.id === 'streak-7' && progression.streak >= 7) earnedNow = true
+
+    if (earnedNow) {
+      const updated = { ...badge, earned: true, dateEarned: todayStr }
+      newEarnedBadges.push(updated)
+      return updated
+    }
+    return badge
+  })
+
+  const updatedAchievements = achievements.map((ach) => {
+    if (ach.unlocked) return ach
+    let unlockedNow = false
+
+    if (ach.id === 'first-website' && completedProjectsCount >= 1) unlockedNow = true
+    if (ach.id === 'first-react' && (completedProjectsCount >= 1 || masteredSkillsCount >= 1)) unlockedNow = true
+    if (ach.id === 'first-fullstack' && completedProjectsCount >= 2) unlockedNow = true
+    if (ach.id === 'portfolio-deployed' && completedProjectsCount >= 1) unlockedNow = true
+
+    if (unlockedNow) {
+      const updated = { ...ach, unlocked: true, dateUnlocked: todayStr }
+      newUnlockedAchievements.push(updated)
+      return updated
+    }
+    return ach
+  })
+
+  return {
+    updatedBadges,
+    updatedAchievements,
+    newEarnedBadges,
+    newUnlockedAchievements,
+  }
 }
