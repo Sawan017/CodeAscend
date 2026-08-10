@@ -19,10 +19,6 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
   useEffect(() => {
     if (open) {
       loadProfiles()
-    } else {
-      setQuery('')
-      setProfiles([])
-      setSelectedProfile(null)
     }
   }, [open])
 

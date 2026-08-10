@@ -15,46 +15,6 @@ export function useAuth() {
   const [loading, setLoading] = useState(false)
   const [isNewUser, setIsNewUser] = useState(false)
 
-  useEffect(() => {
-    if (!isSupabaseConfigured() || !supabase) return
-
-    // Restore session on mount
-    supabase.auth.getSession().then(({ data }) => {
-      const session = data.session
-      if (session?.user) {
-        const authUser = {
-          id: session.user.id,
-          email: session.user.email,
-          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? session.user.email ?? 'Player',
-          avatarUrl: session.user.user_metadata?.avatar_url,
-        }
-        setUser(authUser)
-        createProfileIfMissing(authUser)
-      }
-    })
-
-    // Listen to auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        const authUser = {
-          id: session.user.id,
-          email: session.user.email,
-          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? session.user.email ?? 'Player',
-          avatarUrl: session.user.user_metadata?.avatar_url,
-        }
-        setUser(authUser)
-        createProfileIfMissing(authUser)
-      } else {
-        setUser(null)
-        setIsNewUser(false)
-      }
-    })
-
-    return () => {
-      listener.subscription.unsubscribe()
-    }
-  }, [])
-
   /**
    * Create a default profile and progression for new users.
    */
@@ -126,6 +86,46 @@ export function useAuth() {
 
     setIsNewUser(true)
   }
+
+  useEffect(() => {
+    if (!isSupabaseConfigured() || !supabase) return
+
+    // Restore session on mount
+    supabase.auth.getSession().then(({ data }) => {
+      const session = data.session
+      if (session?.user) {
+        const authUser = {
+          id: session.user.id,
+          email: session.user.email,
+          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? session.user.email ?? 'Player',
+          avatarUrl: session.user.user_metadata?.avatar_url,
+        }
+        setUser(authUser)
+        createProfileIfMissing(authUser)
+      }
+    })
+
+    // Listen to auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const authUser = {
+          id: session.user.id,
+          email: session.user.email,
+          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? session.user.email ?? 'Player',
+          avatarUrl: session.user.user_metadata?.avatar_url,
+        }
+        setUser(authUser)
+        createProfileIfMissing(authUser)
+      } else {
+        setUser(null)
+        setIsNewUser(false)
+      }
+    })
+
+    return () => {
+      listener.subscription.unsubscribe()
+    }
+  }, [])
 
   const signInWithGoogle = async () => {
     if (!isSupabaseConfigured() || !supabase) return null

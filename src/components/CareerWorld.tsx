@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Compass, GraduationCap, House, Layers3, Target, Trophy } from 'lucide-react'
-import type { Progression, SectionId } from '../types'
+import type { Progression, SectionId, UserProfile } from '../types'
 import { calculateLevel, calculateProgressToNextLevel } from '../lib/progression'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
@@ -27,13 +27,15 @@ type CareerWorldProps = {
   activeSection: SectionId
   onSelectSection: (section: SectionId) => void
   progression: Progression
+  profile?: UserProfile
 }
 
-export function CareerWorld({ activeSection, onSelectSection, progression }: CareerWorldProps) {
+export function CareerWorld({ activeSection, onSelectSection, progression, profile }: CareerWorldProps) {
   const level = calculateLevel(progression.xp)
   const levelLabel = String(level).padStart(2, '0')
   const xpLabel = progression.xp.toLocaleString()
   const { progress } = calculateProgressToNextLevel(progression.xp)
+  const playerName = (profile?.displayName || profile?.username || 'DEVELOPER').toUpperCase()
 
   return (
     <motion.section
@@ -64,7 +66,7 @@ export function CareerWorld({ activeSection, onSelectSection, progression }: Car
         <div className="core-node">
           <div className="core-ring" />
           <div className="core-body">
-            <span>SAWAN</span>
+            <span>{playerName}</span>
             <strong>LEVEL {levelLabel}</strong>
             <small>{xpLabel} XP</small>
             <div className="core-progress">

@@ -12,13 +12,15 @@ import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
-import { achievements, badges, goals, milestones, profile, projects, skillTree, skills, timelineEvents, initialProgression, languages, futureMilestones } from './data/journeyData'
-import type { Goal, SectionId, Settings, UserProfile } from './types'
+import { achievements, badges, goals, milestones, projects, skillTree, skills, timelineEvents, languages, futureMilestones } from './data/journeyData'
+import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile } from './types'
 import { loadInitialState, saveProgression } from './utils/storage'
-import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS } from './lib/progression'
+import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
+import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills } from './lib/api'
-import { Toasts, useToasts } from './components/Toasts'
+import { Toasts } from './components/Toasts'
+import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
@@ -34,37 +36,46 @@ function App() {
   const { user, signOut } = useAuth()
   const hydratedFromRemote = useRef(false)
   const { toasts, push, dismiss } = useToasts()
-  const prevLevelRef = useRef(calculateLevel(initialProgression.xp))
   const [entered, setEntered] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionId>('profile')
-  const [activeProject, setActiveProject] = useState(projects[0])
-  const [selectedSkillId, setSelectedSkillId] = useState(skills[0]?.id ?? '')
-  const [selectedGoalId, setSelectedGoalId] = useState(goals[0]?.id ?? '')
-  const [progression, setProgression] = useState(initialProgression)
-  const [goalState, setGoalState] = useState(goals)
-  const [skillState, setSkillState] = useState(skills)
-  const [projectState, setProjectState] = useState(projects)
-  const [achievementState, setAchievementState] = useState(achievements)
-  const [badgeState, setBadgeState] = useState(badges)
-  const [settings, setSettings] = useState<Settings>({ animationIntensity: 'high', reducedMotion: false, soundEffects: false, theme: 'dark', streakTracking: true })
+
+  const [initialData] = useState(() => {
+    const stored = loadInitialState()
+    const streakResult = computeStreak(stored.progression.streak, stored.progression.lastActiveDate)
+    const initialProg: Progression = {
+      ...stored.progression,
+      streak: streakResult.newStreak,
+      lastActiveDate: streakResult.lastDate,
+    }
+    return {
+      progression: initialProg,
+      goals: stored.goals.length ? stored.goals : goals,
+      skills: stored.skills.length ? stored.skills : skills,
+      projects: stored.projects.length ? stored.projects : projects,
+      achievements: stored.achievements.length ? stored.achievements : achievements,
+      badges: stored.badges.length ? stored.badges : badges,
+      settings: stored.settings,
+      profile: stored.profile,
+    }
+  })
+
+  const prevLevelRef = useRef(calculateLevel(initialData.progression.xp))
+  const [progression, setProgression] = useState<Progression>(initialData.progression)
+  const [goalState, setGoalState] = useState(initialData.goals)
+  const [skillState, setSkillState] = useState(initialData.skills)
+  const [projectState, setProjectState] = useState(initialData.projects)
+  const [achievementState, setAchievementState] = useState(initialData.achievements)
+  const [badgeState, setBadgeState] = useState(initialData.badges)
+  const [settings, setSettings] = useState<Settings>(initialData.settings)
+  const [profileState, setProfileState] = useState<UserProfile>(initialData.profile)
+  const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
+  const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? skills[0]?.id ?? '')
+  const [selectedGoalId, setSelectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [userSearchOpen, setUserSearchOpen] = useState(false)
-  const [profileState, setProfileState] = useState<UserProfile>(profile)
   const [languageState] = useState(languages)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const contentRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const stored = loadInitialState()
-    setProgression(stored.progression)
-    setGoalState(stored.goals.length ? stored.goals : goals)
-    setSkillState(stored.skills.length ? stored.skills : skills)
-    setProjectState(stored.projects.length ? stored.projects : projects)
-    setAchievementState(stored.achievements.length ? stored.achievements : achievements)
-    setBadgeState(stored.badges.length ? stored.badges : badges)
-    setSettings(stored.settings)
-    setProfileState(stored.profile)
-  }, [])
 
   // Load remote data when a user logs in
   useEffect(() => {
@@ -135,27 +146,51 @@ function App() {
     saveProfile(user.id, profileState)
   }, [user, profileState])
 
-  // Show a toast when the player levels up
+  // Show a toast and sound when the player levels up or gains XP
   useEffect(() => {
     const level = calculateLevel(progression.xp)
     if (level > prevLevelRef.current) {
       push(`LEVEL UP! You reached level ${level}`, 'level', 4000)
+      playSoundEffect('level', settings.soundEffects)
     }
     prevLevelRef.current = level
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progression.xp])
+  }, [progression.xp, settings.soundEffects])
 
-  // Track daily streak on mount
+  // Automated badge & achievement evaluator
   useEffect(() => {
-    const { streak, lastActiveDate } = progression
-    const { newStreak, lastDate } = computeStreak(streak, lastActiveDate)
-    if (newStreak !== streak) {
-      setProgression((prev) => ({ ...prev, streak: newStreak, lastActiveDate: lastDate }))
-    } else if (lastDate !== lastActiveDate) {
-      setProgression((prev) => ({ ...prev, lastActiveDate: lastDate }))
-    }
+    const timeout = setTimeout(() => {
+      const { updatedBadges, updatedAchievements, newEarnedBadges, newUnlockedAchievements } = evaluateAchievementsAndBadges(
+        progression,
+        goalState,
+        projectState,
+        skillState,
+        achievementState,
+        badgeState
+      )
+
+      if (newEarnedBadges.length > 0) {
+        setBadgeState(updatedBadges)
+        newEarnedBadges.forEach((b) => {
+          setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.badge, badges: p.badges + 1 }))
+          push(`Badge earned: ${b.title} +${XP_REWARDS.badge} XP`, 'badge')
+          playSoundEffect('badge', settings.soundEffects)
+        })
+      }
+
+      if (newUnlockedAchievements.length > 0) {
+        setAchievementState(updatedAchievements)
+        newUnlockedAchievements.forEach((a) => {
+          setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.achievement, achievements: p.achievements + 1 }))
+          push(`Achievement unlocked: ${a.title} +${XP_REWARDS.achievement} XP`, 'unlock')
+          playSoundEffect('unlock', settings.soundEffects)
+        })
+      }
+    }, 0)
+
+    return () => clearTimeout(timeout)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [progression.xp, goalState, projectState, skillState])
 
   const completedGoals = goalState.filter((goal) => goal.status === 'COMPLETED').length
   const masteredSkills = skillState.filter((skill) => skill.status === 'MASTERED').length
@@ -168,16 +203,19 @@ function App() {
       const xpGained = calculateGoalXp(goal, now)
       setProgression((p) => ({ ...p, xp: p.xp + xpGained, goalsCompleted: p.goalsCompleted + 1 }))
       push(`Goal complete! +${xpGained} XP`, 'xp')
+      playSoundEffect('xp', settings.soundEffects)
       return { ...goal, status: 'COMPLETED' as const, progress: 100, completedDate: now }
     }))
   }
 
   const addGoal = (goal: Goal) => {
     setGoalState((prev) => [...prev, goal])
+    playSoundEffect('click', settings.soundEffects)
   }
 
   const removeGoal = (goalId: string) => {
     setGoalState((prev) => prev.filter((goal) => goal.id !== goalId))
+    playSoundEffect('click', settings.soundEffects)
   }
 
   const unlockAchievement = (id: string) => {
@@ -185,6 +223,7 @@ function App() {
       if (achievement.id !== id || achievement.unlocked) return achievement
       setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.achievement, achievements: p.achievements + 1 }))
       push(`Achievement unlocked: ${achievement.title} +${XP_REWARDS.achievement} XP`, 'unlock')
+      playSoundEffect('unlock', settings.soundEffects)
       return { ...achievement, unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10) }
     }))
   }
@@ -196,6 +235,7 @@ function App() {
       if (nextStatus === 'MASTERED') {
         setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
         push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
+        playSoundEffect('unlock', settings.soundEffects)
         return { ...skill, status: 'MASTERED' as const, progress: 100, completed: new Date().toISOString().slice(0, 10) }
       }
       return { ...skill, status: 'LEARNING' as const, completed: '' }
@@ -209,10 +249,12 @@ function App() {
       if (newProgress >= 100) {
         setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
         push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
+        playSoundEffect('unlock', settings.soundEffects)
         return { ...skill, status: 'MASTERED' as const, progress: 100, completed: new Date().toISOString().slice(0, 10) }
       }
       setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillPractice }))
       push(`Practice logged +${XP_REWARDS.skillPractice} XP`, 'xp')
+      playSoundEffect('xp', settings.soundEffects)
       return { ...skill, progress: newProgress }
     }))
   }
@@ -222,6 +264,7 @@ function App() {
       if (project.id !== projectId || project.completed) return project
       setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.projectCompleted, projectsCompleted: p.projectsCompleted + 1 }))
       push(`Project completed! +${XP_REWARDS.projectCompleted} XP`, 'unlock')
+      playSoundEffect('unlock', settings.soundEffects)
       return { ...project, completed: true, completedDate: new Date().toISOString().slice(0, 10), progress: 100, status: 'COMPLETED' }
     }))
   }
@@ -231,12 +274,57 @@ function App() {
       if (badge.id !== badgeId || badge.earned) return badge
       setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.badge, badges: p.badges + 1 }))
       push(`Badge earned: ${badge.title} +${XP_REWARDS.badge} XP`, 'badge')
+      playSoundEffect('badge', settings.soundEffects)
       return { ...badge, earned: true, dateEarned: new Date().toISOString().slice(0, 10) }
     }))
   }
 
+  const addProject = (newProject: Project) => {
+    setProjectState((prev) => [newProject, ...prev])
+    setActiveProject(newProject)
+    push(`Project added: ${newProject.name}`, 'info')
+    playSoundEffect('click', settings.soundEffects)
+  }
+
+  const deleteProject = (projectId: string) => {
+    setProjectState((prev) => {
+      const next = prev.filter((p) => p.id !== projectId)
+      if (activeProject.id === projectId && next.length > 0) {
+        setActiveProject(next[0])
+      }
+      return next
+    })
+    push('Project deleted', 'info')
+    playSoundEffect('click', settings.soundEffects)
+  }
+
+  const addSkill = (newSkill: Skill) => {
+    setSkillState((prev) => [...prev, newSkill])
+    setSelectedSkillId(newSkill.id)
+    push(`Skill added: ${newSkill.name}`, 'info')
+    playSoundEffect('click', settings.soundEffects)
+  }
+
+  const updateSkillNotes = (skillId: string, notes: string) => {
+    setSkillState((prev) => prev.map((s) => (s.id === skillId ? { ...s, notes } : s)))
+    push('Skill notes updated', 'info')
+  }
+
+  const addMilestone = (goalId: string, milestoneText: string) => {
+    setGoalState((prev) =>
+      prev.map((g) => {
+        if (g.id !== goalId) return g
+        const updatedMilestones = [...g.milestones, milestoneText]
+        return { ...g, milestones: updatedMilestones }
+      })
+    )
+    push('Sub-milestone added', 'info')
+    playSoundEffect('click', settings.soundEffects)
+  }
+
   const selectSection = (section: SectionId) => {
     setActiveSection(section)
+    playSoundEffect('click', settings.soundEffects)
     requestAnimationFrame(() => {
       contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
@@ -280,18 +368,18 @@ function App() {
                 </div>
 
                 <div className="arena-grid">
-                  <CareerWorld activeSection={activeSection} onSelectSection={selectSection} progression={progression} />
+                  <CareerWorld activeSection={activeSection} onSelectSection={selectSection} progression={progression} profile={profileState} />
                   <HUD progression={progression} completedGoals={completedGoals} masteredSkills={masteredSkills} earnedBadges={earnedBadges} />
                 </div>
 
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <AnimatePresence mode="wait">
                     {activeSection === 'profile' && <ProfilePanel profile={profileState} progression={progression} languages={languageState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
-                    {activeSection === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={setActiveProject} onMarkComplete={markProjectCompleted} />}
-                    {activeSection === 'learning' && <SkillsPanel skillTree={skillTree} skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={setSelectedSkillId} onMasterSkill={toggleSkillMastery} onIncrementSkill={incrementSkillProgress} />}
-                    {activeSection === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={setSelectedGoalId} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} />}
+                    {activeSection === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={setActiveProject} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
+                    {activeSection === 'learning' && <SkillsPanel skillTree={skillTree} skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={setSelectedSkillId} onMasterSkill={toggleSkillMastery} onIncrementSkill={incrementSkillProgress} onAddSkill={addSkill} onUpdateSkillNotes={updateSkillNotes} />}
+                    {activeSection === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={setSelectedGoalId} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
                     {activeSection === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} onUnlockAchievement={unlockAchievement} onEarnBadge={earnBadge} />}
-                    {activeSection === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} />}
+                    {activeSection === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />}
                   </AnimatePresence>
                 </motion.section>
               </div>
@@ -300,7 +388,7 @@ function App() {
         )}
       </AnimatePresence>
       <ProfileDrawer open={drawerOpen} profile={profileState} settings={settings} user={user} onClose={() => setDrawerOpen(false)} onSettingsChange={setSettings} onProfileChange={setProfileState} onSignOut={signOut} />
-      <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(profile) => { setProfileState(profile); setUserSearchOpen(false) }} />
+      <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(p) => { push(`Viewing profile: @${p.username}`, 'info'); setUserSearchOpen(false) }} />
       <Toasts toasts={toasts} onDismiss={dismiss} />
     </div>
   )
