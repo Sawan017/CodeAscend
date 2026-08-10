@@ -11,9 +11,10 @@ type PublicProfileViewerProps = {
   onClose: () => void
   onSendRequest: (userId: string) => void
   onRemoveFriend: (userId: string) => void
+  onMessage: (userId: string) => void
 }
 
-export function PublicProfileViewer({ userId, activeUserId, friendState, onClose, onSendRequest, onRemoveFriend }: PublicProfileViewerProps) {
+export function PublicProfileViewer({ userId, activeUserId, friendState, onClose, onSendRequest, onRemoveFriend, onMessage }: PublicProfileViewerProps) {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<{
     profile: UserProfile | null
@@ -114,7 +115,7 @@ export function PublicProfileViewer({ userId, activeUserId, friendState, onClose
                     {!isSelf && (
                       isFriend ? (
                         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          <button className="primary-btn" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <button className="primary-btn" onClick={() => { onMessage(userId); onClose() }} style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                             Message
                           </button>
                           <button className="secondary-btn" onClick={() => onRemoveFriend(userId)} style={{ padding: '0.5rem 1rem', color: '#ef4444' }}>

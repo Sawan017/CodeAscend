@@ -21,6 +21,7 @@ const positions: Record<SectionId, { left: string; top: string }> = {
   goals: { left: '30%', top: '65%' },
   achievements: { left: '50%', top: '80%' },
   friends: { left: '80%', top: '60%' },
+  chat: { left: '80%', top: '40%' },
   future: { left: '80%', top: '20%' },
 }
 

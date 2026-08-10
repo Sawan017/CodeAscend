@@ -19,9 +19,10 @@ type FriendsPanelProps = {
   onReject: (userId: string) => void
   onRemove: (userId: string) => void
   onOpenProfile: (userId: string) => void
+  onMessage: (userId: string) => void
 }
 
-export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject, onRemove, onOpenProfile }: FriendsPanelProps) {
+export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject, onRemove, onOpenProfile, onMessage }: FriendsPanelProps) {
   const [activeTab, setActiveTab] = useState<'friends' | 'requests'>('friends')
   const [publicProfiles, setPublicProfiles] = useState<PublicUser[]>([])
   const [loading, setLoading] = useState(true)
@@ -87,7 +88,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                       <p className="muted" style={{ margin: '0', fontSize: '0.85rem' }}>@{friend.username} • Lvl {friend.level}</p>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button className="icon-button" aria-label="Message" title="Message (Coming soon)">
+                      <button className="icon-button" onClick={() => onMessage(friend.userId)} aria-label="Message" title="Message">
                         <MessageSquare size={16} />
                       </button>
                       <button className="icon-button" onClick={() => onRemove(friend.userId)} aria-label="Remove friend" title="Remove Friend" style={{ color: '#ef4444' }}>
