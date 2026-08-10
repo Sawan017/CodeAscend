@@ -1,4 +1,4 @@
-import type { Achievement, Badge, Goal, Progression, Project, Settings, Skill, UserProfile } from '../types'
+import type { Achievement, Badge, FriendState, Goal, Progression, Project, Settings, Skill, UserProfile } from '../types'
 import { isSupabaseConfigured, supabase } from './supabase'
 
 /**
@@ -49,7 +49,7 @@ async function fetchRow<T>(table: TableName, userId: string, key: string): Promi
 export async function fetchAllUserData(userId: string) {
   if (!isSupabaseConfigured()) return null
 
-  const [profile, progression, goals, projects, skills, achievements, badges, settings] = await Promise.all([
+  const [profile, progression, goals, projects, skills, achievements, badges, settings, friends] = await Promise.all([
     fetchRow<UserProfile>(TABLES.profile, userId, 'profile'),
     fetchRow<Progression>(TABLES.progression, userId, 'progression'),
     fetchRow<Goal[]>(TABLES.goals, userId, 'goals'),
@@ -58,13 +58,18 @@ export async function fetchAllUserData(userId: string) {
     fetchRow<Achievement[]>(TABLES.achievements, userId, 'achievements'),
     fetchRow<Badge[]>(TABLES.badges, userId, 'badges'),
     fetchRow<Settings>(TABLES.settings, userId, 'settings'),
+    fetchRow<FriendState>(TABLES.profile, userId, 'friends'),
   ])
 
-  return { profile, progression, goals, projects, skills, achievements, badges, settings }
+  return { profile, progression, goals, projects, skills, achievements, badges, settings, friends }
 }
 
 export async function saveProfile(userId: string, profile: UserProfile) {
   return upsertRow(TABLES.profile, userId, 'profile', profile)
+}
+
+export async function saveFriendsState(userId: string, state: FriendState) {
+  return upsertRow(TABLES.profile, userId, 'friends', state)
 }
 
 export async function saveProgressionData(userId: string, progression: Progression) {
@@ -187,3 +192,33 @@ export async function fetchPublicProfileByUsername(username: string): Promise<{ 
     title: profileData.title,
   }
 }
+
+export async function fetchIncomingFriendRequests(userId: string): Promise<string[]> {
+  if (!isSupabaseConfigured() || !supabase) return []
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("user_id, data")
+    .eq("key", "friends")
+
+  if (error) {
+    console.error("Failed to fetch incoming requests:", error.message)
+    return []
+  }
+
+  const incomingRequests: string[] = []
+  for (const row of data || []) {
+    const friendData = row.data as import("../types").FriendState
+    if (friendData && friendData.relationships) {
+      const hasOutgoing = friendData.relationships.find(
+        (r) => r.userId === userId && r.status === "pending_outgoing"
+      )
+      if (hasOutgoing) {
+        incomingRequests.push(row.user_id)
+      }
+    }
+  }
+
+  return incomingRequests
+}
+

@@ -1,4 +1,4 @@
-export type SectionId = 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future'
+export type SectionId = 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends'
 
 export type SkillStatus = 'LOCKED' | 'LEARNING' | 'MASTERED'
 export type GoalStatus = 'ACTIVE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
@@ -185,3 +185,14 @@ export interface Settings {
   theme: ThemeMode
   streakTracking: boolean
 }
+
+export interface FriendRelationship {
+  userId: string
+  status: 'pending_outgoing' | 'pending_incoming' | 'accepted'
+  createdAt: string
+}
+
+export interface FriendState {
+  relationships: FriendRelationship[]
+}
+
