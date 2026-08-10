@@ -1,0 +1,41 @@
+import type { Achievement, Badge, Goal, Progression, Project, Settings, Skill, UserProfile } from '../types'
+
+const STORAGE_KEYS = {
+  progression: 'futureme-progression',
+  goals: 'futureme-goals',
+  skills: 'futureme-skills',
+  projects: 'futureme-projects',
+  achievements: 'futureme-achievements',
+  badges: 'futureme-badges',
+  settings: 'futureme-settings',
+  profile: 'futureme-profile',
+}
+
+export function loadProgression<T>(fallback: T, key: keyof typeof STORAGE_KEYS): T {
+  if (typeof window === 'undefined') return fallback
+  const serialized = window.localStorage.getItem(STORAGE_KEYS[key])
+  if (!serialized) return fallback
+  try {
+    return JSON.parse(serialized) as T
+  } catch {
+    return fallback
+  }
+}
+
+export function saveProgression<T>(value: T, key: keyof typeof STORAGE_KEYS) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value))
+}
+
+export function loadInitialState() {
+  return {
+    progression: loadProgression<Progression>({ xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0, lastActiveDate: undefined }, 'progression'),
+    goals: loadProgression<Goal[]>([], 'goals'),
+    skills: loadProgression<Skill[]>([], 'skills'),
+    projects: loadProgression<Project[]>([], 'projects'),
+    achievements: loadProgression<Achievement[]>([], 'achievements'),
+    badges: loadProgression<Badge[]>([], 'badges'),
+    settings: loadProgression<Settings>({ animationIntensity: 'high', reducedMotion: false, soundEffects: false, theme: 'dark', streakTracking: true }, 'settings'),
+    profile: loadProgression<UserProfile>({ username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@futureme.dev', contactPublic: false, level: 1, xp: 0 }, 'profile'),
+  }
+}
