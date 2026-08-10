@@ -9,6 +9,7 @@ export function Celebration({ xp }: { xp: number }) {
 
   useEffect(() => {
     if (level > prevLevel) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShow(true)
       setPrevLevel(level)
       const timer = setTimeout(() => setShow(false), 4000)

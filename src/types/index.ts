@@ -1,4 +1,4 @@
-export type SectionId = 'dashboard' | 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat'
+export type SectionId = 'dashboard' | 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat' | 'career_world'
 
 export type SkillStatus = 'LOCKED' | 'LEARNING' | 'MASTERED'
 export type GoalStatus = 'ACTIVE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
@@ -8,6 +8,22 @@ export type ProjectStatus = 'PLANNING' | 'BUILDING' | 'COMPLETED'
 export type BadgeRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary'
 export type ThemeMode = 'dark' | 'light' | 'system' | 'midnight' | 'aurora'
 export type NameTier = 'Novice' | 'Adept' | 'Expert' | 'Veteran' | 'Master' | 'Legend' | 'Mythic'
+
+export type TopicComplexity = 'Simple' | 'Medium' | 'Hard' | 'Very Hard'
+export type SubtopicDifficulty = 'Easy' | 'Normal' | 'Hard'
+export type SubtopicStatus = 'Not Started' | 'Learning' | 'Completed'
+
+export interface SubtopicProgress {
+  id: string
+  title: string
+  complexity: TopicComplexity
+  status: SubtopicStatus
+  difficulty?: SubtopicDifficulty
+  estimatedTime?: number
+  xpReward?: number
+  startedAt?: string
+  completedAt?: string
+}
 
 export interface UserProfile {
   id?: string
@@ -77,6 +93,7 @@ export interface Skill {
   completed: string
   relatedProjects: string[]
   notes: string
+  subtopics?: SubtopicProgress[]
 }
 
 export interface SkillNode {
@@ -184,6 +201,7 @@ export interface Settings {
   soundEffects: boolean
   theme: ThemeMode
   streakTracking: boolean
+  onboarded?: boolean
 }
 
 export interface FriendRelationship {

@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import type { Goal, Language, Progression, UserProfile } from '../../types'
-import { calculateLevel, getNameColorClass } from '../../lib/progression'
+import type { Goal, Progression, UserProfile, Skill } from '../../types'
+import { calculateLevel, getNameColorClass, calculateProgressToNextLevel } from '../../lib/progression'
 import { XpProgressBar } from '../../components/XpProgressBar'
 
 type ProfilePanelProps = {
   profile: UserProfile
   progression: Progression
-  languages: Language[]
+  skills: Skill[]
   goals: Goal[]
   goalsCompleted: number
   onUpdateProfile: (next: UserProfile) => void
@@ -17,10 +17,22 @@ const LANGUAGE_OPTIONS = [
   'Java', 'C++', 'C#', 'Go', 'Rust', 'SQL',
 ]
 
-export function ProfilePanel({ profile, progression, languages, goals, goalsCompleted, onUpdateProfile }: ProfilePanelProps) {
+export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, onUpdateProfile }: ProfilePanelProps) {
   const level = calculateLevel(progression.xp)
   const nameColorClass = getNameColorClass(level)
   const [customLang, setCustomLang] = useState('')
+
+  const skillProgressions = skills.map(skill => {
+    const xp = skill.subtopics?.filter(s => s.status === 'COMPLETED').reduce((acc, sub) => acc + (sub.xpReward || 0), 0) || 0;
+    const { level: skillLevel, progress: levelProgress } = calculateProgressToNextLevel(xp)
+    return {
+      id: skill.id,
+      name: skill.name,
+      xp,
+      level: skillLevel,
+      levelProgress
+    }
+  }).sort((a, b) => b.xp - a.xp)
 
   const toggleLanguage = (lang: string) => {
     const tech = profile.technologies.includes(lang)
@@ -120,13 +132,19 @@ export function ProfilePanel({ profile, progression, languages, goals, goalsComp
       <div className="panel compact-panel">
         <p className="eyebrow">LANGUAGE PROGRESSION</p>
         <div className="lang-grid">
-          {languages.map((lang) => (
-            <div key={lang.id} className="lang-row">
-              <span className="lang-name" style={{ color: lang.color }}>{lang.icon} {lang.name}</span>
-              <div className="progress-bar"><div style={{ width: `${Math.min(100, (lang.xp / 120) * 100)}%` }} /></div>
-              <small className="muted">Level {lang.level} · {lang.xp} XP</small>
-            </div>
-          ))}
+          {skillProgressions.length === 0 ? (
+            <p className="muted" style={{ padding: '1rem', textAlign: 'center', border: '1px dashed var(--border)', borderRadius: '8px' }}>
+              No learning progression yet. Add skills from the Learning tab.
+            </p>
+          ) : (
+            skillProgressions.map((lang) => (
+              <div key={lang.id} className="lang-row">
+                <span className="lang-name" style={{ color: 'var(--cyan)' }}>{lang.name}</span>
+                <div className="progress-bar"><div style={{ width: `${lang.levelProgress}%` }} /></div>
+                <small className="muted">Level {lang.level} · {lang.xp} XP</small>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

@@ -13,7 +13,7 @@ type ProfileDrawerProps = {
   onClose: () => void
   onSettingsChange: (next: Settings) => void
   onProfileChange: (next: UserProfile) => void
-  onSignOut?: () => void
+  onSignOut?: (forgetAccount: boolean) => void
 }
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
@@ -29,6 +29,7 @@ export function ProfileDrawer({ open, profile, settings, user, onClose, onSettin
     onProfileChange({ ...profile, ...patch })
   }
   const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   // Debounced username availability check
   useEffect(() => {
@@ -66,21 +67,7 @@ export function ProfileDrawer({ open, profile, settings, user, onClose, onSettin
                   <p className="muted">@{profile.username} · Level {profile.level}</p>
                 </div>
               </div>
-              {user ? (
-                <div className="drawer-card">
-                  <div className="drawer-toggle-row">
-                    <div>
-                      <h4>Signed in</h4>
-                      <p>{user.email}</p>
-                    </div>
-                    <button className="secondary-btn" onClick={onSignOut}><LogOut size={14} /> Sign out</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="drawer-card">
-                  <p className="muted">Demo mode — data saves locally. Sign in with Google to sync across devices.</p>
-                </div>
-              )}
+
             </div>
 
             <div className="drawer-section">
@@ -182,7 +169,86 @@ export function ProfileDrawer({ open, profile, settings, user, onClose, onSettin
                 </div>
               </div>
             </div>
+
+            <div className="drawer-section">
+              <p className="eyebrow">ACCOUNT</p>
+              {user ? (
+                <div className="drawer-card">
+                  <div className="drawer-toggle-row">
+                    <div>
+                      <h4>Signed in</h4>
+                      <p>{user.email}</p>
+                    </div>
+                    <button className="secondary-btn" onClick={() => setShowLogoutDialog(true)}><LogOut size={14} /> Sign out</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="drawer-card">
+                  <p className="muted">Demo mode — data saves locally. Sign in with Google to sync across devices.</p>
+                </div>
+              )}
+            </div>
           </motion.aside>
+          
+          <AnimatePresence>
+            {showLogoutDialog && (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                style={{ 
+                  position: 'fixed', 
+                  top: 0, left: 0, right: 0, bottom: 0, 
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+                  backdropFilter: 'blur(8px)', 
+                  zIndex: 9999,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '1rem'
+                }}
+                onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutDialog(false) }}
+              >
+                <motion.div 
+                  initial={{ scale: 0.95, opacity: 0, y: 15 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  exit={{ scale: 0.95, opacity: 0, y: 15 }}
+                  className="drawer-card" 
+                  style={{ 
+                    width: '100%', 
+                    maxWidth: '420px', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: '1.25rem',
+                    background: 'rgba(15, 23, 42, 0.9)',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(24px)',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+                    padding: '2rem'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Sign out</h3>
+                    <button className="icon-button" onClick={() => setShowLogoutDialog(false)} aria-label="Cancel sign out">
+                      <X size={24} />
+                    </button>
+                  </div>
+                  <p className="muted" style={{ margin: 0, fontSize: '1.05rem', lineHeight: 1.5 }}>Would you like to remember this account on this device?</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+                    <button className="primary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(false); }}>
+                      Remember this account
+                    </button>
+                    <button className="secondary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(true); }}>
+                      Forget this account
+                    </button>
+                    <button className="secondary-btn" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} onClick={() => setShowLogoutDialog(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       ) : null}
     </AnimatePresence>
