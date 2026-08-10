@@ -37,9 +37,16 @@ export function loadInitialState() {
     projects: loadProgression<Project[]>([], 'projects'),
     achievements: loadProgression<Achievement[]>([], 'achievements'),
     badges: loadProgression<Badge[]>([], 'badges'),
-    settings: loadProgression<Settings>({ animationIntensity: 'high', reducedMotion: false, soundEffects: false, theme: 'dark', streakTracking: true }, 'settings'),
+    settings: loadProgression<Settings>({ animationIntensity: 'high', reducedMotion: false, soundEffects: false, theme: 'dark', streakTracking: true, onboarded: false }, 'settings'),
     profile: loadProgression<UserProfile>({ username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@futureme.dev', contactPublic: false, level: 1, xp: 0 }, 'profile'),
     friends: loadProgression<import('../types').FriendState>({ relationships: [] }, 'friends'),
     chat: loadProgression<import('../types').ChatState>({ messages: [], lastRead: {} }, 'chat'),
   }
+}
+
+export function clearStorage() {
+  if (typeof window === 'undefined') return
+  Object.values(STORAGE_KEYS).forEach((key) => {
+    window.localStorage.removeItem(key)
+  })
 }

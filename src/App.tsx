@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Compass, GraduationCap, House, Layers3, Target, Trophy } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
+import { OnboardingScreen } from './features/auth/OnboardingScreen'
 import { AchievementsPanel } from './features/achievements/AchievementsPanel'
 import { CareerWorld } from './components/CareerWorld'
 import { HUD } from './components/HUD'
@@ -16,7 +17,9 @@ import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
-import { achievements, badges, goals, milestones, projects, skillTree, skills, timelineEvents, languages, futureMilestones } from './data/journeyData'
+import { achievements, badges, goals, projects } from './data/journeyData'
+import { milestones, futureMilestones, timelineEvents } from './data/journeyData'
+import { generateSubtopicsForSkill, calculateSkillProgress } from './data/learningData'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 import { loadInitialState, saveProgression } from './utils/storage'
 import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
@@ -45,6 +48,7 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'friends', label: 'Network', icon: Users },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'future', label: 'Future', icon: Compass },
+  { id: 'career_world', label: 'Career World', icon: Compass },
 ]
 
 const parseHash = (): Route => {
@@ -66,10 +70,26 @@ const buildHash = (r: Route) => {
 }
 
 function App() {
-  const { user, signOut } = useAuth()
+  const { user, loading, isConfigured, signOut } = useAuth()
   const hydratedFromRemote = useRef(false)
   const { toasts, push, dismiss } = useToasts()
   const [entered, setEntered] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [userSearchOpen, setUserSearchOpen] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEntered(true)
+    } else if (isConfigured && !loading) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEntered(false)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDrawerOpen(false)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUserSearchOpen(false)
+    }
+  }, [user, loading, isConfigured])
   const [route, setRoute] = useState<Route>(parseHash)
 
   useEffect(() => {
@@ -91,7 +111,7 @@ function App() {
     return {
       progression: initialProg,
       goals: stored.goals.length ? stored.goals : goals,
-      skills: stored.skills.length ? stored.skills : skills,
+      skills: stored.skills.length ? stored.skills : [],
       projects: stored.projects.length ? stored.projects : projects,
       achievements: stored.achievements.length ? stored.achievements : achievements,
       badges: stored.badges.length ? stored.badges : badges,
@@ -116,13 +136,22 @@ function App() {
   const [chatState, setChatState] = useState<import('./types').ChatState>(initialData.chat)
   const [incomingMessages, setIncomingMessages] = useState<import('./types').ChatMessage[]>([])
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
+  
+  const handleOnboardingComplete = () => {
+    // Explicitly zero out everything to ensure no mock data leaks
+    setProgression(p => ({ ...p, xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0 }))
+    setProjectState([])
+    setGoalState([])
+    setSkillState([])
+    setAchievementState([])
+    setBadgeState([])
+    setSettings(s => ({ ...s, onboarded: true }))
+  }
+
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
-  const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? skills[0]?.id ?? '')
+  const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? '')
   const [selectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [userSearchOpen, setUserSearchOpen] = useState(false)
   const [viewingUserId, setViewingUserId] = useState<string | null>(null)
-  const [languageState] = useState(languages)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const contentRef = useRef<HTMLDivElement>(null)
 
@@ -133,16 +162,17 @@ function App() {
     fetchAllUserData(user.id).then((remote) => {
       if (!remote) return
       hydratedFromRemote.current = true
-      if (remote.profile) setProfileState(remote.profile)
-      if (remote.progression) setProgression(remote.progression)
-      if (remote.goals && remote.goals.length) setGoalState(remote.goals)
-      if (remote.projects && remote.projects.length) setProjectState(remote.projects)
-      if (remote.skills && remote.skills.length) setSkillState(remote.skills)
-      if (remote.achievements && remote.achievements.length) setAchievementState(remote.achievements)
-      if (remote.badges && remote.badges.length) setBadgeState(remote.badges)
-      if (remote.settings) setSettings(remote.settings)
-      if (remote.friends) setFriendState(remote.friends)
-      if (remote.chat) setChatState(remote.chat)
+      
+      setProfileState(remote.profile || initialData.profile)
+      setProgression(remote.progression || initialData.progression)
+      setGoalState(remote.goals || [])
+      setProjectState(remote.projects || [])
+      setSkillState(remote.skills || [])
+      setAchievementState(remote.achievements || [])
+      setBadgeState(remote.badges || [])
+      setSettings(remote.settings || initialData.settings)
+      setFriendState(remote.friends || { relationships: [] })
+      setChatState(remote.chat || { messages: [], lastRead: {} })
 
       fetchIncomingFriendRequests(user.id).then(reqs => setIncomingRequests(reqs))
       fetchIncomingMessages(user.id).then(msgs => setIncomingMessages(msgs))
@@ -301,22 +331,7 @@ function App() {
     }))
   }
 
-  const incrementSkillProgress = (id: string) => {
-    setSkillState((prev) => prev.map((skill) => {
-      if (skill.id !== id || skill.status === 'MASTERED') return skill
-      const newProgress = Math.min(100, skill.progress + 10)
-      if (newProgress >= 100) {
-        setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
-        push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
-        playSoundEffect('unlock', settings.soundEffects)
-        return { ...skill, status: 'MASTERED' as const, progress: 100, completed: new Date().toISOString().slice(0, 10) }
-      }
-      setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillPractice }))
-      push(`Practice logged +${XP_REWARDS.skillPractice} XP`, 'xp')
-      playSoundEffect('xp', settings.soundEffects)
-      return { ...skill, progress: newProgress }
-    }))
-  }
+
 
   const markProjectCompleted = (projectId: string) => {
     setProjectState((prev) => prev.map((project) => {
@@ -353,15 +368,80 @@ function App() {
   }
 
   const addSkill = (newSkill: Skill) => {
-    setSkillState((prev) => [...prev, newSkill])
-    setSelectedSkillId(newSkill.id)
+    const subtopics = generateSubtopicsForSkill(newSkill.name)
+    const skillWithSubtopics = { ...newSkill, subtopics }
+    setSkillState((prev) => [...prev, skillWithSubtopics])
+    setSelectedSkillId(skillWithSubtopics.id)
     push(`Skill added: ${newSkill.name}`, 'info')
     playSoundEffect('click', settings.soundEffects)
+  }
+
+  const removeSkill = (skillId: string) => {
+    setSkillState((prev) => prev.filter(s => s.id !== skillId))
+    push('Skill removed', 'info')
   }
 
   const updateSkillNotes = (skillId: string, notes: string) => {
     setSkillState((prev) => prev.map((s) => (s.id === skillId ? { ...s, notes } : s)))
     push('Skill notes updated', 'info')
+  }
+
+  const startSubtopic = (skillId: string, subtopicId: string, difficulty: 'Easy' | 'Normal' | 'Hard', targetTime: number, xp: number) => {
+    setSkillState((prev) => prev.map(s => {
+      if (s.id !== skillId || !s.subtopics) return s
+      const updatedSubtopics = s.subtopics.map(t => {
+        if (t.id === subtopicId) {
+          return {
+            ...t,
+            status: 'Learning' as const,
+            difficulty,
+            estimatedTime: targetTime,
+            xpReward: xp,
+            startedAt: new Date().toISOString()
+          }
+        }
+        return t
+      })
+      return { ...s, subtopics: updatedSubtopics }
+    }))
+    push('Learning started', 'info')
+    playSoundEffect('click', settings.soundEffects)
+  }
+
+  const completeSubtopic = (skillId: string, subtopicId: string) => {
+    setSkillState((prev) => prev.map(s => {
+      if (s.id !== skillId || !s.subtopics) return s
+      let xpEarned = 0
+      const updatedSubtopics = s.subtopics.map(t => {
+        if (t.id === subtopicId && t.status !== 'Completed') {
+          xpEarned = t.xpReward || 0
+          return { ...t, status: 'Completed' as const, completedAt: new Date().toISOString() }
+        }
+        return t
+      })
+
+      if (xpEarned > 0) {
+        setProgression(p => ({ ...p, xp: p.xp + xpEarned }))
+        push(`Gained ${xpEarned} XP!`, 'xp')
+      }
+
+      const newProgress = calculateSkillProgress(updatedSubtopics)
+      const isMastered = updatedSubtopics.every(t => t.status === 'Completed')
+      
+      if (isMastered && s.status !== 'MASTERED') {
+        push(`${s.name} Mastered!`, 'unlock')
+        setProgression(p => ({ ...p, skillsMastered: p.skillsMastered + 1 }))
+      }
+
+      return {
+        ...s,
+        subtopics: updatedSubtopics,
+        progress: newProgress,
+        status: isMastered ? 'MASTERED' : 'LEARNING',
+        completed: isMastered ? new Date().toISOString().slice(0, 10) : s.completed
+      }
+    }))
+    playSoundEffect('unlock', settings.soundEffects)
   }
 
   const addMilestone = (goalId: string, milestoneText: string) => {
@@ -381,6 +461,7 @@ function App() {
   }
 
   const navigate = (newRoute: Route) => {
+    // eslint-disable-next-line react-hooks/immutability
     window.location.hash = buildHash(newRoute)
     playSoundEffect('click', settings.soundEffects)
     requestAnimationFrame(() => {
@@ -401,8 +482,19 @@ function App() {
       <div className="grid-overlay" />
       <div className="spotlight" style={{ left: `${cursor.x}px`, top: `${cursor.y}px` }} />
       <AnimatePresence mode="wait">
-        {!entered ? (
+        {loading ? (
+          <div key="loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
+            <div className="loading-pulse" style={{ color: 'var(--cyan)', fontSize: '1.25rem', animation: 'pulse 1.5s infinite', letterSpacing: '0.1em', fontWeight: 500 }}>
+              ESTABLISHING CONNECTION...
+            </div>
+            <div style={{ marginTop: '1rem', width: '120px', height: '2px', background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+              <motion.div initial={{ x: '-100%' }} animate={{ x: '100%' }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }} style={{ width: '50%', height: '100%', background: 'var(--cyan)' }} />
+            </div>
+          </div>
+        ) : !entered ? (
           <AuthShell onEnter={() => setEntered(true)} progression={progression} />
+        ) : user && !settings.onboarded ? (
+          <OnboardingScreen onComplete={handleOnboardingComplete} />
         ) : (
           <motion.main key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="world-shell">
             <TopBar progression={progression} profile={profileState} onOpenDrawer={() => setDrawerOpen(true)} onOpenSearch={() => setUserSearchOpen(true)} />
@@ -449,27 +541,13 @@ function App() {
               </aside>
 
               <div className="main-stage">
-                <div className="hero-panel">
-                  <div className="hero-copy">
-                    <p className="eyebrow">CORE SYSTEM</p>
-                    <h3>Developer progression map</h3>
-                    <p>Each node is a milestone in your growth arc.</p>
-                  </div>
-                  <div className="hero-badge">LIVE</div>
-                </div>
-
-                <div className="arena-grid">
-                  <CareerWorld activeSection={route.view as SectionId} onSelectSection={selectSection} progression={progression} profile={profileState} />
-                  <HUD progression={progression} completedGoals={completedGoals} masteredSkills={masteredSkills} earnedBadges={earnedBadges} />
-                </div>
-
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <AnimatePresence mode="wait">
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} languages={languageState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
+                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
                     {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
                     {route.view === 'project_detail' && <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} />}
-                    {route.view === 'learning' && <SkillsPanel skillTree={skillTree} skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={(id) => navigate({ view: 'skill_detail', id })} onMasterSkill={toggleSkillMastery} onIncrementSkill={incrementSkillProgress} onAddSkill={addSkill} onUpdateSkillNotes={updateSkillNotes} />}
+                    {route.view === 'learning' && <SkillsPanel skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={(id) => navigate({ view: 'skill_detail', id })} onAddSkill={addSkill} onRemoveSkill={removeSkill} onUpdateSkillNotes={updateSkillNotes} onStartSubtopic={startSubtopic} onCompleteSubtopic={completeSubtopic} />}
                     {route.view === 'skill_detail' && <SkillDetail skill={skillState.find(s => s.id === route.id)!} onBack={goBack} onMarkMastered={toggleSkillMastery} onUpdateNotes={updateSkillNotes} />}
                     {route.view === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={(id) => navigate({ view: 'goal_detail', id })} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
                     {route.view === 'goal_detail' && <GoalDetail goal={goalState.find(g => g.id === route.id)!} onBack={goBack} onMarkComplete={markGoalCompleted} onDeleteGoal={removeGoal} onUpdateGoal={updateGoal} />}
@@ -525,7 +603,15 @@ function App() {
                         onSetActiveFriendId={setActiveFriendIdForChat}
                       />
                     )}
-                    {route.view === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />}
+                    {route.view === 'future' && (
+                      <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />
+                    )}
+                    {route.view === 'career_world' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                        <HUD progression={progression} completedGoals={completedGoals} masteredSkills={masteredSkills} earnedBadges={earnedBadges} />
+                        <CareerWorld activeSection={route.view as SectionId} onSelectSection={selectSection} progression={progression} profile={profileState} />
+                      </div>
+                    )}
                   </AnimatePresence>
                 </motion.section>
               </div>

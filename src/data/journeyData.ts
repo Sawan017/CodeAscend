@@ -9,13 +9,12 @@ import type {
   SkillNode,
   TimelineEvent,
   UserProfile,
-  Language,
   FutureMilestone,
 } from '../types'
 
 export const profile: UserProfile = {
-  username: 'sawan',
-  displayName: 'Sawan',
+  username: 'player',
+  displayName: 'Player',
   avatar: '',
   bio: 'Building skills. Building projects. Building my future.',
   title: 'CSE Student & Developer',
@@ -32,13 +31,7 @@ export const profile: UserProfile = {
   xp: 3000,
 }
 
-export const languages: Language[] = [
-  { id: 'typescript', name: 'TypeScript', icon: 'TS', xp: 1200, level: 6, color: '#3b82f6' },
-  { id: 'javascript', name: 'JavaScript', icon: 'JS', xp: 2400, level: 8, color: '#f7df1f' },
-  { id: 'python', name: 'Python', icon: 'PY', xp: 800, level: 4, color: '#3776ab' },
-  { id: 'react', name: 'React', icon: '⚛', xp: 950, level: 5, color: '#61dafb' },
-  { id: 'backend', name: 'Backend', icon: '⚙', xp: 600, level: 3, color: '#8b5cf6' },
-]
+
 
 export const projects: Project[] = [
   {

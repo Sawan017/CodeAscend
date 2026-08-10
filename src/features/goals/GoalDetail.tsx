@@ -155,12 +155,12 @@ export function GoalDetail({
               <input value={editTitle} onChange={e => setEditTitle(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px', fontSize: '2rem' }} />
               <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px', minHeight: '100px' }} />
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <select value={editPriority} onChange={e => setEditPriority(e.target.value as any)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px' }}>
+                <select value={editPriority} onChange={e => setEditPriority(e.target.value as import('../../types').GoalPriority)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px' }}>
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
                   <option value="High">High</option>
                 </select>
-                <select value={editDifficulty} onChange={e => setEditDifficulty(e.target.value as any)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px' }}>
+                <select value={editDifficulty} onChange={e => setEditDifficulty(e.target.value as import('../../types').GoalDifficulty)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px' }}>
                   <option value="Easy">Easy</option>
                   <option value="Normal">Normal</option>
                   <option value="Hard">Hard</option>

@@ -15,16 +15,16 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
 
 // Node positions are anchored as percentages. The wrapper holds the centering
 // translate so hover transforms on the inner button never displace the node.
-const positions: Record<SectionId, { left: string; top: string }> = {
-  dashboard: { left: '10%', top: '10%' },
-  profile: { left: '16%', top: '24%' },
-  projects: { left: '78%', top: '20%' },
-  learning: { left: '24%', top: '62%' },
-  goals: { left: '30%', top: '65%' },
-  achievements: { left: '50%', top: '80%' },
+const positions: Partial<Record<SectionId, { left: string; top: string }>> = {
+  dashboard: { left: '35%', top: '25%' },
+  profile: { left: '20%', top: '50%' },
+  projects: { left: '80%', top: '50%' },
+  learning: { left: '35%', top: '75%' },
+  goals: { left: '65%', top: '25%' },
+  achievements: { left: '65%', top: '75%' },
   friends: { left: '80%', top: '60%' },
   chat: { left: '80%', top: '40%' },
-  future: { left: '80%', top: '20%' },
+  future: { left: '50%', top: '15%' },
 }
 
 type CareerWorldProps = {
@@ -59,11 +59,14 @@ export function CareerWorld({ activeSection, onSelectSection, progression, profi
 
       <div className="map-canvas">
         <svg className="map-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path d="M16 26 L36 30 L44 50" />
-          <path d="M74 23 L56 35 L54 54" />
-          <path d="M22 61 L40 61 L44 76" />
-          <path d="M72 58 L56 60 L50 76" />
-          <path d="M44 76 L48 86" />
+          <path d="M20 50 L35 25 L50 15" />
+          <path d="M50 15 L65 25 L80 50" />
+          <path d="M80 50 L65 75 L35 75" />
+          <path d="M35 75 L20 50" />
+          <path d="M50 50 L35 25" />
+          <path d="M50 50 L65 25" />
+          <path d="M50 50 L35 75" />
+          <path d="M50 50 L65 75" />
         </svg>
 
         {/* Central level / XP core */}
@@ -83,6 +86,7 @@ export function CareerWorld({ activeSection, onSelectSection, progression, profi
           const Icon = section.icon
           const isActive = activeSection === section.id
           const position = positions[section.id]
+          if (!position) return null
           // Simple progression state: profile is "current", others are "available"
           const stateClass = isActive ? 'current' : 'available'
           return (
@@ -95,7 +99,7 @@ export function CareerWorld({ activeSection, onSelectSection, progression, profi
                 onClick={() => onSelectSection(section.id)}
                 aria-label={section.label}
               >
-                <span className="world-node-icon"><Icon size={16} /></span>
+                <span className="world-node-icon"><Icon size={14} /></span>
                 <span>{section.label}</span>
               </motion.button>
             </div>

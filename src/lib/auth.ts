@@ -12,7 +12,7 @@ export type AuthUser = {
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(isSupabaseConfigured())
   const [isNewUser, setIsNewUser] = useState(false)
 
   /**
@@ -75,6 +75,7 @@ export function useAuth() {
       soundEffects: false,
       theme: 'dark',
       streakTracking: true,
+      onboarded: false,
     }
 
     // Save all initial data
@@ -88,7 +89,11 @@ export function useAuth() {
   }
 
   useEffect(() => {
-    if (!isSupabaseConfigured() || !supabase) return
+    if (!isSupabaseConfigured() || !supabase) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false)
+      return
+    }
 
     // Restore session on mount
     supabase.auth.getSession().then(({ data }) => {
@@ -103,6 +108,8 @@ export function useAuth() {
         setUser(authUser)
         createProfileIfMissing(authUser)
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false)
     })
 
     // Listen to auth changes
@@ -120,6 +127,8 @@ export function useAuth() {
         setUser(null)
         setIsNewUser(false)
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoading(false)
     })
 
     return () => {
@@ -130,23 +139,32 @@ export function useAuth() {
   const signInWithGoogle = async () => {
     if (!isSupabaseConfigured() || !supabase) return null
     setLoading(true)
+    
+    const forceChooser = window.localStorage.getItem('futureme-force-chooser') === 'true'
+    window.localStorage.removeItem('futureme-force-chooser')
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin,
+          queryParams: forceChooser ? { prompt: 'select_account' } : undefined,
         },
       })
       if (error) throw error
     } catch (err) {
       console.error('Google sign-in failed:', err)
-    } finally {
       setLoading(false)
     }
   }
 
-  const signOut = async () => {
+  const signOut = async (forgetAccount: boolean = false) => {
     if (!isSupabaseConfigured() || !supabase) return
+    
+    if (forgetAccount) {
+      window.localStorage.setItem('futureme-force-chooser', 'true')
+    }
+    
     await supabase.auth.signOut()
     setUser(null)
     setIsNewUser(false)

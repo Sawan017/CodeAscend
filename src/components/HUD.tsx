@@ -13,7 +13,7 @@ export function HUD({ progression, completedGoals, masteredSkills, earnedBadges 
   const { level, progress } = calculateProgressToNextLevel(progression.xp)
 
   return (
-    <section className="hud-card" aria-label="Player status">
+    <section className="status-card" aria-label="Player status">
       <div className="status-top">
         <div>
           <p className="eyebrow">PLAYER HUD</p>
@@ -21,20 +21,22 @@ export function HUD({ progression, completedGoals, masteredSkills, earnedBadges 
         </div>
         <Sparkles size={18} />
       </div>
-      <div className="radial-progress" style={{ background: `conic-gradient(#22d3ee ${progress}%, rgba(255,255,255,0.08) 0 100%)` }}>
-        <div className="radial-inner">
-          <strong>{Math.round(progress)}%</strong>
-          <span>to next level</span>
+      <div className="hud-horizontal-layout">
+        <div className="radial-progress" style={{ background: `conic-gradient(#22d3ee ${progress}%, rgba(255,255,255,0.08) 0 100%)` }}>
+          <div className="radial-inner">
+            <strong>{Math.round(progress)}%</strong>
+            <span>to next level</span>
+          </div>
         </div>
-      </div>
-      <div className="status-rows">
-        <div><span>Level</span><strong>{level}</strong></div>
-        <div><span>XP</span><strong>{progression.xp}</strong></div>
-        <div><span>Projects</span><strong>{progression.projectsCompleted}</strong></div>
-        <div><span>Goals</span><strong>{completedGoals}</strong></div>
-        <div><span>Skills</span><strong>{masteredSkills}</strong></div>
-        <div><span>Badges</span><strong>{earnedBadges}</strong></div>
-        <div><span>Streak</span><strong>🔥 {progression.streak}</strong></div>
+        <div className="status-grid">
+          <div><span>Level</span><strong>{level}</strong></div>
+          <div><span>XP</span><strong>{progression.xp}</strong></div>
+          <div><span>Projects</span><strong>{progression.projectsCompleted}</strong></div>
+          <div><span>Goals</span><strong>{completedGoals}</strong></div>
+          <div><span>Skills</span><strong>{masteredSkills}</strong></div>
+          <div><span>Badges</span><strong>{earnedBadges}</strong></div>
+          <div><span>Streak</span><strong>🔥 {progression.streak}</strong></div>
+        </div>
       </div>
     </section>
   )
