@@ -18,9 +18,10 @@ const positions: Record<SectionId, { left: string; top: string }> = {
   profile: { left: '16%', top: '24%' },
   projects: { left: '78%', top: '20%' },
   learning: { left: '24%', top: '62%' },
-  goals: { left: '72%', top: '60%' },
-  achievements: { left: '40%', top: '82%' },
-  future: { left: '84%', top: '82%' },
+  goals: { left: '30%', top: '65%' },
+  achievements: { left: '50%', top: '80%' },
+  friends: { left: '80%', top: '60%' },
+  future: { left: '80%', top: '20%' },
 }
 
 type CareerWorldProps = {

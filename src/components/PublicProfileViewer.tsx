@@ -2,14 +2,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Trophy, Code, Target, BookOpen, Layers3 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fetchAllUserData } from '../lib/api'
-import type { UserProfile, Progression, Project, Skill, Goal, Achievement, Badge } from '../types'
+import type { UserProfile, Progression, Project, Skill, Goal, Achievement, Badge, FriendRelationship } from '../types'
 
 type PublicProfileViewerProps = {
   userId: string | null
+  activeUserId?: string
+  friendState: { relationships: FriendRelationship[] }
   onClose: () => void
+  onSendRequest: (userId: string) => void
+  onRemoveFriend: (userId: string) => void
 }
 
-export function PublicProfileViewer({ userId, onClose }: PublicProfileViewerProps) {
+export function PublicProfileViewer({ userId, activeUserId, friendState, onClose, onSendRequest, onRemoveFriend }: PublicProfileViewerProps) {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<{
     profile: UserProfile | null
@@ -49,6 +53,11 @@ export function PublicProfileViewer({ userId, onClose }: PublicProfileViewerProp
   }, [userId])
 
   if (!userId) return null
+
+  const isSelf = activeUserId === userId
+  const relationship = friendState.relationships.find(r => r.userId === userId)
+  const isFriend = relationship?.status === 'accepted'
+  const isPendingOutgoing = relationship?.status === 'pending_outgoing'
 
   return (
     <AnimatePresence>
@@ -101,6 +110,28 @@ export function PublicProfileViewer({ userId, onClose }: PublicProfileViewerProp
                 <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
                   <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary)' }}>Level {data.progression?.level || 1}</div>
                   <div className="muted">{data.progression?.xp || 0} XP</div>
+                  <div style={{ marginTop: '1rem' }}>
+                    {!isSelf && (
+                      isFriend ? (
+                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                          <button className="primary-btn" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            Message
+                          </button>
+                          <button className="secondary-btn" onClick={() => onRemoveFriend(userId)} style={{ padding: '0.5rem 1rem', color: '#ef4444' }}>
+                            Remove
+                          </button>
+                        </div>
+                      ) : isPendingOutgoing ? (
+                        <button className="secondary-btn" disabled style={{ padding: '0.5rem 1rem', opacity: 0.7 }}>
+                          Request Sent
+                        </button>
+                      ) : (
+                        <button className="primary-btn" onClick={() => onSendRequest(userId)} style={{ padding: '0.5rem 1rem' }}>
+                          Add Friend
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
 

@@ -13,7 +13,7 @@ import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, milestones, projects, skillTree, skills, timelineEvents, languages, futureMilestones } from './data/journeyData'
-import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile } from './types'
+import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState } from './types'
 import { loadInitialState, saveProgression } from './utils/storage'
 import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
@@ -23,6 +23,9 @@ import { Toasts } from './components/Toasts'
 import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
+import { FriendsPanel } from './features/friends/FriendsPanel'
+import { fetchIncomingFriendRequests, saveFriendsState } from './lib/api'
+import { Users } from 'lucide-react'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'profile', label: 'Profile', icon: House },
@@ -30,6 +33,7 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'learning', label: 'Learning', icon: GraduationCap },
   { id: 'goals', label: 'Goals', icon: Target },
   { id: 'achievements', label: 'Achievements', icon: Trophy },
+  { id: 'friends', label: 'Network', icon: Users },
   { id: 'future', label: 'Future', icon: Compass },
 ]
 
@@ -57,6 +61,7 @@ function App() {
       badges: stored.badges.length ? stored.badges : badges,
       settings: stored.settings,
       profile: stored.profile,
+      friends: stored.friends || { relationships: [] },
     }
   })
 
@@ -69,6 +74,8 @@ function App() {
   const [badgeState, setBadgeState] = useState(initialData.badges)
   const [settings, setSettings] = useState<Settings>(initialData.settings)
   const [profileState, setProfileState] = useState<UserProfile>(initialData.profile)
+  const [friendState, setFriendState] = useState<FriendState>(initialData.friends)
+  const [incomingRequests, setIncomingRequests] = useState<string[]>([])
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
   const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? skills[0]?.id ?? '')
   const [selectedGoalId, setSelectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
@@ -94,6 +101,9 @@ function App() {
       if (remote.achievements && remote.achievements.length) setAchievementState(remote.achievements)
       if (remote.badges && remote.badges.length) setBadgeState(remote.badges)
       if (remote.settings) setSettings(remote.settings)
+      if (remote.friends) setFriendState(remote.friends)
+
+      fetchIncomingFriendRequests(user.id).then(reqs => setIncomingRequests(reqs))
     })
   }, [user])
 
@@ -113,6 +123,7 @@ function App() {
   useEffect(() => { saveProgression(badgeState, 'badges') }, [badgeState])
   useEffect(() => { saveProgression(settings, 'settings') }, [settings])
   useEffect(() => { saveProgression(profileState, 'profile') }, [profileState])
+  useEffect(() => { saveProgression(friendState, 'friends') }, [friendState])
 
   // Push changes to Supabase when logged in (after remote hydration completes)
   useEffect(() => {
@@ -147,6 +158,10 @@ function App() {
     if (!user || !hydratedFromRemote.current) return
     saveProfile(user.id, profileState)
   }, [user, profileState])
+  useEffect(() => {
+    if (!user || !hydratedFromRemote.current) return
+    saveFriendsState(user.id, friendState)
+  }, [user, friendState])
 
   // Show a toast and sound when the player levels up or gains XP
   useEffect(() => {
@@ -381,6 +396,26 @@ function App() {
                     {activeSection === 'learning' && <SkillsPanel skillTree={skillTree} skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={setSelectedSkillId} onMasterSkill={toggleSkillMastery} onIncrementSkill={incrementSkillProgress} onAddSkill={addSkill} onUpdateSkillNotes={updateSkillNotes} />}
                     {activeSection === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={setSelectedGoalId} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
                     {activeSection === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} onUnlockAchievement={unlockAchievement} onEarnBadge={earnBadge} />}
+                    {activeSection === 'friends' && (
+                      <FriendsPanel
+                        friendState={friendState}
+                        incomingRequests={incomingRequests}
+                        onAccept={(id) => {
+                          setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships, { userId: id, status: 'accepted', createdAt: new Date().toISOString() }] }))
+                          setIncomingRequests(prev => prev.filter(r => r !== id))
+                          push('Friend request accepted!', 'info')
+                        }}
+                        onReject={(id) => {
+                          setIncomingRequests(prev => prev.filter(r => r !== id))
+                          push('Friend request rejected.', 'info')
+                        }}
+                        onRemove={(id) => {
+                          setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
+                          push('Friend removed.', 'info')
+                        }}
+                        onOpenProfile={(id) => { setViewingUserId(id) }}
+                      />
+                    )}
                     {activeSection === 'future' && <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />}
                   </AnimatePresence>
                 </motion.section>
@@ -391,7 +426,24 @@ function App() {
       </AnimatePresence>
       <ProfileDrawer open={drawerOpen} profile={profileState} settings={settings} user={user} onClose={() => setDrawerOpen(false)} onSettingsChange={setSettings} onProfileChange={setProfileState} onSignOut={signOut} />
       <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(userId) => { setViewingUserId(userId); setUserSearchOpen(false) }} />
-      <PublicProfileViewer userId={viewingUserId} onClose={() => setViewingUserId(null)} />
+      <PublicProfileViewer
+        userId={viewingUserId}
+        activeUserId={user?.id}
+        friendState={friendState}
+        onSendRequest={(id) => {
+          if (id === user?.id) return
+          setFriendState((prev: FriendState) => {
+            if (prev.relationships.find((r) => r.userId === id)) return prev
+            return { relationships: [...prev.relationships, { userId: id, status: 'pending_outgoing', createdAt: new Date().toISOString() }] }
+          })
+          push('Friend request sent!', 'info')
+        }}
+        onRemoveFriend={(id) => {
+          setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
+          push('Friend removed.', 'info')
+        }}
+        onClose={() => setViewingUserId(null)}
+      />
       <Toasts toasts={toasts} onDismiss={dismiss} />
     </div>
   )
