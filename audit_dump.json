@@ -1,0 +1,768 @@
+{
+  "domains": [
+    {
+      "id": "frontend",
+      "name": "Frontend Development",
+      "primarySkills": [
+        "HTML",
+        "CSS",
+        "React",
+        "Angular",
+        "Vue.js",
+        "Svelte",
+        "Tailwind CSS"
+      ],
+      "secondarySkills": [
+        "JavaScript",
+        "TypeScript",
+        "Figma",
+        "GraphQL",
+        "OWASP Top 10",
+        "React Native",
+        "Testing Fundamentals",
+        "Jest",
+        "Cypress"
+      ]
+    },
+    {
+      "id": "backend",
+      "name": "Backend Development",
+      "primarySkills": [
+        "Node.js",
+        "Express.js",
+        "NestJS",
+        "Django",
+        "Flask",
+        "Spring Boot"
+      ],
+      "secondarySkills": [
+        "Java",
+        "C#",
+        "Ruby",
+        "PHP",
+        "Kotlin",
+        "GraphQL",
+        "REST API",
+        "gRPC",
+        "SQL",
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Redis",
+        "Elasticsearch",
+        "Apache Kafka",
+        "Docker",
+        "System Design",
+        "OWASP Top 10",
+        "Testing Fundamentals",
+        "Selenium"
+      ]
+    },
+    {
+      "id": "devops-cloud",
+      "name": "DevOps / Cloud",
+      "primarySkills": [
+        "Git",
+        "SVN",
+        "Docker",
+        "Kubernetes",
+        "AWS",
+        "Google Cloud Platform",
+        "Microsoft Azure",
+        "Terraform",
+        "CI/CD",
+        "Nginx"
+      ],
+      "secondarySkills": [
+        "Go",
+        "Linux"
+      ]
+    },
+    {
+      "id": "cybersecurity",
+      "name": "Cybersecurity",
+      "primarySkills": [
+        "Cybersecurity Fundamentals",
+        "OWASP Top 10",
+        "Penetration Testing"
+      ],
+      "secondarySkills": []
+    },
+    {
+      "id": "databases",
+      "name": "Databases",
+      "primarySkills": [
+        "SQL",
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Redis",
+        "Elasticsearch",
+        "Cassandra"
+      ],
+      "secondarySkills": []
+    },
+    {
+      "id": "computer-science",
+      "name": "Computer Science",
+      "primarySkills": [
+        "C",
+        "Linux",
+        "Operating Systems Fundamentals"
+      ],
+      "secondarySkills": [
+        "C++",
+        "Rust",
+        "Data Structures",
+        "Algorithms",
+        "Networking Fundamentals"
+      ]
+    },
+    {
+      "id": "dsa",
+      "name": "Data Structures & Algorithms",
+      "primarySkills": [
+        "Data Structures",
+        "Algorithms"
+      ],
+      "secondarySkills": []
+    },
+    {
+      "id": "ai-ml",
+      "name": "AI / Machine Learning",
+      "primarySkills": [
+        "Machine Learning",
+        "Deep Learning",
+        "Generative AI",
+        "TensorFlow",
+        "PyTorch"
+      ],
+      "secondarySkills": [
+        "Python",
+        "NumPy"
+      ]
+    },
+    {
+      "id": "programming-languages",
+      "name": "Programming Languages",
+      "primarySkills": [
+        "Python",
+        "JavaScript",
+        "TypeScript",
+        "Java",
+        "C++",
+        "C#",
+        "Go",
+        "Rust",
+        "Ruby",
+        "PHP"
+      ],
+      "secondarySkills": [
+        "C"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "git",
+      "name": "Git",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "svn",
+      "name": "SVN",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "python",
+      "name": "Python",
+      "primary": "programming-languages",
+      "secondary": [
+        "ai-ml",
+        "data-science"
+      ]
+    },
+    {
+      "id": "javascript",
+      "name": "JavaScript",
+      "primary": "programming-languages",
+      "secondary": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "primary": "programming-languages",
+      "secondary": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "java",
+      "name": "Java",
+      "primary": "programming-languages",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "cpp",
+      "name": "C++",
+      "primary": "programming-languages",
+      "secondary": [
+        "computer-science",
+        "game-development",
+        "embedded-iot"
+      ]
+    },
+    {
+      "id": "c",
+      "name": "C",
+      "primary": "computer-science",
+      "secondary": [
+        "programming-languages",
+        "embedded-iot"
+      ]
+    },
+    {
+      "id": "csharp",
+      "name": "C#",
+      "primary": "programming-languages",
+      "secondary": [
+        "backend",
+        "game-development"
+      ]
+    },
+    {
+      "id": "go",
+      "name": "Go",
+      "primary": "programming-languages",
+      "secondary": [
+        "devops-cloud"
+      ]
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "primary": "programming-languages",
+      "secondary": [
+        "computer-science"
+      ]
+    },
+    {
+      "id": "ruby",
+      "name": "Ruby",
+      "primary": "programming-languages",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "php",
+      "name": "PHP",
+      "primary": "programming-languages",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "swift",
+      "name": "Swift",
+      "primary": "mobile-development",
+      "secondary": []
+    },
+    {
+      "id": "kotlin",
+      "name": "Kotlin",
+      "primary": "mobile-development",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "html",
+      "name": "HTML",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "css",
+      "name": "CSS",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "react",
+      "name": "React",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "angular",
+      "name": "Angular",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "vue-js",
+      "name": "Vue.js",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "svelte",
+      "name": "Svelte",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "tailwind-css",
+      "name": "Tailwind CSS",
+      "primary": "frontend",
+      "secondary": []
+    },
+    {
+      "id": "figma",
+      "name": "Figma",
+      "primary": "ui-ux-design",
+      "secondary": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "node-js",
+      "name": "Node.js",
+      "primary": "backend",
+      "secondary": [
+        "api-development"
+      ]
+    },
+    {
+      "id": "express-js",
+      "name": "Express.js",
+      "primary": "backend",
+      "secondary": [
+        "api-development"
+      ]
+    },
+    {
+      "id": "nestjs",
+      "name": "NestJS",
+      "primary": "backend",
+      "secondary": [
+        "api-development"
+      ]
+    },
+    {
+      "id": "django",
+      "name": "Django",
+      "primary": "backend",
+      "secondary": [
+        "api-development"
+      ]
+    },
+    {
+      "id": "flask",
+      "name": "Flask",
+      "primary": "backend",
+      "secondary": [
+        "api-development"
+      ]
+    },
+    {
+      "id": "spring-boot",
+      "name": "Spring Boot",
+      "primary": "backend",
+      "secondary": [
+        "api-development"
+      ]
+    },
+    {
+      "id": "graphql",
+      "name": "GraphQL",
+      "primary": "api-development",
+      "secondary": [
+        "frontend",
+        "backend"
+      ]
+    },
+    {
+      "id": "rest-api",
+      "name": "REST API",
+      "primary": "api-development",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "grpc",
+      "name": "gRPC",
+      "primary": "api-development",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "sql",
+      "name": "SQL",
+      "primary": "databases",
+      "secondary": [
+        "backend",
+        "data-engineering",
+        "data-science"
+      ]
+    },
+    {
+      "id": "postgresql",
+      "name": "PostgreSQL",
+      "primary": "databases",
+      "secondary": [
+        "backend",
+        "data-engineering"
+      ]
+    },
+    {
+      "id": "mysql",
+      "name": "MySQL",
+      "primary": "databases",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "mongodb",
+      "name": "MongoDB",
+      "primary": "databases",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "redis",
+      "name": "Redis",
+      "primary": "databases",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "elasticsearch",
+      "name": "Elasticsearch",
+      "primary": "databases",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "cassandra",
+      "name": "Cassandra",
+      "primary": "databases",
+      "secondary": [
+        "data-engineering"
+      ]
+    },
+    {
+      "id": "apache-kafka",
+      "name": "Apache Kafka",
+      "primary": "data-engineering",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "apache-spark",
+      "name": "Apache Spark",
+      "primary": "data-engineering",
+      "secondary": [
+        "data-science"
+      ]
+    },
+    {
+      "id": "airflow",
+      "name": "Airflow",
+      "primary": "data-engineering",
+      "secondary": []
+    },
+    {
+      "id": "docker",
+      "name": "Docker",
+      "primary": "devops-cloud",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "kubernetes",
+      "name": "Kubernetes",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "aws",
+      "name": "AWS",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "google-cloud-platform",
+      "name": "Google Cloud Platform",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "microsoft-azure",
+      "name": "Microsoft Azure",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "terraform",
+      "name": "Terraform",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "ci-cd",
+      "name": "CI/CD",
+      "primary": "devops-cloud",
+      "secondary": []
+    },
+    {
+      "id": "linux",
+      "name": "Linux",
+      "primary": "computer-science",
+      "secondary": [
+        "devops-cloud"
+      ]
+    },
+    {
+      "id": "nginx",
+      "name": "Nginx",
+      "primary": "devops-cloud",
+      "secondary": [
+        "networking"
+      ]
+    },
+    {
+      "id": "data-structures",
+      "name": "Data Structures",
+      "primary": "dsa",
+      "secondary": [
+        "computer-science"
+      ]
+    },
+    {
+      "id": "algorithms",
+      "name": "Algorithms",
+      "primary": "dsa",
+      "secondary": [
+        "computer-science"
+      ]
+    },
+    {
+      "id": "system-design",
+      "name": "System Design",
+      "primary": "system-design",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "design-patterns",
+      "name": "Design Patterns",
+      "primary": "system-design",
+      "secondary": []
+    },
+    {
+      "id": "networking-fundamentals",
+      "name": "Networking Fundamentals",
+      "primary": "networking",
+      "secondary": [
+        "computer-science"
+      ]
+    },
+    {
+      "id": "operating-systems-fundamentals",
+      "name": "Operating Systems Fundamentals",
+      "primary": "computer-science",
+      "secondary": []
+    },
+    {
+      "id": "cybersecurity-fundamentals",
+      "name": "Cybersecurity Fundamentals",
+      "primary": "cybersecurity",
+      "secondary": []
+    },
+    {
+      "id": "owasp-top-10",
+      "name": "OWASP Top 10",
+      "primary": "cybersecurity",
+      "secondary": [
+        "frontend",
+        "backend"
+      ]
+    },
+    {
+      "id": "penetration-testing",
+      "name": "Penetration Testing",
+      "primary": "cybersecurity",
+      "secondary": []
+    },
+    {
+      "id": "machine-learning",
+      "name": "Machine Learning",
+      "primary": "ai-ml",
+      "secondary": [
+        "data-science"
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "name": "Deep Learning",
+      "primary": "ai-ml",
+      "secondary": []
+    },
+    {
+      "id": "generative-ai",
+      "name": "Generative AI",
+      "primary": "ai-ml",
+      "secondary": []
+    },
+    {
+      "id": "tensorflow",
+      "name": "TensorFlow",
+      "primary": "ai-ml",
+      "secondary": []
+    },
+    {
+      "id": "pytorch",
+      "name": "PyTorch",
+      "primary": "ai-ml",
+      "secondary": []
+    },
+    {
+      "id": "pandas",
+      "name": "Pandas",
+      "primary": "data-science",
+      "secondary": []
+    },
+    {
+      "id": "numpy",
+      "name": "NumPy",
+      "primary": "data-science",
+      "secondary": [
+        "ai-ml"
+      ]
+    },
+    {
+      "id": "react-native",
+      "name": "React Native",
+      "primary": "mobile-development",
+      "secondary": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "flutter",
+      "name": "Flutter",
+      "primary": "mobile-development",
+      "secondary": []
+    },
+    {
+      "id": "android-development",
+      "name": "Android Development",
+      "primary": "mobile-development",
+      "secondary": []
+    },
+    {
+      "id": "ios-development",
+      "name": "iOS Development",
+      "primary": "mobile-development",
+      "secondary": []
+    },
+    {
+      "id": "testing-fundamentals",
+      "name": "Testing Fundamentals",
+      "primary": "testing-qa",
+      "secondary": [
+        "frontend",
+        "backend"
+      ]
+    },
+    {
+      "id": "jest",
+      "name": "Jest",
+      "primary": "testing-qa",
+      "secondary": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "cypress",
+      "name": "Cypress",
+      "primary": "testing-qa",
+      "secondary": [
+        "frontend"
+      ]
+    },
+    {
+      "id": "selenium",
+      "name": "Selenium",
+      "primary": "testing-qa",
+      "secondary": [
+        "backend"
+      ]
+    },
+    {
+      "id": "blockchain-fundamentals",
+      "name": "Blockchain Fundamentals",
+      "primary": "blockchain-web3",
+      "secondary": []
+    },
+    {
+      "id": "solidity",
+      "name": "Solidity",
+      "primary": "blockchain-web3",
+      "secondary": []
+    },
+    {
+      "id": "game-development-fundamentals",
+      "name": "Game Development Fundamentals",
+      "primary": "game-development",
+      "secondary": []
+    },
+    {
+      "id": "unity",
+      "name": "Unity",
+      "primary": "game-development",
+      "secondary": []
+    },
+    {
+      "id": "unreal-engine",
+      "name": "Unreal Engine",
+      "primary": "game-development",
+      "secondary": []
+    },
+    {
+      "id": "embedded-systems-fundamentals",
+      "name": "Embedded Systems Fundamentals",
+      "primary": "embedded-iot",
+      "secondary": []
+    },
+    {
+      "id": "arduino",
+      "name": "Arduino",
+      "primary": "embedded-iot",
+      "secondary": []
+    },
+    {
+      "id": "raspberry-pi",
+      "name": "Raspberry Pi",
+      "primary": "embedded-iot",
+      "secondary": []
+    }
+  ]
+}

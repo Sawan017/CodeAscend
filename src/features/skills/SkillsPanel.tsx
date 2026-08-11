@@ -12,6 +12,7 @@ type SkillsPanelProps = {
   onStartPathway?: (pathwayId: string) => void
   onRemovePathway?: (pathwayId: string) => void
   onAssociateSkill?: (skillId: string, domainId: string) => void
+  onDisassociateSkill?: (skillId: string, domainId: string) => void
   onRemoveSkill?: (skillId: string) => void
 }
 
@@ -23,6 +24,7 @@ export function SkillsPanel({
   onStartPathway,
   onRemovePathway,
   onAssociateSkill,
+  onDisassociateSkill,
   onRemoveSkill
 }: SkillsPanelProps) {
   const [globalSearch, setGlobalSearch] = useState('')
@@ -35,11 +37,6 @@ export function SkillsPanel({
   const handleStartSkillGlobally = () => {
     if (!globalSearch.trim()) return
     const resolved = resolveSkill(globalSearch.trim())
-    const searchCanon = (resolved.canonicalName || '').toLowerCase().trim()
-    
-    const matchedDomains = activePathways.filter(pid => 
-      getSkillsForPathway(pid).some(ps => (ps.canonicalName||'').toLowerCase().trim() === searchCanon)
-    )
 
     const newSkill: Skill = {
       id: resolved.id,
@@ -52,8 +49,8 @@ export function SkillsPanel({
       completed: '',
       relatedProjects: [],
       notes: 'Focusing on core principles and practice exercises.',
-      isIndependent: matchedDomains.length === 0,
-      activeDomains: matchedDomains,
+      isIndependent: true,
+      activeDomains: [],
     }
     onAddSkill?.(newSkill)
     setGlobalSearch('')
@@ -105,18 +102,17 @@ export function SkillsPanel({
   })
 
   skills.forEach(skill => {
-    let isAssociatedWithActiveDomain = false
-    if (skill.activeDomains && skill.activeDomains.length > 0) {
-      skill.activeDomains.forEach(pid => {
-        if (skillsByPathway[pid]) {
-          skillsByPathway[pid].push(skill)
-          isAssociatedWithActiveDomain = true
-        }
-      })
-    }
-    
-    // Only push to standalone if explicitly independent AND not associated with any active domain
-    if (skill.isIndependent && !isAssociatedWithActiveDomain) {
+    // Check if explicitly associated
+    activePathways.forEach(pid => {
+      const isExplicit = skill.activeDomains?.includes(pid);
+      if (isExplicit) {
+        skillsByPathway[pid].push(skill);
+      }
+    });
+
+    // Independent skills are explicitly those marked isIndependent
+    // They appear here regardless of domain associations.
+    if (skill.isIndependent) {
       standaloneSkills.push(skill)
     }
   })
@@ -173,16 +169,33 @@ export function SkillsPanel({
                 .filter((p: any) => p.name.toLowerCase().includes(globalSearch.toLowerCase().trim()) || p.aliases?.some((a: any) => a.toLowerCase().includes(globalSearch.toLowerCase().trim())))
                 .map((p: any) => {
                   const isActive = activePathways.includes(p.id)
+                  const domainSkills = getSkillsForPathway(p.id)
+                  
                   return (
-                    <div key={p.id} style={{ padding: '0.75rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <span style={{ fontSize: '0.65rem', color: 'var(--cyan)', background: 'var(--cyan-glow)', padding: '2px 6px', borderRadius: '4px', marginRight: '0.5rem' }}>DOMAIN</span>
-                        <strong>{p.name}</strong>
+                    <div key={p.id} style={{ padding: '0.75rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                          <span style={{ fontSize: '0.65rem', color: 'var(--cyan)', background: 'var(--cyan-glow)', padding: '2px 6px', borderRadius: '4px', marginRight: '0.5rem' }}>DOMAIN</span>
+                          <strong>{p.name}</strong>
+                        </div>
+                        {isActive ? (
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Already active</span>
+                        ) : (
+                          <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => { onStartPathway?.(p.id); setGlobalSearch(''); }}>Start Domain</button>
+                        )}
                       </div>
-                      {isActive ? (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Already active</span>
-                      ) : (
-                        <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => { onStartPathway?.(p.id); setGlobalSearch(''); }}>Start Domain</button>
+                      
+                      {domainSkills.length > 0 && (
+                        <div style={{ marginTop: '0.25rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border)' }}>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '0.35rem', display: 'block', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Associated Skills</span>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                            {domainSkills.map(ds => (
+                               <span key={ds.id} style={{ fontSize: '0.75rem', background: 'var(--bg-surface)', padding: '3px 8px', borderRadius: '12px', border: '1px solid var(--border)', color: 'var(--text-main)' }}>
+                                 {ds.canonicalName}
+                               </span>
+                            ))}
+                          </div>
+                        </div>
                       )}
                     </div>
                   )
@@ -259,13 +272,32 @@ export function SkillsPanel({
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>No skills started in this domain yet.</p>
                   )}
                   {domainSkills.map(s => (
-                    <div key={s.id} onClick={() => onSelectSkill(s.id)} style={{ cursor: 'pointer', padding: '0.75rem 1rem', background: 'var(--bg-surface)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 500, color: 'var(--text-main)' }}>{s.canonicalName || s.name}</span>
+                    <div key={s.id} style={{ cursor: 'pointer', padding: '0.75rem 1rem', background: 'var(--bg-surface)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div onClick={() => onSelectSkill(s.id)} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                        <span style={{ fontWeight: 500, color: 'var(--text-main)' }}>{s.canonicalName || s.name}</span>
+                      </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <span style={{ fontSize: '0.875rem', color: s.progress === 100 ? 'var(--cyan)' : 'var(--text-muted)' }}>
+                        <span onClick={() => onSelectSkill(s.id)} style={{ fontSize: '0.875rem', color: s.progress === 100 ? 'var(--cyan)' : 'var(--text-muted)' }}>
                           {s.progress}%
                         </span>
-                        <ChevronRight size={16} color="var(--text-muted)" />
+                        <ChevronRight onClick={() => onSelectSkill(s.id)} size={16} color="var(--text-muted)" />
+                        <button 
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            // Using a direct callback if we add a prop for it. If not, we fallback to global remove.
+                            if (onDisassociateSkill) {
+                              onDisassociateSkill(s.id, pid);
+                            } else {
+                              setSkillToRemove(s.id);
+                            }
+                          }}
+                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: 'var(--text-muted)', padding: '0.25rem', cursor: 'pointer', borderRadius: '4px' }}
+                          onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+                          onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
+                          title="Remove from domain"
+                        >
+                          <X size={16} />
+                        </button>
                       </div>
                     </div>
                   ))}

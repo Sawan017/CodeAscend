@@ -36,8 +36,6 @@ export type SkillDefinition = {
   canonicalName: string
   type: SkillType
   aliases: string[]
-  primaryDomainId: string
-  secondaryDomainIds?: string[]
   curriculum: Curriculum
 }
 
@@ -52,7 +50,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "github",
       "gitlab"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Core Operations",
@@ -229,7 +226,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "svn",
       "subversion"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Centralized Version Control",
@@ -281,8 +277,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "python",
       "py"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: ["ai-ml", "data-science"],
     curriculum: [
       {
         domain: "Syntax & Types",
@@ -490,8 +484,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "js",
       "ecmascript"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: ["frontend"],
     curriculum: [
       {
         domain: "Language Primitives",
@@ -668,8 +660,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "typescript",
       "ts"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: ["frontend"],
     curriculum: [
       {
         domain: "Type System",
@@ -837,8 +827,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "jvm",
       "jdk"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Core Syntax",
@@ -1061,8 +1049,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "cpp",
       "c++11"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: ["computer-science", "game-development", "embedded-iot"],
     curriculum: [
       {
         domain: "Core Language",
@@ -1228,8 +1214,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "c"
     ],
-    primaryDomainId: "computer-science",
-    secondaryDomainIds: ["programming-languages", "embedded-iot"],
     curriculum: [
       {
         domain: "Core Syntax",
@@ -1342,8 +1326,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "csharp",
       ".net"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: ["game-development"],
     curriculum: [
       {
         domain: "Core Language",
@@ -1500,8 +1482,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "go",
       "golang"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Core Syntax",
@@ -1658,8 +1638,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "rust",
       "rs"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: ["computer-science"],
     curriculum: [
       {
         domain: "Core Concepts",
@@ -1815,8 +1793,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "ruby"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Language Fundamentals",
@@ -1927,8 +1903,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "php"
     ],
-    primaryDomainId: "programming-languages",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Core PHP",
@@ -2035,7 +2009,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "swift",
       "ios"
     ],
-    primaryDomainId: "mobile-development",
     curriculum: [
       {
         domain: "Swift Core",
@@ -2167,8 +2140,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "kotlin",
       "android"
     ],
-    primaryDomainId: "mobile-development",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Kotlin Core",
@@ -2295,7 +2266,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "html",
       "html5"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Document Structure",
@@ -2412,7 +2382,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "css",
       "css3"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Styling Fundamentals",
@@ -2545,7 +2514,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "react.js",
       "reactjs"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Component Architecture",
@@ -2686,7 +2654,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "angular"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Core Architecture",
@@ -2799,7 +2766,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "vue.js",
       "vuejs"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Vue Core",
@@ -2910,7 +2876,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "svelte"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Reactivity",
@@ -2992,7 +2957,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "tailwind",
       "tailwindcss"
     ],
-    primaryDomainId: "frontend",
     curriculum: [
       {
         domain: "Utility Classes",
@@ -3068,8 +3032,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "figma"
     ],
-    primaryDomainId: "ui-ux-design",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Design Fundamentals",
@@ -3172,8 +3134,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "node",
       "nodejs"
     ],
-    primaryDomainId: "backend",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Node Architecture",
@@ -3285,8 +3245,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "express",
       "express.js"
     ],
-    primaryDomainId: "backend",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Routing",
@@ -3378,8 +3336,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "nestjs",
       "nest"
     ],
-    primaryDomainId: "backend",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Nest Architecture",
@@ -3470,8 +3426,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "django"
     ],
-    primaryDomainId: "backend",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Django Core",
@@ -3582,8 +3536,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "flask"
     ],
-    primaryDomainId: "backend",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Flask Core",
@@ -3685,8 +3637,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "spring",
       "spring boot"
     ],
-    primaryDomainId: "backend",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Spring Core",
@@ -3798,8 +3748,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "graphql",
       "gql"
     ],
-    primaryDomainId: "api-development",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Schema Definition",
@@ -3916,8 +3864,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "rest",
       "restful"
     ],
-    primaryDomainId: "api-development",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Architectural Constraints",
@@ -4039,8 +3985,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "grpc",
       "protobuf"
     ],
-    primaryDomainId: "api-development",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Protocol Buffers",
@@ -4122,8 +4066,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "sql",
       "relational-database"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: ["data-engineering", "data-science"],
     curriculum: [
       {
         domain: "Data Querying (DQL)",
@@ -4296,8 +4238,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "postgres",
       "psql"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Data Types",
@@ -4419,8 +4359,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "mysql",
       "mariadb"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Storage Engines",
@@ -4523,8 +4461,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "mongo",
       "nosql"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Document Model",
@@ -4656,8 +4592,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "redis",
       "caching"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Data Structures",
@@ -4774,8 +4708,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "elasticsearch",
       "elk"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Core Concepts",
@@ -4892,8 +4824,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "cassandra",
       "apache cassandra"
     ],
-    primaryDomainId: "databases",
-    secondaryDomainIds: ["data-engineering"],
     curriculum: [
       {
         domain: "Architecture",
@@ -5015,8 +4945,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "kafka",
       "event-streaming"
     ],
-    primaryDomainId: "data-engineering",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Architecture",
@@ -5133,8 +5061,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "spark",
       "apache spark"
     ],
-    primaryDomainId: "data-engineering",
-    secondaryDomainIds: ["data-science"],
     curriculum: [
       {
         domain: "Core Architecture",
@@ -5241,7 +5167,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "airflow",
       "apache airflow"
     ],
-    primaryDomainId: "data-engineering",
     curriculum: [
       {
         domain: "Core Concepts",
@@ -5364,8 +5289,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "containers",
       "containerization"
     ],
-    primaryDomainId: "devops-cloud",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Container Fundamentals",
@@ -5508,7 +5431,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "k8s",
       "container orchestration"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Architecture",
@@ -5681,7 +5603,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "amazon web services",
       "cloud"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Compute",
@@ -5823,7 +5744,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "gcp",
       "google cloud"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Compute",
@@ -5945,7 +5865,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "azure",
       "microsoft azure"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Compute",
@@ -6058,7 +5977,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "iac",
       "infrastructure as code"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Terraform Core",
@@ -6181,7 +6099,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "continuous integration",
       "continuous deployment"
     ],
-    primaryDomainId: "devops-cloud",
     curriculum: [
       {
         domain: "Core Principles",
@@ -6289,8 +6206,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "unix",
       "shell"
     ],
-    primaryDomainId: "computer-science",
-    secondaryDomainIds: ["devops-cloud"],
     curriculum: [
       {
         domain: "File System & Navigation",
@@ -6448,8 +6363,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "web-server",
       "reverse-proxy"
     ],
-    primaryDomainId: "networking",
-    secondaryDomainIds: ["devops-cloud"],
     curriculum: [
       {
         domain: "Configuration Basics",
@@ -6556,8 +6469,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "data structures",
       "ds"
     ],
-    primaryDomainId: "dsa",
-    secondaryDomainIds: ["computer-science"],
     curriculum: [
       {
         domain: "Linear Structures",
@@ -6669,8 +6580,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "algorithms",
       "algo"
     ],
-    primaryDomainId: "dsa",
-    secondaryDomainIds: ["computer-science"],
     curriculum: [
       {
         domain: "Algorithm Analysis",
@@ -6782,8 +6691,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "system design",
       "architecture"
     ],
-    primaryDomainId: "system-design",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Design Fundamentals",
@@ -6895,7 +6802,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "design patterns",
       "oop patterns"
     ],
-    primaryDomainId: "system-design",
     curriculum: [
       {
         domain: "Creational Patterns",
@@ -7012,8 +6918,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "networking",
       "computer networks"
     ],
-    primaryDomainId: "networking",
-    secondaryDomainIds: ["computer-science"],
     curriculum: [
       {
         domain: "Network Models",
@@ -7115,7 +7019,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "operating systems",
       "os"
     ],
-    primaryDomainId: "computer-science",
     curriculum: [
       {
         domain: "Process & Thread Management",
@@ -7233,7 +7136,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "infosec",
       "security"
     ],
-    primaryDomainId: "cybersecurity",
     curriculum: [
       {
         domain: "Core Principles",
@@ -7356,8 +7258,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "web security",
       "appsec"
     ],
-    primaryDomainId: "cybersecurity",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Injection Vulnerabilities",
@@ -7464,7 +7364,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "pentesting",
       "ethical hacking"
     ],
-    primaryDomainId: "cybersecurity",
     curriculum: [
       {
         domain: "Methodology",
@@ -7571,8 +7470,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "ml",
       "machine learning"
     ],
-    primaryDomainId: "ai-ml",
-    secondaryDomainIds: ["data-science"],
     curriculum: [
       {
         domain: "Supervised Learning",
@@ -7705,7 +7602,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "dl",
       "neural networks"
     ],
-    primaryDomainId: "ai-ml",
     curriculum: [
       {
         domain: "Neural Network Foundations",
@@ -7834,7 +7730,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "llm",
       "large language models"
     ],
-    primaryDomainId: "ai-ml",
     curriculum: [
       {
         domain: "Core Architectures",
@@ -7946,7 +7841,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "tensorflow",
       "tf"
     ],
-    primaryDomainId: "ai-ml",
     curriculum: [
       {
         domain: "TensorFlow Foundations",
@@ -8088,7 +7982,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "pytorch",
       "torch"
     ],
-    primaryDomainId: "ai-ml",
     curriculum: [
       {
         domain: "PyTorch Foundations",
@@ -8214,7 +8107,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "pandas"
     ],
-    primaryDomainId: "data-science",
     curriculum: [
       {
         domain: "Core Structures",
@@ -8335,8 +8227,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "numpy"
     ],
-    primaryDomainId: "data-science",
-    secondaryDomainIds: ["ai-ml"],
     curriculum: [
       {
         domain: "Core Concepts",
@@ -8428,8 +8318,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "react native",
       "rn"
     ],
-    primaryDomainId: "mobile-development",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Core Components",
@@ -8581,7 +8469,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "flutter",
       "dart"
     ],
-    primaryDomainId: "mobile-development",
     curriculum: [
       {
         domain: "Dart Language",
@@ -8718,7 +8605,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "android",
       "android sdk"
     ],
-    primaryDomainId: "mobile-development",
     curriculum: [
       {
         domain: "App Components",
@@ -8865,7 +8751,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "ios",
       "ios sdk"
     ],
-    primaryDomainId: "mobile-development",
     curriculum: [
       {
         domain: "App Architecture",
@@ -8998,8 +8883,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "qa",
       "software testing"
     ],
-    primaryDomainId: "testing-qa",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Test Types",
@@ -9090,8 +8973,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "jest"
     ],
-    primaryDomainId: "testing-qa",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Test Structure",
@@ -9172,8 +9053,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "cypress"
     ],
-    primaryDomainId: "testing-qa",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "Cypress Basics",
@@ -9285,8 +9164,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "selenium",
       "webdriver"
     ],
-    primaryDomainId: "testing-qa",
-    secondaryDomainIds: [],
     curriculum: [
       {
         domain: "WebDriver Basics",
@@ -9389,7 +9266,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "crypto",
       "web3"
     ],
-    primaryDomainId: "blockchain-web3",
     curriculum: [
       {
         domain: "Core Architecture",
@@ -9506,7 +9382,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "solidity",
       "smart contracts"
     ],
-    primaryDomainId: "blockchain-web3",
     curriculum: [
       {
         domain: "Syntax & Types",
@@ -9648,7 +9523,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "gamedev",
       "game design"
     ],
-    primaryDomainId: "game-development",
     curriculum: [
       {
         domain: "Architecture",
@@ -9785,7 +9659,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "unity",
       "unity3d"
     ],
-    primaryDomainId: "game-development",
     curriculum: [
       {
         domain: "Engine Basics",
@@ -9933,7 +9806,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "ue4",
       "ue5"
     ],
-    primaryDomainId: "game-development",
     curriculum: [
       {
         domain: "Engine Fundamentals",
@@ -10076,7 +9948,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "firmware",
       "microcontrollers"
     ],
-    primaryDomainId: "embedded-iot",
     curriculum: [
       {
         domain: "Hardware Architecture",
@@ -10197,7 +10068,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     aliases: [
       "arduino"
     ],
-    primaryDomainId: "embedded-iot",
     curriculum: [
       {
         domain: "Arduino Environment",
@@ -10299,7 +10169,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       "raspberry pi",
       "rpi"
     ],
-    primaryDomainId: "embedded-iot",
     curriculum: [
       {
         domain: "Setup & OS",
@@ -10414,7 +10283,6 @@ export const resolveSkill = (input: string): SkillDefinition => {
     canonicalName: input,
     type: 'OTHER',
     aliases: [],
-    primaryDomainId: 'independent',
     curriculum: [
       {
         domain: 'Custom Learning',
@@ -10493,24 +10361,287 @@ export const PATHWAY_REGISTRY: import('../types').PathwayDefinition[] = [
   { id: 'computer-science', name: 'Computer Science', description: 'Core CS concepts, operating systems, and architecture.', aliases: ['cs', 'computer science'] },
   { id: 'dsa', name: 'Data Structures & Algorithms', description: 'Core algorithms and data structures.', aliases: ['dsa', 'data structures'] },
   { id: 'ai-ml', name: 'AI / Machine Learning', description: 'Artificial intelligence, machine learning, and deep learning.', aliases: ['ai', 'ml', 'machine learning', 'artificial intelligence'] },
-  { id: 'programming-languages', name: 'Programming Languages', description: 'Various programming languages.', aliases: ['programming', 'languages'] },
-  { id: 'mobile-development', name: 'Mobile Development', description: 'iOS, Android, and cross-platform app development.', aliases: ['mobile'] },
-  { id: 'api-development', name: 'API Development', description: 'API design, REST, GraphQL, and microservices communication.', aliases: ['api', 'apis'] },
-  { id: 'data-engineering', name: 'Data Engineering', description: 'Data pipelines, streaming, and big data orchestration.', aliases: ['data engineering'] },
-  { id: 'system-design', name: 'System Design & Architecture', description: 'High-level architecture, scalability, and design patterns.', aliases: ['system design', 'architecture'] },
-  { id: 'networking', name: 'Networking', description: 'Network topologies, protocols, and routing.', aliases: ['networks'] },
-  { id: 'data-science', name: 'Data Science', description: 'Data analysis, statistics, and scientific computing.', aliases: ['data science'] },
-  { id: 'testing-qa', name: 'Testing & QA', description: 'Software testing, test automation, and quality assurance.', aliases: ['testing', 'qa'] },
-  { id: 'blockchain-web3', name: 'Blockchain & Web3', description: 'Decentralized ledgers, smart contracts, and Web3.', aliases: ['blockchain', 'web3'] },
-  { id: 'game-development', name: 'Game Development', description: 'Game engines, rendering, and game loops.', aliases: ['gamedev'] },
-  { id: 'embedded-iot', name: 'Embedded Systems & IoT', description: 'Bare-metal programming, hardware, and sensors.', aliases: ['embedded', 'iot'] },
-  { id: 'ui-ux-design', name: 'UI/UX Design', description: 'User interface and experience design.', aliases: ['ui', 'ux', 'design'] }
+  { id: 'programming-languages', name: 'Programming Languages', description: 'Various programming languages.', aliases: ['programming', 'languages'] }
 ];
 
 export const getSkillsForPathway = (pathwayId: string): SkillDefinition[] => {
-  return SKILL_REGISTRY.filter(
-    (skill) =>
-      skill.primaryDomainId === pathwayId ||
-      (skill.secondaryDomainIds && skill.secondaryDomainIds.includes(pathwayId))
-  );
+  const mapping: Record<string, string[]> = {
+    'computer-science-fundamentals': [
+        'cpp',
+        'c',
+        'linux',
+        'data-structures',
+        'algorithms',
+        'networking-fundamentals',
+        'operating-systems-fundamentals'
+    ],
+    'programming-languages': [
+        'python',
+        'javascript',
+        'typescript',
+        'java',
+        'cpp',
+        'c',
+        'csharp',
+        'go',
+        'rust',
+        'ruby',
+        'php',
+        'swift',
+        'kotlin',
+        'solidity'
+    ],
+    'data-structures-algorithms': [
+        'data-structures',
+        'algorithms'
+    ],
+    'frontend-development': [
+        'javascript',
+        'typescript',
+        'html',
+        'css',
+        'react',
+        'angular',
+        'vue-js',
+        'svelte',
+        'tailwind-css',
+        'graphql',
+        'jest',
+        'cypress'
+    ],
+    'backend-development': [
+        'python',
+        'javascript',
+        'typescript',
+        'java',
+        'csharp',
+        'go',
+        'rust',
+        'ruby',
+        'php',
+        'kotlin',
+        'node-js',
+        'express-js',
+        'nestjs',
+        'django',
+        'flask',
+        'spring-boot',
+        'graphql',
+        'rest-api',
+        'grpc',
+        'sql',
+        'postgresql',
+        'mysql',
+        'mongodb',
+        'redis',
+        'elasticsearch',
+        'apache-kafka',
+        'docker'
+    ],
+    'full-stack-development': [
+        'react',
+        'angular',
+        'vue-js',
+        'node-js'
+    ],
+    'mobile-development': [
+        'swift',
+        'kotlin',
+        'react-native',
+        'flutter',
+        'android-development',
+        'ios-development'
+    ],
+    'databases': [
+        'sql',
+        'postgresql',
+        'mysql',
+        'mongodb',
+        'redis',
+        'elasticsearch',
+        'cassandra'
+    ],
+    'data-engineering': [
+        'sql',
+        'postgresql',
+        'cassandra',
+        'apache-kafka',
+        'apache-spark',
+        'airflow',
+        'pandas',
+        'numpy'
+    ],
+    'data-science': [
+        'python',
+        'sql',
+        'apache-spark',
+        'machine-learning',
+        'deep-learning',
+        'tensorflow',
+        'pytorch',
+        'pandas',
+        'numpy'
+    ],
+    'ai-machine-learning': [
+        'python',
+        'machine-learning',
+        'deep-learning',
+        'generative-ai',
+        'tensorflow',
+        'pytorch',
+        'numpy'
+    ],
+    'deep-learning': [
+        'deep-learning',
+        'generative-ai',
+        'tensorflow',
+        'pytorch'
+    ],
+    'generative-ai-llms': [
+        'generative-ai'
+    ],
+    'devops': [
+        'git',
+        'docker',
+        'kubernetes',
+        'aws',
+        'google-cloud-platform',
+        'microsoft-azure',
+        'terraform',
+        'ci-cd',
+        'linux',
+        'nginx'
+    ],
+    'cloud-computing': [
+        'docker',
+        'kubernetes',
+        'aws',
+        'google-cloud-platform',
+        'microsoft-azure',
+        'terraform'
+    ],
+    'cybersecurity': [
+        'cybersecurity-fundamentals',
+        'owasp-top-10',
+        'penetration-testing'
+    ],
+    'networking': [
+        'networking-fundamentals'
+    ],
+    'operating-systems': [
+        'c',
+        'linux',
+        'operating-systems-fundamentals'
+    ],
+    'software-engineering': [
+        'git',
+        'java',
+        'docker',
+        'ci-cd',
+        'data-structures',
+        'algorithms',
+        'design-patterns',
+        'testing-fundamentals'
+    ],
+    'system-design': [
+        'system-design',
+        'networking-fundamentals'
+    ],
+    'software-architecture': [
+        'system-design',
+        'design-patterns'
+    ],
+    'testing-qa': [
+        'testing-fundamentals',
+        'jest',
+        'cypress',
+        'selenium'
+    ],
+    'version-control': [
+        'git',
+        'svn'
+    ],
+    'developer-tools': [],
+    'apis': [
+        'node-js',
+        'express-js',
+        'nestjs',
+        'django',
+        'flask',
+        'spring-boot',
+        'graphql',
+        'rest-api',
+        'grpc'
+    ],
+    'distributed-systems': [
+        'rest-api',
+        'grpc',
+        'cassandra',
+        'apache-kafka',
+        'kubernetes',
+        'system-design'
+    ],
+    'web-development': [
+        'javascript',
+        'typescript',
+        'php',
+        'html',
+        'css',
+        'react',
+        'angular',
+        'vue-js',
+        'svelte',
+        'owasp-top-10',
+        'cypress',
+        'selenium'
+    ],
+    'game-development': [
+        'cpp',
+        'csharp',
+        'game-development-fundamentals',
+        'unity',
+        'unreal-engine'
+    ],
+    'blockchain-web3': [
+        'blockchain-fundamentals',
+        'solidity'
+    ],
+    'embedded-systems': [
+        'cpp',
+        'c',
+        'embedded-systems-fundamentals',
+        'arduino',
+        'raspberry-pi'
+    ],
+    'iot': [
+        'embedded-systems-fundamentals',
+        'arduino',
+        'raspberry-pi'
+    ],
+    'ui-ux-for-developers': [
+        'html',
+        'css',
+        'tailwind-css',
+        'figma'
+    ],
+    'automation-scripting': [
+        'python',
+        'ruby',
+        'airflow',
+        'terraform',
+        'linux',
+        'selenium'
+    ]
+};
+  const idMap: Record<string, string> = {
+    'frontend': 'frontend-development',
+    'backend': 'backend-development',
+    'devops-cloud': 'devops',
+    'computer-science': 'computer-science-fundamentals',
+    'dsa': 'data-structures-algorithms',
+    'ai-ml': 'ai-machine-learning'
+  };
+  const key = idMap[pathwayId] || pathwayId;
+  const ids = mapping[key] || [];
+  return ids.map(id => resolveSkill(id)).filter(Boolean) as SkillDefinition[];
 };
