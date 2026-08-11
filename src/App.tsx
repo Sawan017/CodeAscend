@@ -419,12 +419,14 @@ function App() {
   }
 
   const removeSkill = (skillId: string) => {
-    setSkillState((prev) => prev.map(s => {
-      if (s.id === skillId) {
-        return { ...s, isIndependent: false, activeDomains: [] }
-      }
-      return s
-    }))
+    setSkillState((prev) => {
+      return prev.map(s => {
+        if (s.id === skillId) {
+          return { ...s, isIndependent: false, activeDomains: [] }
+        }
+        return s
+      });
+    });
     push('Skill removed from active learning', 'info')
   }
 
@@ -437,7 +439,10 @@ function App() {
       return prev
     })
 
+    // Reclassify independent skills that natively belong to the new domain
     setSkillState((prev) => {
+      // getSkillsForPathway is imported, wait I removed it from App.tsx earlier! I need to ensure it's imported.
+      // I'll add the import later if missing, or use SKILL_REGISTRY. Wait, I must import it.
       const pathwaySkillIds = getSkillsForPathway(pathwayId).map(s => (s.canonicalName||'').toLowerCase().trim())
       return prev.map(s => {
         const sCanon = (s.canonicalName || s.name || '').toLowerCase().trim()
@@ -462,7 +467,8 @@ function App() {
     })
     setSkillState((prev) => prev.map(s => {
       if (s.activeDomains && s.activeDomains.includes(pathwayId)) {
-        return { ...s, activeDomains: s.activeDomains.filter(id => id !== pathwayId) }
+        const newDomains = s.activeDomains.filter(id => id !== pathwayId);
+        return { ...s, activeDomains: newDomains }
       }
       return s
     }))
@@ -477,13 +483,23 @@ function App() {
         const domains = s.activeDomains || []
         if (!domains.includes(domainId)) {
           return { ...s, activeDomains: [...domains, domainId], isIndependent: false }
-        } else {
-          return { ...s, isIndependent: false }
         }
+        return { ...s, isIndependent: false } // ensure it's not independent if it's already in the domain
       }
       return s
     }))
     push('Skill added to domain container', 'info')
+  }
+
+  const disassociateSkillFromDomain = (skillId: string, domainId: string) => {
+    setSkillState((prev) => prev.map(s => {
+      if (s.id === skillId) {
+        const domains = (s.activeDomains || []).filter(id => id !== domainId);
+        return { ...s, activeDomains: domains };
+      }
+      return s;
+    }))
+    push('Skill removed from domain', 'info')
   }
 
   const updateSkillNotes = (skillId: string, notes: string) => {
@@ -604,6 +620,7 @@ function App() {
             onStartPathway={startPathway}
             onRemovePathway={removePathway}
             onAssociateSkill={associateSkillWithDomain}
+            onDisassociateSkill={disassociateSkillFromDomain}
             onRemoveSkill={removeSkill}
           />}
                     {route.view === 'skill_detail' && <SkillDetail skill={skillState.find(s => s.id === route.id)!} onBack={goBack} onMarkMastered={toggleSkillMastery} onUpdateNotes={updateSkillNotes} />}
