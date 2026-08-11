@@ -103,6 +103,8 @@ export interface Skill {
   relatedProjects: string[]
   notes: string
   subtopics?: SubtopicProgress[]
+  isIndependent?: boolean
+  activeDomains?: string[]
 }
 
 export interface SkillNode {
@@ -211,6 +213,7 @@ export interface Settings {
   theme: ThemeMode
   streakTracking: boolean
   onboarded?: boolean
+  activePathways?: string[]
 }
 
 export interface FriendRelationship {
@@ -241,3 +244,11 @@ export interface ChatState {
 
 
 export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'goal_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string };
+
+export interface PathwayDefinition {
+  id: string
+  name: string
+  description: string
+  aliases: string[]
+  canonicalName?: string
+}

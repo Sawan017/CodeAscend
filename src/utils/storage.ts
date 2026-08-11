@@ -50,6 +50,9 @@ export function loadInitialState() {
         if (!skill.canonicalName || changed) {
           const resolved = resolveSkill(cleanName)
           changed = true
+          if (!('curriculum' in resolved)) {
+            return skill
+          }
           return { ...skill, name: resolved.canonicalName, canonicalName: resolved.canonicalName, type: resolved.type, id: resolved.id }
         }
         return skill

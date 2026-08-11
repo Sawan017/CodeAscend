@@ -39,7 +39,397 @@ export type SkillDefinition = {
   curriculum: Curriculum
 }
 
-const SKILL_REGISTRY: SkillDefinition[] = [
+export const SKILL_REGISTRY: SkillDefinition[] = [
+  {
+    id: 'html',
+    canonicalName: 'HTML',
+    type: 'OTHER',
+    aliases: ["html","html5"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of HTML', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'css',
+    canonicalName: 'CSS',
+    type: 'OTHER',
+    aliases: ["css","css3"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of CSS', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'javascript',
+    canonicalName: 'JavaScript',
+    type: 'OTHER',
+    aliases: ["javascript","js"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of JavaScript', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'typescript',
+    canonicalName: 'TypeScript',
+    type: 'OTHER',
+    aliases: ["typescript","ts"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of TypeScript', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'react',
+    canonicalName: 'React',
+    type: 'OTHER',
+    aliases: ["react","reactjs","react.js"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of React', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'nextjs',
+    canonicalName: 'Next.js',
+    type: 'OTHER',
+    aliases: ["nextjs","next.js","next"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Next.js', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'python',
+    canonicalName: 'Python',
+    type: 'OTHER',
+    aliases: ["python","py"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Python', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'go',
+    canonicalName: 'Go',
+    type: 'OTHER',
+    aliases: ["go","golang"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Go', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'rust',
+    canonicalName: 'Rust',
+    type: 'OTHER',
+    aliases: ["rust","rs"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Rust', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'csharp',
+    canonicalName: 'C#',
+    type: 'OTHER',
+    aliases: ["c#","csharp"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of C#', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'postgresql',
+    canonicalName: 'PostgreSQL',
+    type: 'OTHER',
+    aliases: ["postgresql","postgres"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of PostgreSQL', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'rest-api',
+    canonicalName: 'REST API',
+    type: 'OTHER',
+    aliases: ["rest api","rest-api","restful"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of REST API', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'docker',
+    canonicalName: 'Docker',
+    type: 'OTHER',
+    aliases: ["docker"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Docker', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kubernetes',
+    canonicalName: 'Kubernetes',
+    type: 'OTHER',
+    aliases: ["kubernetes","k8s"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Kubernetes', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'linux',
+    canonicalName: 'Linux',
+    type: 'OTHER',
+    aliases: ["linux"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Linux', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cybersecurity',
+    canonicalName: 'Cybersecurity',
+    type: 'OTHER',
+    aliases: ["cybersecurity","security"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Cybersecurity', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cryptography',
+    canonicalName: 'Cryptography',
+    type: 'OTHER',
+    aliases: ["cryptography","crypto"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Cryptography', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'sql',
+    canonicalName: 'SQL',
+    type: 'OTHER',
+    aliases: ["sql"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of SQL', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cs-fundamentals',
+    canonicalName: 'CS Fundamentals',
+    type: 'OTHER',
+    aliases: ["cs fundamentals","cs-fundamentals"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of CS Fundamentals', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'system-design',
+    canonicalName: 'System Design',
+    type: 'OTHER',
+    aliases: ["system design","system-design"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of System Design', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cpp',
+    canonicalName: 'C++',
+    type: 'OTHER',
+    aliases: ["cpp","c++"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of C++', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'dsa',
+    canonicalName: 'Data Structures & Algorithms',
+    type: 'OTHER',
+    aliases: ["dsa","data structures and algorithms"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Data Structures & Algorithms', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'daa',
+    canonicalName: 'Design & Analysis of Algorithms',
+    type: 'OTHER',
+    aliases: ["daa","design and analysis of algorithms"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Design & Analysis of Algorithms', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'pointers',
+    canonicalName: 'Pointers',
+    type: 'OTHER',
+    aliases: ["pointers"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Pointers', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'binary-trees',
+    canonicalName: 'Binary Trees',
+    type: 'OTHER',
+    aliases: ["binary trees","binary-trees"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of Binary Trees', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'aiml',
+    canonicalName: 'AI & ML',
+    type: 'OTHER',
+    aliases: ["aiml","ai & ml"],
+    curriculum: [
+      {
+        domain: 'Fundamentals',
+        topics: [
+          { title: 'Basics of AI & ML', complexity: 'Simple', size: 'Medium' },
+          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+        ]
+      }
+    ]
+  },
   {
     id: 'java',
     canonicalName: 'Java',
@@ -1049,3 +1439,31 @@ export const calculateSkillProgress = (subtopics: SubtopicProgress[]): number =>
   if (totalPoints === 0) return 0
   return Math.round((earnedPoints / totalPoints) * 100)
 }
+
+export const PATHWAY_REGISTRY: import('../types').PathwayDefinition[] = [
+  { id: 'frontend', name: 'Frontend Development', description: 'A structured path containing the skills required for frontend development.', aliases: ['frontend', 'front end', 'frontend development'] },
+  { id: 'backend', name: 'Backend Development', description: 'Server-side programming, APIs, and databases.', aliases: ['backend', 'back end', 'backend development'] },
+  { id: 'devops-cloud', name: 'DevOps / Cloud', description: 'Infrastructure, deployment, containers, and monitoring.', aliases: ['devops', 'cloud', 'devops / cloud'] },
+  { id: 'cybersecurity', name: 'Cybersecurity', description: 'Security, cryptography, and ethical hacking.', aliases: ['cybersecurity', 'security', 'infosec'] },
+  { id: 'databases', name: 'Databases', description: 'Data modeling, SQL, NoSQL, and database administration.', aliases: ['databases', 'db'] },
+  { id: 'computer-science', name: 'Computer Science', description: 'Core CS concepts, operating systems, and architecture.', aliases: ['cs', 'computer science'] },
+  { id: 'dsa', name: 'Data Structures & Algorithms', description: 'Core algorithms and data structures.', aliases: ['dsa', 'data structures'] },
+  { id: 'ai-ml', name: 'AI / Machine Learning', description: 'Artificial intelligence, machine learning, and deep learning.', aliases: ['ai', 'ml', 'machine learning', 'artificial intelligence'] },
+  { id: 'programming-languages', name: 'Programming Languages', description: 'Various programming languages.', aliases: ['programming', 'languages'] }
+];
+
+export const getSkillsForPathway = (pathwayId: string): SkillDefinition[] => {
+  const mapping: Record<string, string[]> = {
+    'frontend': ['html', 'css', 'javascript', 'typescript', 'react', 'nextjs'],
+    'backend': ['python', 'java', 'go', 'rust', 'csharp', 'postgresql', 'rest-api', 'docker'],
+    'devops-cloud': ['docker', 'kubernetes', 'linux', 'python'],
+    'cybersecurity': ['cybersecurity', 'cryptography', 'python'],
+    'databases': ['sql', 'postgresql'],
+    'computer-science': ['cs-fundamentals', 'system-design', 'python', 'c'],
+    'dsa': ['dsa', 'daa', 'pointers', 'binary-trees'],
+    'ai-ml': ['aiml', 'machine-learning', 'python'],
+    'programming-languages': ['c', 'cpp', 'java', 'python', 'javascript', 'typescript', 'go', 'rust', 'csharp', 'html', 'css']
+  };
+  const ids = mapping[pathwayId] || [];
+  return ids.map(id => resolveSkill(id)).filter(Boolean) as SkillDefinition[];
+};

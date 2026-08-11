@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 
 export type Toast = {
   id: number
@@ -11,20 +11,26 @@ export type Toast = {
  */
 export function useToasts() {
   const [toasts, setToasts] = useState<Toast[]>([])
-  const [counter, setCounter] = useState(0)
+  const counter = useRef(0)
 
-  const push = (message: string, type: Toast['type'] = 'info', duration = 3200) => {
-    const id = counter + 1
-    setCounter(id)
-    setToasts((prev) => [...prev, { id, message, type }])
+  const push = useCallback((message: string, type: Toast['type'] = 'info', duration = 3200) => {
+    counter.current += 1
+    const id = counter.current
+    setToasts((prev) => {
+      // Keep only last 5 toasts to avoid endless stacking
+      const next = [...prev, { id, message, type }]
+      if (next.length > 5) return next.slice(next.length - 5)
+      return next
+    })
+    
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
     }, duration)
-  }
+  }, [])
 
-  const dismiss = (id: number) => {
+  const dismiss = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id))
-  }
+  }, [])
 
   useEffect(() => {
     return () => setToasts([])
