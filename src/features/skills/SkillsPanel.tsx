@@ -1,50 +1,45 @@
-import { motion } from 'framer-motion'
-import { Plus, Edit2, Check, Trash2, ChevronDown, ChevronRight } from 'lucide-react'
+import { Plus, X, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
-import type { Skill, SubtopicProgress, SubtopicDifficulty } from '../../types'
-import { resolveSkill, formatEstimatedTime, DIFFICULTY_MULTIPLIERS } from '../../data/learningData'
+import type { Skill } from '../../types'
+import { resolveSkill, PATHWAY_REGISTRY, getSkillsForPathway, SKILL_REGISTRY } from '../../data/learningData'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 
 type SkillsPanelProps = {
   skills: Skill[]
-  selectedSkillId: string
+  activePathways: string[]
   onSelectSkill: (id: string) => void
   onAddSkill?: (skill: Skill) => void
-  onRemoveSkill?: (id: string) => void
-  onUpdateSkillNotes?: (id: string, notes: string) => void
-  onStartSubtopic?: (skillId: string, subtopicId: string, difficulty: SubtopicDifficulty, time: number, xp: number) => void
-  onCompleteSubtopic?: (skillId: string, subtopicId: string) => void
+  onStartPathway?: (pathwayId: string) => void
+  onRemovePathway?: (pathwayId: string) => void
+  onAssociateSkill?: (skillId: string, domainId: string) => void
+  onRemoveSkill?: (skillId: string) => void
 }
 
 export function SkillsPanel({
   skills,
-  selectedSkillId,
+  activePathways = [],
   onSelectSkill,
   onAddSkill,
-  onRemoveSkill,
-  onUpdateSkillNotes,
-  onStartSubtopic,
-  onCompleteSubtopic,
+  onStartPathway,
+  onRemovePathway,
+  onAssociateSkill,
+  onRemoveSkill
 }: SkillsPanelProps) {
-  const selectedSkill = skills.find((skill) => skill.id === selectedSkillId) ?? skills[0]
-  const [showForm, setShowForm] = useState(false)
-  const [name, setName] = useState('')
-  const [notes, setNotes] = useState('')
-  const [isEditingNotes, setIsEditingNotes] = useState(false)
-  const [notesInput, setNotesInput] = useState('')
-  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false)
-  
-  // Subtopic modal state
-  const [activeSubtopic, setActiveSubtopic] = useState<SubtopicProgress | null>(null)
-  const [selectedDifficulty, setSelectedDifficulty] = useState<SubtopicDifficulty>('Normal')
-  const [expandedDomains, setExpandedDomains] = useState<Record<string, boolean>>({})
+  const [globalSearch, setGlobalSearch] = useState('')
+  const [domainSearches, setDomainSearches] = useState<Record<string, string>>({})
+  const [skillToRemove, setSkillToRemove] = useState<string | null>(null)
+  const [domainToRemove, setDomainToRemove] = useState<{id: string, name: string} | null>(null)
 
-  const toggleDomain = (domain: string) => {
-    setExpandedDomains(prev => ({ ...prev, [domain]: !prev[domain] }))
-  }
+  // Global start skill
+  const handleStartSkillGlobally = () => {
+    if (!globalSearch.trim()) return
+    const resolved = resolveSkill(globalSearch.trim())
+    const searchCanon = (resolved.canonicalName || '').toLowerCase().trim()
+    
+    const matchedDomains = activePathways.filter(pid => 
+      getSkillsForPathway(pid).some(ps => (ps.canonicalName||'').toLowerCase().trim() === searchCanon)
+    )
 
-  const handleCreateSkill = () => {
-    if (!name.trim()) return
-    const resolved = resolveSkill(name.trim())
     const newSkill: Skill = {
       id: resolved.id,
       name: resolved.canonicalName,
@@ -55,310 +50,298 @@ export function SkillsPanel({
       started: new Date().toISOString().slice(0, 10),
       completed: '',
       relatedProjects: [],
-      notes: notes.trim() || 'Focusing on core principles and practice exercises.',
+      notes: 'Focusing on core principles and practice exercises.',
+      isIndependent: matchedDomains.length === 0,
+      activeDomains: matchedDomains,
     }
     onAddSkill?.(newSkill)
-    setName('')
-    setNotes('')
-    setShowForm(false)
+    setGlobalSearch('')
   }
-
-  const handleSaveNotes = () => {
-    if (selectedSkill) {
-      onUpdateSkillNotes?.(selectedSkill.id, notesInput)
-    }
-    setIsEditingNotes(false)
-  }
-
-  const startEditNotes = () => {
-    setNotesInput(selectedSkill?.notes || '')
-    setIsEditingNotes(true)
-  }
-
-  const handleStartSubtopic = () => {
-    if (!activeSubtopic || !selectedSkill || !onStartSubtopic) return
-    const mults = DIFFICULTY_MULTIPLIERS[selectedDifficulty]
-    const time = Math.round((activeSubtopic.baseTime || 20) * mults.time)
-    const xp = Math.round((activeSubtopic.baseXP || 30) * mults.xp)
-    onStartSubtopic(selectedSkill.id, activeSubtopic.id, selectedDifficulty, time, xp)
-    setActiveSubtopic(null)
-  }
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
+  
+  // Start skill within a domain
+  const handleStartSkillInDomain = (resolved: any, domainId: string) => {
+    // Check if skill already exists
+    const searchCanon = (resolved.canonicalName || '').toLowerCase().trim()
+    const existing = skills.find(s => 
+      s.id === resolved.id || 
+      (s.canonicalName || s.name || '').toLowerCase().trim() === searchCanon
+    )
+    if (existing) {
+      // Just associate it
+      onAssociateSkill?.(existing.id, domainId)
+    } else {
+      // Create new and associate
+      const newSkill: Skill = {
+        id: resolved.id,
+        name: resolved.canonicalName,
+        canonicalName: resolved.canonicalName,
+        type: resolved.type,
+        progress: 0,
+        status: 'LEARNING',
+        started: new Date().toISOString().slice(0, 10),
+        completed: '',
+        relatedProjects: [],
+        notes: 'Focusing on core principles and practice exercises.',
+        isIndependent: false,
+        activeDomains: [domainId],
       }
+      onAddSkill?.(newSkill)
     }
+    setDomainSearches(prev => ({ ...prev, [domainId]: '' }))
   }
 
-  const item = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0 }
+  // Domain search handling
+  const setDomainSearch = (pid: string, value: string) => {
+    setDomainSearches(prev => ({ ...prev, [pid]: value }))
   }
+
+  // Determine independent vs domain skills
+  const standaloneSkills: Skill[] = []
+  const skillsByPathway: Record<string, Skill[]> = {}
+  
+  activePathways.forEach(pid => {
+    skillsByPathway[pid] = []
+  })
+
+  skills.forEach(skill => {
+    let isAssociatedWithActiveDomain = false
+    if (skill.activeDomains && skill.activeDomains.length > 0) {
+      skill.activeDomains.forEach(pid => {
+        if (skillsByPathway[pid]) {
+          skillsByPathway[pid].push(skill)
+          isAssociatedWithActiveDomain = true
+        }
+      })
+    }
+    
+    // Only push to standalone if explicitly independent AND not associated with any active domain
+    if (skill.isIndependent && !isAssociatedWithActiveDomain) {
+      standaloneSkills.push(skill)
+    }
+  })
 
   return (
-    <div className="section-shell split-shell">
-      <div className="panel">
+    <div className="section-shell">
+      <div className="panel" style={{ width: '100%', margin: '0' }}>
         <div className="card-heading">
-          <p className="eyebrow">LEARNING</p>
-          {onAddSkill && (
-            <button className="icon-button" onClick={() => setShowForm((v) => !v)} aria-label="Add skill">
-              <Plus size={16} />
-            </button>
-          )}
+          <p className="eyebrow">LEARNING DISCOVERY</p>
         </div>
 
-        {showForm && (
-          <div className="goal-form" style={{ marginBottom: '1rem' }}>
-            <input placeholder="Skill Name (e.g. Docker, GraphQL)" value={name} onChange={(e) => setName(e.target.value)} />
-            <input placeholder="Notes / Learning Objective" value={notes} onChange={(e) => setNotes(e.target.value)} />
-            <div className="action-row">
-              <button className="secondary-btn" onClick={handleCreateSkill}>Save skill</button>
-              <button className="secondary-btn" onClick={() => setShowForm(false)}>Cancel</button>
-            </div>
+        {/* Global Search */}
+        <div className="goal-form" style={{ marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <input 
+              placeholder="Global Search (e.g. HTML, React, Frontend Development)..." 
+              value={globalSearch} 
+              onChange={(e) => setGlobalSearch(e.target.value)}
+              style={{ width: '100%' }}
+            />
+            <button className="primary-btn" onClick={handleStartSkillGlobally} style={{ whiteSpace: 'nowrap' }}>
+              <Plus size={16} /> Add Custom Skill
+            </button>
           </div>
-        )}
-
-        {skills.length === 0 ? (
-          <div style={{ padding: '3rem 1rem', textAlign: 'center', border: '1px dashed var(--border)', borderRadius: '12px', marginTop: '1rem' }}>
-            <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-main)' }}>Start your learning journey</h3>
-            <p className="copy" style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>
-              Add something you're learning and build your path. Choose a skill, explore its subtopics, and track your progress.
-            </p>
-            {onAddSkill && (
-              <button className="primary-btn" onClick={() => setShowForm((v) => !v)} style={{ margin: '0 auto' }}>
-                <Plus size={16} /> Add your first skill
-              </button>
-            )}
-          </div>
-        ) : (
-          <motion.div 
-            className="constellation-list"
-            variants={container}
-            initial="hidden"
-            animate="show"
-          >
-            {skills.map((skill) => {
-              return (
-                <motion.div key={skill.id} variants={item} className="constellation-node">
-                  <button
-                    className={`constellation-button ${selectedSkillId === skill.id ? 'active' : ''}`}
-                    onClick={() => onSelectSkill(skill.id)}
-                  >
-                    <span>{skill.name}</span>
-                    <small>{skill.status}</small>
-                  </button>
-                </motion.div>
-              )
-            })}
-          </motion.div>
-        )}
-      </div>
-
-      {activeSubtopic && selectedSkill && (
-        <div className="modal-overlay" style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
-          <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="panel detail-panel" style={{ minWidth: '350px', background: 'var(--bg-panel)', border: '1px solid var(--border-strong)', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
-            <h3 style={{ marginBottom: '0.25rem' }}>Start {activeSubtopic.title}</h3>
-            <p className="eyebrow" style={{ color: 'var(--cyan)', marginBottom: '1.5rem' }}>Complexity: {activeSubtopic.complexity.toUpperCase()}</p>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
-              {(['Easy', 'Normal', 'Hard'] as SubtopicDifficulty[]).map(diff => {
-                const mults = DIFFICULTY_MULTIPLIERS[diff]
-                const time = Math.round((activeSubtopic.baseTime || 20) * mults.time)
-                const xp = Math.round((activeSubtopic.baseXP || 30) * mults.xp)
-                const isSelected = selectedDifficulty === diff
-                return (
-                  <button 
-                    key={diff}
-                    onClick={() => setSelectedDifficulty(diff)}
-                    className="goal-form"
-                    style={{ 
-                      textAlign: 'left', 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      padding: '1rem',
-                      cursor: 'pointer',
-                      border: isSelected ? '1px solid var(--cyan)' : '1px solid var(--border-color)',
-                      background: isSelected ? 'rgba(0, 255, 255, 0.05)' : 'transparent',
-                      borderRadius: '8px'
-                    }}
-                  >
-                    <div>
-                      <strong style={{ display: 'block', color: isSelected ? 'var(--cyan)' : 'var(--text-main)', marginBottom: '0.25rem' }}>{diff}</strong>
-                      <span className="muted" style={{ fontSize: '0.85rem' }}>{formatEstimatedTime(time)}</span>
+          
+          {globalSearch.trim().length > 0 && (
+            <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {/* Domain Results */}
+              {PATHWAY_REGISTRY
+                .filter((p: any) => p.name.toLowerCase().includes(globalSearch.toLowerCase().trim()) || p.aliases?.some((a: any) => a.toLowerCase().includes(globalSearch.toLowerCase().trim())))
+                .map((p: any) => {
+                  const isActive = activePathways.includes(p.id)
+                  return (
+                    <div key={p.id} style={{ padding: '0.75rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--cyan)', background: 'var(--cyan-glow)', padding: '2px 6px', borderRadius: '4px', marginRight: '0.5rem' }}>DOMAIN</span>
+                        <strong>{p.name}</strong>
+                      </div>
+                      {isActive ? (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Already active</span>
+                      ) : (
+                        <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => { onStartPathway?.(p.id); setGlobalSearch(''); }}>Start Domain</button>
+                      )}
                     </div>
-                    <strong style={{ color: 'var(--accent-gamification)' }}>+{xp} XP</strong>
-                  </button>
-                )
+                  )
+              })}
+              {/* Skill Results */}
+              {Array.from(new Map(
+                  SKILL_REGISTRY
+                    .filter((s: any) => s.canonicalName.toLowerCase().includes(globalSearch.toLowerCase().trim()) || s.aliases?.some((a: any) => a.toLowerCase().includes(globalSearch.toLowerCase().trim())))
+                    .map((s: any) => [(s.canonicalName || '').toLowerCase().trim(), s])
+                ).values())
+                .map((s: any) => {
+                  const searchCanon = (s.canonicalName || '').toLowerCase().trim()
+                  const existingSkill = skills.find(sk => sk.id === s.id || (sk.canonicalName || sk.name || '').toLowerCase().trim() === searchCanon)
+                  const isStarted = !!existingSkill && (existingSkill.isIndependent || existingSkill.activeDomains?.some(d => activePathways.includes(d)))
+                  return (
+                    <div key={s.id} style={{ padding: '0.75rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--violet)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--violet)', background: 'var(--violet-glow)', padding: '2px 6px', borderRadius: '4px', marginRight: '0.5rem' }}>SKILL</span>
+                        <strong>{s.canonicalName}</strong>
+                      </div>
+                      {isStarted ? (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Already started</span>
+                      ) : (
+                        <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => { 
+                          const sCanon = (s.canonicalName || '').toLowerCase().trim()
+                          const matchedDomains = activePathways.filter(pid => 
+                            getSkillsForPathway(pid).some(ps => (ps.canonicalName||'').toLowerCase().trim() === sCanon)
+                          )
+                          const newSkill: Skill = {
+                            id: s.id,
+                            name: s.canonicalName,
+                            canonicalName: s.canonicalName,
+                            type: s.type,
+                            progress: 0,
+                            status: 'LEARNING',
+                            started: new Date().toISOString().slice(0, 10),
+                            completed: '',
+                            relatedProjects: [],
+                            notes: 'Focusing on core principles and practice exercises.',
+                            isIndependent: matchedDomains.length === 0,
+                            activeDomains: matchedDomains,
+                          }
+                          onAddSkill?.(newSkill)
+                          setGlobalSearch('')
+                        }}>Start Skill</button>
+                      )}
+                    </div>
+                  )
               })}
             </div>
-            
-            <div className="action-row" style={{ justifyContent: 'flex-end' }}>
-              <button className="secondary-btn" onClick={() => setActiveSubtopic(null)}>Cancel</button>
-              <button className="primary-btn" onClick={handleStartSubtopic}>Start Learning</button>
-            </div>
-          </motion.div>
+          )}
         </div>
-      )}
 
-      {selectedSkill && (
-        <motion.div className="panel detail-panel" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <p className="eyebrow" style={{ margin: 0 }}>SKILL CONSTELLATION</p>
-            {onRemoveSkill && (
-              <button 
-                className="icon-button" 
-                onClick={() => setShowRemoveConfirm(true)} 
-                aria-label="Remove skill"
-                style={{ color: 'var(--danger, #ff453a)' }}
-              >
-                <Trash2 size={16} />
-              </button>
-            )}
-          </div>
-          <h3>{selectedSkill.name}</h3>
-
-          {showRemoveConfirm && (
-            <div className="goal-form" style={{ margin: '1rem 0', borderColor: 'var(--danger, #ff453a)' }}>
-              <p style={{ color: 'var(--danger, #ff453a)', marginBottom: '0.5rem', fontWeight: 500 }}>
-                Remove {selectedSkill.name} from Learning?
-              </p>
-              <p className="copy" style={{ fontSize: '0.875rem', marginBottom: '1rem' }}>
-                This will remove this subject and its learning progress.
-              </p>
-              <div className="action-row">
+        {/* Domain Containers */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {activePathways.map(pid => {
+            const def = PATHWAY_REGISTRY.find((p: any) => p.id === pid)
+            if (!def) return null
+            const domainSkills = skillsByPathway[pid] || []
+            const ds = domainSearches[pid] || ''
+            
+            return (
+              <div key={pid} style={{ border: '1px solid var(--border)', borderRadius: '12px', padding: '1.5rem', background: 'var(--bg-card)', position: 'relative' }}>
                 <button 
-                  className="secondary-btn" 
-                  onClick={() => {
-                    onRemoveSkill?.(selectedSkill.id)
-                    setShowRemoveConfirm(false)
-                  }}
-                  style={{ color: 'var(--danger, #ff453a)', borderColor: 'var(--danger, #ff453a)' }}
+                  onClick={() => setDomainToRemove({ id: pid, name: def.name })}
+                  style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
                 >
-                  Remove
+                  <X size={20} />
                 </button>
-                <button className="secondary-btn" onClick={() => setShowRemoveConfirm(false)}>Cancel</button>
-              </div>
-            </div>
-          )}
-
-          {isEditingNotes ? (
-            <div className="goal-form" style={{ margin: '0.5rem 0' }}>
-              <textarea value={notesInput} onChange={(e) => setNotesInput(e.target.value)} />
-              <button className="secondary-btn" onClick={handleSaveNotes}><Check size={14} /> Save notes</button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.5rem' }}>
-              <p className="copy" style={{ flex: 1 }}>{selectedSkill.notes}</p>
-              {onUpdateSkillNotes && (
-                <button className="icon-button" onClick={startEditNotes} aria-label="Edit notes">
-                  <Edit2 size={14} />
-                </button>
-              )}
-            </div>
-          )}
-
-          <div className="xp-shell">
-            <div className="xp-row">
-              <span>Progress</span>
-              <strong>{selectedSkill.progress}%</strong>
-            </div>
-            <div className="progress-bar">
-              <div style={{ width: `${selectedSkill.progress}%` }} />
-            </div>
-          </div>
-          <div className="meta-row" style={{ marginBottom: '1.5rem' }}>
-            <span>Status: {selectedSkill.status}</span>
-            <span>Started: {selectedSkill.started}</span>
-          </div>
-
-          <p className="eyebrow" style={{ marginBottom: '0.75rem' }}>ROADMAP</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {(() => {
-              if (!selectedSkill.subtopics || selectedSkill.subtopics.length === 0) {
-                return <p className="muted" style={{ fontSize: '0.875rem' }}>No subtopics available.</p>
-              }
-
-              const grouped = selectedSkill.subtopics.reduce((acc, topic) => {
-                const domain = topic.domain || 'General'
-                if (!acc[domain]) acc[domain] = []
-                acc[domain].push(topic)
-                return acc
-              }, {} as Record<string, SubtopicProgress[]>)
-
-              return Object.entries(grouped).map(([domain, topics]) => {
-                const completedCount = topics.filter(t => t.status === 'Completed').length
-                const totalCount = topics.length
-                const isExpanded = expandedDomains[domain]
-
-                return (
-                  <div key={domain} className="goal-form" style={{ padding: '0', overflow: 'hidden', background: 'rgba(255,255,255,0.02)' }}>
-                    <button 
-                      onClick={() => toggleDomain(domain)}
-                      style={{ 
-                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '1rem', background: 'transparent', border: 'none', cursor: 'pointer',
-                        textAlign: 'left', color: 'var(--text-main)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        {isExpanded ? <ChevronDown size={16} className="muted" /> : <ChevronRight size={16} className="muted" />}
-                        <strong style={{ fontSize: '1rem' }}>{domain}</strong>
+                <h3 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '1px' }}>{def.name}</h3>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                  {domainSkills.length === 0 && (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>No skills started in this domain yet.</p>
+                  )}
+                  {domainSkills.map(s => (
+                    <div key={s.id} onClick={() => onSelectSkill(s.id)} style={{ cursor: 'pointer', padding: '0.75rem 1rem', background: 'var(--bg-surface)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 500, color: 'var(--text-main)' }}>{s.canonicalName || s.name}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <span style={{ fontSize: '0.875rem', color: s.progress === 100 ? 'var(--cyan)' : 'var(--text-muted)' }}>
+                          {s.progress}%
+                        </span>
+                        <ChevronRight size={16} color="var(--text-muted)" />
                       </div>
-                      <span className="muted" style={{ fontSize: '0.875rem' }}>{completedCount} / {totalCount}</span>
-                    </button>
-
-                    {isExpanded && (
-                      <div style={{ padding: '0 1rem 1rem 1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                        {topics.map(topic => {
-                          const isCompleted = topic.status === 'Completed'
-                          const isLearning = topic.status === 'Learning'
-                          const isNotStarted = topic.status === 'Not Started'
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Domain Scoped Search */}
+                <div className="goal-form" style={{ marginTop: '1rem' }}>
+                  <input 
+                    placeholder={`Search ${def.name} skills...`}
+                    value={ds}
+                    onChange={(e) => setDomainSearch(pid, e.target.value)}
+                    style={{ width: '100%', background: 'var(--bg-surface)' }}
+                  />
+                  
+                  {ds.trim().length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                      {getSkillsForPathway(pid)
+                        .filter(s => s.canonicalName.toLowerCase().includes(ds.toLowerCase().trim()))
+                        .map(s => {
+                          const searchCanon = (s.canonicalName || '').toLowerCase().trim()
+                          const existingSkill = skills.find(sk => sk.id === s.id || (sk.canonicalName || sk.name || '').toLowerCase().trim() === searchCanon)
+                          const isAssociated = existingSkill?.activeDomains?.includes(pid)
+                          const isStarted = !!existingSkill
                           
                           return (
-                            <div key={topic.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <div style={{ 
-                                  width: '16px', height: '16px', borderRadius: '50%', 
-                                  border: isCompleted ? 'none' : '1px solid var(--border-strong)',
-                                  background: isCompleted ? 'var(--cyan)' : (isLearning ? 'var(--accent-gamification)' : 'transparent'),
-                                  display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}>
-                                  {isCompleted && <Check size={10} color="#000" />}
-                                </div>
-                                <div>
-                                  <span style={{ color: isCompleted ? 'var(--text-muted)' : 'var(--text-main)', textDecoration: isCompleted ? 'line-through' : 'none' }}>{topic.title}</span>
-                                  <div className="muted" style={{ fontSize: '0.75rem', marginTop: '0.2rem' }}>
-                                    {isNotStarted ? `${topic.size || 'Medium'} Topic (${topic.complexity})` : 
-                                     isLearning ? `Learning (${topic.difficulty}) • ${formatEstimatedTime(topic.estimatedTime || 20)}` : 
-                                     `Completed • +${topic.xpReward} XP`}
-                                  </div>
-                                </div>
+                            <div key={s.id} style={{ padding: '0.75rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--violet)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <div>
+                                <span style={{ fontSize: '0.65rem', color: 'var(--violet)', background: 'var(--violet-glow)', padding: '2px 6px', borderRadius: '4px', marginRight: '0.5rem' }}>SKILL</span>
+                                <strong>{s.canonicalName}</strong>
                               </div>
-                              
-                              {isNotStarted && (
-                                <button className="secondary-btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => { setActiveSubtopic(topic); setSelectedDifficulty('Normal'); }}>Start</button>
-                              )}
-                              {isLearning && (
-                                <button className="primary-btn" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }} onClick={() => onCompleteSubtopic?.(selectedSkill.id, topic.id)}>Complete</button>
+                              {isAssociated ? (
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Already in this domain</span>
+                              ) : isStarted ? (
+                                <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => handleStartSkillInDomain(s, pid)}>Add to Domain</button>
+                              ) : (
+                                <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => handleStartSkillInDomain(s, pid)}>Start Learning</button>
                               )}
                             </div>
                           )
-                        })}
-                      </div>
-                    )}
+                        })
+                      }
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+          
+          {/* Independent Skills Container */}
+          {(standaloneSkills.length > 0 || activePathways.length === 0) && (
+            <div style={{ border: '1px solid var(--border)', borderRadius: '12px', padding: '1.5rem', background: 'var(--bg-card)' }}>
+              <h3 style={{ margin: '0 0 1rem 0', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Independent Skills</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {standaloneSkills.map(s => (
+                  <div key={s.id} style={{ cursor: 'pointer', padding: '0.75rem 1rem', background: 'var(--bg-surface)', borderRadius: '8px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div onClick={() => onSelectSkill(s.id)} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                      <span style={{ fontWeight: 500, color: 'var(--text-main)' }}>{s.canonicalName || s.name}</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <span onClick={() => onSelectSkill(s.id)} style={{ fontSize: '0.875rem', color: s.progress === 100 ? 'var(--cyan)' : 'var(--text-muted)' }}>
+                        {s.progress}%
+                      </span>
+                      <ChevronRight size={16} color="var(--text-muted)" onClick={() => onSelectSkill(s.id)} />
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setSkillToRemove(s.id); }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: 'var(--text-muted)', padding: '0.25rem', cursor: 'pointer', borderRadius: '4px' }}
+                        onMouseOver={(e) => { e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+                        onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
+                        title="Remove skill"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
                   </div>
-                )
-              })
-            })()}
-          </div>
-        </motion.div>
-      )}
+                ))}
+                {standaloneSkills.length === 0 && (
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', margin: 0 }}>No independent skills started yet.</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <ConfirmDialog 
+        isOpen={!!skillToRemove}
+        title="Remove Skill?"
+        message="This removes the skill from your active learning list."
+        subMessage="Your existing progress will be preserved if you add it again."
+        confirmLabel="Remove Skill"
+        onConfirm={() => { if(skillToRemove) onRemoveSkill?.(skillToRemove); setSkillToRemove(null); }}
+        onCancel={() => setSkillToRemove(null)}
+      />
+      <ConfirmDialog 
+        isOpen={!!domainToRemove}
+        title={`Remove ${domainToRemove?.name}?`}
+        message={`This removes ${domainToRemove?.name} from your active learning list.`}
+        subMessage="Skills associated with this domain will also be removed from your active learning list. Your existing skill progress will be preserved and restored if you start those skills again."
+        confirmLabel="Remove Domain"
+        onConfirm={() => { if(domainToRemove) onRemovePathway?.(domainToRemove.id); setDomainToRemove(null); }}
+        onCancel={() => setDomainToRemove(null)}
+      />
     </div>
   )
 }
-

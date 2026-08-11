@@ -27,20 +27,23 @@ export function Celebration({ xp }: { xp: number }) {
           transition={{ duration: 0.5 }}
           style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            pointerEvents: 'none', zIndex: 9999,
+            pointerEvents: 'auto', zIndex: 9999,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'radial-gradient(circle, rgba(90, 200, 250, 0.15) 0%, transparent 70%)'
+            background: 'radial-gradient(circle, rgba(90, 200, 250, 0.4) 0%, rgba(0,0,0,0.8) 100%)'
           }}
+          onClick={() => setShow(false)}
         >
           <motion.div
             initial={{ scale: 0.5, y: 50, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={{ scale: 1.1, opacity: 0 }}
             transition={{ type: 'spring', damping: 12, stiffness: 100 }}
+            onClick={(e) => e.stopPropagation()}
             style={{
               background: 'var(--bg-surface)', padding: '3rem 5rem',
               borderRadius: '32px', border: '2px solid var(--cyan)',
-              boxShadow: '0 0 80px rgba(90,200,250,0.4)', textAlign: 'center'
+              boxShadow: '0 0 80px rgba(90,200,250,0.4)', textAlign: 'center',
+              display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center'
             }}
           >
             <motion.h1 
@@ -51,9 +54,16 @@ export function Celebration({ xp }: { xp: number }) {
             >
               LEVEL UP!
             </motion.h1>
-            <p style={{ fontSize: '1.75rem', color: 'white', marginTop: '1rem', fontWeight: 600 }}>
+            <p style={{ fontSize: '1.75rem', color: 'white', margin: 0, fontWeight: 600 }}>
               You reached Level {level}
             </p>
+            <button 
+              className="primary-btn" 
+              onClick={() => setShow(false)}
+              style={{ marginTop: '1rem', padding: '0.75rem 2rem' }}
+            >
+              Continue
+            </button>
           </motion.div>
         </motion.div>
       )}

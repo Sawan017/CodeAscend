@@ -19,7 +19,7 @@ import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
 import { milestones, futureMilestones, timelineEvents } from './data/journeyData'
-import { resolveSkill, generateSubtopicsForSkill, calculateSkillProgress } from './data/learningData'
+import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './data/learningData'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 import { loadInitialState, getEmptyState } from './utils/storage'
 import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
@@ -156,7 +156,6 @@ function App() {
   }
 
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
-  const [selectedSkillId, setSelectedSkillId] = useState(initialData.skills[0]?.id ?? '')
   const [selectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
   const [viewingUserId, setViewingUserId] = useState<string | null>(null)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
@@ -396,18 +395,95 @@ function App() {
   }
 
   const addSkill = (newSkill: Skill) => {
-    const resolved = resolveSkill(newSkill.name)
-    const subtopics = generateSubtopicsForSkill(resolved)
-    const skillWithSubtopics = { ...newSkill, subtopics }
-    setSkillState((prev) => [...prev, skillWithSubtopics])
-    setSelectedSkillId(skillWithSubtopics.id)
-    push(`Skill added: ${newSkill.name}`, 'info')
-    playSoundEffect('click', settings.soundEffects)
+    const searchName = (newSkill.canonicalName || newSkill.name || '').toLowerCase().trim()
+    const existing = skillState.find(s => s.id === newSkill.id || (s.canonicalName || s.name || '').toLowerCase().trim() === searchName)
+    
+    if (existing) {
+      push(`Skill restored: ${existing.name}`, 'info')
+      playSoundEffect('click', settings.soundEffects)
+      setSkillState((prev) => prev.map(s => {
+        if (s.id === existing.id) {
+           const updatedDomains = newSkill.activeDomains?.length ? Array.from(new Set([...(s.activeDomains||[]), ...newSkill.activeDomains])) : s.activeDomains;
+           return { ...s, isIndependent: newSkill.isIndependent ?? true, activeDomains: updatedDomains }
+        }
+        return s
+      }))
+    } else {
+      push(`Skill added: ${newSkill.name}`, 'info')
+      playSoundEffect('click', settings.soundEffects)
+      const resolved = resolveSkill(newSkill.canonicalName || newSkill.name)
+      const subtopics = generateSubtopicsForSkill(resolved)
+      const skillWithSubtopics = { ...newSkill, id: resolved.id, canonicalName: resolved.canonicalName, subtopics, isIndependent: newSkill.isIndependent ?? true }
+      setSkillState((prev) => [...prev, skillWithSubtopics])
+    }
   }
 
   const removeSkill = (skillId: string) => {
-    setSkillState((prev) => prev.filter(s => s.id !== skillId))
-    push('Skill removed', 'info')
+    setSkillState((prev) => prev.map(s => {
+      if (s.id === skillId) {
+        return { ...s, isIndependent: false, activeDomains: [] }
+      }
+      return s
+    }))
+    push('Skill removed from active learning', 'info')
+  }
+
+  const startPathway = (pathwayId: string) => {
+    setSettings((prev) => {
+      const active = prev.activePathways || []
+      if (!active.includes(pathwayId)) {
+        return { ...prev, activePathways: [pathwayId, ...active] }
+      }
+      return prev
+    })
+
+    setSkillState((prev) => {
+      const pathwaySkillIds = getSkillsForPathway(pathwayId).map(s => (s.canonicalName||'').toLowerCase().trim())
+      return prev.map(s => {
+        const sCanon = (s.canonicalName || s.name || '').toLowerCase().trim()
+        if (s.isIndependent && pathwaySkillIds.includes(sCanon)) {
+          return { 
+            ...s, 
+            isIndependent: false, 
+            activeDomains: Array.from(new Set([...(s.activeDomains || []), pathwayId])) 
+          }
+        }
+        return s
+      })
+    })
+
+    push('Domain container added', 'info')
+  }
+
+  const removePathway = (pathwayId: string) => {
+    setSettings((prev) => {
+      const active = prev.activePathways || []
+      return { ...prev, activePathways: active.filter((id: string) => id !== pathwayId) }
+    })
+    setSkillState((prev) => prev.map(s => {
+      if (s.activeDomains && s.activeDomains.includes(pathwayId)) {
+        return { ...s, activeDomains: s.activeDomains.filter(id => id !== pathwayId) }
+      }
+      return s
+    }))
+    push('Domain container removed', 'info')
+  }
+
+  const associateSkillWithDomain = (skillId: string, domainId: string) => {
+    setSkillState((prev) => prev.map(s => {
+      const sCanon = (s.canonicalName || s.name || '').toLowerCase().trim()
+      const searchCanon = skillId.toLowerCase().trim()
+      if (s.id === skillId || sCanon === searchCanon || s.id.toLowerCase() === searchCanon) {
+        const domains = s.activeDomains || []
+        if (!domains.includes(domainId)) {
+          return { ...s, activeDomains: [...domains, domainId], isIndependent: false }
+        } else {
+          return { ...s, isIndependent: false }
+        }
+      }
+      return s
+    }))
+    push('Skill added to domain container', 'info')
   }
 
   const updateSkillNotes = (skillId: string, notes: string) => {
@@ -415,63 +491,7 @@ function App() {
     push('Skill notes updated', 'info')
   }
 
-  const startSubtopic = (skillId: string, subtopicId: string, difficulty: 'Easy' | 'Normal' | 'Hard', targetTime: number, xp: number) => {
-    setSkillState((prev) => prev.map(s => {
-      if (s.id !== skillId || !s.subtopics) return s
-      const updatedSubtopics = s.subtopics.map(t => {
-        if (t.id === subtopicId) {
-          return {
-            ...t,
-            status: 'Learning' as const,
-            difficulty,
-            estimatedTime: targetTime,
-            xpReward: xp,
-            startedAt: new Date().toISOString()
-          }
-        }
-        return t
-      })
-      return { ...s, subtopics: updatedSubtopics }
-    }))
-    push('Learning started', 'info')
-    playSoundEffect('click', settings.soundEffects)
-  }
 
-  const completeSubtopic = (skillId: string, subtopicId: string) => {
-    setSkillState((prev) => prev.map(s => {
-      if (s.id !== skillId || !s.subtopics) return s
-      let xpEarned = 0
-      const updatedSubtopics = s.subtopics.map(t => {
-        if (t.id === subtopicId && t.status !== 'Completed') {
-          xpEarned = t.xpReward || 0
-          return { ...t, status: 'Completed' as const, completedAt: new Date().toISOString() }
-        }
-        return t
-      })
-
-      if (xpEarned > 0) {
-        setProgression(p => ({ ...p, xp: p.xp + xpEarned }))
-        push(`Gained ${xpEarned} XP!`, 'xp')
-      }
-
-      const newProgress = calculateSkillProgress(updatedSubtopics)
-      const isMastered = updatedSubtopics.every(t => t.status === 'Completed')
-      
-      if (isMastered && s.status !== 'MASTERED') {
-        push(`${s.name} Mastered!`, 'unlock')
-        setProgression(p => ({ ...p, skillsMastered: p.skillsMastered + 1 }))
-      }
-
-      return {
-        ...s,
-        subtopics: updatedSubtopics,
-        progress: newProgress,
-        status: isMastered ? 'MASTERED' : 'LEARNING',
-        completed: isMastered ? new Date().toISOString().slice(0, 10) : s.completed
-      }
-    }))
-    playSoundEffect('unlock', settings.soundEffects)
-  }
 
   const addMilestone = (goalId: string, milestoneText: string) => {
     setGoalState((prev) =>
@@ -576,7 +596,16 @@ function App() {
                     {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
                     {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
                     {route.view === 'project_detail' && <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} />}
-                    {route.view === 'learning' && <SkillsPanel skills={skillState} selectedSkillId={selectedSkillId} onSelectSkill={(id) => navigate({ view: 'skill_detail', id })} onAddSkill={addSkill} onRemoveSkill={removeSkill} onUpdateSkillNotes={updateSkillNotes} onStartSubtopic={startSubtopic} onCompleteSubtopic={completeSubtopic} />}
+                    {route.view === 'learning' && <SkillsPanel 
+            skills={skillState} 
+            activePathways={settings.activePathways || []}
+            onSelectSkill={(id) => navigate({ view: 'skill_detail', id })} 
+            onAddSkill={addSkill} 
+            onStartPathway={startPathway}
+            onRemovePathway={removePathway}
+            onAssociateSkill={associateSkillWithDomain}
+            onRemoveSkill={removeSkill}
+          />}
                     {route.view === 'skill_detail' && <SkillDetail skill={skillState.find(s => s.id === route.id)!} onBack={goBack} onMarkMastered={toggleSkillMastery} onUpdateNotes={updateSkillNotes} />}
                     {route.view === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={(id) => navigate({ view: 'goal_detail', id })} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
                     {route.view === 'goal_detail' && <GoalDetail goal={goalState.find(g => g.id === route.id)!} onBack={goBack} onMarkComplete={markGoalCompleted} onDeleteGoal={removeGoal} onUpdateGoal={updateGoal} />}
