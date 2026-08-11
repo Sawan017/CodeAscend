@@ -41,1334 +41,6223 @@ export type SkillDefinition = {
 
 export const SKILL_REGISTRY: SkillDefinition[] = [
   {
-    id: 'html',
-    canonicalName: 'HTML',
-    type: 'OTHER',
-    aliases: ["html","html5"],
+    id: "git",
+    canonicalName: "Git",
+    type: "OTHER",
+    aliases: [
+      "git",
+      "version control",
+      "github",
+      "gitlab"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Git Basics",
         topics: [
-          { title: 'Basics of HTML', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Repositories",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Commits",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Branching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merging",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Rebasing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Stashing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Remote Repositories",
+        topics: [
+          {
+            title: "Cloning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fetching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pulling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pushing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Forks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pull Requests",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Git",
+        topics: [
+          {
+            title: "Cherry-picking",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interactive Rebase",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Git Hooks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Submodules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bisect",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'css',
-    canonicalName: 'CSS',
-    type: 'OTHER',
-    aliases: ["css","css3"],
+    id: "svn",
+    canonicalName: "SVN",
+    type: "OTHER",
+    aliases: [
+      "svn",
+      "subversion"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "SVN Basics",
         topics: [
-          { title: 'Basics of CSS', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Checking out",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Committing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Updating",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Branching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merging",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'javascript',
-    canonicalName: 'JavaScript',
-    type: 'OTHER',
-    aliases: ["javascript","js"],
+    id: "python",
+    canonicalName: "Python",
+    type: "OTHER",
+    aliases: [
+      "python",
+      "py"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Python Basics",
         topics: [
-          { title: 'Basics of JavaScript', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables & Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Flow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modules & Packages",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Structures",
+        topics: [
+          {
+            title: "Lists & Tuples",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dictionaries & Sets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Comprehensions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generators",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Python",
+        topics: [
+          {
+            title: "Decorators",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Context Managers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Metaclasses",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Asyncio",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'typescript',
-    canonicalName: 'TypeScript',
-    type: 'OTHER',
-    aliases: ["typescript","ts"],
+    id: "javascript",
+    canonicalName: "JavaScript",
+    type: "OTHER",
+    aliases: [
+      "javascript",
+      "js",
+      "ecmascript"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Core JS",
         topics: [
-          { title: 'Basics of TypeScript', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables (let/const)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Arrow Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Closures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hoisting",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Asynchronous JS",
+        topics: [
+          {
+            title: "Promises",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Async/Await",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Event Loop",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Callbacks",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Object-Oriented JS",
+        topics: [
+          {
+            title: "Prototypes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "This Keyword",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modules",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'react',
-    canonicalName: 'React',
-    type: 'OTHER',
-    aliases: ["react","reactjs","react.js"],
+    id: "typescript",
+    canonicalName: "TypeScript",
+    type: "OTHER",
+    aliases: [
+      "typescript",
+      "ts"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Types & Interfaces",
         topics: [
-          { title: 'Basics of React', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Basic Types",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "Interfaces vs Type Aliases",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Enums",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generics",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Types",
+        topics: [
+          {
+            title: "Union & Intersection Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mapped Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Conditional Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Utility Types",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Configuration",
+        topics: [
+          {
+            title: "tsconfig.json",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Strict Mode",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Module Resolution",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'nextjs',
-    canonicalName: 'Next.js',
-    type: 'OTHER',
-    aliases: ["nextjs","next.js","next"],
+    id: "java",
+    canonicalName: "Java",
+    type: "OTHER",
+    aliases: [
+      "java",
+      "jvm",
+      "jdk"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Java Fundamentals",
         topics: [
-          { title: 'Basics of Next.js', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "OOP Concepts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Classes & Objects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interfaces & Abstract Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Packages",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Java Core",
+        topics: [
+          {
+            title: "Collections Framework",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Exceptions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generics",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Streams API",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lambdas",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concurrency",
+        topics: [
+          {
+            title: "Threads",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Runnables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Executors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Synchronization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Locks",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'python',
-    canonicalName: 'Python',
-    type: 'OTHER',
-    aliases: ["python","py"],
+    id: "cpp",
+    canonicalName: "C++",
+    type: "OTHER",
+    aliases: [
+      "c++",
+      "cpp",
+      "c++11"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "C++ Basics",
         topics: [
-          { title: 'Basics of Python', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables & Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Structures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pointers & References",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Object-Oriented C++",
+        topics: [
+          {
+            title: "Classes & Objects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inheritance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Polymorphism",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Operator Overloading",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced C++",
+        topics: [
+          {
+            title: "Templates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "STL (Standard Template Library)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Smart Pointers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Move Semantics",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'go',
-    canonicalName: 'Go',
-    type: 'OTHER',
-    aliases: ["go","golang"],
+    id: "c",
+    canonicalName: "C",
+    type: "OTHER",
+    aliases: [
+      "c"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "C Fundamentals",
         topics: [
-          { title: 'Basics of Go', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Flow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Arrays & Strings",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Memory Management",
+        topics: [
+          {
+            title: "Pointers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dynamic Memory (malloc/free)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pointer Arithmetic",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Structs & Unions",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'rust',
-    canonicalName: 'Rust',
-    type: 'OTHER',
-    aliases: ["rust","rs"],
+    id: "csharp",
+    canonicalName: "C#",
+    type: "OTHER",
+    aliases: [
+      "c#",
+      "csharp",
+      ".net"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "C# Basics",
         topics: [
-          { title: 'Basics of Rust', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Flow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced C#",
+        topics: [
+          {
+            title: "LINQ",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Delegates & Events",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Async/Await",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generics",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Attributes",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'csharp',
-    canonicalName: 'C#',
-    type: 'OTHER',
-    aliases: ["c#","csharp"],
+    id: "go",
+    canonicalName: "Go",
+    type: "OTHER",
+    aliases: [
+      "go",
+      "golang"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Go Basics",
         topics: [
-          { title: 'Basics of C#', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Packages",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Structs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Slices & Maps",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concurrency",
+        topics: [
+          {
+            title: "Goroutines",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Channels",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Select",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "WaitGroups",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mutexes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Interfaces & Error Handling",
+        topics: [
+          {
+            title: "Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Type Assertions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error Handling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Panics & Recover",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'postgresql',
-    canonicalName: 'PostgreSQL',
-    type: 'OTHER',
-    aliases: ["postgresql","postgres"],
+    id: "rust",
+    canonicalName: "Rust",
+    type: "OTHER",
+    aliases: [
+      "rust",
+      "rs"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Rust Basics",
         topics: [
-          { title: 'Basics of PostgreSQL', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables & Mutability",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Flow",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ownership & Borrowing",
+        topics: [
+          {
+            title: "Ownership Rules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "References & Borrowing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lifetimes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Rust",
+        topics: [
+          {
+            title: "Structs & Enums",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pattern Matching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Traits",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Concurrency",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Smart Pointers",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'rest-api',
-    canonicalName: 'REST API',
-    type: 'OTHER',
-    aliases: ["rest api","rest-api","restful"],
+    id: "ruby",
+    canonicalName: "Ruby",
+    type: "OTHER",
+    aliases: [
+      "ruby"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Ruby Basics",
         topics: [
-          { title: 'Basics of REST API', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Methods",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Blocks, Procs, & Lambdas",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modules",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "OOP in Ruby",
+        topics: [
+          {
+            title: "Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inheritance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mixins",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Metaprogramming",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'docker',
-    canonicalName: 'Docker',
-    type: 'OTHER',
-    aliases: ["docker"],
+    id: "php",
+    canonicalName: "PHP",
+    type: "OTHER",
+    aliases: [
+      "php"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "PHP Basics",
         topics: [
-          { title: 'Basics of Docker', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Arrays",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Structures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced PHP",
+        topics: [
+          {
+            title: "OOP",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Traits",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Namespaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PDO (PHP Data Objects)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Composer",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'kubernetes',
-    canonicalName: 'Kubernetes',
-    type: 'OTHER',
-    aliases: ["kubernetes","k8s"],
+    id: "swift",
+    canonicalName: "Swift",
+    type: "OTHER",
+    aliases: [
+      "swift",
+      "ios"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Swift Basics",
         topics: [
-          { title: 'Basics of Kubernetes', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Variables & Constants",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Optionals",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Control Flow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions & Closures",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "OOP & Protocols",
+        topics: [
+          {
+            title: "Classes & Structs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Properties & Methods",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Protocols",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Extensions",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'linux',
-    canonicalName: 'Linux',
-    type: 'OTHER',
-    aliases: ["linux"],
+    id: "kotlin",
+    canonicalName: "Kotlin",
+    type: "OTHER",
+    aliases: [
+      "kotlin",
+      "android"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Kotlin Basics",
         topics: [
-          { title: 'Basics of Linux', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Basic Syntax",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "Null Safety",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions & Lambdas",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Classes & Objects",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Kotlin",
+        topics: [
+          {
+            title: "Coroutines",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Extension Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sealed Classes",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'cybersecurity',
-    canonicalName: 'Cybersecurity',
-    type: 'OTHER',
-    aliases: ["cybersecurity","security"],
+    id: "html",
+    canonicalName: "HTML",
+    type: "OTHER",
+    aliases: [
+      "html",
+      "html5"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "HTML Basics",
         topics: [
-          { title: 'Basics of Cybersecurity', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Document Structure",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Semantic HTML",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Forms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multimedia",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'cryptography',
-    canonicalName: 'Cryptography',
-    type: 'OTHER',
-    aliases: ["cryptography","crypto"],
+    id: "css",
+    canonicalName: "CSS",
+    type: "OTHER",
+    aliases: [
+      "css",
+      "css3"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "CSS Basics",
         topics: [
-          { title: 'Basics of Cryptography', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Selectors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Box Model",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Typography",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Colors",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "CSS Layout",
+        topics: [
+          {
+            title: "Flexbox",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Grid",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Positioning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Responsive Design",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Media Queries",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced CSS",
+        topics: [
+          {
+            title: "Animations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transitions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Properties (Variables)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CSS Preprocessors (Sass/Less)",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'sql',
-    canonicalName: 'SQL',
-    type: 'OTHER',
-    aliases: ["sql"],
+    id: "react",
+    canonicalName: "React",
+    type: "OTHER",
+    aliases: [
+      "react",
+      "react.js",
+      "reactjs"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "React Basics",
         topics: [
-          { title: 'Basics of SQL', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "JSX",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Components",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Props",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Event Handling",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "React Hooks",
+        topics: [
+          {
+            title: "useState",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "useEffect",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "useContext",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "useRef",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Hooks",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced React",
+        topics: [
+          {
+            title: "Context API",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Performance Optimization (Memo/Callback)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Portals",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error Boundaries",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'cs-fundamentals',
-    canonicalName: 'CS Fundamentals',
-    type: 'OTHER',
-    aliases: ["cs fundamentals","cs-fundamentals"],
+    id: "angular",
+    canonicalName: "Angular",
+    type: "OTHER",
+    aliases: [
+      "angular"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Angular Basics",
         topics: [
-          { title: 'Basics of CS Fundamentals', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Components",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Templates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Directives",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Angular Core",
+        topics: [
+          {
+            title: "Services & DI",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Routing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Forms (Reactive & Template-driven)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RxJS & Observables",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'system-design',
-    canonicalName: 'System Design',
-    type: 'OTHER',
-    aliases: ["system design","system-design"],
+    id: "vue-js",
+    canonicalName: "Vue.js",
+    type: "OTHER",
+    aliases: [
+      "vue",
+      "vue.js",
+      "vuejs"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Vue Basics",
         topics: [
-          { title: 'Basics of System Design', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Instance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Template Syntax",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Computed Properties",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Watchers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Components",
+        topics: [
+          {
+            title: "Props",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Events",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Slots",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Composition API",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'cpp',
-    canonicalName: 'C++',
-    type: 'OTHER',
-    aliases: ["cpp","c++"],
+    id: "svelte",
+    canonicalName: "Svelte",
+    type: "OTHER",
+    aliases: [
+      "svelte"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Svelte Basics",
         topics: [
-          { title: 'Basics of C++', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Reactivity",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Props",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Logic Blocks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Events",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Svelte",
+        topics: [
+          {
+            title: "Stores",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lifecycle",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Actions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transitions",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'dsa',
-    canonicalName: 'Data Structures & Algorithms',
-    type: 'OTHER',
-    aliases: ["dsa","data structures and algorithms"],
+    id: "tailwind-css",
+    canonicalName: "Tailwind CSS",
+    type: "OTHER",
+    aliases: [
+      "tailwind",
+      "tailwindcss"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Tailwind Basics",
         topics: [
-          { title: 'Basics of Data Structures & Algorithms', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Utility-First Concept",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Responsive Design",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hover & Focus States",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Customization",
+        topics: [
+          {
+            title: "Configuration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Adding Custom Styles",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Plugins",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'daa',
-    canonicalName: 'Design & Analysis of Algorithms',
-    type: 'OTHER',
-    aliases: ["daa","design and analysis of algorithms"],
+    id: "figma",
+    canonicalName: "Figma",
+    type: "OTHER",
+    aliases: [
+      "figma"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Figma Basics",
         topics: [
-          { title: 'Basics of Design & Analysis of Algorithms', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Frames",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Shapes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Text",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Constraints",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Figma",
+        topics: [
+          {
+            title: "Auto Layout",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Components",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variants",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Prototyping",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'pointers',
-    canonicalName: 'Pointers',
-    type: 'OTHER',
-    aliases: ["pointers"],
+    id: "node-js",
+    canonicalName: "Node.js",
+    type: "OTHER",
+    aliases: [
+      "node.js",
+      "node",
+      "nodejs"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Node Basics",
         topics: [
-          { title: 'Basics of Pointers', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Event Loop",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modules (CommonJS vs ESM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "NPM/Yarn",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "File System",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Web Servers",
+        topics: [
+          {
+            title: "HTTP Module",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Express.js Basics",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "Middleware",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Routing",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'binary-trees',
-    canonicalName: 'Binary Trees',
-    type: 'OTHER',
-    aliases: ["binary trees","binary-trees"],
+    id: "express-js",
+    canonicalName: "Express.js",
+    type: "OTHER",
+    aliases: [
+      "express",
+      "express.js"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Express Basics",
         topics: [
-          { title: 'Basics of Binary Trees', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Routing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Middleware",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Request/Response Objects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error Handling",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'aiml',
-    canonicalName: 'AI & ML',
-    type: 'OTHER',
-    aliases: ["aiml","ai & ml"],
+    id: "nestjs",
+    canonicalName: "NestJS",
+    type: "OTHER",
+    aliases: [
+      "nestjs",
+      "nest"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "NestJS Core",
         topics: [
-          { title: 'Basics of AI & ML', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
+          {
+            title: "Controllers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Providers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Middleware",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Exception Filters",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Guards",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interceptors",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'java',
-    canonicalName: 'Java',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['java', 'core java'],
+    id: "django",
+    canonicalName: "Django",
+    type: "OTHER",
+    aliases: [
+      "django"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Django Basics",
         topics: [
-          { title: 'Syntax', complexity: 'Simple', size: 'Tiny' },
-          { title: 'Variables', complexity: 'Simple', size: 'Small' },
-          { title: 'Primitive Data Types', complexity: 'Simple', size: 'Small' },
-          { title: 'Operators', complexity: 'Simple', size: 'Tiny' },
-          { title: 'Input / Output', complexity: 'Simple', size: 'Tiny' },
-          { title: 'Type Casting', complexity: 'Medium', size: 'Small' }
+          {
+            title: "Models",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Views",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Templates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "URLs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Admin Interface",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Control Flow',
+        domain: "Advanced Django",
         topics: [
-          { title: 'if / else', complexity: 'Simple', size: 'Small' },
-          { title: 'switch', complexity: 'Simple', size: 'Small' },
-          { title: 'for loop', complexity: 'Simple', size: 'Small' },
-          { title: 'while loop', complexity: 'Simple', size: 'Tiny' },
-          { title: 'do-while', complexity: 'Simple', size: 'Tiny' },
-          { title: 'break / continue', complexity: 'Simple', size: 'Tiny' }
-        ]
-      },
-      {
-        domain: 'Methods',
-        topics: [
-          { title: 'Methods', complexity: 'Medium', size: 'Medium' },
-          { title: 'Parameters', complexity: 'Simple', size: 'Small' },
-          { title: 'Return Values', complexity: 'Simple', size: 'Small' },
-          { title: 'Method Overloading', complexity: 'Medium', size: 'Medium' },
-          { title: 'Recursion', complexity: 'Hard', size: 'Large' },
-          { title: 'Scope', complexity: 'Medium', size: 'Small' }
-        ]
-      },
-      {
-        domain: 'Object-Oriented Programming',
-        topics: [
-          { title: 'Classes', complexity: 'Medium', size: 'Medium' },
-          { title: 'Objects', complexity: 'Medium', size: 'Medium' },
-          { title: 'Constructors', complexity: 'Medium', size: 'Small' },
-          { title: 'Encapsulation', complexity: 'Medium', size: 'Medium' },
-          { title: 'Inheritance', complexity: 'Hard', size: 'Large' },
-          { title: 'Polymorphism', complexity: 'Hard', size: 'Large' },
-          { title: 'Abstraction', complexity: 'Medium', size: 'Medium' },
-          { title: 'Interfaces', complexity: 'Hard', size: 'Medium' },
-          { title: 'Abstract Classes', complexity: 'Hard', size: 'Medium' }
-        ]
-      },
-      {
-        domain: 'Collections',
-        topics: [
-          { title: 'ArrayList', complexity: 'Medium', size: 'Medium' },
-          { title: 'LinkedList', complexity: 'Medium', size: 'Medium' },
-          { title: 'HashSet', complexity: 'Medium', size: 'Medium' },
-          { title: 'TreeSet', complexity: 'Medium', size: 'Medium' },
-          { title: 'HashMap', complexity: 'Hard', size: 'Large' },
-          { title: 'TreeMap', complexity: 'Hard', size: 'Large' },
-          { title: 'Queue', complexity: 'Medium', size: 'Small' },
-          { title: 'Deque', complexity: 'Medium', size: 'Small' },
-          { title: 'Iterators', complexity: 'Medium', size: 'Small' }
-        ]
-      },
-      {
-        domain: 'Exceptions',
-        topics: [
-          { title: 'try / catch', complexity: 'Medium', size: 'Small' },
-          { title: 'finally', complexity: 'Medium', size: 'Tiny' },
-          { title: 'throw', complexity: 'Medium', size: 'Tiny' },
-          { title: 'throws', complexity: 'Medium', size: 'Tiny' },
-          { title: 'Custom Exceptions', complexity: 'Hard', size: 'Medium' }
-        ]
-      },
-      {
-        domain: 'Advanced Java',
-        topics: [
-          { title: 'Generics', complexity: 'Hard', size: 'Large' },
-          { title: 'Streams', complexity: 'Hard', size: 'Large' },
-          { title: 'Lambdas', complexity: 'Medium', size: 'Medium' },
-          { title: 'Functional Interfaces', complexity: 'Medium', size: 'Medium' },
-          { title: 'Multithreading', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Concurrency', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'JVM concepts', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Memory management', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Reflection', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Annotations', complexity: 'Hard', size: 'Medium' },
-          { title: 'Modules', complexity: 'Medium', size: 'Medium' }
+          {
+            title: "ORM",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Forms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Authentication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Django REST Framework",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'c',
-    canonicalName: 'C',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['c', 'c programming'],
+    id: "flask",
+    canonicalName: "Flask",
+    type: "OTHER",
+    aliases: [
+      "flask"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "Flask Basics",
         topics: [
-          { title: 'Syntax & Types', complexity: 'Simple', size: 'Small' },
-          { title: 'Variables & Constants', complexity: 'Simple', size: 'Small' },
-          { title: 'Operators', complexity: 'Simple', size: 'Small' },
+          {
+            title: "Routing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Templates (Jinja2)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Request Data",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Responses",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Control Flow',
+        domain: "Advanced Flask",
         topics: [
-          { title: 'Conditionals (if, switch)', complexity: 'Simple', size: 'Medium' },
-          { title: 'Loops (for, while, do-while)', complexity: 'Simple', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Functions',
-        topics: [
-          { title: 'Function Prototypes', complexity: 'Medium', size: 'Small' },
-          { title: 'Pass by Value', complexity: 'Medium', size: 'Small' },
-          { title: 'Scope & Storage Classes', complexity: 'Hard', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Memory & Pointers',
-        topics: [
-          { title: 'Pointers Overview', complexity: 'Hard', size: 'Large' },
-          { title: 'Pointer Arithmetic', complexity: 'Very Hard', size: 'Medium' },
-          { title: 'Pass by Reference', complexity: 'Hard', size: 'Medium' },
-          { title: 'Dynamic Memory (malloc, free)', complexity: 'Very Hard', size: 'Large' },
-        ]
-      },
-      {
-        domain: 'Data Structures',
-        topics: [
-          { title: 'Arrays & Strings', complexity: 'Medium', size: 'Medium' },
-          { title: 'Structs', complexity: 'Medium', size: 'Medium' },
-          { title: 'Unions & Bitfields', complexity: 'Hard', size: 'Medium' },
-          { title: 'Enums & Typedef', complexity: 'Medium', size: 'Small' },
-        ]
-      },
-      {
-        domain: 'Advanced C',
-        topics: [
-          { title: 'File I/O', complexity: 'Medium', size: 'Large' },
-          { title: 'Preprocessor Directives', complexity: 'Hard', size: 'Medium' },
-          { title: 'Function Pointers', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Compilation Process', complexity: 'Hard', size: 'Medium' },
+          {
+            title: "Blueprints",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Application Context",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Extensions (SQLAlchemy, Migrate)",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'cpp',
-    canonicalName: 'C++',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['c++', 'cpp', 'c plus plus'],
+    id: "spring-boot",
+    canonicalName: "Spring Boot",
+    type: "OTHER",
+    aliases: [
+      "spring",
+      "spring boot"
+    ],
     curriculum: [
       {
-        domain: 'C++ Fundamentals',
+        domain: "Spring Basics",
         topics: [
-          { title: 'Syntax & Basic Types', complexity: 'Simple', size: 'Small' },
-          { title: 'I/O Streams', complexity: 'Simple', size: 'Small' },
-          { title: 'Namespaces', complexity: 'Medium', size: 'Small' },
+          {
+            title: "Dependency Injection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inversion of Control",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Spring MVC",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Spring Data JPA",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Object-Oriented C++',
+        domain: "Advanced Spring",
         topics: [
-          { title: 'Classes & Objects', complexity: 'Medium', size: 'Medium' },
-          { title: 'Constructors & Destructors', complexity: 'Medium', size: 'Medium' },
-          { title: 'Inheritance & Polymorphism', complexity: 'Hard', size: 'Large' },
-          { title: 'Virtual Functions', complexity: 'Very Hard', size: 'Medium' },
-          { title: 'Operator Overloading', complexity: 'Hard', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Memory Management',
-        topics: [
-          { title: 'Pointers & References', complexity: 'Hard', size: 'Large' },
-          { title: 'Dynamic Memory (new/delete)', complexity: 'Hard', size: 'Medium' },
-          { title: 'Smart Pointers', complexity: 'Very Hard', size: 'Large' },
-          { title: 'RAII', complexity: 'Very Hard', size: 'Large' },
-        ]
-      },
-      {
-        domain: 'STL',
-        topics: [
-          { title: 'Containers', complexity: 'Medium', size: 'Large' },
-          { title: 'Iterators', complexity: 'Hard', size: 'Medium' },
-          { title: 'Algorithms', complexity: 'Hard', size: 'Large' },
-        ]
-      },
-      {
-        domain: 'Advanced C++',
-        topics: [
-          { title: 'Templates', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Exceptions', complexity: 'Hard', size: 'Medium' },
-          { title: 'Move Semantics', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Lambdas', complexity: 'Hard', size: 'Medium' },
-          { title: 'Concurrency', complexity: 'Very Hard', size: 'Very Large' },
+          {
+            title: "Spring Security",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Actuator",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Microservices with Spring Cloud",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'python',
-    canonicalName: 'Python',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['python', 'py'],
+    id: "graphql",
+    canonicalName: "GraphQL",
+    type: "OTHER",
+    aliases: [
+      "graphql",
+      "gql"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "GraphQL Basics",
         topics: [
-          { title: 'Syntax & Variables', complexity: 'Simple', size: 'Tiny' },
-          { title: 'Data Types', complexity: 'Simple', size: 'Small' },
-          { title: 'Operators', complexity: 'Simple', size: 'Tiny' },
-          { title: 'String Manipulation', complexity: 'Simple', size: 'Small' },
+          {
+            title: "Queries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mutations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Schemas & Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Resolvers",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Control Flow',
+        domain: "Advanced GraphQL",
         topics: [
-          { title: 'If/Elif/Else', complexity: 'Simple', size: 'Small' },
-          { title: 'For & While Loops', complexity: 'Simple', size: 'Small' },
-          { title: 'Break, Continue, Pass', complexity: 'Simple', size: 'Tiny' },
-        ]
-      },
-      {
-        domain: 'Data Structures',
-        topics: [
-          { title: 'Lists & Tuples', complexity: 'Simple', size: 'Medium' },
-          { title: 'Dictionaries', complexity: 'Medium', size: 'Medium' },
-          { title: 'Sets', complexity: 'Medium', size: 'Small' },
-          { title: 'Comprehensions', complexity: 'Hard', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Functions',
-        topics: [
-          { title: 'Defining Functions', complexity: 'Simple', size: 'Small' },
-          { title: 'Arguments (*args, **kwargs)', complexity: 'Medium', size: 'Medium' },
-          { title: 'Lambda Functions', complexity: 'Medium', size: 'Small' },
-          { title: 'Scope (LEGB)', complexity: 'Hard', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Object-Oriented Programming',
-        topics: [
-          { title: 'Classes & Objects', complexity: 'Medium', size: 'Medium' },
-          { title: 'Inheritance & Polymorphism', complexity: 'Hard', size: 'Large' },
-          { title: 'Magic Methods', complexity: 'Hard', size: 'Medium' },
-          { title: 'Decorators (@property)', complexity: 'Very Hard', size: 'Large' },
-        ]
-      },
-      {
-        domain: 'Advanced Python',
-        topics: [
-          { title: 'File Handling', complexity: 'Medium', size: 'Medium' },
-          { title: 'Try/Except', complexity: 'Medium', size: 'Small' },
-          { title: 'Decorators', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Generators', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Asyncio', complexity: 'Very Hard', size: 'Very Large' },
+          {
+            title: "Subscriptions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fragments",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Directives",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Apollo Client/Server",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'javascript',
-    canonicalName: 'JavaScript',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['javascript', 'js', 'vanilla js'],
+    id: "rest-api",
+    canonicalName: "REST API",
+    type: "OTHER",
+    aliases: [
+      "rest",
+      "restful"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "REST Basics",
         topics: [
-          { title: 'Syntax & Variables', complexity: 'Simple', size: 'Tiny' },
-          { title: 'Data Types', complexity: 'Simple', size: 'Small' },
-          { title: 'Operators', complexity: 'Simple', size: 'Tiny' },
-          { title: 'Type Coercion', complexity: 'Medium', size: 'Small' },
+          {
+            title: "HTTP Methods",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Status Codes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Resource Naming",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Statelessness",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Functions',
+        domain: "API Design",
         topics: [
-          { title: 'Function Declarations & Expressions', complexity: 'Medium', size: 'Medium' },
-          { title: 'Arrow Functions', complexity: 'Simple', size: 'Small' },
-          { title: 'Scope & Hoisting', complexity: 'Hard', size: 'Medium' },
-          { title: 'Closures', complexity: 'Very Hard', size: 'Large' },
-          { title: 'this Keyword', complexity: 'Very Hard', size: 'Large' },
-        ]
-      },
-      {
-        domain: 'Objects & Arrays',
-        topics: [
-          { title: 'Object Literals', complexity: 'Simple', size: 'Small' },
-          { title: 'Array Methods (map, filter)', complexity: 'Hard', size: 'Large' },
-          { title: 'Destructuring', complexity: 'Medium', size: 'Medium' },
-          { title: 'Spread & Rest', complexity: 'Medium', size: 'Small' },
-        ]
-      },
-      {
-        domain: 'Asynchronous JavaScript',
-        topics: [
-          { title: 'Callbacks', complexity: 'Medium', size: 'Medium' },
-          { title: 'Promises', complexity: 'Hard', size: 'Large' },
-          { title: 'Async/Await', complexity: 'Hard', size: 'Medium' },
-          { title: 'Event Loop', complexity: 'Very Hard', size: 'Very Large' },
-        ]
-      },
-      {
-        domain: 'DOM & Events',
-        topics: [
-          { title: 'DOM Manipulation', complexity: 'Medium', size: 'Medium' },
-          { title: 'Event Listeners', complexity: 'Hard', size: 'Medium' },
-          { title: 'Event Delegation', complexity: 'Very Hard', size: 'Large' },
+          {
+            title: "Versioning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pagination",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Filtering & Sorting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Authentication (OAuth/JWT)",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'typescript',
-    canonicalName: 'TypeScript',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['typescript', 'ts'],
+    id: "grpc",
+    canonicalName: "gRPC",
+    type: "OTHER",
+    aliases: [
+      "grpc",
+      "protobuf"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "gRPC Basics",
         topics: [
-          { title: 'Type Annotations', complexity: 'Simple', size: 'Small' },
-          { title: 'Basic Types', complexity: 'Simple', size: 'Medium' },
-          { title: 'Interfaces vs Types', complexity: 'Medium', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Advanced Types',
-        topics: [
-          { title: 'Generics', complexity: 'Hard', size: 'Large' },
-          { title: 'Utility Types', complexity: 'Hard', size: 'Medium' },
-          { title: 'Mapped Types', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Conditional Types', complexity: 'Very Hard', size: 'Very Large' },
+          {
+            title: "Protocol Buffers (Protobuf)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Service Definition",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Unary RPC",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Streaming RPC (Server, Client, Bidirectional)",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'csharp',
-    canonicalName: 'C#',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['c#', 'csharp', 'c-sharp'],
+    id: "sql",
+    canonicalName: "SQL",
+    type: "OTHER",
+    aliases: [
+      "sql",
+      "relational-database"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "SQL Basics",
         topics: [
-          { title: 'Syntax & Data Types', complexity: 'Simple', size: 'Medium' },
-          { title: 'Control Flow', complexity: 'Simple', size: 'Medium' },
+          {
+            title: "SELECT",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "WHERE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ORDER BY",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GROUP BY",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "HAVING",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Object-Oriented C#',
+        domain: "Joins & Relations",
         topics: [
-          { title: 'Classes & Structs', complexity: 'Medium', size: 'Large' },
-          { title: 'Properties & Fields', complexity: 'Medium', size: 'Medium' },
-          { title: 'Inheritance & Interfaces', complexity: 'Hard', size: 'Large' },
+          {
+            title: "INNER JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LEFT/RIGHT JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "FULL OUTER JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Self Joins",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Subqueries",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Advanced C#',
+        domain: "DDL & DML",
         topics: [
-          { title: 'LINQ', complexity: 'Hard', size: 'Very Large' },
-          { title: 'Delegates & Events', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Async / Await', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Records & Pattern Matching', complexity: 'Hard', size: 'Medium' },
+          {
+            title: "CREATE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ALTER",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DROP",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "INSERT",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UPDATE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DELETE",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced SQL",
+        topics: [
+          {
+            title: "Indexes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transactions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Views",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Stored Procedures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Triggers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Window Functions",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'go',
-    canonicalName: 'Go',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['go', 'golang'],
+    id: "postgresql",
+    canonicalName: "PostgreSQL",
+    type: "OTHER",
+    aliases: [
+      "postgresql",
+      "postgres",
+      "psql"
+    ],
     curriculum: [
       {
-        domain: 'Go Fundamentals',
+        domain: "Postgres Basics",
         topics: [
-          { title: 'Syntax & Types', complexity: 'Simple', size: 'Medium' },
-          { title: 'Functions & Multiple Returns', complexity: 'Medium', size: 'Small' },
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "JSONB",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Array Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "psql CLI",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Data Structures',
+        domain: "Advanced Postgres",
         topics: [
-          { title: 'Arrays & Slices', complexity: 'Medium', size: 'Large' },
-          { title: 'Maps', complexity: 'Medium', size: 'Medium' },
-          { title: 'Pointers', complexity: 'Hard', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Concurrency',
-        topics: [
-          { title: 'Goroutines', complexity: 'Hard', size: 'Large' },
-          { title: 'Channels', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Select Statement', complexity: 'Very Hard', size: 'Medium' },
-          { title: 'WaitGroups & Mutexes', complexity: 'Very Hard', size: 'Medium' },
+          {
+            title: "Full Text Search",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PostGIS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Partitioning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Vacuuming",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'rust',
-    canonicalName: 'Rust',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['rust', 'rs'],
+    id: "mysql",
+    canonicalName: "MySQL",
+    type: "OTHER",
+    aliases: [
+      "mysql",
+      "mariadb"
+    ],
     curriculum: [
       {
-        domain: 'Rust Fundamentals',
+        domain: "MySQL Basics",
         topics: [
-          { title: 'Variables & Mutability', complexity: 'Medium', size: 'Medium' },
-          { title: 'Data Types', complexity: 'Simple', size: 'Small' },
+          {
+            title: "Storage Engines (InnoDB vs MyISAM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "User Management",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Memory & Ownership',
+        domain: "Advanced MySQL",
         topics: [
-          { title: 'Ownership Rules', complexity: 'Very Hard', size: 'Large' },
-          { title: 'References & Borrowing', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Lifetimes', complexity: 'Very Hard', size: 'Very Large' },
-        ]
-      },
-      {
-        domain: 'Structs & Enums',
-        topics: [
-          { title: 'Enums', complexity: 'Medium', size: 'Medium' },
-          { title: 'Pattern Matching', complexity: 'Hard', size: 'Large' },
-          { title: 'Option & Result', complexity: 'Hard', size: 'Medium' },
-        ]
-      },
-      {
-        domain: 'Advanced Rust',
-        topics: [
-          { title: 'Traits & Generics', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Smart Pointers', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Concurrency', complexity: 'Very Hard', size: 'Very Large' },
+          {
+            title: "Replication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Clustering",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Performance Tuning",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Backup & Restore",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'sql',
-    canonicalName: 'SQL',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['sql', 'structured query language'],
+    id: "mongodb",
+    canonicalName: "MongoDB",
+    type: "OTHER",
+    aliases: [
+      "mongodb",
+      "mongo",
+      "nosql"
+    ],
     curriculum: [
       {
-        domain: 'Fundamentals',
+        domain: "MongoDB Basics",
         topics: [
-          { title: 'SELECT Statements', complexity: 'Simple', size: 'Small' },
-          { title: 'WHERE Clause', complexity: 'Simple', size: 'Small' },
-          { title: 'ORDER BY', complexity: 'Simple', size: 'Tiny' },
+          {
+            title: "Documents & Collections",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "BSON",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CRUD Operations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Indexes",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Joins & Relations',
+        domain: "Advanced MongoDB",
         topics: [
-          { title: 'INNER JOIN', complexity: 'Medium', size: 'Medium' },
-          { title: 'OUTER JOINS', complexity: 'Hard', size: 'Medium' },
-          { title: 'CROSS JOIN', complexity: 'Medium', size: 'Small' },
-        ]
-      },
-      {
-        domain: 'Advanced SQL',
-        topics: [
-          { title: 'GROUP BY & Aggregation', complexity: 'Hard', size: 'Large' },
-          { title: 'Subqueries', complexity: 'Hard', size: 'Large' },
-          { title: 'Window Functions', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'CTEs', complexity: 'Hard', size: 'Medium' },
+          {
+            title: "Aggregation Pipeline",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replica Sets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sharding",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data Modeling",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'php',
-    canonicalName: 'PHP',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['php'],
-    curriculum: [{ domain: 'Fundamentals', topics: [{ title: 'Syntax', complexity: 'Simple', size: 'Medium' }] }]
-  },
-  {
-    id: 'kotlin',
-    canonicalName: 'Kotlin',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['kotlin', 'kt'],
-    curriculum: [{ domain: 'Fundamentals', topics: [{ title: 'Syntax', complexity: 'Simple', size: 'Medium' }] }]
-  },
-  {
-    id: 'swift',
-    canonicalName: 'Swift',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['swift'],
-    curriculum: [{ domain: 'Fundamentals', topics: [{ title: 'Syntax', complexity: 'Simple', size: 'Medium' }] }]
-  },
-  {
-    id: 'dart',
-    canonicalName: 'Dart',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['dart'],
-    curriculum: [{ domain: 'Fundamentals', topics: [{ title: 'Syntax', complexity: 'Simple', size: 'Medium' }] }]
-  },
-  {
-    id: 'ruby',
-    canonicalName: 'Ruby',
-    type: 'PROGRAMMING_LANGUAGE',
-    aliases: ['ruby', 'rb'],
-    curriculum: [{ domain: 'Fundamentals', topics: [{ title: 'Syntax', complexity: 'Simple', size: 'Medium' }] }]
-  },
-  {
-    id: 'dsa',
-    canonicalName: 'Data Structures & Algorithms',
-    type: 'DSA',
-    aliases: ['dsa', 'data structures', 'algorithms'],
+    id: "redis",
+    canonicalName: "Redis",
+    type: "OTHER",
+    aliases: [
+      "redis",
+      "caching"
+    ],
     curriculum: [
       {
-        domain: 'Foundations',
+        domain: "Redis Basics",
         topics: [
-          { title: 'Complexity Analysis', complexity: 'Medium', size: 'Small' },
-          { title: 'Big O', complexity: 'Medium', size: 'Small' },
-          { title: 'Big Theta', complexity: 'Hard', size: 'Tiny' },
-          { title: 'Big Omega', complexity: 'Hard', size: 'Tiny' },
-          { title: 'Time Complexity', complexity: 'Medium', size: 'Medium' },
-          { title: 'Space Complexity', complexity: 'Medium', size: 'Medium' },
-          { title: 'Recursion', complexity: 'Hard', size: 'Large' },
-          { title: 'Iteration', complexity: 'Simple', size: 'Small' }
+          {
+            title: "Strings",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lists",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hashes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sorted Sets",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Arrays',
+        domain: "Advanced Redis",
         topics: [
-          { title: 'One-dimensional Arrays', complexity: 'Simple', size: 'Small' },
-          { title: 'Multidimensional Arrays', complexity: 'Medium', size: 'Medium' },
-          { title: 'Dynamic Arrays', complexity: 'Medium', size: 'Medium' },
-          { title: 'Prefix Sum', complexity: 'Hard', size: 'Medium' },
-          { title: 'Difference Arrays', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Sliding Window', complexity: 'Hard', size: 'Large' },
-          { title: 'Two Pointer Technique', complexity: 'Hard', size: 'Large' }
-        ]
-      },
-      {
-        domain: 'Linked Lists',
-        topics: [
-          { title: 'Singly Linked List', complexity: 'Medium', size: 'Large' },
-          { title: 'Doubly Linked List', complexity: 'Medium', size: 'Large' },
-          { title: 'Circular Linked List', complexity: 'Hard', size: 'Medium' },
-          { title: 'Insertions', complexity: 'Simple', size: 'Small' },
-          { title: 'Deletions', complexity: 'Simple', size: 'Small' },
-          { title: 'Reversal', complexity: 'Hard', size: 'Large' },
-          { title: 'Fast and Slow Pointers', complexity: 'Hard', size: 'Large' },
-          { title: 'Merge Linked Lists', complexity: 'Medium', size: 'Medium' }
-        ]
-      },
-      {
-        domain: 'Stacks',
-        topics: [
-          { title: 'Stack Fundamentals', complexity: 'Simple', size: 'Medium' },
-          { title: 'Array-based Stack', complexity: 'Medium', size: 'Small' },
-          { title: 'Linked Stack', complexity: 'Medium', size: 'Small' },
-          { title: 'Applications of Stack', complexity: 'Hard', size: 'Large' },
-          { title: 'Monotonic Stack', complexity: 'Very Hard', size: 'Very Large' }
-        ]
-      },
-      {
-        domain: 'Queues',
-        topics: [
-          { title: 'Queue Fundamentals', complexity: 'Simple', size: 'Medium' },
-          { title: 'Circular Queue', complexity: 'Medium', size: 'Medium' },
-          { title: 'Deque', complexity: 'Medium', size: 'Medium' },
-          { title: 'Priority Queue', complexity: 'Hard', size: 'Large' },
-          { title: 'Queue Applications', complexity: 'Medium', size: 'Large' }
-        ]
-      },
-      {
-        domain: 'Hashing',
-        topics: [
-          { title: 'Hash Tables', complexity: 'Medium', size: 'Medium' },
-          { title: 'Hash Functions', complexity: 'Hard', size: 'Medium' },
-          { title: 'Collision Handling', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Chaining', complexity: 'Hard', size: 'Medium' },
-          { title: 'Open Addressing', complexity: 'Very Hard', size: 'Medium' },
-          { title: 'Hash Maps', complexity: 'Medium', size: 'Medium' },
-          { title: 'Hash Sets', complexity: 'Medium', size: 'Small' }
-        ]
-      },
-      {
-        domain: 'Trees',
-        topics: [
-          { title: 'Tree Fundamentals', complexity: 'Medium', size: 'Large' },
-          { title: 'Binary Trees', complexity: 'Medium', size: 'Large' },
-          { title: 'Tree Traversals', complexity: 'Medium', size: 'Medium' },
-          { title: 'Preorder', complexity: 'Medium', size: 'Small' },
-          { title: 'Inorder', complexity: 'Medium', size: 'Small' },
-          { title: 'Postorder', complexity: 'Medium', size: 'Small' },
-          { title: 'Level Order', complexity: 'Hard', size: 'Medium' },
-          { title: 'Binary Search Trees', complexity: 'Hard', size: 'Large' },
-          { title: 'AVL Trees', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Red-Black Trees', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Heaps', complexity: 'Hard', size: 'Large' },
-          { title: 'Trie', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Segment Tree', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Fenwick Tree', complexity: 'Very Hard', size: 'Very Large' }
-        ]
-      },
-      {
-        domain: 'Graphs',
-        topics: [
-          { title: 'Graph Fundamentals', complexity: 'Medium', size: 'Large' },
-          { title: 'BFS', complexity: 'Hard', size: 'Large' },
-          { title: 'DFS', complexity: 'Hard', size: 'Large' },
-          { title: 'Topological Sort', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Shortest Path', complexity: 'Hard', size: 'Large' },
-          { title: 'Dijkstra', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Bellman-Ford', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Floyd-Warshall', complexity: 'Very Hard', size: 'Large' },
-          { title: 'MST', complexity: 'Hard', size: 'Large' },
-          { title: 'Prim', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Kruskal', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Union-Find / DSU', complexity: 'Very Hard', size: 'Very Large' }
-        ]
-      },
-      {
-        domain: 'Searching',
-        topics: [
-          { title: 'Linear Search', complexity: 'Simple', size: 'Small' },
-          { title: 'Binary Search', complexity: 'Medium', size: 'Medium' },
-          { title: 'Binary Search Variations', complexity: 'Hard', size: 'Large' },
-          { title: 'Search on Answer', complexity: 'Very Hard', size: 'Large' }
-        ]
-      },
-      {
-        domain: 'Sorting',
-        topics: [
-          { title: 'Bubble Sort', complexity: 'Simple', size: 'Small' },
-          { title: 'Selection Sort', complexity: 'Simple', size: 'Small' },
-          { title: 'Insertion Sort', complexity: 'Simple', size: 'Small' },
-          { title: 'Merge Sort', complexity: 'Hard', size: 'Large' },
-          { title: 'Quick Sort', complexity: 'Hard', size: 'Large' },
-          { title: 'Heap Sort', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Counting Sort', complexity: 'Medium', size: 'Medium' }
-        ]
-      },
-      {
-        domain: 'Algorithmic Techniques',
-        topics: [
-          { title: 'Divide and Conquer', complexity: 'Hard', size: 'Large' },
-          { title: 'Greedy Algorithms', complexity: 'Hard', size: 'Large' },
-          { title: 'Backtracking', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Dynamic Programming', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Bit Manipulation', complexity: 'Hard', size: 'Large' }
+          {
+            title: "Pub/Sub",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transactions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Persistence (RDB/AOF)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Redis Cluster",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Eviction Policies",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'daa',
-    canonicalName: 'Design & Analysis of Algorithms',
-    type: 'DAA',
-    aliases: ['daa', 'design and analysis of algorithms'],
+    id: "elasticsearch",
+    canonicalName: "Elasticsearch",
+    type: "OTHER",
+    aliases: [
+      "elasticsearch",
+      "elk"
+    ],
     curriculum: [
       {
-        domain: 'Algorithm Fundamentals',
+        domain: "Elasticsearch Basics",
         topics: [
-          { title: 'Problem Solving', complexity: 'Medium', size: 'Medium' },
-          { title: 'Complexity Analysis', complexity: 'Hard', size: 'Large' },
-          { title: 'Asymptotic Notation', complexity: 'Hard', size: 'Medium' },
-          { title: 'Recurrence Relations', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Recurrence Trees', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Master Theorem', complexity: 'Very Hard', size: 'Large' }
+          {
+            title: "Documents & Indices",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mapping",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Basic Search Queries",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "Text Analysis",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Algorithm Paradigms',
+        domain: "Advanced Elasticsearch",
         topics: [
-          { title: 'Divide and Conquer', complexity: 'Hard', size: 'Large' },
-          { title: 'Greedy Algorithms', complexity: 'Hard', size: 'Large' },
-          { title: 'Dynamic Programming', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Backtracking', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Branch and Bound', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Randomized Algorithms', complexity: 'Very Hard', size: 'Large' }
+          {
+            title: "Aggregations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cluster Management",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Logstash & Kibana Integration",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "cassandra",
+    canonicalName: "Cassandra",
+    type: "OTHER",
+    aliases: [
+      "cassandra",
+      "apache cassandra"
+    ],
+    curriculum: [
+      {
+        domain: "Cassandra Basics",
+        topics: [
+          {
+            title: "Data Model",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CQL (Cassandra Query Language)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Partitioning & Clustering Keys",
+            complexity: "Very Hard",
+            size: "Very Large"
+          }
         ]
       },
       {
-        domain: 'Complexity Theory',
+        domain: "Advanced Cassandra",
         topics: [
-          { title: 'NP Problems', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'P vs NP', complexity: 'Very Hard', size: 'Large' },
-          { title: 'NP-Complete Problems', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Approximation Algorithms', complexity: 'Very Hard', size: 'Very Large' }
+          {
+            title: "Architecture (Ring, Gossip)",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Consistency Levels",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tombstones",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Compaction",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'dsa_java',
-    canonicalName: 'DSA with Java',
-    type: 'LANGUAGE_SPECIFIC',
-    aliases: ['dsa java', 'java dsa', 'dsa in java', 'dsa with java'],
+    id: "apache-kafka",
+    canonicalName: "Apache Kafka",
+    type: "OTHER",
+    aliases: [
+      "kafka",
+      "event-streaming"
+    ],
     curriculum: [
       {
-        domain: 'DSA in Java',
+        domain: "Kafka Basics",
         topics: [
-          { title: 'Arrays in Java', complexity: 'Medium', size: 'Medium' },
-          { title: 'Linked Lists in Java', complexity: 'Hard', size: 'Large' },
-          { title: 'Stacks in Java', complexity: 'Medium', size: 'Medium' },
-          { title: 'Queues in Java', complexity: 'Medium', size: 'Medium' },
-          { title: 'HashMap / HashSet', complexity: 'Hard', size: 'Large' },
-          { title: 'Trees in Java', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Heaps in Java', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Graphs in Java', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Sorting in Java', complexity: 'Hard', size: 'Large' },
-          { title: 'Searching in Java', complexity: 'Medium', size: 'Medium' },
-          { title: 'Dynamic Programming in Java', complexity: 'Very Hard', size: 'Very Large' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'dsa_cpp',
-    canonicalName: 'DSA with C++',
-    type: 'LANGUAGE_SPECIFIC',
-    aliases: ['dsa c++', 'dsa cpp', 'c++ dsa', 'cpp dsa', 'dsa in c++', 'dsa with c++'],
-    curriculum: [
-      {
-        domain: 'DSA in C++',
-        topics: [
-          { title: 'Arrays in C++', complexity: 'Medium', size: 'Medium' },
-          { title: 'std::vector', complexity: 'Medium', size: 'Medium' },
-          { title: 'Linked Lists', complexity: 'Hard', size: 'Large' },
-          { title: 'std::stack', complexity: 'Medium', size: 'Small' },
-          { title: 'std::queue', complexity: 'Medium', size: 'Small' },
-          { title: 'std::priority_queue', complexity: 'Hard', size: 'Medium' },
-          { title: 'std::unordered_map', complexity: 'Hard', size: 'Medium' },
-          { title: 'Trees', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Graphs', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Algorithms using STL', complexity: 'Hard', size: 'Large' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'dsa_c',
-    canonicalName: 'DSA with C',
-    type: 'LANGUAGE_SPECIFIC',
-    aliases: ['dsa c', 'c dsa', 'dsa in c', 'dsa with c'],
-    curriculum: [
-      {
-        domain: 'DSA in C',
-        topics: [
-          { title: 'Arrays in C', complexity: 'Medium', size: 'Medium' },
-          { title: 'Structs & Pointers', complexity: 'Hard', size: 'Large' },
-          { title: 'Linked Lists in C', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Trees in C', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Graphs in C', complexity: 'Very Hard', size: 'Very Large' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'dsa_python',
-    canonicalName: 'DSA with Python',
-    type: 'LANGUAGE_SPECIFIC',
-    aliases: ['dsa python', 'python dsa', 'dsa in python', 'dsa with python'],
-    curriculum: [
-      {
-        domain: 'DSA in Python',
-        topics: [
-          { title: 'Lists as Arrays', complexity: 'Medium', size: 'Small' },
-          { title: 'Linked Lists in Python', complexity: 'Medium', size: 'Medium' },
-          { title: 'Dictionaries as HashMaps', complexity: 'Medium', size: 'Small' },
-          { title: 'Trees in Python', complexity: 'Hard', size: 'Large' },
-          { title: 'Graphs in Python', complexity: 'Hard', size: 'Large' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'dsa_javascript',
-    canonicalName: 'DSA with JavaScript',
-    type: 'LANGUAGE_SPECIFIC',
-    aliases: ['dsa javascript', 'dsa js', 'javascript dsa', 'js dsa', 'dsa in js', 'dsa with js', 'dsa with javascript'],
-    curriculum: [
-      {
-        domain: 'DSA in JavaScript',
-        topics: [
-          { title: 'Arrays in JS', complexity: 'Medium', size: 'Medium' },
-          { title: 'Sets & Maps', complexity: 'Medium', size: 'Small' },
-          { title: 'Linked Lists in JS', complexity: 'Hard', size: 'Large' },
-          { title: 'Trees in JS', complexity: 'Hard', size: 'Large' },
-          { title: 'Graphs in JS', complexity: 'Very Hard', size: 'Very Large' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'react',
-    canonicalName: 'React',
-    type: 'FRAMEWORK',
-    aliases: ['react', 'react.js', 'reactjs'],
-    curriculum: [
-      {
-        domain: 'React Basics',
-        topics: [
-          { title: 'Components & Props', complexity: 'Simple', size: 'Medium' },
-          { title: 'State & useState', complexity: 'Medium', size: 'Medium' },
-          { title: 'useEffect & Lifecycle', complexity: 'Hard', size: 'Large' },
+          {
+            title: "Topics",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Producers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Consumers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Brokers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Partitions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Offsets",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Advanced React',
+        domain: "Advanced Kafka",
         topics: [
-          { title: 'Context API', complexity: 'Medium', size: 'Medium' },
-          { title: 'Custom Hooks', complexity: 'Hard', size: 'Large' },
-          { title: 'Performance Optimization', complexity: 'Very Hard', size: 'Large' },
-          { title: 'State Management', complexity: 'Very Hard', size: 'Very Large' },
+          {
+            title: "Consumer Groups",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Zookeeper/KRaft",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Kafka Streams",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Kafka Connect",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'nodejs',
-    canonicalName: 'Node.js',
-    type: 'FRAMEWORK',
-    aliases: ['node', 'node.js', 'nodejs'],
+    id: "apache-spark",
+    canonicalName: "Apache Spark",
+    type: "OTHER",
+    aliases: [
+      "spark",
+      "apache spark"
+    ],
     curriculum: [
       {
-        domain: 'Node Basics',
+        domain: "Spark Basics",
         topics: [
-          { title: 'Event Loop', complexity: 'Hard', size: 'Large' },
-          { title: 'Modules', complexity: 'Medium', size: 'Small' },
-          { title: 'File System', complexity: 'Medium', size: 'Medium' },
+          {
+            title: "RDDs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DataFrames",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Datasets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transformations & Actions",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Backend Development',
+        domain: "Advanced Spark",
         topics: [
-          { title: 'HTTP Module', complexity: 'Medium', size: 'Medium' },
-          { title: 'Express.js', complexity: 'Medium', size: 'Large' },
-          { title: 'Middleware', complexity: 'Hard', size: 'Medium' },
+          {
+            title: "Spark SQL",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Spark Streaming",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Machine Learning Library (MLlib)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Performance Tuning",
+            complexity: "Very Hard",
+            size: "Very Large"
+          }
         ]
       }
     ]
   },
   {
-    id: 'machine_learning',
-    canonicalName: 'Machine Learning',
-    type: 'AI_ML',
-    aliases: ['ml', 'machine learning'],
+    id: "airflow",
+    canonicalName: "Airflow",
+    type: "OTHER",
+    aliases: [
+      "airflow",
+      "apache airflow"
+    ],
     curriculum: [
       {
-        domain: 'Foundations',
+        domain: "Airflow Basics",
         topics: [
-          { title: 'Linear Algebra Basics', complexity: 'Hard', size: 'Large' },
-          { title: 'Statistics & Probability', complexity: 'Hard', size: 'Large' },
+          {
+            title: "DAGs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tasks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Operators",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sensors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Scheduling",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       },
       {
-        domain: 'Models',
+        domain: "Advanced Airflow",
         topics: [
-          { title: 'Supervised Learning', complexity: 'Medium', size: 'Large' },
-          { title: 'Unsupervised Learning', complexity: 'Medium', size: 'Large' },
-          { title: 'Neural Networks', complexity: 'Very Hard', size: 'Very Large' },
+          {
+            title: "XComs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables & Connections",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Executors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Operators",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'operating_systems',
-    canonicalName: 'Operating Systems',
-    type: 'COMPUTER_SCIENCE',
-    aliases: ['os', 'operating systems'],
+    id: "docker",
+    canonicalName: "Docker",
+    type: "OTHER",
+    aliases: [
+      "docker",
+      "containers",
+      "containerization"
+    ],
     curriculum: [
       {
-        domain: 'OS Concepts',
+        domain: "Docker Basics",
         topics: [
-          { title: 'Processes & Threads', complexity: 'Hard', size: 'Large' },
-          { title: 'CPU Scheduling', complexity: 'Hard', size: 'Large' },
-          { title: 'Deadlocks', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Memory Management', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'File Systems', complexity: 'Hard', size: 'Large' },
+          {
+            title: "Images",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Containers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dockerfile",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Volumes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Networks",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Docker Compose",
+        topics: [
+          {
+            title: "docker-compose.yml",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Services",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Environment Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multi-container apps",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Docker",
+        topics: [
+          {
+            title: "Multi-stage Builds",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Security Scanning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Registry Management",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'dbms',
-    canonicalName: 'DBMS',
-    type: 'COMPUTER_SCIENCE',
-    aliases: ['dbms', 'database management systems'],
+    id: "kubernetes",
+    canonicalName: "Kubernetes",
+    type: "OTHER",
+    aliases: [
+      "kubernetes",
+      "k8s",
+      "container orchestration"
+    ],
     curriculum: [
       {
-        domain: 'Database Concepts',
+        domain: "K8s Basics",
         topics: [
-          { title: 'Relational Model', complexity: 'Medium', size: 'Medium' },
-          { title: 'Normalization', complexity: 'Hard', size: 'Large' },
-          { title: 'Transactions & ACID', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Concurrency Control', complexity: 'Very Hard', size: 'Very Large' },
-          { title: 'Indexing', complexity: 'Hard', size: 'Large' },
+          {
+            title: "Pods",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ReplicaSets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Deployments",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Services",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Namespaces",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Configuration & Storage",
+        topics: [
+          {
+            title: "ConfigMaps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Secrets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Volumes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PersistentVolumes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PersistentVolumeClaims",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced K8s",
+        topics: [
+          {
+            title: "Ingress",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DaemonSets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "StatefulSets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Jobs & CronJobs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Helm Charts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RBAC",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   },
   {
-    id: 'computer_networks',
-    canonicalName: 'Computer Networks',
-    type: 'COMPUTER_SCIENCE',
-    aliases: ['cn', 'computer networks', 'networking'],
+    id: "aws",
+    canonicalName: "AWS",
+    type: "OTHER",
+    aliases: [
+      "aws",
+      "amazon web services",
+      "cloud"
+    ],
     curriculum: [
       {
-        domain: 'Networking Concepts',
+        domain: "Compute",
         topics: [
-          { title: 'OSI Model', complexity: 'Medium', size: 'Large' },
-          { title: 'TCP/IP', complexity: 'Hard', size: 'Large' },
-          { title: 'Routing Protocols', complexity: 'Very Hard', size: 'Large' },
-          { title: 'Application Layer (HTTP/DNS)', complexity: 'Hard', size: 'Medium' },
+          {
+            title: "EC2",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lambda",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ECS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "EKS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Elastic Beanstalk",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Storage & DB",
+        topics: [
+          {
+            title: "S3",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "EBS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "EFS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RDS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DynamoDB",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ElastiCache",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking & Security",
+        topics: [
+          {
+            title: "VPC",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Route 53",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CloudFront",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "IAM",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "KMS",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Management",
+        topics: [
+          {
+            title: "CloudWatch",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CloudFormation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Terraform on AWS",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "google-cloud-platform",
+    canonicalName: "Google Cloud Platform",
+    type: "OTHER",
+    aliases: [
+      "gcp",
+      "google cloud"
+    ],
+    curriculum: [
+      {
+        domain: "Compute",
+        topics: [
+          {
+            title: "Compute Engine",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cloud Run",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GKE (Google Kubernetes Engine)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "App Engine",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cloud Functions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Storage & DB",
+        topics: [
+          {
+            title: "Cloud Storage",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cloud SQL",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cloud Spanner",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Firestore",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bigtable",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data & Analytics",
+        topics: [
+          {
+            title: "BigQuery",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dataflow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pub/Sub",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dataproc",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking & Security",
+        topics: [
+          {
+            title: "VPC",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cloud Load Balancing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cloud IAM",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "microsoft-azure",
+    canonicalName: "Microsoft Azure",
+    type: "OTHER",
+    aliases: [
+      "azure",
+      "microsoft azure"
+    ],
+    curriculum: [
+      {
+        domain: "Compute",
+        topics: [
+          {
+            title: "Virtual Machines",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "App Service",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "AKS (Azure Kubernetes Service)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Storage & DB",
+        topics: [
+          {
+            title: "Blob Storage",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure SQL Database",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cosmos DB",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure Cache for Redis",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking & Security",
+        topics: [
+          {
+            title: "Virtual Network",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure Active Directory (Entra ID)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Key Vault",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "terraform",
+    canonicalName: "Terraform",
+    type: "OTHER",
+    aliases: [
+      "terraform",
+      "iac",
+      "infrastructure as code"
+    ],
+    curriculum: [
+      {
+        domain: "Terraform Basics",
+        topics: [
+          {
+            title: "Providers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Resources",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data Sources",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables & Outputs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Terraform",
+        topics: [
+          {
+            title: "Modules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Workspaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Provisioners",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Remote State",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Terraform Cloud",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "ci-cd",
+    canonicalName: "CI/CD",
+    type: "OTHER",
+    aliases: [
+      "ci/cd",
+      "continuous integration",
+      "continuous deployment"
+    ],
+    curriculum: [
+      {
+        domain: "CI/CD Concepts",
+        topics: [
+          {
+            title: "Continuous Integration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Continuous Delivery",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Continuous Deployment",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipelines",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Tools",
+        topics: [
+          {
+            title: "GitHub Actions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GitLab CI",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Jenkins",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CircleCI",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Practices",
+        topics: [
+          {
+            title: "Automated Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Artifact Management",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Deployment Strategies (Blue/Green, Canary)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "linux",
+    canonicalName: "Linux",
+    type: "OTHER",
+    aliases: [
+      "linux",
+      "unix",
+      "shell"
+    ],
+    curriculum: [
+      {
+        domain: "Linux Basics",
+        topics: [
+          {
+            title: "File System Hierarchy",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Basic Commands (ls, cd, cp, rm)",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "File Permissions (chmod, chown)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Process Management",
+        topics: [
+          {
+            title: "ps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "top/htop",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "kill",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Background Jobs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking & Text",
+        topics: [
+          {
+            title: "ping",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "curl/wget",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "grep",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "awk",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "sed",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "tar/gzip",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Bash Scripting",
+        topics: [
+          {
+            title: "Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Loops",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Conditionals",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cron Jobs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "nginx",
+    canonicalName: "Nginx",
+    type: "OTHER",
+    aliases: [
+      "nginx",
+      "web-server",
+      "reverse-proxy"
+    ],
+    curriculum: [
+      {
+        domain: "Nginx Basics",
+        topics: [
+          {
+            title: "Installation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Configuration Structure",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Static File Serving",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Nginx",
+        topics: [
+          {
+            title: "Reverse Proxy",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Load Balancing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SSL/TLS Termination",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Caching",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "data-structures",
+    canonicalName: "Data Structures",
+    type: "OTHER",
+    aliases: [
+      "data structures",
+      "ds"
+    ],
+    curriculum: [
+      {
+        domain: "Linear Structures",
+        topics: [
+          {
+            title: "Arrays",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Linked Lists",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Stacks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Queues",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Trees & Graphs",
+        topics: [
+          {
+            title: "Binary Trees",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Binary Search Trees",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Heaps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Graphs (Directed/Undirected)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Hashing",
+        topics: [
+          {
+            title: "Hash Tables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hash Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Collision Resolution",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "algorithms",
+    canonicalName: "Algorithms",
+    type: "OTHER",
+    aliases: [
+      "algorithms",
+      "algo"
+    ],
+    curriculum: [
+      {
+        domain: "Sorting & Searching",
+        topics: [
+          {
+            title: "Bubble/Selection/Insertion Sort",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merge/Quick Sort",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Binary Search",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Graph Algorithms",
+        topics: [
+          {
+            title: "BFS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DFS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dijkstra's",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "A* Search",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Minimum Spanning Tree",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Paradigms",
+        topics: [
+          {
+            title: "Divide & Conquer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dynamic Programming",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Greedy Algorithms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Backtracking",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Complexity",
+        topics: [
+          {
+            title: "Big O Notation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Time Complexity",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Space Complexity",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "system-design",
+    canonicalName: "System Design",
+    type: "OTHER",
+    aliases: [
+      "system design",
+      "architecture"
+    ],
+    curriculum: [
+      {
+        domain: "Core Concepts",
+        topics: [
+          {
+            title: "Scalability (Horizontal vs Vertical)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Latency vs Throughput",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CAP Theorem",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PACELC Theorem",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Components",
+        topics: [
+          {
+            title: "Load Balancers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Caches",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Databases (SQL vs NoSQL)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Message Queues",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CDNs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Patterns",
+        topics: [
+          {
+            title: "Microservices",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Event-Driven Architecture",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Sharding",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Consistent Hashing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "design-patterns",
+    canonicalName: "Design Patterns",
+    type: "OTHER",
+    aliases: [
+      "design patterns",
+      "oop patterns"
+    ],
+    curriculum: [
+      {
+        domain: "Creational Patterns",
+        topics: [
+          {
+            title: "Singleton",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Factory Method",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Abstract Factory",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Builder",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Prototype",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Structural Patterns",
+        topics: [
+          {
+            title: "Adapter",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bridge",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Composite",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Decorator",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Facade",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Proxy",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Behavioral Patterns",
+        topics: [
+          {
+            title: "Observer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Strategy",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Command",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Template Method",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Visitor",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "networking-fundamentals",
+    canonicalName: "Networking Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "networking",
+      "computer networks"
+    ],
+    curriculum: [
+      {
+        domain: "OSI & TCP/IP Models",
+        topics: [
+          {
+            title: "Physical/Data Link",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Network (IP)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transport (TCP/UDP)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Application (HTTP, DNS)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Web Protocols",
+        topics: [
+          {
+            title: "HTTP/HTTPS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DNS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "WebSockets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SSL/TLS Handshake",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Network Devices & Concepts",
+        topics: [
+          {
+            title: "Routers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Switches",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Firewalls",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Subnetting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "NAT",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "operating-systems-fundamentals",
+    canonicalName: "Operating Systems Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "operating systems",
+      "os"
+    ],
+    curriculum: [
+      {
+        domain: "Process Management",
+        topics: [
+          {
+            title: "Processes vs Threads",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Scheduling Algorithms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Context Switching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inter-process Communication (IPC)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concurrency",
+        topics: [
+          {
+            title: "Deadlocks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mutexes & Semaphores",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Race Conditions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Memory Management",
+        topics: [
+          {
+            title: "Virtual Memory",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Paging",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Segmentation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Thrashing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Storage & File Systems",
+        topics: [
+          {
+            title: "File System Implementation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Disk Scheduling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RAID",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "cybersecurity-fundamentals",
+    canonicalName: "Cybersecurity Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "cybersecurity",
+      "infosec",
+      "security"
+    ],
+    curriculum: [
+      {
+        domain: "Core Concepts",
+        topics: [
+          {
+            title: "CIA Triad",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Authentication vs Authorization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Principle of Least Privilege",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Zero Trust",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Cryptography",
+        topics: [
+          {
+            title: "Symmetric Encryption (AES)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Asymmetric Encryption (RSA)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hashing (SHA)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Digital Signatures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PKI",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Network Security",
+        topics: [
+          {
+            title: "Firewalls",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "IDS/IPS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "VPNs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Network Segmentation",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "owasp-top-10",
+    canonicalName: "OWASP Top 10",
+    type: "OTHER",
+    aliases: [
+      "owasp",
+      "web security",
+      "appsec"
+    ],
+    curriculum: [
+      {
+        domain: "Injection & Auth",
+        topics: [
+          {
+            title: "SQL Injection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cross-Site Scripting (XSS)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Broken Authentication",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data & Config",
+        topics: [
+          {
+            title: "Sensitive Data Exposure",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Security Misconfiguration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "XML External Entities (XXE)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Access & Monitoring",
+        topics: [
+          {
+            title: "Broken Access Control",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Insecure Deserialization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Insufficient Logging & Monitoring",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "penetration-testing",
+    canonicalName: "Penetration Testing",
+    type: "OTHER",
+    aliases: [
+      "pentesting",
+      "ethical hacking"
+    ],
+    curriculum: [
+      {
+        domain: "Methodology",
+        topics: [
+          {
+            title: "Reconnaissance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Scanning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Exploitation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Post-Exploitation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Reporting",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Tools",
+        topics: [
+          {
+            title: "Nmap",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Burp Suite",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Metasploit",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Wireshark",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "machine-learning",
+    canonicalName: "Machine Learning",
+    type: "OTHER",
+    aliases: [
+      "ml",
+      "machine learning"
+    ],
+    curriculum: [
+      {
+        domain: "Supervised Learning",
+        topics: [
+          {
+            title: "Linear Regression",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Logistic Regression",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Decision Trees",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Random Forests",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SVM",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Unsupervised Learning",
+        topics: [
+          {
+            title: "K-Means Clustering",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "PCA (Principal Component Analysis)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Anomaly Detection",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Model Evaluation",
+        topics: [
+          {
+            title: "Cross-Validation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Precision, Recall, F1-Score",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ROC/AUC",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Overfitting/Underfitting",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "deep-learning",
+    canonicalName: "Deep Learning",
+    type: "OTHER",
+    aliases: [
+      "deep learning",
+      "dl",
+      "neural networks"
+    ],
+    curriculum: [
+      {
+        domain: "Neural Networks",
+        topics: [
+          {
+            title: "Perceptrons",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Activation Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Backpropagation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Loss Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Optimizers (Adam, SGD)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Architectures",
+        topics: [
+          {
+            title: "CNNs (Convolutional Neural Networks)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RNNs & LSTMs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transformers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Autoencoders",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "generative-ai",
+    canonicalName: "Generative AI",
+    type: "OTHER",
+    aliases: [
+      "generative ai",
+      "genai",
+      "llm",
+      "large language models"
+    ],
+    curriculum: [
+      {
+        domain: "Core Concepts",
+        topics: [
+          {
+            title: "Transformers Architecture",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Attention Mechanism",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Embeddings",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tokenization",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Prompt Engineering",
+        topics: [
+          {
+            title: "Zero-shot/Few-shot",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Chain of Thought",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RAG (Retrieval-Augmented Generation)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Model Fine-Tuning",
+        topics: [
+          {
+            title: "LoRA/QLoRA",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RLHF",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Instruction Tuning",
+            complexity: "Very Hard",
+            size: "Very Large"
+          }
+        ]
+      },
+      {
+        domain: "Frameworks & APIs",
+        topics: [
+          {
+            title: "OpenAI API",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LangChain",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LlamaIndex",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hugging Face",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "tensorflow",
+    canonicalName: "TensorFlow",
+    type: "OTHER",
+    aliases: [
+      "tensorflow",
+      "tf"
+    ],
+    curriculum: [
+      {
+        domain: "TF Basics",
+        topics: [
+          {
+            title: "Tensors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Operations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Autodiff",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Keras API",
+        topics: [
+          {
+            title: "Sequential Model",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functional API",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Layers & Models",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Callbacks",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Deployment",
+        topics: [
+          {
+            title: "TF Serving",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "TF Lite",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "TensorFlow.js",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "pytorch",
+    canonicalName: "PyTorch",
+    type: "OTHER",
+    aliases: [
+      "pytorch",
+      "torch"
+    ],
+    curriculum: [
+      {
+        domain: "PyTorch Basics",
+        topics: [
+          {
+            title: "Tensors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Autograd",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "nn.Module",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Optimizers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Handling",
+        topics: [
+          {
+            title: "Datasets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DataLoaders",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transforms",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced PyTorch",
+        topics: [
+          {
+            title: "Custom Autograd Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Distributed Training",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "TorchScript",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ONNX Export",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "pandas",
+    canonicalName: "Pandas",
+    type: "OTHER",
+    aliases: [
+      "pandas"
+    ],
+    curriculum: [
+      {
+        domain: "Pandas Basics",
+        topics: [
+          {
+            title: "Series",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DataFrames",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Reading/Writing Data (CSV, Excel, SQL)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Manipulation",
+        topics: [
+          {
+            title: "Indexing & Selecting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Filtering",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Handling Missing Data",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Grouping & Aggregation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merging & Joining",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "numpy",
+    canonicalName: "NumPy",
+    type: "OTHER",
+    aliases: [
+      "numpy"
+    ],
+    curriculum: [
+      {
+        domain: "NumPy Basics",
+        topics: [
+          {
+            title: "Ndarrays",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Array Creation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Indexing & Slicing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Operations",
+        topics: [
+          {
+            title: "Broadcasting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mathematical Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Linear Algebra (numpy.linalg)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "react-native",
+    canonicalName: "React Native",
+    type: "OTHER",
+    aliases: [
+      "react native",
+      "rn"
+    ],
+    curriculum: [
+      {
+        domain: "RN Basics",
+        topics: [
+          {
+            title: "Core Components",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Styling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Handling Touches",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Navigation (React Navigation)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Native Device Features",
+        topics: [
+          {
+            title: "Camera",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Location",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Storage (AsyncStorage)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Push Notifications",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced RN",
+        topics: [
+          {
+            title: "Animations (Reanimated)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Native Modules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Over-the-Air Updates",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "flutter",
+    canonicalName: "Flutter",
+    type: "OTHER",
+    aliases: [
+      "flutter",
+      "dart"
+    ],
+    curriculum: [
+      {
+        domain: "Flutter Basics",
+        topics: [
+          {
+            title: "Widgets (Stateless vs Stateful)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Layouts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Material & Cupertino",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State Management (Provider/Riverpod)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Flutter",
+        topics: [
+          {
+            title: "Animations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Networking",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Local Storage",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Platform Channels",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "android-development",
+    canonicalName: "Android Development",
+    type: "OTHER",
+    aliases: [
+      "android",
+      "android sdk"
+    ],
+    curriculum: [
+      {
+        domain: "Android Basics",
+        topics: [
+          {
+            title: "Activities",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fragments",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Intents",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Manifest",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Resources",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "UI & Layouts",
+        topics: [
+          {
+            title: "XML Layouts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ConstraintLayout",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RecyclerView",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Jetpack Compose",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Architecture & Data",
+        topics: [
+          {
+            title: "MVVM",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ViewModel",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LiveData",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Room Database",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Retrofit",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "ios-development",
+    canonicalName: "iOS Development",
+    type: "OTHER",
+    aliases: [
+      "ios",
+      "ios sdk"
+    ],
+    curriculum: [
+      {
+        domain: "iOS Basics",
+        topics: [
+          {
+            title: "App Lifecycle",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ViewControllers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Storyboards vs Programmatic UI",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "SwiftUI",
+        topics: [
+          {
+            title: "Views & Modifiers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State & Binding",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lists & Navigation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Combine Framework",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data & Networking",
+        topics: [
+          {
+            title: "CoreData",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "URLSession",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Codable",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "testing-fundamentals",
+    canonicalName: "Testing Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "testing",
+      "qa",
+      "software testing"
+    ],
+    curriculum: [
+      {
+        domain: "Testing Types",
+        topics: [
+          {
+            title: "Unit Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Integration Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "End-to-End (E2E) Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Performance Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Security Testing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concepts",
+        topics: [
+          {
+            title: "Test-Driven Development (TDD)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Behavior-Driven Development (BDD)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mocking & Stubbing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Code Coverage",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "jest",
+    canonicalName: "Jest",
+    type: "OTHER",
+    aliases: [
+      "jest"
+    ],
+    curriculum: [
+      {
+        domain: "Jest Basics",
+        topics: [
+          {
+            title: "Writing Tests",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Matchers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Setup & Teardown",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Mocking",
+        topics: [
+          {
+            title: "Mock Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mocking Modules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Timer Mocks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Snapshot Testing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "cypress",
+    canonicalName: "Cypress",
+    type: "OTHER",
+    aliases: [
+      "cypress"
+    ],
+    curriculum: [
+      {
+        domain: "Cypress Basics",
+        topics: [
+          {
+            title: "Writing E2E Tests",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Selectors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Assertions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interacting with Elements",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Cypress",
+        topics: [
+          {
+            title: "Network Stubbing (cy.intercept)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Commands",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CI Integration",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "selenium",
+    canonicalName: "Selenium",
+    type: "OTHER",
+    aliases: [
+      "selenium",
+      "webdriver"
+    ],
+    curriculum: [
+      {
+        domain: "Selenium Basics",
+        topics: [
+          {
+            title: "WebDriver",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Locators",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Waits (Implicit vs Explicit)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Page Object Model (POM)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "blockchain-fundamentals",
+    canonicalName: "Blockchain Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "blockchain",
+      "crypto",
+      "web3"
+    ],
+    curriculum: [
+      {
+        domain: "Core Concepts",
+        topics: [
+          {
+            title: "Distributed Ledgers",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Cryptography in Blockchain",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Consensus Mechanisms (PoW, PoS)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Smart Contracts",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ecosystems",
+        topics: [
+          {
+            title: "Bitcoin",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Ethereum",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Layer 2 Solutions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DeFi (Decentralized Finance)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "NFTs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "solidity",
+    canonicalName: "Solidity",
+    type: "OTHER",
+    aliases: [
+      "solidity",
+      "smart contracts"
+    ],
+    curriculum: [
+      {
+        domain: "Solidity Basics",
+        topics: [
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mappings",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Structs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Smart Contracts",
+        topics: [
+          {
+            title: "Deploying",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modifiers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Events",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inheritance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Security & Advanced",
+        topics: [
+          {
+            title: "Reentrancy Attacks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Gas Optimization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Oracles (Chainlink)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ERC-20 & ERC-721 Standards",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "game-development-fundamentals",
+    canonicalName: "Game Development Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "gamedev",
+      "game design"
+    ],
+    curriculum: [
+      {
+        domain: "Core Concepts",
+        topics: [
+          {
+            title: "Game Loop",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Delta Time",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Physics Engines",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Collision Detection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "AI & Pathfinding (A*)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Graphics",
+        topics: [
+          {
+            title: "Rendering Pipeline",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Shaders",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Textures & Materials",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lighting",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "unity",
+    canonicalName: "Unity",
+    type: "OTHER",
+    aliases: [
+      "unity",
+      "unity3d"
+    ],
+    curriculum: [
+      {
+        domain: "Unity Basics",
+        topics: [
+          {
+            title: "GameObjects & Components",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Scenes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Prefabs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "C# Scripting in Unity",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Physics & Animation",
+        topics: [
+          {
+            title: "Rigidbodies",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Colliders",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Animator Controller",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UI System (UGUI)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Unity",
+        topics: [
+          {
+            title: "ScriptableObjects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Coroutines",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "AssetBundles",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multiplayer (Netcode)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "unreal-engine",
+    canonicalName: "Unreal Engine",
+    type: "OTHER",
+    aliases: [
+      "unreal",
+      "ue4",
+      "ue5"
+    ],
+    curriculum: [
+      {
+        domain: "Unreal Basics",
+        topics: [
+          {
+            title: "Actors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Components",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Levels",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Blueprints Visual Scripting",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "C++ in Unreal",
+        topics: [
+          {
+            title: "UObject",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "AActor",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Macros (UPROPERTY, UFUNCTION)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Memory Management",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Unreal",
+        topics: [
+          {
+            title: "Materials",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lumen & Nanite",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multiplayer & Replication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Animation Blueprints",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "embedded-systems-fundamentals",
+    canonicalName: "Embedded Systems Fundamentals",
+    type: "OTHER",
+    aliases: [
+      "embedded systems",
+      "firmware",
+      "microcontrollers"
+    ],
+    curriculum: [
+      {
+        domain: "Hardware Concepts",
+        topics: [
+          {
+            title: "Microcontrollers vs Microprocessors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Memory (RAM, ROM, Flash)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Timers & Counters",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interrupts",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Communication Protocols",
+        topics: [
+          {
+            title: "UART/USART",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SPI",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "I2C",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CAN bus",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Software",
+        topics: [
+          {
+            title: "Bare-metal Programming",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RTOS (Real-Time Operating Systems)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Memory-mapped I/O",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Low-power modes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "arduino",
+    canonicalName: "Arduino",
+    type: "OTHER",
+    aliases: [
+      "arduino"
+    ],
+    curriculum: [
+      {
+        domain: "Arduino Basics",
+        topics: [
+          {
+            title: "Setup & Loop",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Digital I/O",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Analog I/O",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PWM",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Sensors & Actuators",
+        topics: [
+          {
+            title: "Reading Sensors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Controlling Motors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Libraries",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "raspberry-pi",
+    canonicalName: "Raspberry Pi",
+    type: "OTHER",
+    aliases: [
+      "raspberry pi",
+      "rpi"
+    ],
+    curriculum: [
+      {
+        domain: "Raspberry Pi Basics",
+        topics: [
+          {
+            title: "OS Installation (Raspberry Pi OS)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GPIO Pins",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Python for Pi",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Projects",
+        topics: [
+          {
+            title: "Camera Module",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Networking",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "IoT Integration",
+            complexity: "Medium",
+            size: "Medium"
+          }
         ]
       }
     ]
   }
-]
+];
 
 export const resolveSkill = (input: string): SkillDefinition => {
   const normalized = input.toLowerCase().trim()
   
-  // Try exact match in aliases
-  const matched = SKILL_REGISTRY.find(s => s.aliases.includes(normalized))
+  // Try exact match in aliases or id or canonical name
+  const matched = SKILL_REGISTRY.find(s => s.aliases.includes(normalized) || s.id === normalized || s.canonicalName.toLowerCase() === normalized)
   if (matched) return matched
+
+  // Try partial match on canonical name
+  const partial = SKILL_REGISTRY.find(s => s.canonicalName.toLowerCase().includes(normalized))
+  if (partial) return partial
 
   // Fallback / Unknown Custom Skill
   return {
-    id: generateId(input),
+    id: input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
     canonicalName: input,
     type: 'OTHER',
     aliases: [],
@@ -1454,16 +6343,300 @@ export const PATHWAY_REGISTRY: import('../types').PathwayDefinition[] = [
 
 export const getSkillsForPathway = (pathwayId: string): SkillDefinition[] => {
   const mapping: Record<string, string[]> = {
-    'frontend': ['html', 'css', 'javascript', 'typescript', 'react', 'nextjs'],
-    'backend': ['python', 'java', 'go', 'rust', 'csharp', 'postgresql', 'rest-api', 'docker'],
-    'devops-cloud': ['docker', 'kubernetes', 'linux', 'python'],
-    'cybersecurity': ['cybersecurity', 'cryptography', 'python'],
-    'databases': ['sql', 'postgresql'],
-    'computer-science': ['cs-fundamentals', 'system-design', 'python', 'c'],
-    'dsa': ['dsa', 'daa', 'pointers', 'binary-trees'],
-    'ai-ml': ['aiml', 'machine-learning', 'python'],
-    'programming-languages': ['c', 'cpp', 'java', 'python', 'javascript', 'typescript', 'go', 'rust', 'csharp', 'html', 'css']
-  };
+    'computer-science-fundamentals': [
+        'cpp',
+        'c',
+        'linux',
+        'data-structures',
+        'algorithms',
+        'networking-fundamentals',
+        'operating-systems-fundamentals',
+        'machine-learning',
+        'blockchain-fundamentals',
+        'embedded-systems-fundamentals'
+    ],
+    'programming-languages': [
+        'python',
+        'javascript',
+        'typescript',
+        'java',
+        'cpp',
+        'c',
+        'csharp',
+        'go',
+        'rust',
+        'ruby',
+        'php',
+        'swift',
+        'kotlin',
+        'solidity'
+    ],
+    'data-structures-algorithms': [
+        'data-structures',
+        'algorithms'
+    ],
+    'frontend-development': [
+        'javascript',
+        'typescript',
+        'html',
+        'css',
+        'react',
+        'angular',
+        'vue-js',
+        'svelte',
+        'tailwind-css',
+        'graphql',
+        'react-native',
+        'flutter',
+        'jest',
+        'cypress'
+    ],
+    'backend-development': [
+        'python',
+        'javascript',
+        'typescript',
+        'java',
+        'csharp',
+        'go',
+        'rust',
+        'ruby',
+        'php',
+        'kotlin',
+        'node-js',
+        'express-js',
+        'nestjs',
+        'django',
+        'flask',
+        'spring-boot',
+        'graphql',
+        'rest-api',
+        'grpc',
+        'sql',
+        'postgresql',
+        'mysql',
+        'mongodb',
+        'redis',
+        'elasticsearch',
+        'apache-kafka',
+        'docker',
+        'aws',
+        'nginx',
+        'owasp-top-10',
+        'jest'
+    ],
+    'full-stack-development': [
+        'react',
+        'angular',
+        'vue-js',
+        'node-js'
+    ],
+    'mobile-development': [
+        'java',
+        'csharp',
+        'swift',
+        'kotlin',
+        'react-native',
+        'flutter',
+        'android-development',
+        'ios-development'
+    ],
+    'databases': [
+        'sql',
+        'postgresql',
+        'mysql',
+        'mongodb',
+        'redis',
+        'elasticsearch',
+        'cassandra'
+    ],
+    'data-engineering': [
+        'sql',
+        'postgresql',
+        'cassandra',
+        'apache-kafka',
+        'apache-spark',
+        'airflow',
+        'google-cloud-platform',
+        'pandas',
+        'numpy'
+    ],
+    'data-science': [
+        'python',
+        'sql',
+        'apache-spark',
+        'machine-learning',
+        'deep-learning',
+        'tensorflow',
+        'pytorch',
+        'pandas',
+        'numpy'
+    ],
+    'ai-machine-learning': [
+        'python',
+        'machine-learning',
+        'deep-learning',
+        'generative-ai',
+        'tensorflow',
+        'pytorch',
+        'numpy'
+    ],
+    'deep-learning': [
+        'deep-learning',
+        'generative-ai',
+        'tensorflow',
+        'pytorch'
+    ],
+    'generative-ai-llms': [
+        'generative-ai'
+    ],
+    'devops': [
+        'git',
+        'go',
+        'redis',
+        'elasticsearch',
+        'docker',
+        'kubernetes',
+        'aws',
+        'google-cloud-platform',
+        'microsoft-azure',
+        'terraform',
+        'ci-cd',
+        'linux',
+        'nginx'
+    ],
+    'cloud-computing': [
+        'go',
+        'docker',
+        'kubernetes',
+        'aws',
+        'google-cloud-platform',
+        'microsoft-azure',
+        'terraform'
+    ],
+    'cybersecurity': [
+        'cybersecurity-fundamentals',
+        'owasp-top-10',
+        'penetration-testing'
+    ],
+    'networking': [
+        'nginx',
+        'networking-fundamentals',
+        'cybersecurity-fundamentals'
+    ],
+    'operating-systems': [
+        'c',
+        'linux',
+        'operating-systems-fundamentals',
+        'raspberry-pi'
+    ],
+    'software-engineering': [
+        'git',
+        'java',
+        'docker',
+        'ci-cd',
+        'data-structures',
+        'algorithms',
+        'design-patterns',
+        'cybersecurity-fundamentals',
+        'testing-fundamentals',
+        'game-development-fundamentals'
+    ],
+    'system-design': [
+        'rust',
+        'system-design',
+        'networking-fundamentals'
+    ],
+    'software-architecture': [
+        'spring-boot',
+        'system-design',
+        'design-patterns'
+    ],
+    'testing-qa': [
+        'testing-fundamentals',
+        'jest',
+        'cypress',
+        'selenium'
+    ],
+    'version-control': [
+        'git',
+        'svn'
+    ],
+    'developer-tools': [],
+    'apis': [
+        'node-js',
+        'express-js',
+        'nestjs',
+        'django',
+        'flask',
+        'spring-boot',
+        'graphql',
+        'rest-api',
+        'grpc'
+    ],
+    'distributed-systems': [
+        'rest-api',
+        'grpc',
+        'cassandra',
+        'apache-kafka',
+        'kubernetes',
+        'system-design',
+        'blockchain-fundamentals'
+    ],
+    'web-development': [
+        'javascript',
+        'typescript',
+        'php',
+        'html',
+        'css',
+        'react',
+        'angular',
+        'vue-js',
+        'svelte',
+        'owasp-top-10',
+        'cypress',
+        'selenium'
+    ],
+    'game-development': [
+        'cpp',
+        'csharp',
+        'game-development-fundamentals',
+        'unity',
+        'unreal-engine'
+    ],
+    'blockchain-web3': [
+        'rust',
+        'blockchain-fundamentals',
+        'solidity'
+    ],
+    'embedded-systems': [
+        'cpp',
+        'c',
+        'embedded-systems-fundamentals',
+        'arduino',
+        'raspberry-pi'
+    ],
+    'iot': [
+        'embedded-systems-fundamentals',
+        'arduino',
+        'raspberry-pi'
+    ],
+    'ui-ux-for-developers': [
+        'html',
+        'css',
+        'tailwind-css',
+        'figma'
+    ],
+    'automation-scripting': [
+        'python',
+        'ruby',
+        'airflow',
+        'terraform',
+        'ci-cd',
+        'linux',
+        'pandas',
+        'selenium'
+    ]
+};
   const ids = mapping[pathwayId] || [];
   return ids.map(id => resolveSkill(id)).filter(Boolean) as SkillDefinition[];
 };

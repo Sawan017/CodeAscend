@@ -26,6 +26,7 @@ export function SkillsPanel({
   onRemoveSkill
 }: SkillsPanelProps) {
   const [globalSearch, setGlobalSearch] = useState('')
+  const [globalSearchFilter, setGlobalSearchFilter] = useState<'all' | 'domains' | 'skills'>('all')
   const [domainSearches, setDomainSearches] = useState<Record<string, string>>({})
   const [skillToRemove, setSkillToRemove] = useState<string | null>(null)
   const [domainToRemove, setDomainToRemove] = useState<{id: string, name: string} | null>(null)
@@ -141,10 +142,34 @@ export function SkillsPanel({
             </button>
           </div>
           
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', marginBottom: '0.5rem' }}>
+            <button 
+              className={globalSearchFilter === 'all' ? 'primary-btn' : 'secondary-btn'} 
+              style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '4px' }} 
+              onClick={() => setGlobalSearchFilter('all')}
+            >
+              All
+            </button>
+            <button 
+              className={globalSearchFilter === 'domains' ? 'primary-btn' : 'secondary-btn'} 
+              style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '4px' }} 
+              onClick={() => setGlobalSearchFilter('domains')}
+            >
+              Domains
+            </button>
+            <button 
+              className={globalSearchFilter === 'skills' ? 'primary-btn' : 'secondary-btn'} 
+              style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '4px' }} 
+              onClick={() => setGlobalSearchFilter('skills')}
+            >
+              Skills
+            </button>
+          </div>
+          
           {globalSearch.trim().length > 0 && (
             <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {/* Domain Results */}
-              {PATHWAY_REGISTRY
+              {(globalSearchFilter === 'all' || globalSearchFilter === 'domains') && PATHWAY_REGISTRY
                 .filter((p: any) => p.name.toLowerCase().includes(globalSearch.toLowerCase().trim()) || p.aliases?.some((a: any) => a.toLowerCase().includes(globalSearch.toLowerCase().trim())))
                 .map((p: any) => {
                   const isActive = activePathways.includes(p.id)
@@ -163,7 +188,7 @@ export function SkillsPanel({
                   )
               })}
               {/* Skill Results */}
-              {Array.from(new Map(
+              {(globalSearchFilter === 'all' || globalSearchFilter === 'skills') && Array.from(new Map(
                   SKILL_REGISTRY
                     .filter((s: any) => s.canonicalName.toLowerCase().includes(globalSearch.toLowerCase().trim()) || s.aliases?.some((a: any) => a.toLowerCase().includes(globalSearch.toLowerCase().trim())))
                     .map((s: any) => [(s.canonicalName || '').toLowerCase().trim(), s])
