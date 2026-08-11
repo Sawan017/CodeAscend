@@ -21,10 +21,11 @@ import { achievements, badges, goals, projects } from './data/journeyData'
 import { milestones, futureMilestones, timelineEvents } from './data/journeyData'
 import { resolveSkill, generateSubtopicsForSkill, calculateSkillProgress } from './data/learningData'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
-import { loadInitialState, saveProgression, getEmptyState } from './utils/storage'
+import { loadInitialState, getEmptyState } from './utils/storage'
 import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
+import { usePersist } from './hooks/usePersist'
 import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills } from './lib/api'
 import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
@@ -136,6 +137,7 @@ function App() {
   const [chatState, setChatState] = useState<import('./types').ChatState>(initialData.chat)
   const [incomingMessages, setIncomingMessages] = useState<import('./types').ChatMessage[]>([])
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
+  const [dataLoaded, setDataLoaded] = useState(false)
   
   const handleOnboardingComplete = () => {
     // Explicitly zero out everything to ensure no mock data leaks
@@ -146,6 +148,11 @@ function App() {
     setAchievementState([])
     setBadgeState([])
     setSettings(s => ({ ...s, onboarded: true }))
+    
+    // Explicitly force a save of the initial profile so they are marked as an existing user
+    if (user) {
+      saveProfile(user.id, profileState)
+    }
   }
 
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
@@ -160,6 +167,7 @@ function App() {
     if (!user) {
       if (isConfigured) {
         hydratedFromRemote.current = false
+        setDataLoaded(false)
         const empty = getEmptyState()
         setProfileState(empty.profile)
         setProgression(empty.progression)
@@ -176,24 +184,67 @@ function App() {
     }
     
     hydratedFromRemote.current = false
+    setDataLoaded(false)
     fetchAllUserData(user.id).then((remote) => {
       if (!remote) return
-      hydratedFromRemote.current = true
       
       const empty = getEmptyState()
-      setProfileState(remote.profile || empty.profile)
-      setProgression(remote.progression || empty.progression)
-      setGoalState(remote.goals || empty.goals)
-      setProjectState(remote.projects || empty.projects)
-      setSkillState(remote.skills || empty.skills)
-      setAchievementState(remote.achievements || empty.achievements)
-      setBadgeState(remote.badges || empty.badges)
-      setSettings(remote.settings || empty.settings)
-      setFriendState(remote.friends || empty.friends)
-      setChatState(remote.chat || empty.chat)
+      
+      // Determine if this is a genuinely NEW user (no profile AND no progression AND no settings)
+      const isNewUser = !remote.profile && !remote.progression && !remote.settings
+
+      if (isNewUser) {
+        // 1. BRAND-NEW USER: Initialize and persist their first-time state
+        const initialProfile = {
+          ...empty.profile,
+          displayName: user.name || empty.profile.displayName,
+          avatar: user.avatarUrl || empty.profile.avatar,
+          contact: user.email || empty.profile.contact
+        }
+        
+        setProfileState(initialProfile)
+        setProgression(empty.progression)
+        setGoalState(empty.goals)
+        setProjectState(empty.projects)
+        setSkillState(empty.skills)
+        setAchievementState(empty.achievements)
+        setBadgeState(empty.badges)
+        setSettings(empty.settings) // onboarded is false by default
+        setFriendState(empty.friends)
+        setChatState(empty.chat)
+
+        // Automatically persist the initial records to Supabase so they exist
+        saveProfile(user.id, initialProfile)
+        saveProgressionData(user.id, empty.progression)
+        saveSettings(user.id, empty.settings)
+        
+      } else {
+        // 2. EXISTING USER: Load their persisted data exactly as it is
+        if (remote.profile) setProfileState(remote.profile)
+        if (remote.progression) setProgression(remote.progression)
+        if (remote.goals) setGoalState(remote.goals)
+        if (remote.projects) setProjectState(remote.projects)
+        if (remote.skills) setSkillState(remote.skills)
+        if (remote.achievements) setAchievementState(remote.achievements)
+        if (remote.badges) setBadgeState(remote.badges)
+        if (remote.friends) setFriendState(remote.friends)
+        if (remote.chat) setChatState(remote.chat)
+        
+        if (remote.settings) {
+          setSettings(remote.settings)
+        } else {
+          // Fallback if settings are somehow missing but user is not new
+          setSettings(s => ({ ...s, onboarded: true }))
+        }
+      }
 
       fetchIncomingFriendRequests(user.id).then(reqs => setIncomingRequests(reqs))
       fetchIncomingMessages(user.id).then(msgs => setIncomingMessages(msgs))
+
+      setTimeout(() => {
+        hydratedFromRemote.current = true
+        setDataLoaded(true)
+      }, 0)
     })
   }, [user, isConfigured])
 
@@ -205,58 +256,17 @@ function App() {
     return () => window.removeEventListener('mousemove', onMove)
   }, [])
 
-  useEffect(() => { saveProgression(progression, 'progression') }, [progression])
-  useEffect(() => { saveProgression(goalState, 'goals') }, [goalState])
-  useEffect(() => { saveProgression(skillState, 'skills') }, [skillState])
-  useEffect(() => { saveProgression(projectState, 'projects') }, [projectState])
-  useEffect(() => { saveProgression(achievementState, 'achievements') }, [achievementState])
-  useEffect(() => { saveProgression(badgeState, 'badges') }, [badgeState])
-  useEffect(() => { saveProgression(settings, 'settings') }, [settings])
-  useEffect(() => { saveProgression(profileState, 'profile') }, [profileState])
-  useEffect(() => { saveProgression(friendState, 'friends') }, [friendState])
-  useEffect(() => { saveProgression(chatState, 'chat') }, [chatState])
-
-  // Push changes to Supabase when logged in (after remote hydration completes)
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveProgressionData(user.id, progression)
-  }, [user, progression])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveGoals(user.id, goalState)
-  }, [user, goalState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveSkills(user.id, skillState)
-  }, [user, skillState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveProjects(user.id, projectState)
-  }, [user, projectState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveAchievements(user.id, achievementState)
-  }, [user, achievementState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveBadges(user.id, badgeState)
-  }, [user, badgeState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveSettings(user.id, settings)
-  }, [user, settings])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveProfile(user.id, profileState)
-  }, [user, profileState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveFriendsState(user.id, friendState)
-  }, [user, friendState])
-  useEffect(() => {
-    if (!user || !hydratedFromRemote.current) return
-    saveChatState(user.id, chatState)
-  }, [user, chatState])
+  // Safe persistence: only saves when state mutates AFTER hydration
+  usePersist(progression, user, dataLoaded, saveProgressionData)
+  usePersist(goalState, user, dataLoaded, saveGoals)
+  usePersist(skillState, user, dataLoaded, saveSkills)
+  usePersist(projectState, user, dataLoaded, saveProjects)
+  usePersist(achievementState, user, dataLoaded, saveAchievements)
+  usePersist(badgeState, user, dataLoaded, saveBadges)
+  usePersist(settings, user, dataLoaded, saveSettings)
+  usePersist(profileState, user, dataLoaded, saveProfile)
+  usePersist(friendState, user, dataLoaded, saveFriendsState)
+  usePersist(chatState, user, dataLoaded, saveChatState)
 
   // Show a toast and sound when the player levels up or gains XP
   useEffect(() => {
@@ -501,7 +511,7 @@ function App() {
       <div className="grid-overlay" />
       <div className="spotlight" style={{ left: `${cursor.x}px`, top: `${cursor.y}px` }} />
       <AnimatePresence mode="wait">
-        {loading ? (
+        {loading || (user && !dataLoaded) ? (
           <div key="loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
             <div className="loading-pulse" style={{ color: 'var(--cyan)', fontSize: '1.25rem', animation: 'pulse 1.5s infinite', letterSpacing: '0.1em', fontWeight: 500 }}>
               ESTABLISHING CONNECTION...
