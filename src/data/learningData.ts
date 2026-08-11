@@ -52,7 +52,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Git Basics",
+        domain: "Core Operations",
         topics: [
           {
             title: "Repositories",
@@ -65,12 +65,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Branching",
+            title: "Staging Area",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Merging",
+            title: "Diffs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Status",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Branching & Merging",
+        topics: [
+          {
+            title: "Branch Creation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fast-Forward Merges",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "3-Way Merges",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merge Conflicts",
             complexity: "Medium",
             size: "Medium"
           },
@@ -87,7 +117,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Remote Repositories",
+        domain: "Remote Collaboration",
         topics: [
           {
             title: "Cloning",
@@ -118,19 +148,49 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Pull Requests",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Upstreams",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Git",
+        domain: "History & Diagnostics",
         topics: [
           {
-            title: "Cherry-picking",
+            title: "Git Log",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Interactive Rebase",
+            title: "Blame",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bisect",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Reflog",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Configuration & Automation",
+        topics: [
+          {
+            title: "Git Config",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Aliases",
             complexity: "Medium",
             size: "Medium"
           },
@@ -145,7 +205,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Bisect",
+            title: "Gitattributes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Gitignore",
             complexity: "Medium",
             size: "Medium"
           }
@@ -163,7 +228,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "SVN Basics",
+        domain: "Centralized Version Control",
         topics: [
           {
             title: "Checking out",
@@ -189,6 +254,16 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Merging",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Tags",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Locks",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       }
@@ -204,25 +279,55 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Python Basics",
+        domain: "Syntax & Types",
         topics: [
           {
-            title: "Variables & Types",
+            title: "Variables",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Control Flow",
+            title: "Strings",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Functions",
+            title: "Numbers",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Modules & Packages",
+            title: "Booleans",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Type Hinting",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Control Flow",
+        topics: [
+          {
+            title: "Conditionals",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "For Loops",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "While Loops",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Exception Handling",
             complexity: "Medium",
             size: "Medium"
           }
@@ -232,17 +337,57 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Data Structures",
         topics: [
           {
-            title: "Lists & Tuples",
+            title: "Lists",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Dictionaries & Sets",
+            title: "Tuples",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Comprehensions",
+            title: "Dictionaries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "List Comprehensions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dict Comprehensions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Functions & Modules",
+        topics: [
+          {
+            title: "Function Definition",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Arguments & kwargs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lambda Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Decorators",
             complexity: "Medium",
             size: "Medium"
           },
@@ -250,14 +395,59 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Generators",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Imports",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Virtual Environments",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Python",
+        domain: "Object-Oriented Programming",
         topics: [
           {
-            title: "Decorators",
+            title: "Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Objects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inheritance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Polymorphism",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dunder Methods",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Properties",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "File I/O & Concurrency",
+        topics: [
+          {
+            title: "Reading/Writing Files",
             complexity: "Medium",
             size: "Medium"
           },
@@ -267,7 +457,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Metaclasses",
+            title: "Multithreading",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multiprocessing",
             complexity: "Medium",
             size: "Medium"
           },
@@ -291,13 +486,33 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Core JS",
+        domain: "Language Primitives",
         topics: [
           {
             title: "Variables (let/const)",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Data Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Type Coercion",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Template Literals",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Functions & Scope",
+        topics: [
           {
             title: "Arrow Functions",
             complexity: "Medium",
@@ -309,15 +524,60 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Lexical Scope",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Hoisting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "IIFEs",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Asynchronous JS",
+        domain: "Objects & Arrays",
         topics: [
+          {
+            title: "Object Destructuring",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Spread/Rest Operators",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Array Methods (map, filter, reduce)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Maps & Sets",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Asynchronous Execution",
+        topics: [
+          {
+            title: "Event Loop",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Callbacks",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Promises",
             complexity: "Medium",
@@ -329,12 +589,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Event Loop",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Callbacks",
+            title: "Microtasks",
             complexity: "Medium",
             size: "Medium"
           }
@@ -349,6 +604,11 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Prototypal Inheritance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Classes",
             complexity: "Medium",
             size: "Medium"
@@ -359,7 +619,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Modules",
+            title: "Bind/Call/Apply",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Modules & Ecosystem",
+        topics: [
+          {
+            title: "ES Modules",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CommonJS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "NPM/Yarn",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Package.json",
             complexity: "Medium",
             size: "Medium"
           }
@@ -377,15 +662,25 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Types & Interfaces",
+        domain: "Type System",
         topics: [
           {
-            title: "Basic Types",
-            complexity: "Simple",
-            size: "Small"
+            title: "Primitive Types",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Interfaces vs Type Aliases",
+            title: "Arrays & Tuples",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Any & Unknown",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Void & Never",
             complexity: "Medium",
             size: "Medium"
           },
@@ -393,9 +688,79 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Enums",
             complexity: "Medium",
             size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Interfaces & Aliases",
+        topics: [
+          {
+            title: "Interface Declarations",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Generics",
+            title: "Type Aliases",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Extending Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Intersection Types",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Type Narrowing",
+        topics: [
+          {
+            title: "Type Guards",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "typeof / instanceof",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Discriminated Unions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Assertion Functions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Generics",
+        topics: [
+          {
+            title: "Generic Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generic Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generic Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generic Constraints",
             complexity: "Medium",
             size: "Medium"
           }
@@ -404,11 +769,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
       {
         domain: "Advanced Types",
         topics: [
-          {
-            title: "Union & Intersection Types",
-            complexity: "Medium",
-            size: "Medium"
-          },
           {
             title: "Mapped Types",
             complexity: "Medium",
@@ -420,7 +780,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Utility Types",
+            title: "Utility Types (Partial, Pick, Omit)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Template Literal Types",
             complexity: "Medium",
             size: "Medium"
           }
@@ -443,6 +808,11 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Module Resolution",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Declaration Files (.d.ts)",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       }
@@ -459,45 +829,140 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Java Fundamentals",
+        domain: "Core Syntax",
         topics: [
           {
-            title: "OOP Concepts",
+            title: "Primitives",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Classes & Objects",
+            title: "Strings",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Interfaces & Abstract Classes",
+            title: "Arrays",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Packages",
+            title: "Control Flow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Methods",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Java Core",
+        domain: "Object-Oriented Design",
         topics: [
           {
-            title: "Collections Framework",
+            title: "Classes & Objects",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Exceptions",
+            title: "Inheritance",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Generics",
+            title: "Polymorphism",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Encapsulation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Abstract Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Records",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Collections Framework",
+        topics: [
+          {
+            title: "Lists",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Maps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Queues",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Iterators",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Comparators",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Error Handling",
+        topics: [
+          {
+            title: "Checked vs Unchecked Exceptions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Try-Catch-Finally",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Exceptions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Functional Programming",
+        topics: [
+          {
+            title: "Lambdas",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Method References",
             complexity: "Medium",
             size: "Medium"
           },
@@ -507,7 +972,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Lambdas",
+            title: "Optional",
             complexity: "Medium",
             size: "Medium"
           }
@@ -527,17 +992,47 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Executors",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
             title: "Synchronization",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Locks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Executors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CompletableFuture",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "JVM Ecosystem",
+        topics: [
+          {
+            title: "Garbage Collection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Classloaders",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "JAR/WAR Files",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Maven/Gradle",
             complexity: "Medium",
             size: "Medium"
           }
@@ -556,10 +1051,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "C++ Basics",
+        domain: "Core Language",
         topics: [
           {
-            title: "Variables & Types",
+            title: "Types",
             complexity: "Medium",
             size: "Medium"
           },
@@ -574,7 +1069,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Pointers & References",
+            title: "Namespaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Header Files",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Memory Management",
+        topics: [
+          {
+            title: "Pointers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "References",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dynamic Memory Allocation (new/delete)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Smart Pointers (unique_ptr, shared_ptr)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RAII",
             complexity: "Medium",
             size: "Medium"
           }
@@ -584,7 +1114,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Object-Oriented C++",
         topics: [
           {
-            title: "Classes & Objects",
+            title: "Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Constructors/Destructors",
             complexity: "Medium",
             size: "Medium"
           },
@@ -594,7 +1129,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Polymorphism",
+            title: "Virtual Functions",
             complexity: "Medium",
             size: "Medium"
           },
@@ -602,29 +1137,69 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Operator Overloading",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Multiple Inheritance",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced C++",
+        domain: "Templates & STL",
         topics: [
           {
-            title: "Templates",
+            title: "Function Templates",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "STL (Standard Template Library)",
+            title: "Class Templates",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Smart Pointers",
+            title: "STL Containers (vector, map, set)",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "STL Algorithms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Iterators",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Modern C++",
+        topics: [
           {
             title: "Move Semantics",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Rvalue References",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lambda Expressions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "constexpr",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Auto Type Deduction",
             complexity: "Medium",
             size: "Medium"
           }
@@ -641,7 +1216,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "C Fundamentals",
+        domain: "Core Syntax",
         topics: [
           {
             title: "Data Types",
@@ -666,15 +1241,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Memory Management",
+        domain: "Pointers & Memory",
         topics: [
           {
             title: "Pointers",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Dynamic Memory (malloc/free)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -684,7 +1254,62 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Structs & Unions",
+            title: "Dynamic Memory (malloc/calloc/free)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Function Pointers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Structures",
+        topics: [
+          {
+            title: "Structs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Unions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Typedefs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bit Fields",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Preprocessor & I/O",
+        topics: [
+          {
+            title: "Macros",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Header Files",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "File I/O (fopen, fread)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Standard I/O",
             complexity: "Medium",
             size: "Medium"
           }
@@ -703,7 +1328,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "C# Basics",
+        domain: "Core Language",
         topics: [
           {
             title: "Types",
@@ -721,22 +1346,112 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Structs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Properties",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced C#",
+        domain: "Collections & Generics",
         topics: [
           {
-            title: "LINQ",
+            title: "Lists",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Delegates & Events",
+            title: "Dictionaries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Arrays",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generic Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generic Methods",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Language Features",
+        topics: [
+          {
+            title: "Delegates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Events",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Attributes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Extension Methods",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pattern Matching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Records",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Querying",
+        topics: [
+          {
+            title: "LINQ to Objects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LINQ Syntax",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lambda Expressions in LINQ",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Asynchronous Programming",
+        topics: [
+          {
+            title: "Tasks",
             complexity: "Medium",
             size: "Medium"
           },
@@ -746,12 +1461,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Generics",
+            title: "Cancellation Tokens",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Attributes",
+            title: "Thread Pool",
             complexity: "Medium",
             size: "Medium"
           }
@@ -769,7 +1484,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Go Basics",
+        domain: "Core Syntax",
         topics: [
           {
             title: "Packages",
@@ -792,7 +1507,62 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Slices & Maps",
+            title: "Pointers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Collections",
+        topics: [
+          {
+            title: "Arrays",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Slices",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Maps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Make & Append",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Interfaces & Errors",
+        topics: [
+          {
+            title: "Interface Implementation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Type Assertions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Type Switches",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error Handling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Panics & Recover",
             complexity: "Medium",
             size: "Medium"
           }
@@ -812,7 +1582,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Select",
+            title: "Buffered Channels",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Select Statements",
             complexity: "Medium",
             size: "Medium"
           },
@@ -829,25 +1604,25 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Interfaces & Error Handling",
+        domain: "Tooling",
         topics: [
           {
-            title: "Interfaces",
+            title: "go mod",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Type Assertions",
+            title: "go test",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Error Handling",
+            title: "go build",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Panics & Recover",
+            title: "go fmt",
             complexity: "Medium",
             size: "Medium"
           }
@@ -865,7 +1640,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Rust Basics",
+        domain: "Core Concepts",
         topics: [
           {
             title: "Variables & Mutability",
@@ -890,7 +1665,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Ownership & Borrowing",
+        domain: "Memory Safety",
         topics: [
           {
             title: "Ownership Rules",
@@ -910,13 +1685,43 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Advanced Rust",
+        domain: "Data Structures",
         topics: [
           {
-            title: "Structs & Enums",
+            title: "Structs",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Enums",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Option & Result",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Vectors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "HashMaps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Strings",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Constructs",
+        topics: [
           {
             title: "Pattern Matching",
             complexity: "Medium",
@@ -928,12 +1733,52 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Concurrency",
-            complexity: "Hard",
-            size: "Large"
+            title: "Generics",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Smart Pointers",
+            title: "Closures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Iterators",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concurrency & Ecosystem",
+        topics: [
+          {
+            title: "Threads",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Message Passing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Shared State",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cargo",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Crates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Macros",
             complexity: "Medium",
             size: "Medium"
           }
@@ -950,7 +1795,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Ruby Basics",
+        domain: "Language Fundamentals",
         topics: [
           {
             title: "Variables",
@@ -963,19 +1808,44 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Blocks, Procs, & Lambdas",
+            title: "Symbols",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Modules",
+            title: "Arrays & Hashes",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "OOP in Ruby",
+        domain: "Blocks & Closures",
+        topics: [
+          {
+            title: "Blocks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Procs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lambdas",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Yield",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Object-Oriented Ruby",
         topics: [
           {
             title: "Classes",
@@ -988,12 +1858,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Mixins",
+            title: "Modules (Mixins)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Metaprogramming",
+            title: "Access Control",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Metaprogramming",
+        topics: [
+          {
+            title: "Method Missing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Define Method",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Eval",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Class Macros",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1010,7 +1905,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "PHP Basics",
+        domain: "Core PHP",
         topics: [
           {
             title: "Variables",
@@ -1018,7 +1913,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Arrays",
+            title: "Arrays (Indexed & Associative)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1031,14 +1926,29 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Functions",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Superglobals",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced PHP",
+        domain: "Object-Oriented PHP",
         topics: [
           {
-            title: "OOP",
+            title: "Classes & Objects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inheritance",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interfaces",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1053,12 +1963,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "PDO (PHP Data Objects)",
+            title: "Magic Methods",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Database & Ecosystem",
+        topics: [
+          {
+            title: "PDO",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Prepared Statements",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Composer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Autoloading",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error Handling",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1076,7 +2011,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Swift Basics",
+        domain: "Swift Core",
         topics: [
           {
             title: "Variables & Constants",
@@ -1094,22 +2029,72 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Functions & Closures",
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Closures",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "OOP & Protocols",
+        domain: "Data Structures",
         topics: [
           {
-            title: "Classes & Structs",
+            title: "Arrays",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Properties & Methods",
+            title: "Dictionaries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tuples",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Strings",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Object-Oriented & Protocol-Oriented",
+        topics: [
+          {
+            title: "Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Structs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Enums",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Properties",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Methods",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1120,6 +2105,26 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Extensions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Generics",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Memory Management",
+        topics: [
+          {
+            title: "ARC (Automatic Reference Counting)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Strong/Weak/Unowned References",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1137,7 +2142,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Kotlin Basics",
+        domain: "Kotlin Core",
         topics: [
           {
             title: "Basic Syntax",
@@ -1145,32 +2150,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Small"
           },
           {
-            title: "Null Safety",
+            title: "Null Safety (? & !!)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Functions & Lambdas",
+            title: "Functions",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Classes & Objects",
+            title: "Lambdas",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Collections",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Kotlin",
+        domain: "Classes & Types",
         topics: [
           {
-            title: "Coroutines",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Extension Functions",
+            title: "Classes & Inheritance",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1181,6 +2186,71 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Sealed Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Enum Classes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Object Declarations",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Features",
+        topics: [
+          {
+            title: "Extension Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Higher-Order Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Scope Functions (let, run, apply)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Inline Functions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concurrency",
+        topics: [
+          {
+            title: "Coroutines",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Suspend Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dispatchers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Channels",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Flows",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1198,32 +2268,107 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "HTML Basics",
+        domain: "Document Structure",
         topics: [
           {
-            title: "Document Structure",
+            title: "Doctype",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Semantic HTML",
+            title: "Head & Body",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Forms",
+            title: "Meta Tags",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Tables",
+            title: "Linking Assets",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Semantic Markup",
+        topics: [
+          {
+            title: "Header, Main, Footer",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Multimedia",
+            title: "Section & Article",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Nav & Aside",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Headings",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Forms & Input",
+        topics: [
+          {
+            title: "Form Attributes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Input Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Labels",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Validation Attributes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Multimedia",
+        topics: [
+          {
+            title: "Images",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Audio",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Video",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Iframes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Canvas/SVG Basics",
+            complexity: "Simple",
+            size: "Small"
           }
         ]
       }
@@ -1239,10 +2384,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "CSS Basics",
+        domain: "Styling Fundamentals",
         topics: [
           {
-            title: "Selectors",
+            title: "Selectors & Specificity",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1252,19 +2397,19 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Typography",
+            title: "Colors & Gradients",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Colors",
+            title: "Typography",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "CSS Layout",
+        domain: "Layout Systems",
         topics: [
           {
             title: "Flexbox",
@@ -1272,47 +2417,87 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Grid",
+            title: "CSS Grid",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Positioning",
+            title: "Positioning (Static, Relative, Absolute, Fixed)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Responsive Design",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Media Queries",
+            title: "Z-Index",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced CSS",
+        domain: "Responsive Design",
         topics: [
           {
-            title: "Animations",
+            title: "Media Queries",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Relative Units (rem, em, vh, vw)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Container Queries",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Visual Effects",
+        topics: [
           {
             title: "Transitions",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Custom Properties (Variables)",
+            title: "Keyframe Animations",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "CSS Preprocessors (Sass/Less)",
+            title: "Transforms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Filters",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Shadows",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Architecture",
+        topics: [
+          {
+            title: "CSS Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "BEM Methodology",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sass/Less Preprocessors",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1331,15 +2516,15 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "React Basics",
+        domain: "Component Architecture",
         topics: [
           {
-            title: "JSX",
+            title: "JSX Syntax",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Components",
+            title: "Functional Components",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1349,19 +2534,14 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "State",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Event Handling",
+            title: "Component Lifecycle",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "React Hooks",
+        domain: "State & Effects",
         topics: [
           {
             title: "useState",
@@ -1374,12 +2554,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "State Lifting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Immutability",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Hooks",
+        topics: [
+          {
             title: "useContext",
             complexity: "Medium",
             size: "Medium"
           },
           {
+            title: "useReducer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "useRef",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "useMemo",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "useCallback",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1391,15 +2601,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Advanced React",
+        domain: "Routing & Ecosystem",
         topics: [
           {
-            title: "Context API",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Performance Optimization (Memo/Callback)",
+            title: "React Router",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1410,6 +2615,31 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Error Boundaries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Suspense & Lazy Loading",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "State Management Libraries",
+        topics: [
+          {
+            title: "Redux Toolkit",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Zustand",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "React Query / SWR",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1426,8 +2656,13 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Angular Basics",
+        domain: "Core Architecture",
         topics: [
+          {
+            title: "Modules (NgModules vs Standalone)",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Components",
             complexity: "Medium",
@@ -1439,37 +2674,82 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Directives",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Pipes",
+            title: "Data Binding",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Angular Core",
+        domain: "Directives & Pipes",
         topics: [
           {
-            title: "Services & DI",
+            title: "Structural Directives",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Routing",
+            title: "Attribute Directives",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Forms (Reactive & Template-driven)",
+            title: "Built-in Pipes",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "RxJS & Observables",
+            title: "Custom Pipes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Services & State",
+        topics: [
+          {
+            title: "Dependency Injection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Services",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RxJS Observables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Signals",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Routing & Forms",
+        topics: [
+          {
+            title: "Router Setup",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Route Guards",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Reactive Forms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Template-driven Forms",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1488,15 +2768,20 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Vue Basics",
+        domain: "Vue Core",
         topics: [
           {
-            title: "Instance",
+            title: "Vue Instance",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Template Syntax",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Reactivity Fundamentals",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1513,15 +2798,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Components",
+        domain: "Component System",
         topics: [
           {
-            title: "Props",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Events",
+            title: "Props & Events",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1531,7 +2811,57 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Composition API",
+            title: "Provide / Inject",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dynamic Components",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Composition API",
+        topics: [
+          {
+            title: "setup()",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Refs & Reactive",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lifecycle Hooks in Composition",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Composables",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ecosystem",
+        topics: [
+          {
+            title: "Vue Router",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pinia (State Management)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transitions & Animations",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1548,52 +2878,72 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Svelte Basics",
+        domain: "Reactivity",
         topics: [
           {
-            title: "Reactivity",
+            title: "Reactive Assignments",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Props",
+            title: "Reactive Declarations ($:)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Logic Blocks",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Events",
+            title: "Reactive Statements",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Svelte",
+        domain: "Components",
         topics: [
           {
-            title: "Stores",
+            title: "Props",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Lifecycle",
+            title: "Logic Blocks (if/each/await)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Actions",
+            title: "Events (Forwarding/Modifiers)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Transitions",
+            title: "Slots",
             complexity: "Medium",
             size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "State & Ecosystem",
+        topics: [
+          {
+            title: "Writable/Readable Stores",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Derived Stores",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lifecycle Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SvelteKit Basics",
+            complexity: "Simple",
+            size: "Small"
           }
         ]
       }
@@ -1609,40 +2959,65 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Tailwind Basics",
+        domain: "Utility Classes",
         topics: [
           {
-            title: "Utility-First Concept",
+            title: "Spacing",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Responsive Design",
+            title: "Typography",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Hover & Focus States",
+            title: "Colors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Flexbox/Grid Utilities",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Customization",
+        domain: "Responsive & States",
         topics: [
           {
-            title: "Configuration",
+            title: "Breakpoints",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Adding Custom Styles",
+            title: "Hover/Focus/Active States",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Plugins",
+            title: "Dark Mode",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Configuration",
+        topics: [
+          {
+            title: "tailwind.config.js",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Themes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Directives (@apply, @layer)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1659,7 +3034,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Figma Basics",
+        domain: "Design Fundamentals",
         topics: [
           {
             title: "Frames",
@@ -1667,12 +3042,27 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Shapes",
+            title: "Vectors & Shapes",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Text",
+            title: "Typography",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Color Styles",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Layout & Structure",
+        topics: [
+          {
+            title: "Auto Layout",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1680,17 +3070,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Constraints",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Grids",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Figma",
+        domain: "Design Systems",
         topics: [
-          {
-            title: "Auto Layout",
-            complexity: "Medium",
-            size: "Medium"
-          },
           {
             title: "Components",
             complexity: "Medium",
@@ -1702,7 +3092,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Prototyping",
+            title: "Design Tokens",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Libraries",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Prototyping",
+        topics: [
+          {
+            title: "Interactions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Smart Animate",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Overlays",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1721,7 +3136,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Node Basics",
+        domain: "Node Architecture",
         topics: [
           {
             title: "Event Loop",
@@ -1729,42 +3144,92 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Modules (CommonJS vs ESM)",
+            title: "V8 Engine",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "NPM/Yarn",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "File System",
+            title: "Single-Threaded Non-Blocking I/O",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Web Servers",
+        domain: "Core Modules",
         topics: [
           {
-            title: "HTTP Module",
+            title: "fs (File System)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Express.js Basics",
-            complexity: "Simple",
-            size: "Small"
-          },
-          {
-            title: "Middleware",
+            title: "path",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Routing",
+            title: "http",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "events (Event Emitter)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "crypto",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "stream",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Module Systems",
+        topics: [
+          {
+            title: "CommonJS (require)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ES Modules (import)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "NPM / Package Management",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Node",
+        topics: [
+          {
+            title: "Worker Threads",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Child Processes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Buffer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Performance Profiling",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1782,25 +3247,80 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Express Basics",
+        domain: "Routing",
         topics: [
           {
-            title: "Routing",
+            title: "Route Methods",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Middleware",
+            title: "Route Parameters",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Request/Response Objects",
+            title: "Query Strings",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Error Handling",
+            title: "Express Router",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Middleware",
+        topics: [
+          {
+            title: "Application-Level",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Router-Level",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error-Handling Middleware",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Built-in Middleware",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Third-Party Middleware",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Request & Response",
+        topics: [
+          {
+            title: "Req Object",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Res Object",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Status Codes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sending JSON/HTML",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1818,8 +3338,13 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "NestJS Core",
+        domain: "Nest Architecture",
         topics: [
+          {
+            title: "Modules",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Controllers",
             complexity: "Medium",
@@ -1831,22 +3356,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Modules",
+            title: "Dependency Injection",
             complexity: "Medium",
             size: "Medium"
-          },
+          }
+        ]
+      },
+      {
+        domain: "Request Lifecycle",
+        topics: [
           {
             title: "Middleware",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Exception Filters",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Pipes",
             complexity: "Medium",
             size: "Medium"
           },
@@ -1857,6 +3377,41 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Interceptors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Exception Filters",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data & Integrations",
+        topics: [
+          {
+            title: "TypeORM / Prisma Integration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GraphQL Setup",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Microservices Basics",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "WebSockets",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1873,55 +3428,100 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Django Basics",
+        domain: "Django Core",
         topics: [
           {
-            title: "Models",
+            title: "MVT Architecture",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Project vs App",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Views",
+            title: "settings.py",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Templates",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "URLs",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Admin Interface",
+            title: "manage.py",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Django",
+        domain: "Models & Databases",
         topics: [
           {
-            title: "ORM",
+            title: "Model Fields",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Forms",
+            title: "Migrations",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Authentication",
+            title: "QuerySets",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Django REST Framework",
+            title: "Relationships (ForeignKey, M2M)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Views & Templates",
+        topics: [
+          {
+            title: "Function-Based Views",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Class-Based Views",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "URL Routing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Jinja Templates",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Django REST Framework",
+        topics: [
+          {
+            title: "Serializers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ViewSets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Routers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Authentication & Permissions",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1938,32 +3538,52 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Flask Basics",
+        domain: "Flask Core",
         topics: [
+          {
+            title: "App Initialization",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Routing",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Templates (Jinja2)",
+            title: "Request Object",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Request Data",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Responses",
+            title: "Responses & JSON",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Flask",
+        domain: "Templating & Static",
+        topics: [
+          {
+            title: "Jinja2 Templates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Static Files",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Context Processors",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Application Structure",
         topics: [
           {
             title: "Blueprints",
@@ -1971,12 +3591,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Application Context",
+            title: "Application Factory",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Extensions (SQLAlchemy, Migrate)",
+            title: "App Context vs Request Context",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Extensions",
+        topics: [
+          {
+            title: "Flask-SQLAlchemy",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Flask-Migrate",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Flask-Login",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Flask-RESTful",
             complexity: "Medium",
             size: "Medium"
           }
@@ -1994,50 +3639,100 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Spring Basics",
+        domain: "Spring Core",
         topics: [
+          {
+            title: "Inversion of Control (IoC)",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Dependency Injection",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Inversion of Control",
+            title: "Application Context",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Spring MVC",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Spring Data JPA",
+            title: "Beans & Scopes",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Spring",
+        domain: "Spring Web",
         topics: [
           {
-            title: "Spring Security",
+            title: "REST Controllers",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Actuator",
+            title: "Request Mapping",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Testing",
+            title: "Path Variables & Query Params",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Microservices with Spring Cloud",
+            title: "Exception Handling (@ControllerAdvice)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Access",
+        topics: [
+          {
+            title: "Spring Data JPA",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Entities & Repositories",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "JPQL",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Transactions (@Transactional)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Security & Ops",
+        topics: [
+          {
+            title: "Spring Security Basics",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "JWT Authentication",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Spring Boot Actuator",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Profiles",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2055,7 +3750,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "GraphQL Basics",
+        domain: "Schema Definition",
+        topics: [
+          {
+            title: "Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Scalars",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Enums",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Input Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interfaces",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Operations",
         topics: [
           {
             title: "Queries",
@@ -2068,37 +3793,62 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Schemas & Types",
+            title: "Subscriptions",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Resolvers",
+            title: "Aliases & Fragments",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced GraphQL",
+        domain: "Server Implementation",
         topics: [
           {
-            title: "Subscriptions",
+            title: "Resolvers",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Fragments",
+            title: "Context",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Directives",
+            title: "DataLoaders (N+1 Problem)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Apollo Client/Server",
+            title: "Error Handling",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Client Integration",
+        topics: [
+          {
+            title: "Apollo Client",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Caching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Optimistic UI Updates",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2116,10 +3866,40 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "REST Basics",
+        domain: "Architectural Constraints",
         topics: [
           {
-            title: "HTTP Methods",
+            title: "Client-Server",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Stateless",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cacheable",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Uniform Interface",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Layered System",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "HTTP Fundamentals",
+        topics: [
+          {
+            title: "Methods (GET, POST, PUT, PATCH, DELETE)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2129,22 +3909,22 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Resource Naming",
+            title: "Headers",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Statelessness",
+            title: "Content Negotiation",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "API Design",
+        domain: "API Design Principles",
         topics: [
           {
-            title: "Versioning",
+            title: "Resource Naming",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2159,7 +3939,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Authentication (OAuth/JWT)",
+            title: "HATEOAS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Versioning",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Security",
+        topics: [
+          {
+            title: "Authentication (Tokens/OAuth)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Authorization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Rate Limiting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CORS",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2177,25 +3987,70 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "gRPC Basics",
+        domain: "Protocol Buffers",
         topics: [
           {
-            title: "Protocol Buffers (Protobuf)",
+            title: "Message Definitions",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Service Definition",
+            title: "Data Types",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Compiling Protoc",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Service Types",
+        topics: [
           {
             title: "Unary RPC",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Streaming RPC (Server, Client, Bidirectional)",
+            title: "Server Streaming",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Client Streaming",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bidirectional Streaming",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced gRPC",
+        topics: [
+          {
+            title: "Interceptors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Deadlines & Timeouts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Error Handling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Load Balancing",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2213,83 +4068,33 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "SQL Basics",
+        domain: "Data Querying (DQL)",
         topics: [
           {
-            title: "SELECT",
+            title: "SELECT Statements",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "WHERE",
+            title: "Filtering (WHERE, LIKE, IN)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "ORDER BY",
+            title: "Sorting (ORDER BY)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "GROUP BY",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "HAVING",
+            title: "Limiting",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Joins & Relations",
+        domain: "Data Manipulation (DML)",
         topics: [
-          {
-            title: "INNER JOIN",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "LEFT/RIGHT JOIN",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "FULL OUTER JOIN",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Self Joins",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Subqueries",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "DDL & DML",
-        topics: [
-          {
-            title: "CREATE",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "ALTER",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "DROP",
-            complexity: "Medium",
-            size: "Medium"
-          },
           {
             title: "INSERT",
             complexity: "Medium",
@@ -2304,6 +4109,91 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "DELETE",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Upserts (MERGE/ON CONFLICT)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Definition (DDL)",
+        topics: [
+          {
+            title: "CREATE TABLE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ALTER TABLE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DROP TABLE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Constraints (Primary/Foreign Keys)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Aggregations & Grouping",
+        topics: [
+          {
+            title: "GROUP BY",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "HAVING",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Aggregate Functions (SUM, COUNT, AVG)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Joins & Set Operations",
+        topics: [
+          {
+            title: "INNER JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LEFT/RIGHT JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "FULL JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CROSS JOIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UNION",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "INTERSECT",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
@@ -2311,32 +4201,27 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Advanced SQL",
         topics: [
           {
+            title: "Subqueries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CTEs (Common Table Expressions)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Window Functions (ROW_NUMBER, RANK)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Indexes",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Transactions",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Views",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Stored Procedures",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Triggers",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Window Functions",
+            title: "Transactions (ACID)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2355,55 +4240,110 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Postgres Basics",
+        domain: "Data Types",
         topics: [
           {
-            title: "Data Types",
+            title: "Numeric",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "JSONB",
+            title: "String",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Array Types",
+            title: "Date/Time",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "psql CLI",
+            title: "Arrays",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "JSON & JSONB",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UUID",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Postgres",
+        domain: "Advanced Queries",
         topics: [
           {
-            title: "Full Text Search",
+            title: "Full-Text Search",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "PostGIS",
+            title: "Recursive CTEs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Lateral Joins",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Materialized Views",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Performance Tuning",
+        topics: [
+          {
+            title: "EXPLAIN ANALYZE",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Index Types (B-Tree, GIN, GiST)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Vacuuming & Autovacuum",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Connection Pooling (PgBouncer)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Administration",
+        topics: [
+          {
+            title: "Roles & Permissions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Backup & Restore (pg_dump)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replication (Logical vs Physical)",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Partitioning",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Replication",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Vacuuming",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2421,45 +4361,90 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "MySQL Basics",
+        domain: "Storage Engines",
         topics: [
           {
-            title: "Storage Engines (InnoDB vs MyISAM)",
+            title: "InnoDB vs MyISAM",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Data Types",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "User Management",
+            title: "Memory Engine",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced MySQL",
+        domain: "Data Types & Constraints",
         topics: [
           {
-            title: "Replication",
+            title: "Numeric",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Clustering",
-            complexity: "Very Hard",
-            size: "Very Large"
+            title: "String (VARCHAR, TEXT)",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Performance Tuning",
-            complexity: "Very Hard",
-            size: "Very Large"
+            title: "Date/Time",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Backup & Restore",
+            title: "Foreign Key Constraints",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Performance & Optimization",
+        topics: [
+          {
+            title: "EXPLAIN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Query Caching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Indexing Strategies",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Slow Query Log",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Administration",
+        topics: [
+          {
+            title: "User Management",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replication (Master-Slave)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Clustering Basics",
+            complexity: "Simple",
+            size: "Small"
+          },
+          {
+            title: "mysqldump",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2478,35 +4463,110 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "MongoDB Basics",
+        domain: "Document Model",
         topics: [
           {
-            title: "Documents & Collections",
+            title: "Databases",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "BSON",
+            title: "Collections",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "CRUD Operations",
+            title: "BSON Documents",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Indexes",
+            title: "_id Field",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced MongoDB",
+        domain: "CRUD Operations",
         topics: [
           {
-            title: "Aggregation Pipeline",
+            title: "insertOne/Many",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "find",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Query Operators ($eq, $gt, $in)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "updateOne/Many",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Update Operators ($set, $inc)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "delete",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Aggregation Pipeline",
+        topics: [
+          {
+            title: "Pipeline Stages ($match, $group, $project, $lookup)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Expressions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Modeling",
+        topics: [
+          {
+            title: "Embedding vs Referencing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Schema Validation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "One-to-Many / Many-to-Many in NoSQL",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Performance & Scale",
+        topics: [
+          {
+            title: "Indexing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Compound Indexes",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2517,11 +4577,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Sharding",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Data Modeling",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2539,7 +4594,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Redis Basics",
+        domain: "Data Structures",
         topics: [
           {
             title: "Strings",
@@ -2565,11 +4620,41 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Sorted Sets",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Bitmaps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "HyperLogLog",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Redis",
+        domain: "Key Management",
+        topics: [
+          {
+            title: "Expiration (TTL)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Eviction Policies (LRU, LFU)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Key Naming Conventions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Features",
         topics: [
           {
             title: "Pub/Sub",
@@ -2577,12 +4662,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Transactions",
+            title: "Transactions (MULTI/EXEC)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Persistence (RDB/AOF)",
+            title: "Lua Scripting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipelining",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "High Availability",
+        topics: [
+          {
+            title: "Persistence (RDB vs AOF)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Redis Sentinel",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2590,11 +4695,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Redis Cluster",
             complexity: "Very Hard",
             size: "Very Large"
-          },
-          {
-            title: "Eviction Policies",
-            complexity: "Medium",
-            size: "Medium"
           }
         ]
       }
@@ -2610,45 +4710,105 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Elasticsearch Basics",
+        domain: "Core Concepts",
         topics: [
           {
-            title: "Documents & Indices",
+            title: "Indices",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Mapping",
+            title: "Documents",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Basic Search Queries",
-            complexity: "Simple",
-            size: "Small"
+            title: "Shards",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Text Analysis",
+            title: "Replicas",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Nodes & Clusters",
+            complexity: "Very Hard",
+            size: "Very Large"
+          }
+        ]
+      },
+      {
+        domain: "Mapping & Analysis",
+        topics: [
+          {
+            title: "Dynamic vs Explicit Mapping",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Field Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Analyzers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tokenizers",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Elasticsearch",
+        domain: "Search API",
         topics: [
           {
-            title: "Aggregations",
+            title: "Query DSL",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Cluster Management",
-            complexity: "Very Hard",
-            size: "Very Large"
+            title: "Match/Term Queries",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Logstash & Kibana Integration",
+            title: "Bool Queries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Highlighting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pagination",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Aggregations",
+        topics: [
+          {
+            title: "Metric Aggregations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bucket Aggregations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipeline Aggregations",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2666,35 +4826,80 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Cassandra Basics",
+        domain: "Architecture",
         topics: [
           {
-            title: "Data Model",
+            title: "Ring Topology",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "CQL (Cassandra Query Language)",
+            title: "Gossip Protocol",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Partitioning & Clustering Keys",
-            complexity: "Very Hard",
-            size: "Very Large"
+            title: "Snitches",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Virtual Nodes (Vnodes)",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Cassandra",
+        domain: "Data Modeling",
         topics: [
           {
-            title: "Architecture (Ring, Gossip)",
-            complexity: "Hard",
-            size: "Large"
+            title: "CQL",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Consistency Levels",
+            title: "Partition Keys",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Clustering Columns",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Primary Keys",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Denormalization",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Read/Write Paths",
+        topics: [
+          {
+            title: "Memtables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SSTables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Commit Log",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Compaction",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2704,7 +4909,27 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Compaction",
+            title: "Bloom Filters",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Consistency & Replication",
+        topics: [
+          {
+            title: "Replication Factor",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Consistency Levels (ONE, QUORUM, ALL)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hinted Handoff",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2722,25 +4947,15 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Kafka Basics",
+        domain: "Architecture",
         topics: [
           {
-            title: "Topics",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Producers",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Consumers",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
             title: "Brokers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Topics",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2753,24 +4968,74 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Offsets",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Zookeeper/KRaft",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Kafka",
+        domain: "Producers & Consumers",
         topics: [
+          {
+            title: "Producer Acks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Message Key & Routing",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Consumer Groups",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Replication",
+            title: "Rebalancing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Reliability",
+        topics: [
+          {
+            title: "Replication Factor",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Zookeeper/KRaft",
+            title: "In-Sync Replicas (ISR)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Exactly-Once Semantics",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Retention Policies",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ecosystem",
+        topics: [
+          {
+            title: "Kafka Connect",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Schema Registry",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2780,7 +5045,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Kafka Connect",
+            title: "ksqlDB",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2798,7 +5063,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Spark Basics",
+        domain: "Core Architecture",
+        topics: [
+          {
+            title: "Driver",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Executors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cluster Managers (YARN, K8s, Standalone)",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "DAGs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Abstractions",
         topics: [
           {
             title: "RDDs",
@@ -2816,7 +5106,27 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Transformations & Actions",
+            title: "Transformations (Lazy) vs Actions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Spark SQL",
+        topics: [
+          {
+            title: "Querying DataFrames",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UDFs (User Defined Functions)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Catalyst Optimizer",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2826,22 +5136,22 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Advanced Spark",
         topics: [
           {
-            title: "Spark SQL",
+            title: "Spark Streaming (Structured Streaming)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Spark Streaming",
+            title: "Broadcast Variables",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Machine Learning Library (MLlib)",
+            title: "Accumulators",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Performance Tuning",
+            title: "Partition Tuning",
             complexity: "Very Hard",
             size: "Very Large"
           }
@@ -2859,7 +5169,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Airflow Basics",
+        domain: "Core Concepts",
         topics: [
           {
             title: "DAGs",
@@ -2872,6 +5182,21 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Task Dependencies (Bitshift Operators)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Execution Dates",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Components",
+        topics: [
+          {
             title: "Operators",
             complexity: "Medium",
             size: "Medium"
@@ -2882,14 +5207,49 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Scheduling",
+            title: "Hooks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Connections",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Airflow",
+        domain: "Architecture",
+        topics: [
+          {
+            title: "Scheduler",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Webserver",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Workers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Executors (Local, Celery, Kubernetes)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced DAGs",
         topics: [
           {
             title: "XComs",
@@ -2897,17 +5257,22 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Variables & Connections",
+            title: "Branching",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Executors",
+            title: "Task Groups",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Custom Operators",
+            title: "Dynamic DAGs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SLAs & Alerts",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2926,30 +5291,80 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Docker Basics",
+        domain: "Container Fundamentals",
         topics: [
           {
-            title: "Images",
+            title: "Containers vs VMs",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Containers",
+            title: "Namespaces & Cgroups",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Dockerfile",
+            title: "Docker Daemon",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Docker CLI",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Image Building",
+        topics: [
+          {
+            title: "Dockerfile Instructions (FROM, RUN, CMD, ENTRYPOINT)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Layers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multi-stage Builds",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Caching",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Storage & Networking",
+        topics: [
           {
             title: "Volumes",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Networks",
+            title: "Bind Mounts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bridge Networks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Host Networks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Overlay Networks",
             complexity: "Medium",
             size: "Medium"
           }
@@ -2959,12 +5374,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Docker Compose",
         topics: [
           {
-            title: "docker-compose.yml",
+            title: "Services",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Services",
+            title: "Networks & Volumes in Compose",
             complexity: "Medium",
             size: "Medium"
           },
@@ -2974,27 +5389,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Multi-container apps",
+            title: "Overrides",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Docker",
+        domain: "Registry & Security",
         topics: [
           {
-            title: "Multi-stage Builds",
+            title: "Docker Hub",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Security Scanning",
+            title: "Private Registries",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Registry Management",
+            title: "Scanning Images",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Running as Non-Root",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3013,7 +5433,22 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "K8s Basics",
+        domain: "Architecture",
+        topics: [
+          {
+            title: "Control Plane (API Server, etcd, Scheduler, Controller Manager)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Worker Nodes (Kubelet, Kube-proxy)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Core Workloads",
         topics: [
           {
             title: "Pods",
@@ -3031,12 +5466,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Services",
+            title: "StatefulSets",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Namespaces",
+            title: "DaemonSets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Jobs & CronJobs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking",
+        topics: [
+          {
+            title: "Services (ClusterIP, NodePort, LoadBalancer)",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Ingress",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Ingress Controllers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Network Policies",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3061,47 +5526,67 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "PersistentVolumes",
+            title: "PersistentVolumes (PV)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "PersistentVolumeClaims",
+            title: "PersistentVolumeClaims (PVC)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "StorageClasses",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced K8s",
+        domain: "Scheduling & Scaling",
         topics: [
           {
-            title: "Ingress",
+            title: "Node Selectors",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "DaemonSets",
+            title: "Taints & Tolerations",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "StatefulSets",
+            title: "Node/Pod Affinity",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Jobs & CronJobs",
+            title: "HPA (Horizontal Pod Autoscaler)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Security & Observability",
+        topics: [
+          {
+            title: "RBAC (Role-Based Access Control)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Helm Charts",
+            title: "Service Accounts",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "RBAC",
+            title: "Liveness/Readiness Probes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Resource Requests & Limits",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3123,7 +5608,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Compute",
         topics: [
           {
-            title: "EC2",
+            title: "EC2 (Instances, AMIs, Auto Scaling)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3133,12 +5618,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "ECS",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "EKS",
+            title: "ECS & EKS",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3150,10 +5630,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Storage & DB",
+        domain: "Storage",
         topics: [
           {
-            title: "S3",
+            title: "S3 (Buckets, Classes, Policies)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3168,27 +5648,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "RDS",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "DynamoDB",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "ElastiCache",
+            title: "Glacier",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Networking & Security",
+        domain: "Networking",
         topics: [
           {
-            title: "VPC",
+            title: "VPC (Subnets, Route Tables, IGW, NAT)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3203,7 +5673,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "IAM",
+            title: "Elastic Load Balancing (ALB, NLB)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Databases",
+        topics: [
+          {
+            title: "RDS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DynamoDB",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ElastiCache",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Redshift",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Security & Management",
+        topics: [
+          {
+            title: "IAM (Users, Roles, Policies)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3211,24 +5716,19 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "KMS",
             complexity: "Medium",
             size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Management",
-        topics: [
+          },
           {
             title: "CloudWatch",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "CloudFormation",
+            title: "CloudTrail",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Terraform on AWS",
+            title: "CloudFormation",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3249,7 +5749,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Compute",
         topics: [
           {
-            title: "Compute Engine",
+            title: "Compute Engine (VMs)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3264,11 +5764,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "App Engine",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
             title: "Cloud Functions",
             complexity: "Medium",
             size: "Medium"
@@ -3276,7 +5771,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Storage & DB",
+        domain: "Storage & Databases",
         topics: [
           {
             title: "Cloud Storage",
@@ -3344,7 +5839,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Cloud CDN",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Cloud IAM",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Secret Manager",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3387,7 +5892,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Storage & DB",
+        domain: "Storage & Databases",
         topics: [
           {
             title: "Blob Storage",
@@ -3412,15 +5917,45 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Networking & Security",
+        domain: "Networking & Identity",
         topics: [
           {
-            title: "Virtual Network",
+            title: "Virtual Network (VNet)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure Load Balancer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Application Gateway",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Azure Active Directory (Entra ID)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Management & Dev",
+        topics: [
+          {
+            title: "Azure Resource Manager (ARM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure DevOps",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Azure Monitor",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3444,7 +5979,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Terraform Basics",
+        domain: "Terraform Core",
         topics: [
           {
             title: "Providers",
@@ -3462,20 +5997,60 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Variables & Outputs",
+            title: "HCL Syntax",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "State",
+            title: "Init, Plan, Apply, Destroy",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Terraform",
+        domain: "State Management",
         topics: [
+          {
+            title: "State Files (terraform.tfstate)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Remote State (S3, Azure Blob)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State Locking",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Importing Resources",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Modularity & Variables",
+        topics: [
+          {
+            title: "Input Variables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Local Values",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Outputs",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Modules",
             complexity: "Medium",
@@ -3485,19 +6060,29 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Workspaces",
             complexity: "Medium",
             size: "Medium"
-          },
+          }
+        ]
+      },
+      {
+        domain: "Advanced Features",
+        topics: [
           {
             title: "Provisioners",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Remote State",
+            title: "Dynamic Blocks",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Terraform Cloud",
+            title: "Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Count & For_each",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3516,7 +6101,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "CI/CD Concepts",
+        domain: "Core Principles",
         topics: [
           {
             title: "Continuous Integration",
@@ -3524,52 +6109,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Continuous Delivery",
+            title: "Continuous Delivery vs Deployment",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Continuous Deployment",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Pipelines",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Tools",
-        topics: [
-          {
-            title: "GitHub Actions",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "GitLab CI",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Jenkins",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "CircleCI",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Practices",
-        topics: [
-          {
-            title: "Automated Testing",
+            title: "Pipeline Stages",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3577,9 +6122,74 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Artifact Management",
             complexity: "Medium",
             size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Build & Test Automation",
+        topics: [
+          {
+            title: "Running Unit Tests",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Deployment Strategies (Blue/Green, Canary)",
+            title: "Linting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Code Coverage",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Container Builds",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Deployment Strategies",
+        topics: [
+          {
+            title: "Rolling Updates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Blue-Green Deployment",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Canary Releases",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Feature Flags",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Tooling Specifics",
+        topics: [
+          {
+            title: "GitHub Actions (Workflows, Runners)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GitLab CI (.gitlab-ci.yml)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Jenkins (Pipelines, Plugins)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3598,20 +6208,25 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Linux Basics",
+        domain: "File System & Navigation",
         topics: [
           {
-            title: "File System Hierarchy",
+            title: "Directory Structure",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Basic Commands (ls, cd, cp, rm)",
-            complexity: "Simple",
-            size: "Small"
+            title: "cd, ls, pwd",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "File Permissions (chmod, chown)",
+            title: "File Permissions (chmod, chown, umask)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Symlinks",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3621,40 +6236,30 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Process Management",
         topics: [
           {
-            title: "ps",
+            title: "ps, top, htop",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "top/htop",
+            title: "kill, pkill",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "kill",
+            title: "Background/Foreground (bg, fg, jobs)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Background Jobs",
+            title: "Systemd & Services",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Networking & Text",
+        domain: "Text Processing",
         topics: [
-          {
-            title: "ping",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "curl/wget",
-            complexity: "Medium",
-            size: "Medium"
-          },
           {
             title: "grep",
             complexity: "Medium",
@@ -3671,7 +6276,52 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "tar/gzip",
+            title: "cut",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "sort",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "uniq",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pipes & Redirection",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking & Security",
+        topics: [
+          {
+            title: "ip, ifconfig",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "netstat, ss",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "curl, wget",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SSH",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Firewalls (ufw, iptables)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3681,17 +6331,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Bash Scripting",
         topics: [
           {
-            title: "Variables",
+            title: "Variables & Environments",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Loops",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Conditionals",
+            title: "Conditionals & Loops",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3720,45 +6365,95 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Nginx Basics",
+        domain: "Configuration Basics",
         topics: [
           {
-            title: "Installation",
+            title: "nginx.conf Structure",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Configuration Structure",
+            title: "Contexts (main, http, server, location)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Static File Serving",
+            title: "Directives",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Nginx",
+        domain: "Web Serving",
         topics: [
           {
-            title: "Reverse Proxy",
+            title: "Serving Static Content",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Load Balancing",
+            title: "Index Files",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "SSL/TLS Termination",
+            title: "Error Pages",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Caching",
+            title: "MIME Types",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Reverse Proxy & Load Balancing",
+        topics: [
+          {
+            title: "proxy_pass",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Upstream Blocks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Load Balancing Algorithms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sticky Sessions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Security & Performance",
+        topics: [
+          {
+            title: "SSL/TLS Configuration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Gzip Compression",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Caching (proxy_cache)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Rate Limiting",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3779,29 +6474,29 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Linear Structures",
         topics: [
           {
-            title: "Arrays",
+            title: "Arrays & Dynamic Arrays",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Linked Lists",
+            title: "Linked Lists (Singly, Doubly)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Stacks",
+            title: "Stacks (LIFO)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Queues",
+            title: "Queues (FIFO, Deque)",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Trees & Graphs",
+        domain: "Trees",
         topics: [
           {
             title: "Binary Trees",
@@ -3809,12 +6504,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Binary Search Trees",
+            title: "Binary Search Trees (BST)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Heaps",
+            title: "AVL Trees",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Red-Black Trees",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3824,7 +6524,27 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Graphs (Directed/Undirected)",
+            title: "Heaps (Min/Max)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Graphs",
+        topics: [
+          {
+            title: "Directed & Undirected Graphs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Adjacency Matrix",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Adjacency List",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3844,7 +6564,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Collision Resolution",
+            title: "Collision Resolution (Chaining, Probing)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3862,15 +6582,40 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Sorting & Searching",
+        domain: "Algorithm Analysis",
         topics: [
           {
-            title: "Bubble/Selection/Insertion Sort",
+            title: "Big O Notation (Time/Space Complexity)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Merge/Quick Sort",
+            title: "Best, Worst, Average Cases",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Recursion",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Sorting & Searching",
+        topics: [
+          {
+            title: "Bubble, Selection, Insertion Sort",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merge Sort",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Quick Sort",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3885,17 +6630,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Graph Algorithms",
         topics: [
           {
-            title: "BFS",
+            title: "Breadth-First Search (BFS)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "DFS",
+            title: "Depth-First Search (DFS)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Dijkstra's",
+            title: "Dijkstra's Algorithm",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3905,22 +6650,22 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Minimum Spanning Tree",
+            title: "Topological Sort",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Paradigms",
+        domain: "Algorithm Paradigms",
         topics: [
           {
-            title: "Divide & Conquer",
+            title: "Divide and Conquer",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Dynamic Programming",
+            title: "Dynamic Programming (Memoization, Tabulation)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3931,26 +6676,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Backtracking",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Complexity",
-        topics: [
-          {
-            title: "Big O Notation",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Time Complexity",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Space Complexity",
             complexity: "Medium",
             size: "Medium"
           }
@@ -3968,10 +6693,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Core Concepts",
+        domain: "Design Fundamentals",
         topics: [
           {
-            title: "Scalability (Horizontal vs Vertical)",
+            title: "Vertical vs Horizontal Scaling",
             complexity: "Medium",
             size: "Medium"
           },
@@ -3993,7 +6718,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Components",
+        domain: "Architecture Components",
         topics: [
           {
             title: "Load Balancers",
@@ -4001,12 +6726,52 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Caches",
+            title: "API Gateways",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Databases (SQL vs NoSQL)",
+            title: "Caches (Write-through, Write-behind)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Content Delivery Networks (CDN)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Database Scaling",
+        topics: [
+          {
+            title: "SQL vs NoSQL Selection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Sharding & Partitioning",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Replication (Master-Slave, Master-Master)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Consistent Hashing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Communication & Processing",
+        topics: [
+          {
+            title: "Synchronous vs Asynchronous",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4016,37 +6781,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "CDNs",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Patterns",
-        topics: [
-          {
-            title: "Microservices",
+            title: "Event Sourcing",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Event-Driven Architecture",
-            complexity: "Hard",
-            size: "Large"
-          },
-          {
-            title: "Sharding",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Replication",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Consistent Hashing",
+            title: "Batch vs Stream Processing",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4160,6 +6900,11 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Visitor",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Iterator",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       }
@@ -4175,40 +6920,80 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "OSI & TCP/IP Models",
+        domain: "Network Models",
         topics: [
           {
-            title: "Physical/Data Link",
+            title: "OSI 7-Layer Model",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Network (IP)",
+            title: "TCP/IP Model",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Transport (TCP/UDP)",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Application (HTTP, DNS)",
+            title: "Encapsulation & Decapsulation",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Web Protocols",
+        domain: "Transport Layer",
         topics: [
           {
-            title: "HTTP/HTTPS",
+            title: "TCP (Handshake, Windowing, Congestion Control)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "DNS",
+            title: "UDP",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Ports & Sockets",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Network Layer",
+        topics: [
+          {
+            title: "IP Addressing (IPv4 vs IPv6)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Subnetting & CIDR",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Routing Protocols",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "NAT (Network Address Translation)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Application Layer",
+        topics: [
+          {
+            title: "HTTP/1.1 vs HTTP/2 vs HTTP/3",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DNS Resolution",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4219,36 +7004,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "SSL/TLS Handshake",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Network Devices & Concepts",
-        topics: [
-          {
-            title: "Routers",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Switches",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Firewalls",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Subnetting",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "NAT",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4266,15 +7021,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Process Management",
+        domain: "Process & Thread Management",
         topics: [
           {
-            title: "Processes vs Threads",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Scheduling Algorithms",
+            title: "Process States",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4284,27 +7034,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Inter-process Communication (IPC)",
+            title: "Process Scheduling Algorithms",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "User Threads vs Kernel Threads",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Concurrency",
+        domain: "Concurrency & Synchronization",
         topics: [
           {
-            title: "Deadlocks",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Mutexes & Semaphores",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
             title: "Race Conditions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Critical Sections",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mutexes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Semaphores",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Deadlocks (Prevention, Avoidance)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4319,12 +7084,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Paging",
+            title: "Paging & Segmentation",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Segmentation",
+            title: "Page Replacement Algorithms (LRU, FIFO)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4344,12 +7109,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Inodes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Disk Scheduling",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "RAID",
+            title: "RAID Levels",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4368,10 +7138,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Core Concepts",
+        domain: "Core Principles",
         topics: [
           {
-            title: "CIA Triad",
+            title: "CIA Triad (Confidentiality, Integrity, Availability)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4386,7 +7156,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Zero Trust",
+            title: "Defense in Depth",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4401,12 +7171,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Asymmetric Encryption (RSA)",
+            title: "Asymmetric Encryption (RSA, ECC)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Hashing (SHA)",
+            title: "Hashing (SHA-256)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4416,7 +7186,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "PKI",
+            title: "PKI & Certificates",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4426,7 +7196,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Network Security",
         topics: [
           {
-            title: "Firewalls",
+            title: "Firewalls (Stateful vs Stateless)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4441,7 +7211,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "DMZ",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Network Segmentation",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Threat Modeling",
+        topics: [
+          {
+            title: "Malware Types",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Social Engineering / Phishing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "DDoS Attacks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Man-in-the-Middle (MitM)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4460,7 +7260,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Injection & Auth",
+        domain: "Injection Vulnerabilities",
         topics: [
           {
             title: "SQL Injection",
@@ -4468,25 +7268,50 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Cross-Site Scripting (XSS)",
+            title: "NoSQL Injection",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Broken Authentication",
+            title: "Command Injection",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cross-Site Scripting (XSS)",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Data & Config",
+        domain: "Authentication & Access",
         topics: [
           {
-            title: "Sensitive Data Exposure",
+            title: "Broken Access Control",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Session Hijacking",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Credential Stuffing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Insecure Direct Object References (IDOR)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Configuration & Logic",
+        topics: [
           {
             title: "Security Misconfiguration",
             complexity: "Medium",
@@ -4496,19 +7321,29 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "XML External Entities (XXE)",
             complexity: "Medium",
             size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Access & Monitoring",
-        topics: [
+          },
           {
-            title: "Broken Access Control",
+            title: "Server-Side Request Forgery (SSRF)",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Insecure Deserialization",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Protection",
+        topics: [
+          {
+            title: "Sensitive Data Exposure",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cryptographic Failures",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4534,12 +7369,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Methodology",
         topics: [
           {
-            title: "Reconnaissance",
+            title: "Reconnaissance (OSINT)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Scanning",
+            title: "Scanning & Enumeration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Vulnerability Assessment",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4561,25 +7401,60 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Tools",
+        domain: "Network & Infrastructure",
         topics: [
           {
-            title: "Nmap",
+            title: "Port Scanning (Nmap)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Burp Suite",
+            title: "Network Sniffing (Wireshark)",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Man-in-the-Middle Frameworks",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Web Application Pentesting",
+        topics: [
+          {
+            title: "Intercepting Proxies (Burp Suite, ZAP)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Directory Brute Forcing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Payload Generation",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Exploitation Frameworks",
+        topics: [
           {
             title: "Metasploit",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Wireshark",
+            title: "Privilege Escalation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Password Cracking (Hashcat, John the Ripper)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4620,7 +7495,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "SVM",
+            title: "Support Vector Machines (SVM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Naive Bayes",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4631,6 +7511,11 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         topics: [
           {
             title: "K-Means Clustering",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "Hierarchical Clustering",
             complexity: "Very Hard",
             size: "Very Large"
           },
@@ -4647,10 +7532,45 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
+        domain: "Data Preprocessing",
+        topics: [
+          {
+            title: "Feature Scaling",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Handling Missing Data",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "One-Hot Encoding",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Feature Engineering",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
         domain: "Model Evaluation",
         topics: [
           {
+            title: "Train/Test Split",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Cross-Validation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Confusion Matrix",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4660,12 +7580,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "ROC/AUC",
+            title: "ROC & AUC",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Overfitting/Underfitting",
+            title: "Overfitting vs Underfitting",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4684,7 +7604,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Neural Networks",
+        domain: "Neural Network Foundations",
         topics: [
           {
             title: "Perceptrons",
@@ -4692,7 +7612,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Activation Functions",
+            title: "Activation Functions (ReLU, Sigmoid, Tanh)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Forward Propagation",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4705,34 +7630,89 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Loss Functions",
             complexity: "Medium",
             size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Optimization",
+        topics: [
+          {
+            title: "Gradient Descent",
+            complexity: "Medium",
+            size: "Medium"
           },
           {
-            title: "Optimizers (Adam, SGD)",
+            title: "Stochastic Gradient Descent (SGD)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Adam Optimizer",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Learning Rates",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Dropout & Regularization",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Architectures",
+        domain: "Computer Vision Architectures",
         topics: [
           {
-            title: "CNNs (Convolutional Neural Networks)",
+            title: "Convolutional Neural Networks (CNNs)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "RNNs & LSTMs",
+            title: "Pooling Layers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ResNet",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Object Detection (YOLO)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Sequence Models",
+        topics: [
+          {
+            title: "Recurrent Neural Networks (RNNs)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "LSTMs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GRUs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Attention Mechanisms",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Transformers",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Autoencoders",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4752,25 +7732,25 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Core Concepts",
+        domain: "Core Architectures",
         topics: [
           {
-            title: "Transformers Architecture",
+            title: "Transformer Architecture",
             complexity: "Hard",
             size: "Large"
           },
           {
-            title: "Attention Mechanism",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Embeddings",
+            title: "Self-Attention",
             complexity: "Medium",
             size: "Medium"
           },
           {
             title: "Tokenization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Vector Embeddings",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4780,7 +7760,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Prompt Engineering",
         topics: [
           {
-            title: "Zero-shot/Few-shot",
+            title: "Zero-Shot Prompting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Few-Shot Prompting",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4790,7 +7775,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "RAG (Retrieval-Augmented Generation)",
+            title: "System Prompts",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Retrieval-Augmented Generation",
+        topics: [
+          {
+            title: "RAG Architecture",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "Vector Databases",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Semantic Search",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Chunking Strategies",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4800,42 +7810,22 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Model Fine-Tuning",
         topics: [
           {
-            title: "LoRA/QLoRA",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "RLHF",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Instruction Tuning",
+            title: "Supervised Fine-Tuning (SFT)",
             complexity: "Very Hard",
             size: "Very Large"
-          }
-        ]
-      },
-      {
-        domain: "Frameworks & APIs",
-        topics: [
+          },
           {
-            title: "OpenAI API",
+            title: "PEFT (Parameter-Efficient Fine-Tuning)",
+            complexity: "Very Hard",
+            size: "Very Large"
+          },
+          {
+            title: "LoRA / QLoRA",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "LangChain",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "LlamaIndex",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Hugging Face",
+            title: "RLHF (Reinforcement Learning from Human Feedback)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4853,7 +7843,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "TF Basics",
+        domain: "TensorFlow Foundations",
         topics: [
           {
             title: "Tensors",
@@ -4871,7 +7861,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Autodiff",
+            title: "Autodiff (GradientTape)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4891,12 +7881,67 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Custom Layers & Models",
+            title: "Model Subclassing",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Callbacks",
+            title: "Built-in Layers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Custom Layers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Training & Evaluation",
+        topics: [
+          {
+            title: "Compiling Models",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fit/Evaluate/Predict",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Callbacks (EarlyStopping, Checkpoints)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "TensorBoard",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data Pipelines",
+        topics: [
+          {
+            title: "tf.data API",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Datasets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Mapping & Batching",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Prefetching",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4906,12 +7951,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Deployment",
         topics: [
           {
-            title: "TF Serving",
+            title: "SavedModel Format",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "TF Lite",
+            title: "TensorFlow Serving",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "TensorFlow Lite",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4934,7 +7984,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "PyTorch Basics",
+        domain: "PyTorch Foundations",
         topics: [
           {
             title: "Tensors",
@@ -4942,17 +7992,62 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Autograd",
+            title: "Broadcasting",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "nn.Module",
+            title: "Autograd Mechanics",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Computation Graphs",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Neural Networks (torch.nn)",
+        topics: [
+          {
+            title: "Modules (nn.Module)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Layers (Linear, Conv2d)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Loss Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Parameters & Buffers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Optimization (torch.optim)",
+        topics: [
           {
             title: "Optimizers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Learning Rate Schedulers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Gradient Clipping",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4962,7 +8057,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Data Handling",
         topics: [
           {
-            title: "Datasets",
+            title: "Datasets (torch.utils.data.Dataset)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -4972,7 +8067,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Transforms",
+            title: "Transforms (torchvision)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -4987,7 +8082,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Distributed Training",
+            title: "Distributed Data Parallel (DDP)",
             complexity: "Hard",
             size: "Large"
           },
@@ -5014,7 +8109,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Pandas Basics",
+        domain: "Core Structures",
         topics: [
           {
             title: "Series",
@@ -5027,7 +8122,27 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Reading/Writing Data (CSV, Excel, SQL)",
+            title: "Index Objects",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Data I/O",
+        topics: [
+          {
+            title: "Reading CSV/Excel/JSON",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Writing Data",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Connecting to SQL",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5037,27 +8152,67 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Data Manipulation",
         topics: [
           {
-            title: "Indexing & Selecting",
+            title: "Indexing (.loc, .iloc)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Filtering",
+            title: "Filtering & Boolean Masking",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Handling Missing Data",
+            title: "Handling Missing Data (dropna, fillna)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Grouping & Aggregation",
+            title: "String Operations",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Aggregation & Grouping",
+        topics: [
+          {
+            title: "GroupBy",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Merging & Joining",
+            title: "Aggregations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pivot Tables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Cross Tabulations",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Merging Data",
+        topics: [
+          {
+            title: "Merge",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Join",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Concat",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5074,7 +8229,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "NumPy Basics",
+        domain: "Core Concepts",
         topics: [
           {
             title: "Ndarrays",
@@ -5082,17 +8237,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Array Creation",
+            title: "Array Creation (arange, linspace, zeros)",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Data Types (dtypes)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Array Manipulation",
+        topics: [
           {
             title: "Indexing & Slicing",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Data Types",
+            title: "Reshaping",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Concatenation & Splitting",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5102,17 +8272,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Operations",
         topics: [
           {
-            title: "Broadcasting",
+            title: "Vectorized Operations",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Mathematical Functions",
+            title: "Broadcasting Rules",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Linear Algebra (numpy.linalg)",
+            title: "Universal Functions (ufuncs)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Linear Algebra & Stats",
+        topics: [
+          {
+            title: "Dot Products",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Matrix Inverses (numpy.linalg)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Statistical Functions (mean, std, var)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5130,33 +8320,103 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "RN Basics",
+        domain: "Core Components",
         topics: [
           {
-            title: "Core Components",
+            title: "View",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Styling",
+            title: "Text",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Handling Touches",
+            title: "Image",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Navigation (React Navigation)",
+            title: "ScrollView",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "FlatList",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SectionList",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Native Device Features",
+        domain: "Styling & Layout",
         topics: [
+          {
+            title: "StyleSheet",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Flexbox in React Native",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Responsive Layouts",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Navigation",
+        topics: [
+          {
+            title: "React Navigation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Stack Navigator",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Tab Navigator",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Drawer Navigator",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Deep Linking",
+            complexity: "Very Hard",
+            size: "Very Large"
+          }
+        ]
+      },
+      {
+        domain: "Native Integration",
+        topics: [
+          {
+            title: "AsyncStorage",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Permissions",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Camera",
             complexity: "Medium",
@@ -5168,11 +8428,6 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Storage (AsyncStorage)",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
             title: "Push Notifications",
             complexity: "Medium",
             size: "Medium"
@@ -5180,20 +8435,25 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         ]
       },
       {
-        domain: "Advanced RN",
+        domain: "Architecture & Build",
         topics: [
           {
-            title: "Animations (Reanimated)",
+            title: "Metro Bundler",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Native Modules",
+            title: "JSI / Fabric",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Over-the-Air Updates",
+            title: "Expo Managed vs Bare Workflow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Building APK/IPA",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5211,50 +8471,125 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Flutter Basics",
+        domain: "Dart Language",
         topics: [
           {
-            title: "Widgets (Stateless vs Stateful)",
+            title: "Dart Types",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Layouts",
+            title: "Classes",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Material & Cupertino",
+            title: "Null Safety",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "State Management (Provider/Riverpod)",
+            title: "Futures & Streams",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Flutter",
+        domain: "Widgets",
         topics: [
           {
-            title: "Animations",
+            title: "Stateless Widgets",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Networking",
+            title: "Stateful Widgets",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Local Storage",
+            title: "Material & Cupertino Widgets",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Platform Channels",
+            title: "Layout Widgets (Row, Column, Stack)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "State Management",
+        topics: [
+          {
+            title: "setState",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "InheritedWidget",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Provider",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Riverpod",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "BLoC",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Navigation & Routing",
+        topics: [
+          {
+            title: "Navigator 1.0",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Navigator 2.0 (Router API)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Passing Data",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Networking & Data",
+        topics: [
+          {
+            title: "HTTP Requests",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "JSON Serialization",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Shared Preferences",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "SQLite (sqflite)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5272,10 +8607,10 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Android Basics",
+        domain: "App Components",
         topics: [
           {
-            title: "Activities",
+            title: "Activities & Lifecycle",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5290,12 +8625,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Manifest",
+            title: "Services",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Resources",
+            title: "Broadcast Receivers",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5320,7 +8655,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Jetpack Compose",
+            title: "ViewBinding",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Jetpack Compose",
+        topics: [
+          {
+            title: "Composable Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "State in Compose",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Modifiers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Compose Layouts",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5330,9 +8690,9 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Architecture & Data",
         topics: [
           {
-            title: "MVVM",
-            complexity: "Medium",
-            size: "Medium"
+            title: "MVVM Architecture",
+            complexity: "Hard",
+            size: "Large"
           },
           {
             title: "ViewModel",
@@ -5340,7 +8700,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "LiveData",
+            title: "LiveData / StateFlow",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5351,6 +8711,31 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
           },
           {
             title: "Retrofit",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ecosystem",
+        topics: [
+          {
+            title: "AndroidManifest.xml",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Gradle Build Scripts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Permissions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Play Store Deployment",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5368,7 +8753,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "iOS Basics",
+        domain: "App Architecture",
         topics: [
           {
             title: "App Lifecycle",
@@ -5376,12 +8761,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "ViewControllers",
+            title: "AppDelegate & SceneDelegate",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Storyboards vs Programmatic UI",
+            title: "MVC vs MVVM",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "UIKit",
+        topics: [
+          {
+            title: "UIViewControllers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Storyboards",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Auto Layout",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UITableView & UICollectionView",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5401,12 +8811,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Lists & Navigation",
+            title: "ObservableObject",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Combine Framework",
+            title: "NavigationStack",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GeometryReader",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5426,7 +8841,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Codable",
+            title: "Codable Protocol",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "UserDefaults",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Concurrency",
+        topics: [
+          {
+            title: "GCD (Grand Central Dispatch)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Operations",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Async/Await in Swift",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5445,7 +8885,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Testing Types",
+        domain: "Test Types",
         topics: [
           {
             title: "Unit Testing",
@@ -5463,19 +8903,19 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Performance Testing",
+            title: "Regression Testing",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Security Testing",
+            title: "Performance Testing",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Concepts",
+        domain: "Testing Paradigms",
         topics: [
           {
             title: "Test-Driven Development (TDD)",
@@ -5488,12 +8928,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Black Box vs White Box Testing",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Testing Concepts",
+        topics: [
+          {
             title: "Mocking & Stubbing",
             complexity: "Medium",
             size: "Medium"
           },
           {
+            title: "Spies",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fixtures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
             title: "Code Coverage",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Assertions",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5510,20 +8975,20 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Jest Basics",
+        domain: "Test Structure",
         topics: [
           {
-            title: "Writing Tests",
+            title: "describe, it, test",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Matchers",
+            title: "Setup & Teardown (beforeEach, afterAll)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Setup & Teardown",
+            title: "Matchers (expect)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5533,12 +8998,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Mocking",
         topics: [
           {
-            title: "Mock Functions",
+            title: "Mock Functions (jest.fn)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Mocking Modules",
+            title: "Mocking Modules (jest.mock)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5548,7 +9013,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
+            title: "Spying (jest.spyOn)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Jest",
+        topics: [
+          {
             title: "Snapshot Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Asynchronous Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Coverage Reporting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Configuration",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5568,42 +9058,97 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Cypress Basics",
         topics: [
           {
-            title: "Writing E2E Tests",
+            title: "Test Runner",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Selectors",
+            title: "Writing Specs",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Assertions",
+            title: "Selectors (cy.get)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Interacting with Elements",
+            title: "Assertions (should, expect)",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Cypress",
+        domain: "Interactions",
         topics: [
           {
-            title: "Network Stubbing (cy.intercept)",
+            title: "Clicking",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Typing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Checking Boxes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Handling Alerts & Modals",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Network & APIs",
+        topics: [
+          {
+            title: "cy.intercept",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Stubbing Responses",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Waiting for Requests (cy.wait)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "API Testing (cy.request)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Architecture",
+        topics: [
           {
             title: "Custom Commands",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "CI Integration",
+            title: "Page Object Model",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fixtures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "CI/CD Integration",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5621,25 +9166,90 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Selenium Basics",
+        domain: "WebDriver Basics",
         topics: [
           {
-            title: "WebDriver",
+            title: "Driver Instantiation",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Locators",
+            title: "Browser Navigation",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Waits (Implicit vs Explicit)",
+            title: "Finding Elements (By.id, By.xpath)",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Interactions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Synchronization",
+        topics: [
+          {
+            title: "Implicit Waits",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Explicit Waits",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fluent Waits",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Interactions",
+        topics: [
+          {
+            title: "Action Chains",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Handling Alerts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Switching Frames & Windows",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Executing JavaScript",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Architecture",
+        topics: [
           {
             title: "Page Object Model (POM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Data-Driven Testing",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Selenium Grid",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5658,20 +9268,95 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Core Concepts",
+        domain: "Core Architecture",
         topics: [
+          {
+            title: "Blocks",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hashes",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Merkle Trees",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Distributed Ledgers",
             complexity: "Hard",
             size: "Large"
           },
           {
-            title: "Cryptography in Blockchain",
+            title: "Nodes",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Cryptography",
+        topics: [
+          {
+            title: "Public/Private Keys",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Consensus Mechanisms (PoW, PoS)",
+            title: "Digital Signatures",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Hash Functions",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Consensus Mechanisms",
+        topics: [
+          {
+            title: "Proof of Work (PoW)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Proof of Stake (PoS)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Delegated PoS",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Byzantine Fault Tolerance (BFT)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ecosystem Concepts",
+        topics: [
+          {
+            title: "Wallets",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Gas & Fees",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Layer 1 vs Layer 2",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5679,34 +9364,9 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Smart Contracts",
             complexity: "Medium",
             size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Ecosystems",
-        topics: [
-          {
-            title: "Bitcoin",
-            complexity: "Medium",
-            size: "Medium"
           },
           {
-            title: "Ethereum",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Layer 2 Solutions",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "DeFi (Decentralized Finance)",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "NFTs",
+            title: "dApps",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5724,45 +9384,35 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Solidity Basics",
+        domain: "Syntax & Types",
         topics: [
           {
-            title: "Data Types",
+            title: "State Variables",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Variables",
+            title: "Data Types (uint, address, mapping)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Functions",
+            title: "Structs & Enums",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Mappings",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Structs",
+            title: "Functions & Modifiers",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Smart Contracts",
+        domain: "Smart Contract Architecture",
         topics: [
           {
-            title: "Deploying",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Modifiers",
+            title: "Constructors",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5780,14 +9430,24 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Interfaces",
             complexity: "Medium",
             size: "Medium"
+          },
+          {
+            title: "Payable Functions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Fallback/Receive",
+            complexity: "Medium",
+            size: "Medium"
           }
         ]
       },
       {
-        domain: "Security & Advanced",
+        domain: "Memory & Execution",
         topics: [
           {
-            title: "Reentrancy Attacks",
+            title: "Storage vs Memory vs Calldata",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5797,12 +9457,57 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Oracles (Chainlink)",
+            title: "EVM (Ethereum Virtual Machine) Basics",
+            complexity: "Simple",
+            size: "Small"
+          }
+        ]
+      },
+      {
+        domain: "Security",
+        topics: [
+          {
+            title: "Reentrancy Attacks",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "ERC-20 & ERC-721 Standards",
+            title: "Integer Overflow/Underflow",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Access Control",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "tx.origin vs msg.sender",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Ecosystem Tooling",
+        topics: [
+          {
+            title: "Hardhat",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Truffle",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Ethers.js / Web3.js Integration",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ERC Standards (ERC-20, ERC-721)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5820,7 +9525,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Core Concepts",
+        domain: "Architecture",
         topics: [
           {
             title: "Game Loop",
@@ -5833,24 +9538,69 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Physics Engines",
+            title: "Entity Component System (ECS)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Collision Detection",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "AI & Pathfinding (A*)",
+            title: "State Management",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Graphics",
+        domain: "Mathematics for Games",
+        topics: [
+          {
+            title: "Vectors",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Matrices",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Quaternions",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Trigonometry",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Physics & Collision",
+        topics: [
+          {
+            title: "Bounding Boxes (AABB)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Raycasting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Rigidbodies",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Collision Resolution",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Graphics & Rendering",
         topics: [
           {
             title: "Rendering Pipeline",
@@ -5863,12 +9613,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Textures & Materials",
+            title: "Textures & Sprites",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Lighting",
+            title: "Lighting & Shadows",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Camera Systems",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Game AI",
+        topics: [
+          {
+            title: "Finite State Machines (FSM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Behavior Trees",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Pathfinding (A*, NavMesh)",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5886,10 +9661,20 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Unity Basics",
+        domain: "Engine Basics",
         topics: [
           {
-            title: "GameObjects & Components",
+            title: "Editor Interface",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GameObjects",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Components",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5902,44 +9687,19 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             title: "Prefabs",
             complexity: "Medium",
             size: "Medium"
-          },
-          {
-            title: "C# Scripting in Unity",
-            complexity: "Medium",
-            size: "Medium"
           }
         ]
       },
       {
-        domain: "Physics & Animation",
+        domain: "Scripting (C#)",
         topics: [
           {
-            title: "Rigidbodies",
+            title: "MonoBehaviour Lifecycle",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Colliders",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Animator Controller",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "UI System (UGUI)",
-            complexity: "Medium",
-            size: "Medium"
-          }
-        ]
-      },
-      {
-        domain: "Advanced Unity",
-        topics: [
-          {
-            title: "ScriptableObjects",
+            title: "Update vs FixedUpdate",
             complexity: "Medium",
             size: "Medium"
           },
@@ -5949,12 +9709,87 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "AssetBundles",
+            title: "ScriptableObjects",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Physics & UI",
+        topics: [
+          {
+            title: "Colliders & Triggers",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Multiplayer (Netcode)",
+            title: "Rigidbodies",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Raycasts",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Unity UI (UGUI)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Canvas",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Graphics & Animation",
+        topics: [
+          {
+            title: "Materials & Shaders",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Particle Systems",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Animator Controller",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Animation Curves",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Systems",
+        topics: [
+          {
+            title: "NavMesh (Pathfinding)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Addressables",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Multiplayer (Netcode for GameObjects)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Build Settings",
             complexity: "Medium",
             size: "Medium"
           }
@@ -5973,7 +9808,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Unreal Basics",
+        domain: "Engine Fundamentals",
         topics: [
           {
             title: "Actors",
@@ -5991,7 +9826,37 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Blueprints Visual Scripting",
+            title: "Pawn vs Character",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "GameMode",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Blueprints",
+        topics: [
+          {
+            title: "Visual Scripting",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Event Graph",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Variables & Macros",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Blueprint Interfaces",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6001,47 +9866,72 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "C++ in Unreal",
         topics: [
           {
-            title: "UObject",
+            title: "UObject Architecture",
+            complexity: "Hard",
+            size: "Large"
+          },
+          {
+            title: "UPROPERTY & UFUNCTION Macros",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "AActor",
+            title: "Memory Management (Garbage Collection)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Macros (UPROPERTY, UFUNCTION)",
-            complexity: "Medium",
-            size: "Medium"
-          },
-          {
-            title: "Memory Management",
+            title: "Delegates",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Advanced Unreal",
+        domain: "Graphics (UE5)",
         topics: [
+          {
+            title: "Lumen (Global Illumination)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Nanite (Virtual Geometry)",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Materials",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Lumen & Nanite",
+            title: "Niagara (Particles)",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Multiplayer",
+        topics: [
+          {
+            title: "Replication",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Multiplayer & Replication",
+            title: "RPCs (Remote Procedure Calls)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Animation Blueprints",
+            title: "Authority vs Client",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Session Management",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6060,7 +9950,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Hardware Concepts",
+        domain: "Hardware Architecture",
         topics: [
           {
             title: "Microcontrollers vs Microprocessors",
@@ -6068,7 +9958,32 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Memory (RAM, ROM, Flash)",
+            title: "Memory (RAM, ROM, EEPROM, Flash)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Registers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Clocks & Oscillators",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "I/O & Interrupts",
+        topics: [
+          {
+            title: "GPIO (General Purpose I/O)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interrupt Service Routines (ISRs)",
             complexity: "Medium",
             size: "Medium"
           },
@@ -6078,7 +9993,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "Interrupts",
+            title: "PWM",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "ADC/DAC",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6088,7 +10008,7 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Communication Protocols",
         topics: [
           {
-            title: "UART/USART",
+            title: "UART",
             complexity: "Medium",
             size: "Medium"
           },
@@ -6103,14 +10023,19 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "CAN bus",
+            title: "CAN Bus",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "1-Wire",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Software",
+        domain: "Software & OS",
         topics: [
           {
             title: "Bare-metal Programming",
@@ -6118,17 +10043,17 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
             size: "Medium"
           },
           {
-            title: "RTOS (Real-Time Operating Systems)",
+            title: "RTOS (Tasks, Schedulers, Mutexes, Queues)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Memory-mapped I/O",
+            title: "Watchdog Timers",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Low-power modes",
+            title: "Power Management",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6145,25 +10070,45 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Arduino Basics",
+        domain: "Arduino Environment",
         topics: [
           {
-            title: "Setup & Loop",
+            title: "IDE Setup",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Digital I/O",
+            title: "Sketches",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Analog I/O",
+            title: "setup() and loop()",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "PWM",
+            title: "Serial Monitor",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Digital & Analog I/O",
+        topics: [
+          {
+            title: "digitalRead/Write",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "analogRead/Write (PWM)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "PinModes",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6173,17 +10118,42 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
         domain: "Sensors & Actuators",
         topics: [
           {
-            title: "Reading Sensors",
+            title: "Interfacing LEDs & Buttons",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Controlling Motors",
+            title: "Reading Temperature/Humidity Sensors",
             complexity: "Medium",
             size: "Medium"
           },
+          {
+            title: "Controlling Servos & Steppers",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Advanced Arduino",
+        topics: [
           {
             title: "Libraries",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Direct Port Manipulation",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Interrupts (attachInterrupt)",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "EEPROM Usage",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6201,40 +10171,95 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
     ],
     curriculum: [
       {
-        domain: "Raspberry Pi Basics",
+        domain: "Setup & OS",
         topics: [
           {
-            title: "OS Installation (Raspberry Pi OS)",
+            title: "Raspberry Pi OS Installation",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "GPIO Pins",
+            title: "Headless Setup",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "Python for Pi",
+            title: "SSH Access",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "raspi-config",
             complexity: "Medium",
             size: "Medium"
           }
         ]
       },
       {
-        domain: "Projects",
+        domain: "Hardware Interfacing",
         topics: [
+          {
+            title: "GPIO Pins",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Python RPi.GPIO Library",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "I2C/SPI on Pi",
+            complexity: "Medium",
+            size: "Medium"
+          },
           {
             title: "Camera Module",
             complexity: "Medium",
             size: "Medium"
-          },
+          }
+        ]
+      },
+      {
+        domain: "Networking & IoT",
+        topics: [
           {
-            title: "Networking",
+            title: "Setting up Web Servers (Flask/Node)",
             complexity: "Medium",
             size: "Medium"
           },
           {
-            title: "IoT Integration",
+            title: "MQTT Protocols",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Bluetooth/Wi-Fi Config",
+            complexity: "Medium",
+            size: "Medium"
+          }
+        ]
+      },
+      {
+        domain: "Projects & Automation",
+        topics: [
+          {
+            title: "Cron Jobs",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Systemd Services",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "Media Centers",
+            complexity: "Medium",
+            size: "Medium"
+          },
+          {
+            title: "RetroPie",
             complexity: "Medium",
             size: "Medium"
           }
@@ -6247,15 +10272,12 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
 export const resolveSkill = (input: string): SkillDefinition => {
   const normalized = input.toLowerCase().trim()
   
-  // Try exact match in aliases or id or canonical name
   const matched = SKILL_REGISTRY.find(s => s.aliases.includes(normalized) || s.id === normalized || s.canonicalName.toLowerCase() === normalized)
   if (matched) return matched
 
-  // Try partial match on canonical name
   const partial = SKILL_REGISTRY.find(s => s.canonicalName.toLowerCase().includes(normalized))
   if (partial) return partial
 
-  // Fallback / Unknown Custom Skill
   return {
     id: input.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
     canonicalName: input,
@@ -6272,6 +10294,7 @@ export const resolveSkill = (input: string): SkillDefinition => {
     ]
   }
 }
+
 
 export const generateSubtopicsForSkill = (skillDef: SkillDefinition): SubtopicProgress[] => {
   const subtopics: SubtopicProgress[] = []

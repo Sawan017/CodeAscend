@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { ArrowLeft, BookOpen, Award, CheckCircle } from 'lucide-react'
 import type { Skill } from '../../types'
+import { resolveSkill } from '../../data/learningData'
 
 type SkillDetailProps = {
   skill: Skill
@@ -23,6 +24,9 @@ export function SkillDetail({
     onUpdateNotes?.(skill.id, editNotes)
     setIsEditingNotes(false)
   }
+
+  const canonicalSkill = resolveSkill(skill.id);
+  const curriculum = canonicalSkill?.curriculum || [];
 
   return (
     <motion.div 
@@ -103,6 +107,51 @@ export function SkillDetail({
           />
         </div>
       </div>
+
+      {curriculum.length > 0 && (
+        <div style={{ marginBottom: '4rem' }}>
+          <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ width: '4px', height: '24px', background: 'var(--cyan)', borderRadius: '2px' }} />
+            Subtopics
+          </h3>
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '1.5rem',
+            maxHeight: '400px',
+            overflowY: 'auto',
+            paddingRight: '1rem',
+            // Custom scrollbar styling via inline style is tricky, but basic auto overflow works.
+          }}>
+            {curriculum.map((group, idx) => (
+              <div key={idx} style={{ background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-strong)' }}>
+                <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--cyan)', fontWeight: 600 }}>{group.domain}</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
+                  {group.topics.map((topic, tIdx) => (
+                    <div key={tIdx} style={{ 
+                      padding: '1rem', 
+                      background: 'rgba(255,255,255,0.03)', 
+                      borderRadius: '8px', 
+                      border: '1px solid var(--border-strong)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--cyan)'; e.currentTarget.style.background = 'rgba(0, 255, 255, 0.05)' }}
+                    onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    >
+                      <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{topic.title}</span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{topic.complexity} • {topic.size}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         <div>
