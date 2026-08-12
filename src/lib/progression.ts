@@ -1,13 +1,30 @@
 import type { Achievement, Badge, Goal, NameTier, Progression, Project, Skill } from '../types'
 
 /**
- * XP / Level system
- * Uses a cumulative threshold curve: early levels are fast, later levels
- * take progressively more XP. Level N requires floor(120 * (N-1)^1.6) XP.
- * Level 8 ≈ 3,000 XP. Level 1 = 0 XP.
+ * XP / Level system  —  floor(500 * (N-1)^1.6)
+ *
+ * Calibrated to the actual skill XP economy:
+ *   Easy PRIME ≈ 250 XP · Normal PRIME ≈ 771 XP · Hard PRIME ≈ 2150 XP
+ *
+ * Level curve benchmarks:
+ *   L1  → 0 XP       gap +500     (2 Easy-PRIME sessions, or 1 Normal)
+ *   L2  → 500 XP     gap +1,015   (~2 Normal-PRIME sessions)
+ *   L3  → 1,515 XP   gap +1,384
+ *   L5  → 4,594 XP   gap +1,972   (~3 Normal-PRIME sessions)
+ *   L10 → 16,817 XP  gap +3,088   (~5 Normal / ~2 Hard-PRIME sessions)
+ *   L20 → 55,587 XP  gap +4,754   (~7 Normal / ~3 Hard-PRIME sessions)
+ *   L30 → 109,346 XP gap +6,096   (~8 Normal / ~3 Hard-PRIME sessions)
+ *   L50 → 253,095 XP gap +8,314   (~11 Normal / ~4 Hard-PRIME sessions)
+ *   L75 → 489,486 XP gap +10,626  (~14 Normal / ~5 Hard-PRIME sessions)
+ *   L100 → 779,805 XP gap +12,641 (~17 Normal / ~6 Hard-PRIME sessions)
+ *
+ * L1 = 0 XP. Player XP is preserved — only the level interpretation changes.
+ * All downstream functions (calculateLevel, calculateProgressToNextLevel,
+ * progress bars, level-up checks) derive from xpForLevel, so this is the
+ * only place that needs to change.
  */
 
-const XP_BASE = 120
+const XP_BASE = 500
 const XP_EXPONENT = 1.6
 
 export const XP_REWARDS = {

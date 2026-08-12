@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { ArrowLeft, BookOpen, Award, CheckCircle } from 'lucide-react'
 import type { Skill, SubtopicProgress } from '../../types'
 import { resolveSkill, generateSubtopicsForSkill } from '../../data/learningData'
-
+import { allTimeDistributions } from '../../data/timeDistributions/index'
 import { LearningSession } from './LearningSession'
 
 type SkillDetailProps = {
@@ -215,7 +215,10 @@ export function SkillDetail({
                         {isCompleted && <CheckCircle size={16} color="#34c759" />}
                       </div>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                        {aiRec ? `AI Adjusted: ${aiRec.difficulty}` : `${topic.complexity} • ${topic.size}`}
+                        {aiRec
+                          ? `AI Adjusted: ${aiRec.difficulty}`
+                          : `Difficulty: ${allTimeDistributions[skill.id]?.[topic.title]?.intentionalDifficulty || 'Normal'}`
+                        }
                       </span>
                     </div>
                   )})}
@@ -302,10 +305,25 @@ export function SkillDetail({
         const currentSubtopic = activeSubtopic;
         if (!currentSubtopic) return null;
         
+        const dist = allTimeDistributions[skill.id]?.[currentSubtopic.title];
+        const aiDiff = currentSubtopic.aiRecommendation?.difficulty;
+        const trueDifficulty: 'Easy' | 'Normal' | 'Hard' =
+          (aiDiff === 'Easy' || aiDiff === 'Normal' || aiDiff === 'Hard')
+            ? aiDiff
+            : (dist?.intentionalDifficulty || currentSubtopic.difficulty || 'Normal') as 'Easy' | 'Normal' | 'Hard';
+        const tMins = dist?.teachingMinutes ?? 60;
+        const sMins = dist?.solvingBaselineMinutes?.[trueDifficulty] ?? 25;
+        const XP_BASE: Record<string, number> = { Easy: 60,  Normal: 150, Hard: 320 };
+        const XP_MULT: Record<string, number> = { Easy: 3.5, Normal: 5.5, Hard: 9.0 };
+        const dynamicXP = Math.round(
+          (XP_BASE[trueDifficulty] ?? 150) + sMins * (XP_MULT[trueDifficulty] ?? 5.5)
+        );
+        
         return (
           <LearningSession
-            subtopic={currentSubtopic}
-            baselineTime={currentSubtopic.baseTime || 60}
+            subtopic={{ ...currentSubtopic, difficulty: trueDifficulty, baseXP: dynamicXP }}
+            teachingMinutes={tMins}
+            solvingBaselineMinutes={sMins}
             onClose={() => {
               setActiveSubtopic(null)
               if (onCloseSession) onCloseSession()
@@ -336,3 +354,4 @@ export function SkillDetail({
     </motion.div>
   )
 }
+

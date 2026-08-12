@@ -1,4 +1,5 @@
 import type { TopicComplexity, SubtopicProgress, SkillType, TopicSize, SubtopicDifficulty } from '../types'
+import { allTimeDistributions } from './timeDistributions/index'
 
 export const TOPIC_SIZE_BASE_TIME: Record<TopicSize, number> = {
   'Tiny': 8,
@@ -10433,14 +10434,27 @@ export const generateSubtopicsForSkill = (skillDef: SkillDefinition): SubtopicPr
   
   skillDef.curriculum.forEach(domainGroup => {
     domainGroup.topics.forEach(topic => {
+      const dist = allTimeDistributions[skillDef.id]?.[topic.title];
+      const authoritativeDifficulty = dist?.intentionalDifficulty || 'Normal';
+      const solvingMins = dist?.solvingBaselineMinutes?.[authoritativeDifficulty] || 25;
+
+      // XP formula: difficulty anchor + solving-time multiplier
+      // Easy: base=60 + solvingMins*3.5  Normal: base=150 + solvingMins*5.5  Hard: base=320 + solvingMins*9
+      const XP_BASE: Record<string, number>  = { Easy: 60,  Normal: 150, Hard: 320 };
+      const XP_MULT: Record<string, number>  = { Easy: 3.5, Normal: 5.5, Hard: 9.0 };
+      const xpAnchor = XP_BASE[authoritativeDifficulty] ?? 150;
+      const xpMult   = XP_MULT[authoritativeDifficulty] ?? 5.5;
+      const dynamicXP = Math.round(xpAnchor + solvingMins * xpMult);
+      
       subtopics.push({
         id: generateId(`${domainGroup.domain}-${topic.title}`),
         title: topic.title,
         domain: domainGroup.domain,
         size: topic.size,
         complexity: topic.complexity,
+        difficulty: authoritativeDifficulty,
         baseTime: TOPIC_SIZE_BASE_TIME[topic.size],
-        baseXP: TOPIC_COMPLEXITY_BASE_XP[topic.complexity],
+        baseXP: dynamicXP,
         status: 'Not Started'
       })
     })

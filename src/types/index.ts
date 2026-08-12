@@ -263,7 +263,9 @@ export interface PathwayDefinition {
 export interface ActiveSessionState {
   skillId: string
   subtopic: SubtopicProgress
-  baselineTime: number // in minutes
+  baselineTime: number // in minutes (total)
+  teachingMinutes?: number
+  solvingBaselineMinutes?: number
   startTime: number // timestamp
   totalPausedSeconds: number
   lastPauseTime: number | null
