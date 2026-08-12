@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Compass, GraduationCap, House, Layers3, Target, Trophy } from 'lucide-react'
+import { Compass, GraduationCap, House, Layers3, Target, Trophy, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
 import { OnboardingScreen } from './features/auth/OnboardingScreen'
@@ -22,7 +22,7 @@ import { milestones, futureMilestones, timelineEvents } from './data/journeyData
 import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './data/learningData'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 import { loadInitialState, getEmptyState } from './utils/storage'
-import { calculateGoalXp, calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
+import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { usePersist } from './hooks/usePersist'
@@ -33,7 +33,6 @@ import { PublicProfileViewer } from './components/PublicProfileViewer'
 import { FriendsPanel } from './features/friends/FriendsPanel'
 import { ChatPanel } from './features/chat/ChatPanel'
 import { ProjectDetail } from './features/projects/ProjectDetail'
-import { GoalDetail } from './features/goals/GoalDetail'
 import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
 import { fetchIncomingFriendRequests, fetchIncomingMessages, saveFriendsState, saveChatState } from './lib/api'
@@ -120,6 +119,7 @@ function App() {
       profile: stored.profile,
       friends: stored.friends || { relationships: [] },
       chat: stored.chat || { messages: [], lastRead: {} },
+      activeSession: stored.activeSession || null,
     }
   })
 
@@ -138,7 +138,94 @@ function App() {
   const [incomingMessages, setIncomingMessages] = useState<import('./types').ChatMessage[]>([])
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [dataLoaded, setDataLoaded] = useState(false)
-  
+
+  const [activeSession, setActiveSession] = useState<import('./types').ActiveSessionState | null>(initialData.activeSession)
+  const [activeSessionElapsed, setActiveSessionElapsed] = useState(0)
+
+  useEffect(() => {
+    import('./utils/storage').then(({ saveProgression }) => {
+      saveProgression(activeSession, 'activeSession')
+    })
+  }, [activeSession])
+
+  useEffect(() => {
+    let interval: number;
+    if (activeSession && activeSession.isActive) {
+      interval = window.setInterval(() => {
+        const now = Date.now()
+        const diff = now - activeSession.startTime
+        setActiveSessionElapsed(Math.floor(diff / 1000) - activeSession.totalPausedSeconds)
+      }, 1000)
+    } else if (activeSession && !activeSession.isActive) {
+      const diff = (activeSession.lastPauseTime || Date.now()) - activeSession.startTime
+      setActiveSessionElapsed(Math.floor(diff / 1000) - activeSession.totalPausedSeconds)
+    } else {
+      setActiveSessionElapsed(0)
+    }
+    return () => window.clearInterval(interval)
+  }, [activeSession])
+
+  const completeActiveSession = async () => {
+    if (!activeSession) return
+    const { skillId, subtopic, baselineTime } = activeSession
+    const minutesSpent = Math.max(1, Math.ceil(activeSessionElapsed / 60))
+    const xpBase = subtopic.baseXP || 50
+    let finalXp = 0 // Expired by default
+    if (minutesSpent <= baselineTime * 0.5) finalXp = Math.floor(xpBase * 1.5)
+    else if (minutesSpent <= baselineTime) finalXp = Math.floor(xpBase * 1.2)
+    else if (minutesSpent <= baselineTime * 1.5) finalXp = xpBase
+
+    setProgression(prev => ({ ...prev, xp: prev.xp + finalXp }))
+    
+    let history: any[] = []
+    setSkillState(prev => prev.map(s => {
+      if (s.id !== skillId) return s
+      const newSubtopics = (s.subtopics || []).map(st => {
+        if (st.id === subtopic.id) {
+          return { ...st, status: 'Completed' as const, completedAt: new Date().toISOString(), xpReward: finalXp, completionTimeMinutes: minutesSpent }
+        }
+        return st
+      })
+      const completedCount = newSubtopics.filter(st => st.status === 'Completed').length
+      const totalCount = newSubtopics.length
+      
+      history = newSubtopics
+        .filter(st => st.status === 'Completed' && st.completionTimeMinutes)
+        .map(st => ({
+          title: st.title,
+          baseTime: st.baseTime,
+          timeSpent: st.completionTimeMinutes,
+          difficulty: st.difficulty
+        }))
+
+      return { ...s, subtopics: newSubtopics, progress: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : s.progress }
+    }))
+    
+    push(`Subtopic completed! +${finalXp} XP`, 'xp')
+    setActiveSession(null)
+
+    import('./lib/api').then(async ({ analyzeUserPerformance }) => {
+      const { content } = await analyzeUserPerformance(history)
+      if (content && typeof content === 'object') {
+        setSkillState(prev => prev.map(s => {
+          if (s.id !== skillId) return s
+          const newSubtopics = (s.subtopics || []).map(st => {
+            if (st.id === subtopic.id) {
+              return { ...st, aiRecommendation: content as any }
+            }
+            return st
+          })
+          return { ...s, subtopics: newSubtopics }
+        }))
+      }
+    }).catch(e => console.error('AI Error:', e))
+  }
+
+  const cancelActiveSession = () => {
+    if (!activeSession) return
+    setActiveSession(null)
+  }
+
   const handleOnboardingComplete = () => {
     // Explicitly zero out everything to ensure no mock data leaks
     setProgression(p => ({ ...p, xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0 }))
@@ -156,10 +243,46 @@ function App() {
   }
 
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
-  const [selectedGoalId] = useState(initialData.goals[0]?.id ?? goals[0]?.id ?? '')
   const [viewingUserId, setViewingUserId] = useState<string | null>(null)
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const contentRef = useRef<HTMLDivElement>(null)
+
+  const [goalReminder, setGoalReminder] = useState<Goal | null>(null)
+  
+  // Track notifications independent of React render cycle to prevent Strict Mode duplicates
+  const notifiedGoalsRef = useRef<Set<string>>(new Set())
+
+  useEffect(() => {
+    const checkGoals = () => {
+      setGoalState(prevGoals => {
+        const today = new Date().toISOString().slice(0, 10)
+        let updated = false
+        const nextGoals = prevGoals.map(g => {
+          if (g.status !== 'COMPLETED' && !g.notificationSent && g.targetDate && g.targetDate <= today) {
+            if (!notifiedGoalsRef.current.has(g.id)) {
+              notifiedGoalsRef.current.add(g.id)
+              if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('Goal Reminder', { body: `You planned to work on '${g.title}' today.` })
+              }
+              setGoalReminder(current => current ? current : g)
+            }
+            updated = true
+            return { ...g, notificationSent: true }
+          }
+          return g
+        })
+        return updated ? nextGoals : prevGoals
+      })
+    }
+
+    const timeout = setTimeout(checkGoals, 1500)
+    const interval = setInterval(checkGoals, 60000)
+    
+    return () => {
+      clearTimeout(timeout)
+      clearInterval(interval)
+    }
+  }, [])
 
   // Load remote data when a user logs in
   useEffect(() => {
@@ -317,21 +440,9 @@ function App() {
   const masteredSkills = skillState.filter((skill) => skill.status === 'MASTERED').length
   const earnedBadges = badgeState.filter((badge) => badge.earned).length
 
-  const updateGoal = (updatedGoal: Goal) => {
-    setGoalState((prev) => prev.map(g => g.id === updatedGoal.id ? updatedGoal : g))
-    push('Goal updated successfully', 'info')
-  }
-
   const markGoalCompleted = (goalId: string) => {
-    const now = new Date().toISOString().slice(0, 10)
-    setGoalState((prev) => prev.map((goal) => {
-      if (goal.id !== goalId || goal.status === 'COMPLETED') return goal
-      const xpGained = calculateGoalXp(goal, now)
-      setProgression((p) => ({ ...p, xp: p.xp + xpGained, goalsCompleted: p.goalsCompleted + 1 }))
-      push(`Goal complete! +${xpGained} XP`, 'xp')
-      playSoundEffect('xp', settings.soundEffects)
-      return { ...goal, status: 'COMPLETED' as const, progress: 100, completedDate: now }
-    }))
+    setGoalState((prev) => prev.filter((goal) => goal.id !== goalId))
+    push(`Goal marked as done.`, 'info')
   }
 
   const addGoal = (goal: Goal) => {
@@ -509,17 +620,6 @@ function App() {
 
 
 
-  const addMilestone = (goalId: string, milestoneText: string) => {
-    setGoalState((prev) =>
-      prev.map((g) => {
-        if (g.id !== goalId) return g
-        const updatedMilestones = [...g.milestones, milestoneText]
-        return { ...g, milestones: updatedMilestones }
-      })
-    )
-    push('Sub-milestone added', 'info')
-    playSoundEffect('click', settings.soundEffects)
-  }
 
   const selectSection = (section: SectionId) => {
     navigate({ view: section })
@@ -562,7 +662,19 @@ function App() {
           <OnboardingScreen onComplete={handleOnboardingComplete} />
         ) : (
           <motion.main key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="world-shell">
-            <TopBar progression={progression} profile={profileState} onOpenDrawer={() => setDrawerOpen(true)} onOpenSearch={() => setUserSearchOpen(true)} />
+            <TopBar 
+              progression={progression} 
+              profile={profileState} 
+              onOpenDrawer={() => setDrawerOpen(true)} 
+              onOpenSearch={() => setUserSearchOpen(true)}
+              activeSession={activeSession}
+              activeSessionElapsed={activeSessionElapsed}
+              onOpenActiveSession={() => {
+                if (activeSession) {
+                  navigate({ view: 'skill_detail', id: activeSession.skillId })
+                }
+              }}
+            />
             <div className="workspace">
               <aside className="sidebar">
                 {sections.map((section) => {
@@ -623,9 +735,40 @@ function App() {
             onDisassociateSkill={disassociateSkillFromDomain}
             onRemoveSkill={removeSkill}
           />}
-                    {route.view === 'skill_detail' && <SkillDetail skill={skillState.find(s => s.id === route.id)!} onBack={goBack} onMarkMastered={toggleSkillMastery} onUpdateNotes={updateSkillNotes} />}
-                    {route.view === 'goals' && <GoalsPanel goals={goalState} selectedGoalId={selectedGoalId} onSelectGoal={(id) => navigate({ view: 'goal_detail', id })} onCompleteGoal={markGoalCompleted} onAddGoal={addGoal} onRemoveGoal={removeGoal} onAddMilestone={addMilestone} />}
-                    {route.view === 'goal_detail' && <GoalDetail goal={goalState.find(g => g.id === route.id)!} onBack={goBack} onMarkComplete={markGoalCompleted} onDeleteGoal={removeGoal} onUpdateGoal={updateGoal} />}
+                    {route.view === 'skill_detail' && <SkillDetail 
+                      skill={skillState.find(s => s.id === route.id)!} 
+                      onBack={goBack} 
+                      onMarkMastered={toggleSkillMastery} 
+                      onUpdateNotes={updateSkillNotes} 
+                      onStartSession={(subtopic) => {
+                        setActiveSession({
+                          skillId: route.id,
+                          subtopic,
+                          baselineTime: subtopic.baseTime || 60,
+                          startTime: Date.now(),
+                          totalPausedSeconds: 0,
+                          lastPauseTime: null,
+                          isActive: true
+                        })
+                        navigate({ view: 'goals' })
+                      }}
+                      onCloseSession={() => {
+                        // Just closing modal, session keeps running
+                      }}
+                      activeSession={activeSession}
+                    />}
+                    {route.view === 'goals' && <GoalsPanel 
+                      goals={goalState} 
+                      onCompleteActiveSession={completeActiveSession}
+                      onCancelActiveSession={cancelActiveSession}
+                      activeSession={activeSession}
+                      activeSessionElapsed={activeSessionElapsed}
+                      onAddGoal={addGoal} 
+                      onRemoveGoal={removeGoal} 
+
+                      onCompleteGoal={markGoalCompleted} 
+                    />}
+
                     {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
                     {route.view === 'achievement_detail' && <AchievementDetail achievement={achievementState.find(a => a.id === route.id)!} onBack={goBack} />}
                     {route.view === 'badge_detail' && <BadgeDetail badge={badgeState.find(b => b.id === route.id)!} onBack={goBack} />}
@@ -694,6 +837,33 @@ function App() {
           </motion.main>
         )}
       </AnimatePresence>
+      
+      {goalReminder && (
+        <div style={{ position: 'fixed', top: '24px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}>
+          <motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ background: 'var(--bg-surface)', padding: '1.5rem 2rem', borderRadius: '16px', minWidth: '350px', border: '1px solid var(--cyan)', textAlign: 'center', boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)', position: 'relative' }}>
+            <button 
+              onClick={() => setGoalReminder(null)}
+              style={{ position: 'absolute', top: '12px', right: '12px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', color: 'var(--cyan)' }}>Goal Reminder</h3>
+            <p style={{ color: 'var(--text-main)', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
+              You planned to work on <strong>'{goalReminder.title}'</strong> today.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button 
+                onClick={() => setGoalReminder(null)} 
+                style={{ flex: 1, padding: '0.75rem', background: 'var(--cyan)', color: '#000', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Okay
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       <ProfileDrawer open={drawerOpen} profile={profileState} settings={settings} user={user} onClose={() => setDrawerOpen(false)} onSettingsChange={setSettings} onProfileChange={setProfileState} onSignOut={signOut} />
       <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(userId) => { setViewingUserId(userId); setUserSearchOpen(false) }} />
       <PublicProfileViewer

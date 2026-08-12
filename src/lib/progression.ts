@@ -101,27 +101,19 @@ export function clampProgress(value: number) {
  * - Early completion (before deadline) earns a 1.5x bonus.
  * - Late completion earns only 50%.
  */
-export function calculateGoalXp(goal: Goal, completedDate: string) {
-  const base = goal.xpReward ?? XP_REWARDS.goalMedium
-  const multiplier = DIFFICULTY_MULTIPLIER[goal.difficulty ?? 'Normal']
-  const deadline = new Date(goal.deadline).getTime()
-  const complete = new Date(completedDate).getTime()
-  if (Number.isNaN(deadline)) return Math.round(base * multiplier)
-  if (complete <= deadline) return Math.round(base * multiplier * 1.5)
-  return Math.round(base * multiplier * 0.5)
-}
+// Goal XP calculation removed as Goals are now pure To-Dos
 
 export function isGoalOverdue(goal: Goal) {
   if (goal.status === 'COMPLETED') return false
-  const deadline = new Date(goal.deadline).getTime()
-  if (Number.isNaN(deadline)) return false
-  return Date.now() > deadline
+  const target = new Date(goal.targetDate).getTime()
+  if (Number.isNaN(target)) return false
+  return Date.now() > target
 }
 
 export function daysUntilDeadline(goal: Goal) {
-  const deadline = new Date(goal.deadline).getTime()
-  if (Number.isNaN(deadline)) return null
-  return Math.ceil((deadline - Date.now()) / (1000 * 60 * 60 * 24))
+  const target = new Date(goal.targetDate).getTime()
+  if (Number.isNaN(target)) return null
+  return Math.ceil((target - Date.now()) / (1000 * 60 * 60 * 24))
 }
 
 export function computeStreak(currentStreak: number, lastActiveDate?: string) {

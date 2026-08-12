@@ -16,10 +16,18 @@ export type SubtopicStatus = 'Not Started' | 'Learning' | 'Completed'
 
 export type SkillType = 'PROGRAMMING_LANGUAGE' | 'COMPUTER_SCIENCE' | 'DSA' | 'DAA' | 'DEVELOPMENT' | 'FRAMEWORK' | 'DATABASE' | 'DEVOPS_CLOUD' | 'AI_ML' | 'LANGUAGE_SPECIFIC' | 'OTHER'
 
+export interface AIRecommendation {
+  difficulty: 'Easy' | 'Normal' | 'Hard' | 'Expert'
+  confidence: number
+  reason: string
+}
+
 export interface SubtopicProgress {
   id: string
   title: string
   domain?: string
+  category?: string
+  priority?: GoalPriority
   size?: TopicSize
   complexity: TopicComplexity
   baseTime?: number
@@ -30,6 +38,8 @@ export interface SubtopicProgress {
   xpReward?: number
   startedAt?: string
   completedAt?: string
+  completionTimeMinutes?: number
+  aiRecommendation?: AIRecommendation
 }
 
 export interface UserProfile {
@@ -120,14 +130,11 @@ export interface Goal {
   description: string
   category: string
   languageId?: string
-  progress: number
   priority: GoalPriority
-  difficulty: GoalDifficulty
-  xpReward: number
-  deadline: string
+  targetDate: string
+  notificationSent?: boolean
   milestones: string[]
   status: GoalStatus
-  relatedProject: string
   notes: string
   completedDate?: string
   createdAt?: string
@@ -243,7 +250,7 @@ export interface ChatState {
 
 
 
-export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'goal_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string };
+export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string };
 
 export interface PathwayDefinition {
   id: string
@@ -251,4 +258,14 @@ export interface PathwayDefinition {
   description: string
   aliases: string[]
   canonicalName?: string
+}
+
+export interface ActiveSessionState {
+  skillId: string
+  subtopic: SubtopicProgress
+  baselineTime: number // in minutes
+  startTime: number // timestamp
+  totalPausedSeconds: number
+  lastPauseTime: number | null
+  isActive: boolean
 }

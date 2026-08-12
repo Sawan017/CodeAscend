@@ -155,8 +155,7 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
             {activeGoals.map((goal) => (
               <div key={goal.id} className="goal-card">
                 <div className="goal-card-main">
-                  <div className="goal-head"><strong>{goal.title}</strong><span>{goal.difficulty}</span></div>
-                  <div className="progress-bar"><div style={{ width: `${goal.progress}%` }} /></div>
+                  <div className="goal-head"><strong>{goal.title}</strong><span>{goal.priority}</span></div>
                 </div>
               </div>
             ))}

@@ -1,57 +1,66 @@
 import { motion } from 'framer-motion'
 import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import type { Goal, GoalDifficulty, GoalPriority } from '../../types'
-import { daysUntilDeadline, isGoalOverdue, XP_REWARDS } from '../../lib/progression'
+import type { Goal, GoalPriority, ActiveSessionState } from '../../types'
+import { CustomSelect } from '../../components/CustomSelect'
+import { CustomDatePicker } from '../../components/CustomDatePicker'
+
 
 type GoalsPanelProps = {
   goals: Goal[]
-  selectedGoalId: string
-  onSelectGoal: (id: string) => void
   onCompleteGoal: (id: string) => void
   onAddGoal: (goal: Goal) => void
   onRemoveGoal: (id: string) => void
-  onAddMilestone?: (goalId: string, milestoneText: string) => void
+
+  activeSession?: ActiveSessionState | null
+  activeSessionElapsed?: number
+  onOpenActiveSession?: () => void
+  onCompleteActiveSession?: () => void
+  onCancelActiveSession?: () => void
 }
 
 function createId() {
   return `goal-${Date.now()}`
 }
 
+function formatTime(seconds: number) {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+}
+
 export function GoalsPanel({
   goals,
-  selectedGoalId,
-  onSelectGoal,
   onCompleteGoal,
   onAddGoal,
   onRemoveGoal,
-  onAddMilestone,
+
+  activeSession,
+  activeSessionElapsed,
+  onCompleteActiveSession,
+  onCancelActiveSession
 }: GoalsPanelProps) {
-  const selectedGoal = goals.find((goal) => goal.id === selectedGoalId) ?? goals[0]
+
   const [showForm, setShowForm] = useState(false)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('Learning')
   const [priority, setPriority] = useState<GoalPriority>('Medium')
-  const [difficulty, setDifficulty] = useState<GoalDifficulty>('Normal')
-  const [deadline, setDeadline] = useState('')
-  const [newMilestoneText, setNewMilestoneText] = useState('')
+  const [targetDate, setTargetDate] = useState('')
+
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
 
   const submitGoal = () => {
     if (!title.trim()) return
     onAddGoal({
       id: createId(),
       title: title.trim(),
-      description: description.trim() || 'A new quest on the journey.',
+      description: description.trim(),
       category,
-      progress: 0,
       priority,
-      difficulty,
-      xpReward: difficulty === 'Easy' ? XP_REWARDS.goalEasy : difficulty === 'Normal' ? XP_REWARDS.goalMedium : difficulty === 'Hard' ? XP_REWARDS.goalHard : difficulty === 'Expert' ? XP_REWARDS.goalHard : XP_REWARDS.goalHard,
-      deadline: deadline || '2027-12-31',
+      targetDate: targetDate || '2027-12-31',
       milestones: [],
       status: 'ACTIVE',
-      relatedProject: '',
       notes: '',
       createdAt: new Date().toISOString().slice(0, 10),
     })
@@ -59,19 +68,14 @@ export function GoalsPanel({
     setDescription('')
     setCategory('Learning')
     setPriority('Medium')
-    setDifficulty('Normal')
-    setDeadline('')
+    setTargetDate('')
     setShowForm(false)
+
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
   }
 
-  const handleAddMilestone = () => {
-    if (!newMilestoneText.trim() || !selectedGoal) return
-    onAddMilestone?.(selectedGoal.id, newMilestoneText.trim())
-    setNewMilestoneText('')
-  }
-
-  const deadlineInfo = selectedGoal ? daysUntilDeadline(selectedGoal) : null
-  const overdue = selectedGoal ? isGoalOverdue(selectedGoal) : false
 
   const container = {
     hidden: { opacity: 0 },
@@ -89,38 +93,49 @@ export function GoalsPanel({
   }
 
   return (
-    <div className="section-shell split-shell">
-      <div className="panel">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%' }}>
+      
+      <div className="section-shell split-shell">
+        <div className="panel" style={{ display: 'flex', flexDirection: 'column' }}>
         <div className="card-heading">
           <p className="eyebrow">GOALS</p>
           <button className="icon-button" onClick={() => setShowForm((v) => !v)} aria-label="Add goal"><Plus size={16} /></button>
         </div>
         {showForm && (
           <div className="goal-form">
-            <input placeholder="Goal title" value={title} onChange={(e) => setTitle(e.target.value)} />
-            <input placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} />
-            <div className="form-row">
-              <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                <option>Learning</option>
-                <option>Projects</option>
-                <option>Career</option>
-                <option>Health</option>
-              </select>
-              <select value={priority} onChange={(e) => setPriority(e.target.value as GoalPriority)}>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-              </select>
-              <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as GoalDifficulty)}>
-                <option value="Easy">Easy</option>
-                <option value="Normal">Normal</option>
-                <option value="Hard">Hard</option>
-                <option value="Expert">Expert</option>
-                <option value="Extreme">Extreme</option>
-              </select>
+            <input className="text-input" placeholder="Goal title" value={title} onChange={(e) => setTitle(e.target.value)} style={{ width: '100%', padding: '0.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-main)' }} />
+            <input className="text-input" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} style={{ width: '100%', padding: '0.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-main)', marginTop: '1rem' }} />
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+              <CustomSelect 
+                label="Category"
+                value={category} 
+                onChange={setCategory}
+                options={[
+                  { value: 'Learning', label: 'Learning' },
+                  { value: 'Projects', label: 'Projects' },
+                  { value: 'Career', label: 'Career' },
+                  { value: 'Health', label: 'Health' }
+                ]}
+              />
+              <CustomSelect 
+                label="Priority"
+                value={priority} 
+                onChange={(val) => setPriority(val as GoalPriority)}
+                options={[
+                  { value: 'High', label: 'High' },
+                  { value: 'Medium', label: 'Medium' },
+                  { value: 'Low', label: 'Low' }
+                ]}
+              />
             </div>
-            <input type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-            <div className="action-row">
+
+            <div style={{ marginTop: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Target Date</label>
+              <CustomDatePicker value={targetDate} onChange={setTargetDate} />
+            </div>
+
+            <div className="action-row" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
               <button className="secondary-btn" onClick={submitGoal}>Save goal</button>
               <button className="secondary-btn" onClick={() => setShowForm(false)}>Cancel</button>
             </div>
@@ -131,84 +146,159 @@ export function GoalsPanel({
           variants={container}
           initial="hidden"
           animate="show"
+          style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
-          {goals.map((goal) => (
+          {[...goals].sort((a, b) => {
+            // First sort by target date
+            const dateA = a.targetDate || '9999-12-31'
+            const dateB = b.targetDate || '9999-12-31'
+            if (dateA !== dateB) return dateA.localeCompare(dateB)
+            
+            // Second sort by priority
+            const priorityWeight = { High: 1, Medium: 2, Low: 3 }
+            const weightA = priorityWeight[a.priority as GoalPriority] || 2
+            const weightB = priorityWeight[b.priority as GoalPriority] || 2
+            return weightA - weightB
+          }).map((goal) => (
             <motion.div 
               key={goal.id} 
               variants={item}
-              whileHover={{ y: -4, scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              className={`goal-card ${selectedGoalId === goal.id ? 'active' : ''}`}
+              className="goal-card"
+              style={{ cursor: 'default', display: 'flex', flexDirection: 'column', padding: '1.25rem', gap: '0.75rem', background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border)' }}
             >
-              <button className="goal-card-main" onClick={() => onSelectGoal(goal.id)}>
-                <div className="goal-head"><strong>{goal.title}</strong><span>{goal.priority} · {goal.difficulty}</span></div>
-                <div className="progress-bar"><div style={{ width: `${goal.progress}%` }} /></div>
-                <small className="muted">{goal.status === 'COMPLETED' ? `Completed ${goal.completedDate ?? ''}` : `XP: ${goal.xpReward}`}</small>
-              </button>
-              <button className="goal-delete" onClick={() => onRemoveGoal(goal.id)} aria-label={`Delete ${goal.title}`}><Trash2 size={14} /></button>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <strong style={{ fontSize: '1.1rem' }}>{goal.title}</strong>
+                <button className="icon-button" style={{ padding: '4px', opacity: 0.6 }} onClick={() => onRemoveGoal(goal.id)} aria-label={`Delete ${goal.title}`}><Trash2 size={16} /></button>
+              </div>
+              {goal.description && <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-muted)' }}>{goal.description}</p>}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                {goal.category && <span>Category: {goal.category}</span>}
+                <span>Target Date: {goal.targetDate}</span>
+              </div>
+              <div style={{ marginTop: '0.5rem' }}>
+                <button className="secondary-btn" onClick={() => onCompleteGoal(goal.id)} style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Mark as Done</button>
+              </div>
             </motion.div>
           ))}
+          {goals.length === 0 && <p className="muted" style={{ textAlign: 'center', marginTop: '2rem' }}>No goals found. Create one above.</p>}
+        </motion.div>
+        </div>
+        
+        <motion.div className="panel detail-panel" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
+          <p className="eyebrow">ACTIVE TARGET</p>
+          
+          {activeSession ? (
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ flex: 1 }}>
+                <h3 style={{ marginBottom: '0.25rem' }}>{activeSession.subtopic.title}</h3>
+                {activeSession.subtopic.domain && <p className="copy">{activeSession.subtopic.domain}</p>}
+                
+                <div style={{ marginBottom: '1.5rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+                  <p style={{ margin: '0.25rem 0' }}>{activeSession.subtopic.category || 'Learning'}</p>
+                  {activeSession.subtopic.difficulty && (
+                    <p style={{ margin: '0.25rem 0' }}>Difficulty: <strong style={{ color: 'var(--text-main)' }}>{activeSession.subtopic.difficulty}</strong></p>
+                  )}
+                  <p style={{ margin: '0.25rem 0' }}>Baseline: <strong style={{ color: 'var(--text-main)' }}>{activeSession.baselineTime} min</strong></p>
+                </div>
+
+                {(() => {
+                  const baselineSeconds = activeSession.baselineTime * 60;
+                  const baseXP = activeSession.subtopic.baseXP || 50;
+                  const elapsed = activeSessionElapsed ?? 0;
+                  
+                  const tiers = [
+                    { name: 'PRIME', xp: Math.floor(baseXP * 1.5), limit: baselineSeconds * 0.5 },
+                    { name: 'FOCUSED', xp: Math.floor(baseXP * 1.2), limit: baselineSeconds },
+                    { name: 'EXTENDED', xp: baseXP, limit: baselineSeconds * 1.5 }
+                  ];
+
+                  return (
+                    <div style={{ marginTop: '1.5rem' }}>
+                      <p className="eyebrow" style={{ marginBottom: '1rem' }}>REWARD TIERS</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                        {tiers.map((tier, idx) => {
+                          const isActive = elapsed <= tier.limit;
+                          const prevLimit = idx === 0 ? 0 : tiers[idx - 1].limit;
+                          const minStr = Math.floor(prevLimit / 60);
+                          const maxStr = Math.floor(tier.limit / 60);
+                          
+                          return (
+                            <div 
+                              key={tier.name}
+                              style={{ 
+                                padding: '1rem 0.5rem', 
+                                background: isActive ? 'var(--bg-surface)' : 'rgba(0,0,0,0.1)',
+                                border: `1px solid ${isActive ? 'var(--cyan)' : 'var(--border)'}`,
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                opacity: isActive ? 1 : 0.4,
+                                transition: 'all 0.5s ease',
+                                boxShadow: isActive ? 'var(--glow-cyan)' : 'none'
+                              }}
+                            >
+                              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isActive ? 'var(--text-main)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                                {isActive ? '✦ ' : '· '}{tier.name}
+                              </div>
+                              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: isActive ? 'var(--cyan)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                                +{tier.xp} XP
+                              </div>
+                              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                {minStr}–{maxStr} min
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid var(--border)', textAlign: 'center' }}>
+                  <p className="eyebrow" style={{ marginBottom: '0.5rem' }}>TIME ELAPSED</p>
+                  <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--cyan)', fontFamily: 'monospace' }}>
+                    {formatTime(activeSessionElapsed ?? 0)}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <button className="primary-btn" onClick={onCompleteActiveSession} style={{ padding: '1rem' }}>Complete Task</button>
+                <button className="secondary-btn" onClick={() => setShowCancelDialog(true)} style={{ color: '#ff453a', borderColor: 'rgba(255, 69, 58, 0.3)' }}>Cancel Task</button>
+              </div>
+            </div>
+          ) : (
+            <p className="muted" style={{ marginTop: '1rem' }}>No active target. Start a learning subtopic to see it here.</p>
+          )}
         </motion.div>
       </div>
-      <motion.div className="panel detail-panel" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
-        <p className="eyebrow">ACTIVE TARGET</p>
-        <h3>{selectedGoal?.title}</h3>
-        <p className="copy">{selectedGoal?.description}</p>
-        <div className="meta-row">
-          <span>Category: {selectedGoal?.category}</span>
-          <span>Priority: {selectedGoal?.priority}</span>
-        </div>
-        <div className="meta-row">
-          <span>Difficulty: {selectedGoal?.difficulty}</span>
-          <span>XP: {selectedGoal?.xpReward}</span>
-        </div>
-        <div className="meta-row">
-          <span>Deadline: {selectedGoal?.deadline}</span>
-          {selectedGoal?.status !== 'COMPLETED' && deadlineInfo !== null && (
-            <span className={overdue ? 'overdue' : 'on-time'}>
-              {overdue ? `${Math.abs(deadlineInfo)}d overdue` : `${deadlineInfo}d left`}
-            </span>
-          )}
-        </div>
 
-        {selectedGoal && (
-          <div className="detail-list" style={{ marginTop: '1rem' }}>
-            <h4>Milestones Checklist</h4>
-            {selectedGoal.milestones.length > 0 ? (
-              <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
-                {selectedGoal.milestones.map((m, idx) => (
-                  <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                    <span style={{ color: selectedGoal.status === 'COMPLETED' ? '#22c55e' : '#a1a1aa' }}>✓</span>
-                    <span>{m}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="muted" style={{ fontSize: '0.85rem' }}>No sub-milestones added yet.</p>
-            )}
-
-            {selectedGoal.status !== 'COMPLETED' && onAddMilestone && (
-              <div className="lang-add" style={{ marginTop: '0.5rem' }}>
-                <input
-                  placeholder="Add a sub-milestone…"
-                  value={newMilestoneText}
-                  onChange={(e) => setNewMilestoneText(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddMilestone()}
-                />
-                <button className="secondary-btn" onClick={handleAddMilestone}>Add</button>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div style={{ marginTop: '1.5rem' }}>
-          {selectedGoal?.status === 'COMPLETED' ? (
-            <button className="secondary-btn" disabled>Completed ✓</button>
-          ) : (
-            <button className="secondary-btn" onClick={() => onCompleteGoal(selectedGoal?.id ?? '')}>Complete goal</button>
-          )}
+      {showCancelDialog && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: 'var(--bg-panel)', padding: '2rem', borderRadius: '16px', maxWidth: '400px', border: '1px solid var(--border-strong)' }}>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#ff453a' }}>Cancel this learning task?</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.5 }}>
+              Your current active session will be discarded. No XP will be awarded.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => setShowCancelDialog(false)} 
+                style={{ padding: '0.75rem 1.5rem', background: 'transparent', color: 'var(--text-main)', borderRadius: '8px', border: '1px solid var(--border-strong)', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Keep Learning
+              </button>
+              <button 
+                onClick={() => {
+                  setShowCancelDialog(false)
+                  onCancelActiveSession?.()
+                }} 
+                style={{ padding: '0.75rem 1.5rem', background: '#ff453a', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Cancel Task
+              </button>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
+      )}
     </div>
   )
 }
