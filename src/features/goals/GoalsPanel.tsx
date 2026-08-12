@@ -202,14 +202,15 @@ export function GoalsPanel({
                 </div>
 
                 {(() => {
-                  const baselineSeconds = activeSession.baselineTime * 60;
-                  const baseXP = activeSession.subtopic.baseXP || 50;
+                  const teachingSeconds = (activeSession.teachingMinutes || 60) * 60;
+                  const solvingSeconds = (activeSession.solvingBaselineMinutes || 25) * 60;
+                  const baseXP = activeSession.subtopic.baseXP || 88;  // minimum baseXP in current economy
                   const elapsed = activeSessionElapsed ?? 0;
                   
                   const tiers = [
-                    { name: 'PRIME', xp: Math.floor(baseXP * 1.5), limit: baselineSeconds * 0.5 },
-                    { name: 'FOCUSED', xp: Math.floor(baseXP * 1.2), limit: baselineSeconds },
-                    { name: 'EXTENDED', xp: baseXP, limit: baselineSeconds * 1.5 }
+                    { name: 'PRIME',    xp: Math.floor(baseXP * 2.5),  limit: teachingSeconds + (solvingSeconds * 0.5), hasLimit: true  },
+                    { name: 'FOCUSED',  xp: Math.floor(baseXP * 1.75), limit: teachingSeconds + solvingSeconds,          hasLimit: true  },
+                    { name: 'EXTENDED', xp: baseXP,                     limit: Infinity,                                  hasLimit: false }
                   ];
 
                   return (
@@ -220,7 +221,7 @@ export function GoalsPanel({
                           const isActive = elapsed <= tier.limit;
                           const prevLimit = idx === 0 ? 0 : tiers[idx - 1].limit;
                           const minStr = Math.floor(prevLimit / 60);
-                          const maxStr = Math.floor(tier.limit / 60);
+                          const timeLabel = tier.hasLimit ? `${minStr}–${Math.floor(tier.limit / 60)} min` : `${minStr}+ min · No cap`;
                           
                           return (
                             <div 
@@ -243,7 +244,7 @@ export function GoalsPanel({
                                 +{tier.xp} XP
                               </div>
                               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                                {minStr}–{maxStr} min
+                                {timeLabel}
                               </div>
                             </div>
                           )

@@ -4,15 +4,17 @@ import type { SubtopicProgress, AIRecommendation } from '../../types'
 
 type LearningSessionProps = {
   subtopic: SubtopicProgress
-  baselineTime: number // in minutes
+  teachingMinutes: number
+  solvingBaselineMinutes: number
   onClose: () => void
   onStart: () => void
   aiRecommendation?: AIRecommendation
 }
 
-export function LearningSession({ subtopic, baselineTime, onClose, onStart, aiRecommendation }: LearningSessionProps) {
+export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinutes, onClose, onStart, aiRecommendation }: LearningSessionProps) {
   const displayDifficulty = aiRecommendation ? aiRecommendation.difficulty : subtopic.difficulty || 'Normal'
-  const baseXP = subtopic.baseXP || 50
+  const baseXP = subtopic.baseXP || 88  // minimum baseXP in the current economy (Easy, 8m solving)
+  const baselineTime = teachingMinutes + solvingBaselineMinutes;
 
   return (
     <div style={{
@@ -63,21 +65,21 @@ export function LearningSession({ subtopic, baselineTime, onClose, onStart, aiRe
             <h4 style={{ margin: 0, color: 'var(--text-main)' }}>Baseline Target: {baselineTime} mins</h4>
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
-            This baseline is designed for a newbie pace. <strong>It is NOT a deadline.</strong> You can take as long as you need to finish the task without penalty.
+            This baseline is designed for a newbie pace. <strong>It is NOT a deadline.</strong> EXTENDED has no time cap — you always earn XP no matter how long the task takes.
           </p>
 
           <h5 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>XP Rewards</h5>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
-              <span>Complete under {Math.floor(baselineTime * 0.5)} mins (Fast)</span>
-              <span style={{ color: '#34d399', fontWeight: 600 }}>{Math.floor(baseXP * 1.5)} XP</span>
+              <span>Complete under {Math.floor(teachingMinutes + (solvingBaselineMinutes * 0.5))} mins (PRIME)</span>
+              <span style={{ color: '#34d399', fontWeight: 600 }}>{Math.floor(baseXP * 2.5)} XP</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
-              <span>Complete under {baselineTime} mins (Target)</span>
-              <span style={{ color: 'var(--cyan)', fontWeight: 600 }}>{Math.floor(baseXP * 1.2)} XP</span>
+              <span>Complete under {Math.floor(teachingMinutes + solvingBaselineMinutes)} mins (FOCUSED)</span>
+              <span style={{ color: 'var(--cyan)', fontWeight: 600 }}>{Math.floor(baseXP * 1.75)} XP</span>
             </li>
             <li style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Complete over {baselineTime} mins (Normal)</span>
+              <span>Complete at your own pace (EXTENDED)</span>
               <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{baseXP} XP</span>
             </li>
           </ul>

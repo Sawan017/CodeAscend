@@ -20,6 +20,7 @@ import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
 import { milestones, futureMilestones, timelineEvents } from './data/journeyData'
 import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './data/learningData'
+import { allTimeDistributions } from './data/timeDistributions/index'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 import { loadInitialState, getEmptyState } from './utils/storage'
 import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
@@ -167,13 +168,21 @@ function App() {
 
   const completeActiveSession = async () => {
     if (!activeSession) return
-    const { skillId, subtopic, baselineTime } = activeSession
+    const { skillId, subtopic, teachingMinutes = 60, solvingBaselineMinutes = 25 } = activeSession
     const minutesSpent = Math.max(1, Math.ceil(activeSessionElapsed / 60))
-    const xpBase = subtopic.baseXP || 50
+    const xpBase = subtopic.baseXP || 88  // minimum baseXP in the current economy
     let finalXp = 0 // Expired by default
-    if (minutesSpent <= baselineTime * 0.5) finalXp = Math.floor(xpBase * 1.5)
-    else if (minutesSpent <= baselineTime) finalXp = Math.floor(xpBase * 1.2)
-    else if (minutesSpent <= baselineTime * 1.5) finalXp = xpBase
+    
+    // Tier thresholds (minutes from session start)
+    // PRIME  = finish within teaching + 50% of solving window
+    // FOCUSED = finish within teaching + 100% of solving window
+    // EXTENDED = no time limit — always earnable
+    const primeLimit   = teachingMinutes + (solvingBaselineMinutes * 0.5)
+    const focusedLimit = teachingMinutes + solvingBaselineMinutes
+
+    if (minutesSpent <= primeLimit)   finalXp = Math.floor(xpBase * 2.5)   // fastest
+    else if (minutesSpent <= focusedLimit) finalXp = Math.floor(xpBase * 1.75)  // on target
+    else                              finalXp = xpBase                       // EXTENDED — no cap
 
     setProgression(prev => ({ ...prev, xp: prev.xp + finalXp }))
     
@@ -741,10 +750,18 @@ function App() {
                       onMarkMastered={toggleSkillMastery} 
                       onUpdateNotes={updateSkillNotes} 
                       onStartSession={(subtopic) => {
+                        const dist = allTimeDistributions[route.id]?.[subtopic.title];
+                        const trueDifficulty = dist?.intentionalDifficulty || subtopic.difficulty || 'Normal';
+                        const tMins = dist?.teachingMinutes || 60;
+                        const sMins = dist?.solvingBaselineMinutes?.[trueDifficulty] || 25;
+                        const updatedSubtopic = { ...subtopic, difficulty: trueDifficulty };
+                        
                         setActiveSession({
                           skillId: route.id,
-                          subtopic,
-                          baselineTime: subtopic.baseTime || 60,
+                          subtopic: updatedSubtopic,
+                          baselineTime: tMins + sMins,
+                          teachingMinutes: tMins,
+                          solvingBaselineMinutes: sMins,
                           startTime: Date.now(),
                           totalPausedSeconds: 0,
                           lastPauseTime: null,
