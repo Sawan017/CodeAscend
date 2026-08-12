@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   profile: 'futureme-profile',
   friends: 'futureme-friends',
   chat: 'futureme-chat',
+  activeSession: 'futureme-activesession',
 }
 
 export function loadProgression<T>(fallback: T, key: keyof typeof STORAGE_KEYS): T {
@@ -67,6 +68,7 @@ export function loadInitialState() {
     profile: loadProgression<UserProfile>({ username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@futureme.dev', contactPublic: false, level: 1, xp: 0 }, 'profile'),
     friends: loadProgression<import('../types').FriendState>({ relationships: [] }, 'friends'),
     chat: loadProgression<import('../types').ChatState>({ messages: [], lastRead: {} }, 'chat'),
+    activeSession: loadProgression<import('../types').ActiveSessionState | null>(null, 'activeSession'),
   }
 }
 

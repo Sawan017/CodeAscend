@@ -34,7 +34,7 @@ export function Dashboard({
   const remaining = requiredXp - currentXp
 
   const activeProjects = projects.filter(p => !p.completed).slice(0, 3)
-  const activeGoals = goals.filter(g => g.status !== 'COMPLETED').slice(0, 3)
+  const pendingGoals = goals.filter(g => g.status !== 'COMPLETED').slice(0, 3)
   const activeSkills = skills.filter(s => s.status !== 'MASTERED').slice(0, 3)
   const unlockedBadges = badges.filter(b => b.earned).slice(-4).reverse()
 
@@ -103,15 +103,15 @@ export function Dashboard({
             <button className="icon-button" onClick={() => onNavigate({ view: 'goals' })}><ArrowRight size={18} /></button>
           </div>
           <div className="dashboard-item-list">
-            {activeGoals.length > 0 ? activeGoals.map(g => (
-              <div key={g.id} className="dashboard-item" onClick={() => onNavigate({ view: 'goal_detail', id: g.id })}>
+            {pendingGoals.length > 0 ? pendingGoals.map(g => (
+              <div key={g.id} className="dashboard-item" onClick={() => onNavigate({ view: 'goals' })}>
                 <h4>{g.title}</h4>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   <span>{g.priority} Priority</span>
-                  <span>Due {g.deadline}</span>
+                  <span>Target Date: {g.targetDate}</span>
                 </div>
               </div>
-            )) : <p className="muted" style={{ margin: 'auto' }}>No active goals.</p>}
+            )) : <p className="muted" style={{ margin: 'auto' }}>No pending goals.</p>}
           </div>
         </motion.div>
 

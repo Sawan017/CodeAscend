@@ -251,3 +251,31 @@ export async function fetchIncomingMessages(userId: string): Promise<import("../
   return incoming
 }
 
+/**
+ * Communicates with the Supabase Edge Function to get an AI recommendation based on performance history.
+ */
+export async function analyzeUserPerformance(performanceHistory: any[]): Promise<{ content: any; error?: string }> {
+  if (!isSupabaseConfigured() || !supabase) {
+    return { content: null, error: 'Supabase is not configured' }
+  }
+
+  try {
+    const { data, error } = await supabase.functions.invoke('chat', {
+      body: { performanceHistory }
+    })
+
+    if (error) {
+      console.error('Error invoking AI edge function:', error)
+      return { content: null, error: error.message || 'Failed to call AI backend' }
+    }
+
+    if (data?.error) {
+      return { content: null, error: data.error }
+    }
+
+    return { content: data?.content || null }
+  } catch (err: any) {
+    console.error('Unexpected error calling AI backend:', err)
+    return { content: null, error: err.message || 'Unexpected error' }
+  }
+}

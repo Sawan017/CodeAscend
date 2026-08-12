@@ -1,32 +1,67 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { ArrowLeft, BookOpen, Award, CheckCircle } from 'lucide-react'
-import type { Skill } from '../../types'
-import { resolveSkill } from '../../data/learningData'
+import type { Skill, SubtopicProgress } from '../../types'
+import { resolveSkill, generateSubtopicsForSkill } from '../../data/learningData'
+
+import { LearningSession } from './LearningSession'
 
 type SkillDetailProps = {
   skill: Skill
   onBack: () => void
-  onMarkMastered?: (skillId: string) => void
-  onUpdateNotes?: (skillId: string, notes: string) => void
+  onMarkMastered: (id: string) => void
+  onUpdateNotes: (id: string, notes: string) => void
+  onStartSession?: (subtopic: SubtopicProgress) => void
+  onCloseSession?: () => void
+  activeSession?: import('../../types').ActiveSessionState | null
 }
 
 export function SkillDetail({
   skill,
   onBack,
   onMarkMastered,
-  onUpdateNotes
+  onUpdateNotes,
+  onStartSession,
+  onCloseSession,
+  activeSession
 }: SkillDetailProps) {
   const [isEditingNotes, setIsEditingNotes] = useState(false)
   const [editNotes, setEditNotes] = useState(skill.notes || '')
+  
+  const [activeSubtopic, setActiveSubtopic] = useState<SubtopicProgress | null>(null)
+  const [showBlockDialog, setShowBlockDialog] = useState(false)
 
   const handleSaveNotes = () => {
     onUpdateNotes?.(skill.id, editNotes)
     setIsEditingNotes(false)
   }
 
+  const handleSubtopicClick = (subtopicTitle: string) => {
+    let subtopic = skill.subtopics?.find(s => s.title === subtopicTitle)
+    
+    if (!subtopic && canonicalSkill) {
+      const freshSubtopics = generateSubtopicsForSkill(canonicalSkill)
+      subtopic = freshSubtopics.find(s => s.title === subtopicTitle)
+    }
+
+    if (subtopic && subtopic.status !== 'Completed') {
+      if (activeSession && activeSession.isActive) {
+        setShowBlockDialog(true)
+        return
+      }
+      setActiveSubtopic(subtopic)
+    }
+  }
+
+
   const canonicalSkill = resolveSkill(skill.id);
   const curriculum = canonicalSkill?.curriculum || [];
+  
+  const completedSubtopicsWithAi = (skill.subtopics || [])
+    .filter(s => s.status === 'Completed' && s.aiRecommendation && s.completedAt)
+    .sort((a, b) => new Date(b.completedAt!).getTime() - new Date(a.completedAt!).getTime())
+
+  const latestAiRec = completedSubtopicsWithAi.length > 0 ? completedSubtopicsWithAi[0].aiRecommendation : null
 
   return (
     <motion.div 
@@ -69,6 +104,19 @@ export function SkillDetail({
           <ArrowLeft size={18} /> Return to Skills
         </button>
       </header>
+
+      {latestAiRec && (
+        <div style={{ background: 'rgba(52, 211, 153, 0.1)', border: '1px solid rgba(52, 211, 153, 0.3)', padding: '1.25rem 1.5rem', borderRadius: '16px', marginBottom: '3rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+          <div style={{ background: 'rgba(52, 211, 153, 0.2)', padding: '0.5rem', borderRadius: '10px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div>
+            <h3 style={{ margin: 0, color: '#34d399', fontSize: '1.1rem', marginBottom: '0.25rem' }}>AI Adaptive Engine</h3>
+            <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '0.95rem' }}>Next recommended difficulty: <strong>{latestAiRec.difficulty}</strong></p>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.25rem' }}>{latestAiRec.reason}</p>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: '2rem', marginBottom: '4rem' }}>
         <div style={{ 
@@ -127,25 +175,50 @@ export function SkillDetail({
               <div key={idx} style={{ background: 'rgba(255,255,255,0.01)', padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--border-strong)' }}>
                 <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--cyan)', fontWeight: 600 }}>{group.domain}</h4>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '0.75rem' }}>
-                  {group.topics.map((topic, tIdx) => (
-                    <div key={tIdx} style={{ 
+                  {group.topics.map((topic, tIdx) => {
+                    const userProgress = skill.subtopics?.find(s => s.title === topic.title)
+                    const isCompleted = userProgress?.status === 'Completed'
+                    const aiRec = userProgress?.aiRecommendation
+                    
+                    return (
+                    <div key={tIdx} 
+                      onClick={() => handleSubtopicClick(topic.title)}
+                      style={{ 
                       padding: '1rem', 
-                      background: 'rgba(255,255,255,0.03)', 
+                      background: isCompleted ? 'rgba(52, 199, 89, 0.05)' : 'rgba(255,255,255,0.03)', 
                       borderRadius: '8px', 
-                      border: '1px solid var(--border-strong)',
+                      border: isCompleted ? '1px solid rgba(52, 199, 89, 0.3)' : '1px solid var(--border-strong)',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '0.5rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
+                      cursor: isCompleted ? 'default' : 'pointer',
+                      transition: 'all 0.2s',
+                      opacity: 1
                     }}
-                    onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--cyan)'; e.currentTarget.style.background = 'rgba(0, 255, 255, 0.05)' }}
-                    onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    onMouseOver={(e) => { 
+                      if (!isCompleted) {
+                        e.currentTarget.style.borderColor = 'var(--cyan)'
+                        e.currentTarget.style.background = 'rgba(0, 255, 255, 0.05)'
+                      }
+                    }}
+                    onMouseOut={(e) => { 
+                      if (!isCompleted) {
+                        e.currentTarget.style.borderColor = 'var(--border-strong)'
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
+                      }
+                    }}
                     >
-                      <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{topic.title}</span>
-                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{topic.complexity} • {topic.size}</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <span style={{ fontWeight: 600, fontSize: '0.95rem', color: isCompleted ? '#34c759' : 'var(--text-main)' }}>
+                          {topic.title}
+                        </span>
+                        {isCompleted && <CheckCircle size={16} color="#34c759" />}
+                      </div>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                        {aiRec ? `AI Adjusted: ${aiRec.difficulty}` : `${topic.complexity} • ${topic.size}`}
+                      </span>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             ))}
@@ -160,7 +233,7 @@ export function SkillDetail({
               <div style={{ width: '4px', height: '24px', background: 'var(--cyan)', borderRadius: '2px' }} />
               Notes & Learnings
             </div>
-            {onUpdateNotes && !isEditingNotes && (
+            {!isEditingNotes && (
               <button 
                 onClick={() => setIsEditingNotes(true)}
                 style={{ fontSize: '0.875rem', padding: '0.25rem 0.75rem', borderRadius: '8px', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--cyan)', border: '1px solid rgba(59, 130, 246, 0.2)', cursor: 'pointer' }}
@@ -207,7 +280,7 @@ export function SkillDetail({
         </div>
       </div>
 
-      {onMarkMastered && skill.status !== 'MASTERED' && (
+      {skill.status !== 'MASTERED' && (
         <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'center' }}>
           <button 
             onClick={() => onMarkMastered(skill.id)}
@@ -222,6 +295,42 @@ export function SkillDetail({
           >
             <CheckCircle size={20} /> Mark as Mastered
           </button>
+        </div>
+      )}
+
+      {activeSubtopic && (() => {
+        const currentSubtopic = activeSubtopic;
+        if (!currentSubtopic) return null;
+        
+        return (
+          <LearningSession
+            subtopic={currentSubtopic}
+            baselineTime={currentSubtopic.baseTime || 60}
+            onClose={() => {
+              setActiveSubtopic(null)
+              if (onCloseSession) onCloseSession()
+            }}
+            onStart={() => {
+              setActiveSubtopic(null)
+              if (onStartSession) onStartSession(currentSubtopic)
+            }}
+            aiRecommendation={currentSubtopic.aiRecommendation}
+          />
+        )
+      })()}
+      {showBlockDialog && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: 'var(--bg-panel)', padding: '2rem', borderRadius: '16px', maxWidth: '400px', border: '1px solid var(--border-strong)' }}>
+            <h3 style={{ fontSize: '1.25rem', marginBottom: '1rem', color: '#ff453a' }}>Session Already Active</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.5 }}>
+              You already have an active learning session. Complete or cancel the current task before starting another.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button onClick={() => setShowBlockDialog(false)} style={{ padding: '0.75rem 1.5rem', background: 'var(--primary)', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+                Understood
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </motion.div>
