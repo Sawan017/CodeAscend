@@ -211,6 +211,27 @@ export interface Progression {
   streak: number
   longestStreak: number
   lastActiveDate?: string
+  knowledgeChecksCompleted?: number
+  knowledgeChecksPassed?: number
+  perfectScores?: number
+  codingChallengesCompleted?: number
+  codingChallengesPassed?: number
+}
+
+export type MilestoneCategory = 'All' | 'Learning' | 'Coding' | 'Knowledge' | 'XP' | 'Streak' | 'Exploration' | 'Special'
+
+export interface DynamicMilestone {
+  id: string
+  title: string
+  description: string
+  category: MilestoneCategory
+  icon: string
+  targetValue: number
+  progressValue: number
+  isUnlocked: boolean
+  dateUnlocked?: string
+  xpReward?: number
+  tier?: 'bronze' | 'silver' | 'gold' | 'diamond' | 'mythic'
 }
 
 export interface Settings {
