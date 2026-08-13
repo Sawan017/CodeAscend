@@ -23,7 +23,7 @@ import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './
 import { allTimeDistributions } from './data/timeDistributions/index'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 import { loadInitialState, getEmptyState } from './utils/storage'
-import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges } from './lib/progression'
+import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges, evaluateDynamicMilestones } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { usePersist } from './hooks/usePersist'
@@ -786,7 +786,7 @@ function App() {
                       onCompleteGoal={markGoalCompleted} 
                     />}
 
-                    {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
+                    {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
                     {route.view === 'achievement_detail' && <AchievementDetail achievement={achievementState.find(a => a.id === route.id)!} onBack={goBack} />}
                     {route.view === 'badge_detail' && <BadgeDetail badge={badgeState.find(b => b.id === route.id)!} onBack={goBack} />}
                     {route.view === 'friends' && (

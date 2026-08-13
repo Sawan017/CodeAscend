@@ -4,6 +4,9 @@ import { useState } from 'react'
 import type { Goal, GoalPriority, ActiveSessionState } from '../../types'
 import { CustomSelect } from '../../components/CustomSelect'
 import { CustomDatePicker } from '../../components/CustomDatePicker'
+import { KnowledgeCheckModal } from '../../components/KnowledgeCheckModal'
+import { calculateMinimumVerificationTime } from '../../lib/progression'
+
 
 
 type GoalsPanelProps = {
@@ -48,7 +51,9 @@ export function GoalsPanel({
   const [priority, setPriority] = useState<GoalPriority>('Medium')
   const [targetDate, setTargetDate] = useState('')
 
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showKnowledgeCheck, setShowKnowledgeCheck] = useState(false);
+  
 
   const submitGoal = () => {
     if (!title.trim()) return
@@ -204,9 +209,9 @@ export function GoalsPanel({
                 {(() => {
                   const teachingSeconds = (activeSession.teachingMinutes || 60) * 60;
                   const solvingSeconds = (activeSession.solvingBaselineMinutes || 25) * 60;
-                  const baseXP = activeSession.subtopic.baseXP || 88;  // minimum baseXP in current economy
+                  const baseXP = activeSession.subtopic.baseXP || 88;
                   const elapsed = activeSessionElapsed ?? 0;
-                  
+
                   const tiers = [
                     { name: 'PRIME',    xp: Math.floor(baseXP * 2.5),  limit: teachingSeconds + (solvingSeconds * 0.5), hasLimit: true  },
                     { name: 'FOCUSED',  xp: Math.floor(baseXP * 1.75), limit: teachingSeconds + solvingSeconds,          hasLimit: true  },
@@ -214,43 +219,46 @@ export function GoalsPanel({
                   ];
 
                   return (
-                    <div style={{ marginTop: '1.5rem' }}>
-                      <p className="eyebrow" style={{ marginBottom: '1rem' }}>REWARD TIERS</p>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                        {tiers.map((tier, idx) => {
-                          const isActive = elapsed <= tier.limit;
-                          const prevLimit = idx === 0 ? 0 : tiers[idx - 1].limit;
-                          const minStr = Math.floor(prevLimit / 60);
-                          const timeLabel = tier.hasLimit ? `${minStr}–${Math.floor(tier.limit / 60)} min` : `${minStr}+ min · No cap`;
-                          
-                          return (
-                            <div 
-                              key={tier.name}
-                              style={{ 
-                                padding: '1rem 0.5rem', 
-                                background: isActive ? 'var(--bg-surface)' : 'rgba(0,0,0,0.1)',
-                                border: `1px solid ${isActive ? 'var(--cyan)' : 'var(--border)'}`,
-                                borderRadius: '8px',
-                                textAlign: 'center',
-                                opacity: isActive ? 1 : 0.4,
-                                transition: 'all 0.5s ease',
-                                boxShadow: isActive ? 'var(--glow-cyan)' : 'none'
-                              }}
-                            >
-                              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isActive ? 'var(--text-main)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                                {isActive ? '✦ ' : '· '}{tier.name}
+                    <>
+                      
+                      <div style={{ marginTop: '1.5rem' }}>
+                        <p className="eyebrow" style={{ marginBottom: '1rem' }}>REWARD TIERS</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
+                          {tiers.map((tier, idx) => {
+                            const isActive = elapsed <= tier.limit;
+                            const prevLimit = idx === 0 ? 0 : tiers[idx - 1].limit;
+                            const minStr = Math.floor(prevLimit / 60);
+                            const timeLabel = tier.hasLimit ? `${minStr}–${Math.floor(tier.limit / 60)} min` : `${minStr}+ min · No cap`;
+
+                            return (
+                              <div
+                                key={tier.name}
+                                style={{
+                                  padding: '1rem 0.5rem',
+                                  background: isActive ? 'var(--bg-surface)' : 'rgba(0,0,0,0.1)',
+                                  border: `1px solid ${isActive ? 'var(--cyan)' : 'var(--border)'}`,
+                                  borderRadius: '8px',
+                                  textAlign: 'center',
+                                  opacity: isActive ? 1 : 0.4,
+                                  transition: 'all 0.5s ease',
+                                  boxShadow: isActive ? 'var(--glow-cyan)' : 'none'
+                                }}
+                              >
+                                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isActive ? 'var(--text-main)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                                  {isActive ? '✦ ' : '· '}{tier.name}
+                                </div>
+                                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: isActive ? 'var(--cyan)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                                  +{tier.xp} XP
+                                </div>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                  {timeLabel}
+                                </div>
                               </div>
-                              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: isActive ? 'var(--cyan)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                                +{tier.xp} XP
-                              </div>
-                              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                                {timeLabel}
-                              </div>
-                            </div>
-                          )
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
+                    </>
                   );
                 })()}
 
@@ -263,7 +271,29 @@ export function GoalsPanel({
               </div>
 
               <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <button className="primary-btn" onClick={onCompleteActiveSession} style={{ padding: '1rem' }}>Complete Task</button>
+                {(() => {
+                  const teachingSeconds = (activeSession.teachingMinutes || 60) * 60;
+                  const solvingSeconds = (activeSession.solvingBaselineMinutes || 25) * 60;
+                  const primeSeconds = teachingSeconds + (solvingSeconds * 0.5);
+                  const minVerificationTime = calculateMinimumVerificationTime(primeSeconds);
+                  const effectiveElapsed = activeSessionElapsed ?? 0;
+                  const canComplete = effectiveElapsed >= minVerificationTime;
+
+                  if (canComplete) {
+                    return (
+                      <button className="primary-btn" onClick={() => setShowKnowledgeCheck(true)} style={{ padding: '1rem' }}>Complete Task</button>
+                    )
+                  } else {
+                    return (
+                      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <p style={{ color: 'var(--cyan)', fontSize: '0.85rem', margin: 0, fontWeight: 600 }}>Learning in progress</p>
+                        <button className="primary-btn" disabled style={{ padding: '1rem', width: '100%', opacity: 0.5, cursor: 'not-allowed' }}>
+                          Verification unlocks in {formatTime(minVerificationTime - effectiveElapsed)}
+                        </button>
+                      </div>
+                    )
+                  }
+                })()}
                 <button className="secondary-btn" onClick={() => setShowCancelDialog(true)} style={{ color: '#ff453a', borderColor: 'rgba(255, 69, 58, 0.3)' }}>Cancel Task</button>
               </div>
             </div>
@@ -299,6 +329,17 @@ export function GoalsPanel({
             </div>
           </motion.div>
         </div>
+      )}
+
+      {showKnowledgeCheck && activeSession && (
+        <KnowledgeCheckModal 
+          activeSession={activeSession} 
+          onPass={() => {
+            setShowKnowledgeCheck(false)
+            onCompleteActiveSession?.()
+          }}
+          onCancel={() => setShowKnowledgeCheck(false)}
+        />
       )}
     </div>
   )

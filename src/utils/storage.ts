@@ -34,7 +34,7 @@ import { resolveSkill } from '../data/learningData'
 
 export function loadInitialState() {
   return {
-    progression: loadProgression<Progression>({ xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0, lastActiveDate: undefined }, 'progression'),
+    progression: loadProgression<Progression>({ xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0, lastActiveDate: undefined, knowledgeChecksCompleted: 0, knowledgeChecksPassed: 0, perfectScores: 0, codingChallengesCompleted: 0, codingChallengesPassed: 0 }, 'progression'),
     goals: loadProgression<Goal[]>([], 'goals'),
     skills: (() => {
       const loaded = loadProgression<Skill[]>([], 'skills')
@@ -74,7 +74,7 @@ export function loadInitialState() {
 
 export function getEmptyState() {
   return {
-    progression: { xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0, lastActiveDate: undefined } as Progression,
+    progression: { xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0, lastActiveDate: undefined, knowledgeChecksCompleted: 0, knowledgeChecksPassed: 0, perfectScores: 0, codingChallengesCompleted: 0, codingChallengesPassed: 0 } as Progression,
     goals: [] as Goal[],
     skills: [] as Skill[],
     projects: [] as Project[],

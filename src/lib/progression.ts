@@ -1,4 +1,5 @@
-import type { Achievement, Badge, Goal, NameTier, Progression, Project, Skill } from '../types'
+import type { Achievement, Badge, Goal, NameTier, Progression, Project, Skill, DynamicMilestone } from '../types'
+import { milestoneDefinitions } from '../data/milestoneData'
 
 /**
  * XP / Level system  —  floor(500 * (N-1)^1.6)
@@ -225,4 +226,74 @@ export function evaluateAchievementsAndBadges(
     newEarnedBadges,
     newUnlockedAchievements,
   }
+}
+
+/**
+ * Calculates the minimum required learning time before a task's Knowledge Check can be unlocked.
+ * It is derived from the existing PRIME limit of the task.
+ * Default policy is 35% of the PRIME duration, clamped between 5 minutes and 45 minutes to prevent absurd bounds.
+ */
+export function calculateMinimumVerificationTime(primeLimitSeconds: number): number {
+  const minSeconds = Math.floor(primeLimitSeconds * 0.35);
+  // Clamp between 5 minutes and 45 minutes
+  return Math.max(5 * 60, Math.min(45 * 60, minSeconds));
+}
+
+export function evaluateDynamicMilestones(progression: Progression, skills: Skill[]): DynamicMilestone[] {
+  const masteredSkills = skills.filter((s) => s.status === 'MASTERED').length
+  const topicsMastered = skills.reduce((total, skill) => {
+    if (!skill.subtopics) return total
+    const mastered = skill.subtopics.filter(s => s.status === 'Completed').length === skill.subtopics.length && skill.subtopics.length > 0
+    return total + (mastered ? 1 : 0)
+  }, 0)
+  
+  const topicsStarted = skills.reduce((total, skill) => {
+    if (!skill.subtopics) return total
+    const started = skill.subtopics.some(s => s.status !== 'Not Started')
+    return total + (started ? 1 : 0)
+  }, 0)
+
+  const todayStr = new Date().toISOString().slice(0, 10)
+
+  return milestoneDefinitions.map(def => {
+    let progressValue = 0
+
+    // Match definition ID to specific stats
+    if (def.id.startsWith('m-learn-')) {
+      progressValue = masteredSkills
+    } else if (def.id.startsWith('m-topic-')) {
+      progressValue = topicsMastered
+    } else if (def.id.startsWith('m-kc-perf-')) {
+      progressValue = progression.perfectScores || 0
+    } else if (def.id.startsWith('m-kc-')) {
+      progressValue = progression.knowledgeChecksCompleted || 0
+    } else if (def.id.startsWith('m-code-pass-')) {
+      progressValue = progression.codingChallengesPassed || 0
+    } else if (def.id.startsWith('m-code-')) {
+      progressValue = progression.codingChallengesCompleted || 0
+    } else if (def.id.startsWith('m-xp-')) {
+      progressValue = progression.xp
+    } else if (def.id.startsWith('m-lvl-')) {
+      progressValue = calculateLevel(progression.xp)
+    } else if (def.id.startsWith('m-streak-')) {
+      progressValue = progression.longestStreak || progression.streak || 0 // use whichever is highest for milestones
+    } else if (def.id.startsWith('m-explore-')) {
+      progressValue = topicsStarted
+    } else if (def.id === 'm-spec-1') {
+      progressValue = (progression.streak >= 14 && progression.xp >= 1000) ? 1 : 0
+    } else if (def.id === 'm-spec-2') {
+      progressValue = (masteredSkills >= 10 && (progression.codingChallengesPassed || 0) >= 10) ? 1 : 0
+    } else if (def.id === 'm-spec-3') {
+      progressValue = ((progression.perfectScores || 0) >= 10 && topicsMastered >= 5) ? 1 : 0
+    }
+
+    const isUnlocked = progressValue >= def.targetValue
+
+    return {
+      ...def,
+      progressValue,
+      isUnlocked,
+      dateUnlocked: isUnlocked ? todayStr : undefined // Ideally read from stored list to not overwrite dates, but this is a purely derived state for now
+    }
+  })
 }
