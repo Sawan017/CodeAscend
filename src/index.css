@@ -103,11 +103,18 @@ button { border: 1px solid transparent; }
   color: var(--text);
 }
 
-.landing, .world-shell {
+.world-shell {
   min-height: 100vh;
   padding: 20px;
   position: relative;
   z-index: 2;
+}
+
+.landing {
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+  overflow-x: hidden;
 }
 
 .landing-card {
@@ -131,7 +138,7 @@ button { border: 1px solid transparent; }
 
 h1, h2, h3, h4, p { margin: 0; }
 h1 { font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.04; letter-spacing: -0.02em; }
-h2 { font-size: 1.08rem; font-weight: 600; letter-spacing: 0.16em; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
 h3 { font-size: 1.35rem; }
 h4 { font-size: 1rem; }
 
@@ -986,6 +993,13 @@ h4 { font-size: 1rem; }
   .desktop-only { display: none !important; }
   .chat-sidebar { width: 100% !important; border-right: none !important; }
   .chat-window { width: 100% !important; }
+  /* Landing page mobile fixes */
+  .landing-feature-grid { grid-template-columns: 1fr !important; }
+  .landing-nav { padding: 16px 20px !important; }
+  .landing-hero { padding: 56px 20px 48px !important; }
+  .landing-feature-section { padding: 48px 20px !important; }
+  .landing-footer-cta { margin: 24px 20px 40px !important; padding: 48px 24px !important; }
+  .landing-stats-row { gap: 24px !important; }
 }
 @media (min-width: 769px) {
   .mobile-only { display: none !important; }
