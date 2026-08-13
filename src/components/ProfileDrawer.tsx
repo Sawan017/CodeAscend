@@ -47,61 +47,65 @@ export function ProfileDrawer({ open, profile, settings, user, onClose, onSettin
     <AnimatePresence>
       {open ? (
         <>
-          <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
-          <motion.aside className="drawer-panel" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 220, damping: 24 }}>
-            <div className="drawer-header">
+          <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(3,4,7,0.7)', backdropFilter: 'blur(16px)', zIndex: 3000 }} />
+          <motion.aside className="drawer-panel" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 220, damping: 24 }} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '450px', maxWidth: '100vw', background: 'linear-gradient(180deg, rgba(10,13,20,0.95) 0%, rgba(10,13,20,0.98) 100%)', borderLeft: '1px solid rgba(255,255,255,0.05)', boxShadow: '-20px 0 50px rgba(0,0,0,0.5)', zIndex: 3001, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+            <div style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <p className="eyebrow">PLAYER</p>
-                <h3>Profile & Settings</h3>
+                <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--cyan)', margin: '0 0 0.25rem 0', textTransform: 'uppercase' }}>System Config</p>
+                <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 600, letterSpacing: '-0.02em' }}>Operative Profile</h3>
               </div>
-              <button className="icon-button" onClick={onClose} aria-label="Close profile drawer">
+              <button style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onClose} aria-label="Close profile drawer" onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)' }}>
                 <X size={18} />
               </button>
             </div>
 
-            <div className="drawer-section">
-              <div className="drawer-card">
-                <div className="avatar-badge">{profile.displayName?.charAt(0).toUpperCase() || profile.username?.charAt(0).toUpperCase() || 'S'}</div>
+            <div style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 600, color: 'var(--cyan)' }}>
+                  {profile.displayName?.charAt(0).toUpperCase() || profile.username?.charAt(0).toUpperCase() || 'S'}
+                </div>
                 <div>
-                  <h4>{profile.displayName || profile.username}</h4>
-                  <p className="muted">@{profile.username} · Level {profile.level}</p>
+                  <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.25rem', color: '#fff', fontWeight: 600 }}>{profile.displayName || profile.username}</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>@{profile.username} <span style={{ margin: '0 6px', opacity: 0.5 }}>|</span> Level {profile.level}</p>
                 </div>
               </div>
 
-            </div>
-
-            <div className="drawer-section">
-              <p className="eyebrow">EDIT PROFILE</p>
-              <div className="drawer-card">
-                <h4>User ID</h4>
-                <div className="username-input-row">
-                  <input value={profile.username} onChange={(event) => updateProfile({ username: event.target.value })} />
-                  {usernameStatus === 'available' && <Check size={18} className="username-status-icon available" />}
-                  {usernameStatus === 'taken' && <XCircle size={18} className="username-status-icon taken" />}
+              <div>
+                <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 0 1rem 0', textTransform: 'uppercase' }}>Parameters</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Callsign (ID)</label>
+                    <div style={{ position: 'relative' }}>
+                      <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.username} onChange={(event) => updateProfile({ username: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                      {usernameStatus === 'available' && <Check size={18} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#34d399' }} />}
+                      {usernameStatus === 'taken' && <XCircle size={18} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#ff453a' }} />}
+                    </div>
+                    {usernameStatus === 'taken' && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#ff453a' }}>Callsign unavailable</p>}
+                    {usernameStatus === 'available' && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#34d399' }}>Callsign available</p>}
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Display Alias</label>
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.displayName} onChange={(event) => updateProfile({ displayName: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Avatar Image URL</label>
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.avatar || ''} onChange={(event) => updateProfile({ avatar: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Bio / Designation</label>
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.bio || ''} onChange={(event) => updateProfile({ bio: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Primary Role</label>
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.title} onChange={(event) => updateProfile({ title: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                  </div>
                 </div>
-                {usernameStatus === 'taken' && <p className="username-error">This username is already taken</p>}
-                {usernameStatus === 'available' && <p className="username-success">Username is available</p>}
               </div>
-              <div className="drawer-card">
-                <h4>Display name</h4>
-                <input value={profile.displayName} onChange={(event) => updateProfile({ displayName: event.target.value })} />
-              </div>
-              <div className="drawer-card">
-                <h4>Avatar URL</h4>
-                <input value={profile.avatar || ''} onChange={(event) => updateProfile({ avatar: event.target.value })} />
-              </div>
-              <div className="drawer-card">
-                <h4>Bio</h4>
-                <input value={profile.bio || ''} onChange={(event) => updateProfile({ bio: event.target.value })} />
-              </div>
-              <div className="drawer-card">
-                <h4>Title</h4>
-                <input value={profile.title} onChange={(event) => updateProfile({ title: event.target.value })} />
-              </div>
-              <div className="drawer-card">
-                <h4>Introduction</h4>
-                <textarea value={profile.introduction} onChange={(event) => updateProfile({ introduction: event.target.value })} />
-              </div>
+
               <div className="drawer-card">
                 <h4>Education</h4>
                 <input value={profile.education} onChange={(event) => updateProfile({ education: event.target.value })} />

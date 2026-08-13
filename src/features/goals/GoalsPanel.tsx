@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Target } from 'lucide-react'
 import { useState } from 'react'
 import type { Goal, GoalPriority, ActiveSessionState } from '../../types'
 import { CustomSelect } from '../../components/CustomSelect'
@@ -101,19 +101,19 @@ export function GoalsPanel({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', height: '100%' }}>
       
       <div className="section-shell split-shell">
-        <div className="panel" style={{ display: 'flex', flexDirection: 'column' }}>
-        <div className="card-heading">
-          <p className="eyebrow">GOALS</p>
-          <button className="icon-button" onClick={() => setShowForm((v) => !v)} aria-label="Add goal"><Plus size={16} /></button>
+        <div className="panel" style={{ display: 'flex', flexDirection: 'column', padding: '1.5rem', background: 'rgba(10,13,20,0.6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase' }}>Strategic Objectives</p>
+          <button style={{ background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.3)', color: 'var(--cyan)', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => setShowForm((v) => !v)} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(6,182,212,0.2)'; e.currentTarget.style.boxShadow = '0 0 15px rgba(6,182,212,0.3)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(6,182,212,0.1)'; e.currentTarget.style.boxShadow = 'none' }} aria-label="Add goal"><Plus size={16} /></button>
         </div>
         {showForm && (
-          <div className="goal-form">
-            <input className="text-input" placeholder="Goal title" value={title} onChange={(e) => setTitle(e.target.value)} style={{ width: '100%', padding: '0.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-main)' }} />
-            <input className="text-input" placeholder="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} style={{ width: '100%', padding: '0.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-main)', marginTop: '1rem' }} />
+          <div style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.3)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem' }}>
+            <input placeholder="Objective designation..." value={title} onChange={(e) => setTitle(e.target.value)} style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', color: '#fff', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'} />
+            <input placeholder="Parameters (optional)" value={description} onChange={(e) => setDescription(e.target.value)} style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', marginTop: '1rem', transition: 'all 0.2s', outline: 'none' }} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'} />
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.5rem' }}>
               <CustomSelect 
-                label="Category"
+                label="Sector"
                 value={category} 
                 onChange={setCategory}
                 options={[
@@ -135,14 +135,14 @@ export function GoalsPanel({
               />
             </div>
 
-            <div style={{ marginTop: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Target Date</label>
+            <div style={{ marginTop: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Target Date</label>
               <CustomDatePicker value={targetDate} onChange={setTargetDate} />
             </div>
 
-            <div className="action-row" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-              <button className="secondary-btn" onClick={submitGoal}>Save goal</button>
-              <button className="secondary-btn" onClick={() => setShowForm(false)}>Cancel</button>
+            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button style={{ padding: '0.75rem 1.5rem', background: 'transparent', color: 'var(--text-muted)', border: 'none', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, transition: 'color 0.2s' }} onClick={() => setShowForm(false)} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}>Cancel</button>
+              <button style={{ padding: '0.75rem 1.5rem', background: 'var(--text-main)', color: 'var(--bg-base)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(255,255,255,0.1)' }} onClick={submitGoal} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>Initialize Objective</button>
             </div>
           </div>
         )}
@@ -172,16 +172,16 @@ export function GoalsPanel({
               style={{ cursor: 'default', display: 'flex', flexDirection: 'column', padding: '1.25rem', gap: '0.75rem', background: 'var(--bg-surface)', borderRadius: '12px', border: '1px solid var(--border)' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <strong style={{ fontSize: '1.1rem' }}>{goal.title}</strong>
-                <button className="icon-button" style={{ padding: '4px', opacity: 0.6 }} onClick={() => onRemoveGoal(goal.id)} aria-label={`Delete ${goal.title}`}><Trash2 size={16} /></button>
+                <strong style={{ fontSize: '1.15rem', color: '#fff', letterSpacing: '-0.01em' }}>{goal.title}</strong>
+                <button style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', transition: 'color 0.2s', padding: '4px' }} onClick={() => onRemoveGoal(goal.id)} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--danger)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'} aria-label={`Delete ${goal.title}`}><Trash2 size={16} /></button>
               </div>
-              {goal.description && <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-muted)' }}>{goal.description}</p>}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                {goal.category && <span>Category: {goal.category}</span>}
-                <span>Target Date: {goal.targetDate}</span>
+              {goal.description && <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>{goal.description}</p>}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                {goal.category && <span style={{ padding: '2px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>Sector: {goal.category}</span>}
+                <span style={{ padding: '2px 8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>Target: {goal.targetDate}</span>
               </div>
-              <div style={{ marginTop: '0.5rem' }}>
-                <button className="secondary-btn" onClick={() => onCompleteGoal(goal.id)} style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Mark as Done</button>
+              <div style={{ marginTop: '1rem' }}>
+                <button className="secondary-btn" onClick={() => onCompleteGoal(goal.id)} style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}>Mark Completed</button>
               </div>
             </motion.div>
           ))}
@@ -189,21 +189,30 @@ export function GoalsPanel({
         </motion.div>
         </div>
         
-        <motion.div className="panel detail-panel" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
-          <p className="eyebrow">ACTIVE TARGET</p>
+        <motion.div className="panel" style={{ padding: '1.5rem', background: 'rgba(3,4,7,0.7)', border: '1px solid rgba(255,255,255,0.08)' }} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }}>
+          <p style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.15em', color: 'var(--cyan)', margin: '0 0 1.5rem 0', textTransform: 'uppercase' }}>Active Target</p>
           
           {activeSession ? (
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               <div style={{ flex: 1 }}>
-                <h3 style={{ marginBottom: '0.25rem' }}>{activeSession.subtopic.title}</h3>
-                {activeSession.subtopic.domain && <p className="copy">{activeSession.subtopic.domain}</p>}
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>{activeSession.subtopic.title}</h3>
+                {activeSession.subtopic.domain && <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>{activeSession.subtopic.domain}</p>}
                 
-                <div style={{ marginBottom: '1.5rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                  <p style={{ margin: '0.25rem 0' }}>{activeSession.subtopic.category || 'Learning'}</p>
+                <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                  <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sector</span>
+                    <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{activeSession.subtopic.category || 'Learning'}</strong>
+                  </div>
                   {activeSession.subtopic.difficulty && (
-                    <p style={{ margin: '0.25rem 0' }}>Difficulty: <strong style={{ color: 'var(--text-main)' }}>{activeSession.subtopic.difficulty}</strong></p>
+                    <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Class</span>
+                      <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{activeSession.subtopic.difficulty}</strong>
+                    </div>
                   )}
-                  <p style={{ margin: '0.25rem 0' }}>Baseline: <strong style={{ color: 'var(--text-main)' }}>{activeSession.baselineTime} min</strong></p>
+                  <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Est. Time</span>
+                    <strong style={{ color: '#fff', fontSize: '0.9rem' }}>{activeSession.baselineTime} min</strong>
+                  </div>
                 </div>
 
                 {(() => {
@@ -220,37 +229,36 @@ export function GoalsPanel({
 
                   return (
                     <>
-                      
                       <div style={{ marginTop: '1.5rem' }}>
-                        <p className="eyebrow" style={{ marginBottom: '1rem' }}>REWARD TIERS</p>
+                        <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase' }}>Reward Thresholds</p>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                           {tiers.map((tier, idx) => {
                             const isActive = elapsed <= tier.limit;
                             const prevLimit = idx === 0 ? 0 : tiers[idx - 1].limit;
                             const minStr = Math.floor(prevLimit / 60);
-                            const timeLabel = tier.hasLimit ? `${minStr}–${Math.floor(tier.limit / 60)} min` : `${minStr}+ min · No cap`;
+                            const timeLabel = tier.hasLimit ? `${minStr}–${Math.floor(tier.limit / 60)}m` : `${minStr}m+`;
 
                             return (
                               <div
                                 key={tier.name}
                                 style={{
                                   padding: '1rem 0.5rem',
-                                  background: isActive ? 'var(--bg-surface)' : 'rgba(0,0,0,0.1)',
-                                  border: `1px solid ${isActive ? 'var(--cyan)' : 'var(--border)'}`,
-                                  borderRadius: '8px',
+                                  background: isActive ? 'linear-gradient(180deg, rgba(6,182,212,0.1) 0%, rgba(6,182,212,0.02) 100%)' : 'rgba(255,255,255,0.02)',
+                                  border: `1px solid ${isActive ? 'var(--cyan)' : 'rgba(255,255,255,0.05)'}`,
+                                  borderRadius: '12px',
                                   textAlign: 'center',
                                   opacity: isActive ? 1 : 0.4,
                                   transition: 'all 0.5s ease',
-                                  boxShadow: isActive ? 'var(--glow-cyan)' : 'none'
+                                  boxShadow: isActive ? '0 0 15px rgba(6,182,212,0.1)' : 'none'
                                 }}
                               >
-                                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: isActive ? 'var(--text-main)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                                  {isActive ? '✦ ' : '· '}{tier.name}
+                                <div style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em', color: isActive ? '#fff' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                                  {tier.name}
                                 </div>
-                                <div style={{ fontSize: '1.25rem', fontWeight: 800, color: isActive ? 'var(--cyan)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
-                                  +{tier.xp} XP
+                                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: isActive ? 'var(--cyan)' : 'var(--text-muted)', marginBottom: '0.25rem' }}>
+                                  +{tier.xp}
                                 </div>
-                                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
                                   {timeLabel}
                                 </div>
                               </div>
@@ -262,9 +270,9 @@ export function GoalsPanel({
                   );
                 })()}
 
-                <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', border: '1px solid var(--border)', textAlign: 'center' }}>
-                  <p className="eyebrow" style={{ marginBottom: '0.5rem' }}>TIME ELAPSED</p>
-                  <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--cyan)', fontFamily: 'monospace' }}>
+                <div style={{ marginTop: '2rem', padding: '2rem', background: 'rgba(0,0,0,0.4)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center', boxShadow: 'inset 0 0 20px rgba(0,0,0,0.5)' }}>
+                  <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.15em', color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Time Elapsed</p>
+                  <div style={{ fontSize: '3.5rem', fontWeight: 800, color: '#fff', textShadow: '0 0 20px var(--cyan)', fontFamily: 'monospace', fontVariantNumeric: 'tabular-nums' }}>
                     {formatTime(activeSessionElapsed ?? 0)}
                   </div>
                 </div>
@@ -284,21 +292,22 @@ export function GoalsPanel({
                       <button className="primary-btn" onClick={() => setShowKnowledgeCheck(true)} style={{ padding: '1rem' }}>Complete Task</button>
                     )
                   } else {
+                    const remaining = minVerificationTime - effectiveElapsed;
                     return (
-                      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <p style={{ color: 'var(--cyan)', fontSize: '0.85rem', margin: 0, fontWeight: 600 }}>Learning in progress</p>
-                        <button className="primary-btn" disabled style={{ padding: '1rem', width: '100%', opacity: 0.5, cursor: 'not-allowed' }}>
-                          Verification unlocks in {formatTime(minVerificationTime - effectiveElapsed)}
-                        </button>
+                      <div style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.3)', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '12px', textAlign: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Verification sequence locked. Continue immersion for <strong>{Math.ceil(remaining/60)}</strong> min.</p>
                       </div>
                     )
                   }
                 })()}
-                <button className="secondary-btn" onClick={() => setShowCancelDialog(true)} style={{ color: '#ff453a', borderColor: 'rgba(255, 69, 58, 0.3)' }}>Cancel Task</button>
+                <button style={{ padding: '1rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-muted)', borderRadius: '12px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s', width: '100%' }} onClick={() => setShowCancelDialog(true)} onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--danger)'; e.currentTarget.style.color = 'var(--danger)' }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = 'var(--text-muted)' }}>Abort Sequence</button>
               </div>
             </div>
           ) : (
-            <p className="muted" style={{ marginTop: '1rem' }}>No active target. Start a learning subtopic to see it here.</p>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: '400px', opacity: 0.5 }}>
+              <Target size={48} color="var(--text-muted)" style={{ marginBottom: '1rem' }} />
+              <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>No active target. Initialize a learning sequence from the Knowledge Base.</p>
+            </div>
           )}
         </motion.div>
       </div>

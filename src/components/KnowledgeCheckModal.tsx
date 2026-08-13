@@ -9,13 +9,6 @@ type KnowledgeCheckModalProps = {
   onPass: () => void
   onCancel: () => void
 }
-
-// HTML void elements that should NOT receive a closing tag
-const HTML_VOID_ELEMENTS = new Set([
-  'area','base','br','col','embed','hr','img','input',
-  'link','meta','param','source','track','wbr'
-]);
-
 /** Normalize a question string for duplicate comparison */
 function normalizeQuestion(q: string): string {
   return q.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -126,7 +119,7 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)',
+      background: 'rgba(3,4,7,0.85)', backdropFilter: 'blur(24px)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       zIndex: 2000
     }}>
@@ -135,64 +128,77 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         style={{
-          background: 'var(--bg-card)', border: `1px solid ${phase === 'coding' ? 'var(--primary)' : 'var(--cyan)'}`,
-          borderRadius: '24px', padding: '2.5rem', maxWidth: '650px', width: '90%',
-          position: 'relative', boxShadow: `0 25px 50px -12px ${phase === 'coding' ? 'rgba(99, 102, 241, 0.15)' : 'rgba(0,255,255,0.15)'}`
+          background: 'linear-gradient(145deg, rgba(10,13,20,0.9) 0%, rgba(10,13,20,0.6) 100%)',
+          border: `1px solid ${phase === 'coding' ? 'rgba(139,92,246,0.5)' : 'rgba(6,182,212,0.5)'}`,
+          borderRadius: '24px', padding: '2.5rem', maxWidth: '700px', width: '90%',
+          position: 'relative', boxShadow: `0 25px 50px -12px ${phase === 'coding' ? 'rgba(168,85,247,0.2)' : 'rgba(6,182,212,0.2)'}`,
+          overflow: 'hidden'
         }}
       >
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', background: phase === 'coding' ? 'linear-gradient(90deg, #a855f7, #7e22ce)' : 'linear-gradient(90deg, var(--cyan), var(--primary))' }} />
+
         <button 
           onClick={onCancel}
           disabled={step === 'loading_question' || step === 'evaluating'}
-          style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', opacity: (step === 'loading_question' || step === 'evaluating') ? 0.5 : 1 }}
+          style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', transition: 'color 0.2s', opacity: (step === 'loading_question' || step === 'evaluating') ? 0.5 : 1 }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
         >
           <X size={24} />
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-          {phase === 'theory' ? <BookOpen size={28} color="var(--cyan)" /> : <Code size={28} color="var(--primary)" />}
-          <h2 style={{ fontSize: '1.75rem', margin: 0, color: 'var(--text-main)' }}>
-            Knowledge Check: {phase === 'theory' ? 'Theory' : 'Practical'}
-          </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: phase === 'coding' ? 'rgba(168,85,247,0.1)' : 'rgba(6,182,212,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${phase === 'coding' ? 'rgba(168,85,247,0.2)' : 'rgba(6,182,212,0.2)'}` }}>
+            {phase === 'theory' ? <BookOpen size={24} color="var(--cyan)" /> : <Code size={24} color="#a855f7" />}
+          </div>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: phase === 'theory' ? 'var(--cyan)' : '#a855f7', textTransform: 'uppercase', marginBottom: '0.25rem' }}>VERIFICATION SEQUENCE</p>
+            <h2 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 600, letterSpacing: '-0.02em' }}>
+              {phase === 'theory' ? 'Theoretical Knowledge' : 'Practical Application'}
+            </h2>
+          </div>
         </div>
 
         <div style={{ marginBottom: '2rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <div style={{ flex: 1, height: '4px', background: 'var(--cyan)', borderRadius: '2px', opacity: 1 }}></div>
-          <div style={{ flex: 1, height: '4px', background: phase === 'coding' ? 'var(--primary)' : 'rgba(255,255,255,0.1)', borderRadius: '2px', transition: 'background 0.3s' }}></div>
+          <div style={{ flex: 1, height: '4px', background: 'var(--cyan)', borderRadius: '2px', opacity: 1, boxShadow: '0 0 10px var(--cyan)' }}></div>
+          <div style={{ flex: 1, height: '4px', background: phase === 'coding' ? '#a855f7' : 'rgba(255,255,255,0.1)', borderRadius: '2px', transition: 'background 0.3s', boxShadow: phase === 'coding' ? '0 0 10px #a855f7' : 'none' }}></div>
         </div>
 
-        <div style={{ marginBottom: '2rem', padding: '1rem', background: phase === 'theory' ? 'rgba(0,255,255,0.05)' : 'rgba(99, 102, 241, 0.05)', borderRadius: '12px', border: `1px solid ${phase === 'theory' ? 'rgba(0,255,255,0.1)' : 'rgba(99, 102, 241, 0.1)'}` }}>
-          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
-            Topic: {activeSession.subtopic.title}
+        <div style={{ marginBottom: '2rem', padding: '1.5rem', background: phase === 'theory' ? 'rgba(6,182,212,0.05)' : 'rgba(168,85,247,0.05)', borderRadius: '16px', border: `1px solid ${phase === 'theory' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)'}` }}>
+          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', fontWeight: 600 }}>
+            Active Protocol: <span style={{ color: '#fff' }}>{activeSession.subtopic.title}</span>
           </p>
-          <p style={{ margin: 0, color: phase === 'theory' ? 'var(--cyan)' : 'var(--primary)', fontSize: '0.85rem' }}>
-            Step {phase === 'theory' ? '1' : '2'} of 2 — Difficulty: {activeSession.subtopic.difficulty || 'Normal'}
+          <p style={{ margin: 0, color: phase === 'theory' ? 'var(--cyan)' : '#a855f7', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em' }}>
+            SEQUENCE {phase === 'theory' ? '1' : '2'} / 2 <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.2)' }}>|</span> DIFFICULTY: {activeSession.subtopic.difficulty?.toUpperCase() || 'NORMAL'}
           </p>
         </div>
 
         <AnimatePresence mode="wait">
           {step === 'loading_question' && (
-            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
-              <RefreshCw size={32} className="spin" style={{ color: phase === 'theory' ? 'var(--cyan)' : 'var(--primary)', marginBottom: '1rem' }} />
-              <p style={{ color: 'var(--text-muted)' }}>Generating {phase} question...</p>
+            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ textAlign: 'center', padding: '3rem 0' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: phase === 'theory' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
+                <RefreshCw size={28} className="spin" style={{ color: phase === 'theory' ? 'var(--cyan)' : '#a855f7' }} />
+              </div>
+              <p style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 500, margin: 0, letterSpacing: '0.05em' }}>Synthesizing Evaluation Matrix...</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.5rem' }}>Accessing knowledge base for {phase} protocol</p>
             </motion.div>
           )}
 
           {step === 'answering' && (
             <motion.div key="answering" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <h3 style={{ fontSize: '1.15rem', color: 'var(--text-main)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+              <h3 style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '1.5rem', lineHeight: 1.6, fontWeight: 500 }}>
                 {question || 'Could not load question.'}
               </h3>
 
               {error && (
-                <div style={{ color: '#ff453a', background: 'rgba(255, 69, 58, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <AlertCircle size={18} /> {error}
+                <div style={{ color: '#ff453a', background: 'rgba(255, 69, 58, 0.1)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center', border: '1px solid rgba(255, 69, 58, 0.2)' }}>
+                  <AlertCircle size={18} /> <span style={{ fontSize: '0.9rem' }}>{error}</span>
                 </div>
               )}
 
               {phase === 'theory' ? (
                 <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                    Explain in your own words. (Copy/paste is disabled)
+                  <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.75rem', textTransform: 'uppercase' }}>
+                    Response Required <span style={{ opacity: 0.5, fontWeight: 400 }}>(External Input Disabled)</span>
                   </p>
                   <textarea
                     value={answer}
@@ -200,13 +206,16 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
                     onPaste={(e) => e.preventDefault()}
                     onDrop={(e) => e.preventDefault()}
                     onContextMenu={(e) => e.preventDefault()}
-                    placeholder="Type your explanation here..."
+                    placeholder="Enter your analysis..."
                     style={{
-                      width: '100%', minHeight: '140px', padding: '1rem',
-                      background: 'var(--bg-surface)', border: '1px solid var(--border)',
-                      borderRadius: '12px', color: 'var(--text-main)', fontSize: '1rem',
-                      lineHeight: 1.5, resize: 'vertical'
+                      width: '100%', minHeight: '160px', padding: '1.25rem',
+                      background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px', color: '#fff', fontSize: '1rem',
+                      lineHeight: 1.6, resize: 'vertical', outline: 'none', transition: 'all 0.2s',
+                      boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)'
                     }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--cyan)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; }}
                   />
                 </div>
               ) : (
@@ -247,85 +256,38 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
                       autoClosingTags: 'always',
                       autoClosingQuotes: 'always'
                     }}
-                    onMount={(editor, monaco) => {
-                      const model = editor.getModel();
+                    onMount={(_editor, monaco) => {
                       // Enable HTML auto-closing tags at the language level
                       // @ts-ignore – htmlDefaults may not be typed in all versions
                       monaco.languages.html?.htmlDefaults?.setOptions?.({ autoClosingTags: true });
-
-                      // Custom auto-close handler: insert closing tag when user types '>'
-                      // This works reliably even when Monaco's HTML worker isn't loaded
-                      // @ts-ignore – onDidType exists on the editor instance
-                      editor.onDidType((text: string) => {
-                        if (text !== '>' || !model) return;
-
-                        const position = editor.getPosition();
-                        if (!position) return;
-
-                        const lineContent = model.getLineContent(position.lineNumber);
-                        // Get text before the cursor (which is right after the '>' we just typed)
-                        const textBeforeCursor = lineContent.substring(0, position.column - 1);
-                        const textAfterCursor = lineContent.substring(position.column - 1);
-
-                        // Match an opening tag: <tagName or <tagName attr="val"
-                        // Must end with '>' (the character we just typed)
-                        const tagMatch = textBeforeCursor.match(/<([a-zA-Z][a-zA-Z0-9]*)(?:\s[^>]*)?>$/);
-                        if (!tagMatch) return;
-
-                        const tagName = tagMatch[1].toLowerCase();
-
-                        // Don't auto-close void/self-closing elements
-                        if (HTML_VOID_ELEMENTS.has(tagName)) return;
-
-                        // Don't auto-close if it looks like a self-closing tag e.g. <br />
-                        if (textBeforeCursor.match(/\/\s*>$/)) return;
-
-                        const closingTag = `</${tagMatch[1]}>`;
-
-                        // Don't insert if the closing tag already exists right after cursor
-                        if (textAfterCursor.startsWith(closingTag)) return;
-
-                        // Insert the closing tag at the current cursor position
-                        const range = new monaco.Range(
-                          position.lineNumber,
-                          position.column,
-                          position.lineNumber,
-                          position.column
-                        );
-                        editor.executeEdits('auto-close-tag', [{
-                          range,
-                          text: closingTag,
-                          forceMoveMarkers: false
-                        }]);
-                        // Keep cursor between the opening and closing tags
-                        editor.setPosition(position);
-                      });
                     }}
                      />
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-                <button className="secondary-btn" onClick={() => loadQuestion(phase)} style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <RefreshCw size={16} /> New Question
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem' }}>
+                <button style={{ padding: '0.85rem 1.5rem', background: 'transparent', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, display: 'flex', gap: '0.5rem', alignItems: 'center', transition: 'all 0.2s' }} onClick={() => loadQuestion(phase)} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#fff' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}>
+                  <RefreshCw size={16} /> Reroll Prompt
                 </button>
                 <button 
-                  className="primary-btn" 
                   onClick={handleSubmit} 
                   disabled={!answer.trim()}
-                  style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: !answer.trim() ? 0.5 : 1 }}
+                  style={{ padding: '0.85rem 1.5rem', background: phase === 'coding' ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)' : 'linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%)', color: phase === 'coding' ? '#fff' : '#000', border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 700, cursor: answer.trim() ? 'pointer' : 'not-allowed', display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: !answer.trim() ? 0.5 : 1, transition: 'transform 0.2s', boxShadow: phase === 'coding' ? '0 4px 15px rgba(168,85,247,0.4)' : '0 4px 15px rgba(6,182,212,0.4)' }}
+                  onMouseEnter={(e) => { if (answer.trim()) e.currentTarget.style.transform = 'translateY(-2px)' }} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
-                  <Send size={16} /> Submit Answer
+                  <Send size={16} /> Submit Analysis
                 </button>
               </div>
             </motion.div>
           )}
 
           {step === 'evaluating' && (
-            <motion.div key="evaluating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ textAlign: 'center', padding: '2rem 0' }}>
-              <BrainCircuit size={48} className="pulse" style={{ color: phase === 'theory' ? 'var(--cyan)' : 'var(--primary)', marginBottom: '1.5rem', opacity: 0.8 }} />
-              <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 500 }}>Evaluating your {phase} answer...</p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Verifying understanding of core concepts</p>
+            <motion.div key="evaluating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ textAlign: 'center', padding: '3rem 0' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: phase === 'theory' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
+                <BrainCircuit size={40} className="pulse" style={{ color: phase === 'theory' ? 'var(--cyan)' : '#a855f7' }} />
+              </div>
+              <p style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 500, letterSpacing: '0.05em', margin: 0 }}>Processing Submission...</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.5rem' }}>Comparing parameters against knowledge base</p>
             </motion.div>
           )}
 
@@ -333,9 +295,13 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
             <motion.div key="result" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                 {evaluation.passed ? (
-                  <CheckCircle size={56} color="#34d399" style={{ marginBottom: '1rem' }} />
+                  <div style={{ display: 'inline-flex', padding: '1rem', background: 'rgba(52, 211, 153, 0.1)', borderRadius: '50%', marginBottom: '1rem', boxShadow: '0 0 20px rgba(52, 211, 153, 0.2)' }}>
+                    <CheckCircle size={48} color="#34d399" />
+                  </div>
                 ) : (
-                  <AlertCircle size={56} color="#ff453a" style={{ marginBottom: '1rem' }} />
+                  <div style={{ display: 'inline-flex', padding: '1rem', background: 'rgba(255, 69, 58, 0.1)', borderRadius: '50%', marginBottom: '1rem', boxShadow: '0 0 20px rgba(255, 69, 58, 0.2)' }}>
+                    <AlertCircle size={48} color="#ff453a" />
+                  </div>
                 )}
                 
                 <h3 style={{ fontSize: '1.5rem', color: evaluation.passed ? '#34d399' : '#ff453a', margin: '0 0 0.5rem 0' }}>
@@ -351,16 +317,16 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
                 )}
               </div>
 
-              <div style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
-                <p style={{ color: 'var(--text-main)', lineHeight: 1.6, margin: 0, fontSize: '1.05rem' }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '16px', marginBottom: '2rem', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)' }}>
+                <p style={{ color: '#fff', lineHeight: 1.6, margin: 0, fontSize: '1rem' }}>
                   {evaluation.feedback}
                 </p>
                 
                 {!evaluation.passed && evaluation.missingPoints && evaluation.missingPoints.length > 0 && (
-                  <div style={{ marginTop: '1.5rem' }}>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', fontWeight: 600 }}>Missing Points:</p>
-                    <ul style={{ color: 'var(--text-muted)', margin: 0, paddingLeft: '1.5rem', fontSize: '0.9rem' }}>
-                      {evaluation.missingPoints.map((pt, i) => <li key={i} style={{ marginBottom: '0.25rem' }}>{pt}</li>)}
+                  <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
+                    <p style={{ color: '#ff453a', fontSize: '0.85rem', marginBottom: '1rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Missing Critical Parameters:</p>
+                    <ul style={{ color: 'var(--text-muted)', margin: 0, paddingLeft: '1.5rem', fontSize: '0.95rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                      {evaluation.missingPoints.map((pt, i) => <li key={i}>{pt}</li>)}
                     </ul>
                   </div>
                 )}
@@ -370,28 +336,28 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
                 {evaluation.passed ? (
                   phase === 'theory' ? (
                     <button 
-                      className="primary-btn" 
                       onClick={handleNextPhase} 
-                      style={{ flex: 1, padding: '1rem', fontSize: '1.1rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'var(--primary)' }}
+                      style={{ flex: 1, padding: '1.25rem', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)', color: '#fff', border: 'none', borderRadius: '12px', cursor: 'pointer', transition: 'transform 0.2s', boxShadow: '0 4px 15px rgba(168,85,247,0.4)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <Code size={20} /> Continue to Practical
+                      <Code size={20} /> Initialize Practical Phase
                     </button>
                   ) : (
                     <button 
-                      className="primary-btn" 
                       onClick={onPass} 
-                      style={{ flex: 1, padding: '1rem', fontSize: '1.1rem', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: '#34d399' }}
+                      style={{ flex: 1, padding: '1.25rem', fontSize: '1rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #34d399 0%, #10b981 100%)', color: '#000', border: 'none', borderRadius: '12px', cursor: 'pointer', transition: 'transform 0.2s', boxShadow: '0 4px 15px rgba(52, 211, 153, 0.4)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                     >
-                      <CheckCircle size={20} /> Complete Task & Claim XP
+                      <CheckCircle size={20} /> Confirm Sequence & Acquire XP
                     </button>
                   )
                 ) : (
                   <>
-                    <button className="secondary-btn" onClick={onCancel} style={{ flex: 1 }}>
-                      Cancel Task
+                    <button style={{ flex: 1, padding: '1.25rem', background: 'transparent', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', cursor: 'pointer', fontSize: '1rem', fontWeight: 600, transition: 'all 0.2s' }} onClick={onCancel} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = '#fff' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)' }}>
+                      Abort Sequence
                     </button>
-                    <button className="primary-btn" onClick={() => loadQuestion(phase)} style={{ flex: 1 }}>
-                      Try Another Question
+                    <button style={{ flex: 1, padding: '1.25rem', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', cursor: 'pointer', fontSize: '1rem', fontWeight: 600, transition: 'all 0.2s' }} onClick={() => loadQuestion(phase)} onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)' }}>
+                      Re-attempt Verification
                     </button>
                   </>
                 )}

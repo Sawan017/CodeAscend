@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Compass, GraduationCap, House, Layers3, Target, Trophy, X } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
 import { OnboardingScreen } from './features/auth/OnboardingScreen'
 import { AchievementsPanel } from './features/achievements/AchievementsPanel'
@@ -38,6 +38,8 @@ import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
 import { fetchIncomingFriendRequests, fetchIncomingMessages, saveFriendsState, saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
+
+const AmbientBackground = lazy(() => import('./components/three/AmbientBackground'))
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'dashboard', label: 'Home', icon: House },
@@ -671,6 +673,9 @@ function App() {
           <OnboardingScreen onComplete={handleOnboardingComplete} />
         ) : (
           <motion.main key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="world-shell">
+            <Suspense fallback={null}>
+              <AmbientBackground />
+            </Suspense>
             <TopBar 
               progression={progression} 
               profile={profileState} 
