@@ -119,46 +119,44 @@ export function SkillsPanel({
 
   return (
     <div className="section-shell">
-      <div className="panel" style={{ width: '100%', margin: '0' }}>
-        <div className="card-heading">
-          <p className="eyebrow">LEARNING DISCOVERY</p>
+      <div className="panel" style={{ width: '100%', margin: '0', padding: '1.5rem', background: 'rgba(10,13,20,0.6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.5rem' }}>
+          <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase' }}>Learning Discovery</p>
         </div>
 
         {/* Global Search */}
-        <div className="goal-form" style={{ marginBottom: '2rem' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+        <div style={{ padding: '1.5rem', background: 'rgba(0,0,0,0.3)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <input 
-              placeholder="Global Search (e.g. HTML, React, Frontend Development)..." 
+              placeholder="Query matrix (e.g. HTML, React, Frontend Development)..." 
               value={globalSearch} 
               onChange={(e) => setGlobalSearch(e.target.value)}
-              style={{ width: '100%' }}
+              style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', color: '#fff', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }}
+              onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'}
             />
-            <button className="primary-btn" onClick={handleStartSkillGlobally} style={{ whiteSpace: 'nowrap' }}>
+            <button style={{ padding: '0.85rem 1.5rem', background: 'var(--text-main)', color: 'var(--bg-base)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(255,255,255,0.1)' }} onClick={handleStartSkillGlobally} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
               <Plus size={16} /> Add Custom Skill
             </button>
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', marginBottom: '0.5rem' }}>
             <button 
-              className={globalSearchFilter === 'all' ? 'primary-btn' : 'secondary-btn'} 
-              style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '4px' }} 
+              style={{ fontSize: '0.8rem', fontWeight: 600, padding: '0.4rem 1rem', borderRadius: '100px', cursor: 'pointer', transition: 'all 0.2s', border: globalSearchFilter === 'all' ? '1px solid var(--cyan)' : '1px solid rgba(255,255,255,0.1)', background: globalSearchFilter === 'all' ? 'rgba(6,182,212,0.1)' : 'transparent', color: globalSearchFilter === 'all' ? 'var(--cyan)' : 'var(--text-muted)' }} 
               onClick={() => setGlobalSearchFilter('all')}
             >
-              All
+              All Data
             </button>
             <button 
-              className={globalSearchFilter === 'domains' ? 'primary-btn' : 'secondary-btn'} 
-              style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '4px' }} 
+              style={{ fontSize: '0.8rem', fontWeight: 600, padding: '0.4rem 1rem', borderRadius: '100px', cursor: 'pointer', transition: 'all 0.2s', border: globalSearchFilter === 'domains' ? '1px solid var(--cyan)' : '1px solid rgba(255,255,255,0.1)', background: globalSearchFilter === 'domains' ? 'rgba(6,182,212,0.1)' : 'transparent', color: globalSearchFilter === 'domains' ? 'var(--cyan)' : 'var(--text-muted)' }} 
               onClick={() => setGlobalSearchFilter('domains')}
             >
               Domains
             </button>
             <button 
-              className={globalSearchFilter === 'skills' ? 'primary-btn' : 'secondary-btn'} 
-              style={{ fontSize: '0.75rem', padding: '0.25rem 0.75rem', borderRadius: '4px' }} 
+              style={{ fontSize: '0.8rem', fontWeight: 600, padding: '0.4rem 1rem', borderRadius: '100px', cursor: 'pointer', transition: 'all 0.2s', border: globalSearchFilter === 'skills' ? '1px solid var(--cyan)' : '1px solid rgba(255,255,255,0.1)', background: globalSearchFilter === 'skills' ? 'rgba(6,182,212,0.1)' : 'transparent', color: globalSearchFilter === 'skills' ? 'var(--cyan)' : 'var(--text-muted)' }} 
               onClick={() => setGlobalSearchFilter('skills')}
             >
-              Skills
+              Isolated Skills
             </button>
           </div>
           
@@ -211,15 +209,15 @@ export function SkillsPanel({
                   const existingSkill = skills.find(sk => sk.id === s.id || (sk.canonicalName || sk.name || '').toLowerCase().trim() === searchCanon)
                   const isStarted = !!existingSkill && (existingSkill.isIndependent || existingSkill.activeDomains?.some(d => activePathways.includes(d)))
                   return (
-                    <div key={s.id} style={{ padding: '0.75rem', background: 'var(--bg-card)', borderRadius: '8px', border: '1px solid var(--violet)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={s.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(139,92,246,0.3)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
-                        <span style={{ fontSize: '0.65rem', color: 'var(--violet)', background: 'var(--violet-glow)', padding: '2px 6px', borderRadius: '4px', marginRight: '0.5rem' }}>SKILL</span>
-                        <strong>{s.canonicalName}</strong>
+                        <span style={{ fontSize: '0.7rem', color: '#a855f7', background: 'rgba(168,85,247,0.1)', padding: '4px 8px', borderRadius: '6px', marginRight: '0.75rem', fontWeight: 600, letterSpacing: '0.05em' }}>SKILL</span>
+                        <strong style={{ fontSize: '1rem', color: '#fff' }}>{s.canonicalName}</strong>
                       </div>
                       {isStarted ? (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Already started</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>Already in progress</span>
                       ) : (
-                        <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.875rem' }} onClick={() => { 
+                        <button style={{ padding: '0.5rem 1.25rem', background: 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, boxShadow: '0 4px 15px rgba(168,85,247,0.3)' }} onClick={() => { 
                           const sCanon = (s.canonicalName || '').toLowerCase().trim()
                           const matchedDomains = activePathways.filter(pid => 
                             getSkillsForPathway(pid).some(ps => (ps.canonicalName||'').toLowerCase().trim() === sCanon)

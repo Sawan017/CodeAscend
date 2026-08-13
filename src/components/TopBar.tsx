@@ -1,6 +1,5 @@
 import { UserCircle2, Search, PlayCircle } from 'lucide-react'
 import type { Progression, UserProfile, ActiveSessionState } from '../types'
-import { calculateLevel, getNameColorClass } from '../lib/progression'
 import { XpProgressBar } from './XpProgressBar'
 
 type TopBarProps = {
@@ -14,9 +13,6 @@ type TopBarProps = {
 }
 
 export function TopBar({ progression, profile, onOpenDrawer, onOpenSearch, activeSession, activeSessionElapsed, onOpenActiveSession }: TopBarProps) {
-  const level = calculateLevel(progression.xp)
-  const nameColorClass = getNameColorClass(level)
-
   const formatTime = (totalSeconds: number) => {
     const m = Math.floor(Math.abs(totalSeconds) / 60)
     const s = Math.abs(totalSeconds) % 60
@@ -31,24 +27,27 @@ export function TopBar({ progression, profile, onOpenDrawer, onOpenSearch, activ
   }
 
   return (
-    <header className="topbar">
-      <div className="brand-block">
-        <div className="brand-mark" />
-        <div>
-          <p className="eyebrow">FUTUREME</p>
-          <h2>Career World</h2>
+    <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 32px', background: 'rgba(3,4,7,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.05)', position: 'sticky', top: 0, zIndex: 100 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--cyan), var(--primary))', borderRadius: '8px', boxShadow: '0 0 15px rgba(6,182,212,0.4)' }} />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', lineHeight: 1 }}>SYSTEM LOGGED</span>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>{profile.displayName || profile.username}</h2>
         </div>
       </div>
-      <div className="hud-right">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         {activeSession && (
           <button 
             onClick={onOpenActiveSession}
             style={{ 
-              display: 'flex', alignItems: 'center', gap: '0.5rem', 
-              background: 'rgba(52, 211, 153, 0.15)', border: '1px solid rgba(52, 211, 153, 0.4)', 
-              color: '#34d399', padding: '0.25rem 0.75rem', borderRadius: '100px', 
-              fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' 
+              display: 'flex', alignItems: 'center', gap: '8px', 
+              background: 'rgba(6, 182, 212, 0.1)', border: '1px solid rgba(6, 182, 212, 0.3)', 
+              color: 'var(--cyan)', padding: '6px 14px', borderRadius: '100px', 
+              fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+              boxShadow: '0 0 10px rgba(6, 182, 212, 0.15)'
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(6, 182, 212, 0.2)'; e.currentTarget.style.boxShadow = '0 0 20px rgba(6, 182, 212, 0.3)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(6, 182, 212, 0.1)'; e.currentTarget.style.boxShadow = '0 0 10px rgba(6, 182, 212, 0.15)' }}
           >
             <PlayCircle size={14} />
             {sessionText}
@@ -62,13 +61,13 @@ export function TopBar({ progression, profile, onOpenDrawer, onOpenSearch, activ
             .desktop-only-xp { display: block !important; }
           }
         `}</style>
-        <div className="hud-chip"><span>@{profile.username}</span><strong className={nameColorClass}>{profile.displayName || profile.username}</strong></div>
+        
         {onOpenSearch && (
-          <button className="icon-button" onClick={onOpenSearch} aria-label="Search developers">
+          <button style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onOpenSearch} onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}>
             <Search size={18} />
           </button>
         )}
-        <button className="icon-button" onClick={onOpenDrawer} aria-label="Open player drawer">
+        <button style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onOpenDrawer} onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}>
           <UserCircle2 size={18} />
         </button>
       </div>
