@@ -13,6 +13,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@react-three/drei": "^10.7.8",
     "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.0.5",
     "@supabase/supabase-js": "^2.112.2",
     "@types/three": "^0.185.4",
     "dotenv": "^17.4.2",
