@@ -5,33 +5,38 @@ import * as THREE from 'three'
 
 export function SceneCamera() {
   const scroll = useScroll()
-  const targetPos = new THREE.Vector3()
   const targetLook = new THREE.Vector3()
 
   useFrame((state) => {
-    // scroll.offset goes from 0 to 1
-    const offset = scroll.offset
+    const offset = scroll.offset // 0 to 1
     
-    // We want the camera to move from z = 5 down to z = -105
-    const zPos = 5 - (offset * 110)
+    // We want the camera to move from z = 5 down to z = -200
+    const zPos = 5 - (offset * 215)
     
-    // Add some subtle sway based on scroll
-    const xPos = Math.sin(offset * Math.PI * 4) * 2
-    const yPos = Math.cos(offset * Math.PI * 2) * 1
-    
-    targetPos.set(xPos, yPos, zPos)
-    
-    // Look slightly ahead of the camera
+    // Extremely subtle, slow sway (dolly movement)
+    const xPos = Math.sin(offset * Math.PI * 2) * 1.5
+    const yPos = Math.cos(offset * Math.PI * 2) * 0.5
+
+    // Mouse parallax (extremely subtle so it doesn't distract)
+    const mouseX = (state.pointer.x * 0.5)
+    const mouseY = (state.pointer.y * 0.5)
+
+    const targetX = xPos + mouseX
+    const targetY = yPos + mouseY
+
+    // Look slightly ahead, but mostly straight to keep it calm and stable
     targetLook.set(
-      Math.sin(offset * Math.PI * 4 + 0.2) * 1.5,
-      Math.cos(offset * Math.PI * 2 + 0.2) * 0.5,
-      zPos - 15
+      Math.sin(offset * Math.PI * 2) * 0.5,
+      Math.cos(offset * Math.PI * 2) * 0.2,
+      zPos - 30 // Look deep into the scene
     )
 
-    // Smoothly interpolate the camera position and lookAt
-    state.camera.position.lerp(targetPos, 0.05)
+    // Smoothly interpolate X/Y but bind Z more tightly to scroll so the user immediately feels the forward movement
+    state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetX, 0.05)
+    state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetY, 0.05)
+    state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, zPos, 0.1)
     
-    // Create a temporary vector for the current look direction, lerp it, and apply
+    // Smoothly interpolate look target
     const currentLook = new THREE.Vector3(0, 0, -1).applyQuaternion(state.camera.quaternion).add(state.camera.position)
     currentLook.lerp(targetLook, 0.05)
     state.camera.lookAt(currentLook)

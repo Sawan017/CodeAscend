@@ -24,7 +24,10 @@ export function AuthShell({ onEnter }: AuthShellProps) {
       <nav style={{
         position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '20px 40px', pointerEvents: 'none'
+        padding: '20px 40px', pointerEvents: 'none',
+        background: 'rgba(3, 4, 7, 0.4)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', pointerEvents: 'auto' }}>
