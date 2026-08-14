@@ -227,8 +227,8 @@ export function AuthShell({ onEnter }: AuthShellProps) {
 
             {/* The Emotional Punchline */}
             <p style={{ marginTop: '0', fontFamily: 'Georgia, serif', fontSize: 'clamp(1.2rem, 2.2vw, 1.8rem)', letterSpacing: '0.04em', opacity: 0.9, maxWidth: '800px', margin: '0 auto 40px', lineHeight: 1.6, fontStyle: 'italic' }}>
-              "The world can count milestones.<br />
-              I remember the person that made me chase them."
+              "The world can count my milestones,<br />
+              I'll remember the person that made me chase them."
             </p>
 
             {/* Original Era 7 Texts (Smaller) */}
