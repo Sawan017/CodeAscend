@@ -279,3 +279,29 @@ export async function analyzeUserPerformance(performanceHistory: any[]): Promise
     return { content: null, error: err.message || 'Unexpected error' }
   }
 }
+
+// ============================================================================
+// IDENTITY SYSTEM RPC CALLS
+// ============================================================================
+
+export async function reserveUsername(displayName: string) {
+  if (!isSupabaseConfigured() || !supabase) {
+    throw new Error('Supabase is not configured')
+  }
+  const { data, error } = await supabase.rpc('reserve_username', { display_name_input: displayName })
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data as { id: string; full_username: string; discriminator: string; display_name: string; expires_at: string }
+}
+
+export async function confirmUsername(identityId: string) {
+  if (!isSupabaseConfigured() || !supabase) {
+    throw new Error('Supabase is not configured')
+  }
+  const { error } = await supabase.rpc('confirm_username', { identity_id: identityId })
+  if (error) {
+    throw new Error(error.message)
+  }
+  return true
+}
