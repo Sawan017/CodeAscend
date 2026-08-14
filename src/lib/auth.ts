@@ -96,5 +96,33 @@ export function useAuth() {
     setIsNewUser(false)
   }
 
-  return { user, loading, isNewUser, signInWithGoogle, signOut, isConfigured: isSupabaseConfigured() }
+  const signInWithEmail = async (email: string, password: string) => {
+    if (!isSupabaseConfigured() || !supabase) return null
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.error('Email sign-in failed:', err)
+      setLoading(false)
+      throw err
+    }
+  }
+
+  const signUpWithEmail = async (email: string, password: string) => {
+    if (!isSupabaseConfigured() || !supabase) return null
+    setLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signUp({ email, password })
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.error('Email sign-up failed:', err)
+      setLoading(false)
+      throw err
+    }
+  }
+
+  return { user, loading, isNewUser, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, isConfigured: isSupabaseConfigured() }
 }

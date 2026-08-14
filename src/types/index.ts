@@ -1,4 +1,4 @@
-export type SectionId = 'dashboard' | 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat' | 'career_world'
+export type SectionId = 'dashboard' | 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat' | 'career_world' | 'login'
 
 export type SkillStatus = 'LOCKED' | 'LEARNING' | 'MASTERED'
 export type GoalStatus = 'ACTIVE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
