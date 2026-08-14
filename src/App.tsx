@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Compass, GraduationCap, House, Layers3, Target, Trophy, X } from 'lucide-react'
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
 import { OnboardingScreen } from './features/auth/OnboardingScreen'
 import { AchievementsPanel } from './features/achievements/AchievementsPanel'
@@ -22,12 +22,14 @@ import { milestones, futureMilestones, timelineEvents } from './data/journeyData
 import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './data/learningData'
 import { allTimeDistributions } from './data/timeDistributions/index'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
+
 import { loadInitialState, getEmptyState } from './utils/storage'
+import { LoginUI } from './features/auth/LoginUI'
 import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges, evaluateDynamicMilestones } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { usePersist } from './hooks/usePersist'
-import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills } from './lib/api'
+import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills, fetchIncomingFriendRequests, fetchIncomingMessages } from './lib/api'
 import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
@@ -36,10 +38,8 @@ import { ChatPanel } from './features/chat/ChatPanel'
 import { ProjectDetail } from './features/projects/ProjectDetail'
 import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
-import { fetchIncomingFriendRequests, fetchIncomingMessages, saveFriendsState, saveChatState } from './lib/api'
+import { saveFriendsState, saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
-
-const AmbientBackground = lazy(() => import('./components/three/AmbientBackground'))
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'dashboard', label: 'Home', icon: House },
@@ -79,29 +79,42 @@ function App() {
   const [entered, setEntered] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [userSearchOpen, setUserSearchOpen] = useState(false)
+  const [route, setRoute] = useState<Route>(parseHash)
 
   useEffect(() => {
     if (user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setEntered(true)
+      if (route.view === 'login') {
+        window.location.hash = '#view=dashboard'
+      }
     } else if (isConfigured && !loading) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEntered(false)
+      // If we are explicitly on the login route, don't force 'entered' back to false
+      // so they can see the login screen instead of the landing page.
+      if (route.view !== 'login') {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setEntered(false)
+      }
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDrawerOpen(false)
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setUserSearchOpen(false)
     }
-  }, [user, loading, isConfigured])
-  const [route, setRoute] = useState<Route>(parseHash)
+  }, [user, loading, isConfigured, route.view])
 
   useEffect(() => {
     const handleHashChange = () => {
-      setRoute(parseHash())
+      const newRoute = parseHash();
+      // Protect routes: If unauthenticated and trying to access app routes, redirect to login
+      if (!user && !loading && isConfigured && newRoute.view !== 'login' && entered) {
+         window.location.hash = '#view=login';
+         return;
+      }
+      setRoute(newRoute)
     }
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
+  }, [user, loading, isConfigured, entered])
 
   const [initialData] = useState(() => {
     const stored = loadInitialState()
@@ -255,7 +268,6 @@ function App() {
 
   const [activeProject, setActiveProject] = useState(initialData.projects[0] ?? projects[0])
   const [viewingUserId, setViewingUserId] = useState<string | null>(null)
-  const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const contentRef = useRef<HTMLDivElement>(null)
 
   const [goalReminder, setGoalReminder] = useState<Goal | null>(null)
@@ -380,14 +392,6 @@ function App() {
       }, 0)
     })
   }, [user, isConfigured])
-
-  useEffect(() => {
-    const onMove = (event: MouseEvent) => {
-      setCursor({ x: event.clientX, y: event.clientY })
-    }
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [])
 
   // Safe persistence: only saves when state mutates AFTER hydration
   usePersist(progression, user, dataLoaded, saveProgressionData)
@@ -619,7 +623,7 @@ function App() {
         const domains = (s.activeDomains || []).filter(id => id !== domainId);
         return { ...s, activeDomains: domains };
       }
-      return s;
+      return s
     }))
     push('Skill removed from domain', 'info')
   }
@@ -655,8 +659,6 @@ function App() {
       <div className="noise" />
       <div className="aurora aura-a" />
       <div className="aurora aura-b" />
-      <div className="grid-overlay" />
-      <div className="spotlight" style={{ left: `${cursor.x}px`, top: `${cursor.y}px` }} />
       <AnimatePresence mode="wait">
         {loading || (user && !dataLoaded) ? (
           <div key="loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
@@ -667,14 +669,15 @@ function App() {
               <motion.div initial={{ x: '-100%' }} animate={{ x: '100%' }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }} style={{ width: '50%', height: '100%', background: 'var(--cyan)' }} />
             </div>
           </div>
-        ) : !entered ? (
-          <AuthShell onEnter={() => setEntered(true)} progression={progression} />
+        ) : (!entered && route.view !== 'login') ? (
+          <AuthShell onEnter={() => { setEntered(true); window.location.hash = '#view=login'; }} progression={progression} />
+        ) : !user ? (
+          <LoginUI />
         ) : user && !settings.onboarded ? (
           <OnboardingScreen onComplete={handleOnboardingComplete} />
         ) : (
           <motion.main key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="world-shell">
             <Suspense fallback={null}>
-              <AmbientBackground />
             </Suspense>
             <TopBar 
               progression={progression} 
