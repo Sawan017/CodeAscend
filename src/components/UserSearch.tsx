@@ -106,7 +106,7 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
             <div className="search-box">
               <input
                 type="text"
-                placeholder="Search by username..."
+                placeholder="Search by User ID..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}

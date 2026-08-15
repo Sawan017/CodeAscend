@@ -7,8 +7,41 @@ const demoMode = import.meta.env.VITE_DEMO_MODE === 'true'
 // If credentials are missing or demo mode is explicitly enabled, we run in local-only mode.
 const isConfigured = Boolean(supabaseUrl && supabaseAnonKey && !demoMode)
 
+// Custom storage wrapper for "Remember Me" and multi-account persistence
+const getStorageKey = (baseKey: string) => {
+  const currentLoginId = window.localStorage.getItem('current_login_id')
+  return currentLoginId ? `${baseKey}-${currentLoginId}` : baseKey
+}
+
+const customStorage = {
+  getItem: (key: string) => {
+    const k = getStorageKey(key)
+    return window.localStorage.getItem(k) || window.sessionStorage.getItem(k)
+  },
+  setItem: (key: string, value: string) => {
+    const k = getStorageKey(key)
+    if (window.localStorage.getItem('auth_remember_me') === 'true') {
+       window.localStorage.setItem(k, value)
+       window.sessionStorage.removeItem(k)
+    } else {
+       window.sessionStorage.setItem(k, value)
+       window.localStorage.removeItem(k)
+    }
+  },
+  removeItem: (key: string) => {
+    const k = getStorageKey(key)
+    window.localStorage.removeItem(k)
+    window.sessionStorage.removeItem(k)
+  }
+}
+
 export const supabase: SupabaseClient | null = isConfigured
-  ? createClient(supabaseUrl!, supabaseAnonKey!)
+  ? createClient(supabaseUrl!, supabaseAnonKey!, {
+      auth: {
+        storage: customStorage,
+        persistSession: true
+      }
+    })
   : null
 
 export function isSupabaseConfigured() {

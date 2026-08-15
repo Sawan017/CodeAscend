@@ -1,72 +1,103 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { LogOut, X, Check, XCircle } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import type { Settings, ThemeMode, UserProfile } from '../types'
-import type { AuthUser } from '../lib/auth'
-import { checkUsernameAvailability } from '../lib/api'
+import { X, Save, AlertTriangle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import type { UserProfile } from '../types'
 
 type ProfileDrawerProps = {
   open: boolean
   profile: UserProfile
-  settings: Settings
-  user?: AuthUser | null
   onClose: () => void
-  onSettingsChange: (next: Settings) => void
   onProfileChange: (next: UserProfile) => void
-  onSignOut?: (forgetAccount: boolean) => void
+  onSaveProfile?: (next: UserProfile) => void
 }
 
-const themeOptions: Array<{ value: ThemeMode; label: string }> = [
-  { value: 'dark', label: 'Dark' },
-  { value: 'light', label: 'Light' },
-  { value: 'system', label: 'System' },
-  { value: 'midnight', label: 'Midnight' },
-  { value: 'aurora', label: 'Aurora' },
-]
+export function ProfileDrawer({ open, profile, onClose, onProfileChange, onSaveProfile }: ProfileDrawerProps) {
+  const [draftProfile, setDraftProfile] = useState<UserProfile>(profile)
+  const [showConfirmClose, setShowConfirmClose] = useState(false)
 
-export function ProfileDrawer({ open, profile, settings, user, onClose, onSettingsChange, onProfileChange, onSignOut }: ProfileDrawerProps) {
-  const updateProfile = (patch: Partial<UserProfile>) => {
-    onProfileChange({ ...profile, ...patch })
-  }
-  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
-
-  // Debounced username availability check
   useEffect(() => {
-    if (!open || !user) return
+    if (open) {
+      setDraftProfile(profile)
+      setShowConfirmClose(false)
+    }
+  }, [open, profile])
 
-    const timeout = setTimeout(async () => {
-      const isAvailable = await checkUsernameAvailability(profile.username, user.id)
-      setUsernameStatus(isAvailable ? 'available' : 'taken')
-    }, 500)
+  const hasUnsavedChanges = JSON.stringify(draftProfile) !== JSON.stringify(profile)
 
-    return () => clearTimeout(timeout)
-  }, [profile.username, open, user])
+  const updateDraft = (patch: Partial<UserProfile>) => {
+    setDraftProfile({ ...draftProfile, ...patch })
+  }
+
+  const handleSave = () => {
+    if (onSaveProfile) {
+      onSaveProfile(draftProfile)
+    } else {
+      onProfileChange(draftProfile)
+    }
+    setShowConfirmClose(false)
+  }
+
+  const handleAttemptClose = () => {
+    if (hasUnsavedChanges) {
+      setShowConfirmClose(true)
+    } else {
+      onClose()
+    }
+  }
+
+  const handleDiscard = () => {
+    setDraftProfile(profile)
+    setShowConfirmClose(false)
+    onClose()
+  }
 
   return (
     <AnimatePresence>
       {open ? (
         <>
-          <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(3,4,7,0.7)', backdropFilter: 'blur(16px)', zIndex: 3000 }} />
+          <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={handleAttemptClose} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(3,4,7,0.7)', backdropFilter: 'blur(16px)', zIndex: 3000 }} />
           <motion.aside className="drawer-panel" initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', stiffness: 220, damping: 24 }} style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '450px', maxWidth: '100vw', background: 'linear-gradient(180deg, rgba(10,13,20,0.95) 0%, rgba(10,13,20,0.98) 100%)', borderLeft: '1px solid rgba(255,255,255,0.05)', boxShadow: '-20px 0 50px rgba(0,0,0,0.5)', zIndex: 3001, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-            <div style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, background: 'rgba(10,13,20,0.95)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
               <div>
                 <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--cyan)', margin: '0 0 0.25rem 0', textTransform: 'uppercase' }}>System Config</p>
                 <h3 style={{ fontSize: '1.5rem', margin: 0, color: '#fff', fontWeight: 600, letterSpacing: '-0.02em' }}>Operative Profile</h3>
               </div>
-              <button style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onClose} aria-label="Close profile drawer" onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)' }}>
-                <X size={18} />
-              </button>
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                {hasUnsavedChanges && (
+                  <button onClick={handleSave} className="primary-btn" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                    <Save size={14} /> Save
+                  </button>
+                )}
+                <button style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={handleAttemptClose} aria-label="Close profile drawer" onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.color = '#fff' }} onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.color = 'var(--text-muted)' }}>
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             <div style={{ padding: '2rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              
+              {showConfirmClose && (
+                <div style={{ padding: '1.5rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444', fontWeight: 600 }}>
+                    <AlertTriangle size={18} />
+                    <span>Save changes before leaving?</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-main)' }}>You have unsaved edits to your profile.</p>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <button onClick={handleSave} className="primary-btn" style={{ flex: 1, padding: '0.5rem' }}>Save Changes</button>
+                    <button onClick={handleDiscard} className="secondary-btn" style={{ flex: 1, padding: '0.5rem', borderColor: 'rgba(239,68,68,0.3)', color: '#ef4444' }}>Discard</button>
+                    <button onClick={() => setShowConfirmClose(false)} className="secondary-btn" style={{ padding: '0.5rem 1rem' }}>Cancel</button>
+                  </div>
+                </div>
+              )}
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'rgba(6,182,212,0.1)', border: '1px solid rgba(6,182,212,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 600, color: 'var(--cyan)' }}>
-                  {profile.displayName?.charAt(0).toUpperCase() || profile.username?.charAt(0).toUpperCase() || 'S'}
+                  {draftProfile.displayName?.charAt(0).toUpperCase() || draftProfile.username?.charAt(0).toUpperCase() || 'S'}
                 </div>
                 <div>
-                  <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.25rem', color: '#fff', fontWeight: 600 }}>{profile.displayName || profile.username}</h4>
-                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>@{profile.username} <span style={{ margin: '0 6px', opacity: 0.5 }}>|</span> Level {profile.level}</p>
+                  <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.25rem', color: '#fff', fontWeight: 600 }}>{draftProfile.displayName}</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>@{draftProfile.username} <span style={{ margin: '0 6px', opacity: 0.5 }}>|</span> Level {draftProfile.level}</p>
                 </div>
               </div>
 
@@ -74,185 +105,65 @@ export function ProfileDrawer({ open, profile, settings, user, onClose, onSettin
                 <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 0 1rem 0', textTransform: 'uppercase' }}>Parameters</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Callsign (ID)</label>
-                    <div style={{ position: 'relative' }}>
-                      <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.username} onChange={(event) => updateProfile({ username: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
-                      {usernameStatus === 'available' && <Check size={18} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#34d399' }} />}
-                      {usernameStatus === 'taken' && <XCircle size={18} style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#ff453a' }} />}
-                    </div>
-                    {usernameStatus === 'taken' && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#ff453a' }}>Callsign unavailable</p>}
-                    {usernameStatus === 'available' && <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: '#34d399' }}>Callsign available</p>}
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>User ID (Login)</label>
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', outline: 'none' }} value={draftProfile.username} readOnly disabled title="User ID is permanent and cannot be changed" />
                   </div>
-                  
+
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Display Alias</label>
-                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.displayName} onChange={(event) => updateProfile({ displayName: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={draftProfile.displayName} onChange={(event) => updateDraft({ displayName: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Avatar Image URL</label>
-                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.avatar || ''} onChange={(event) => updateProfile({ avatar: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={draftProfile.avatar || ''} onChange={(event) => updateDraft({ avatar: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Bio / Designation</label>
-                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.bio || ''} onChange={(event) => updateProfile({ bio: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={draftProfile.bio || ''} onChange={(event) => updateDraft({ bio: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>Primary Role</label>
-                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={profile.title} onChange={(event) => updateProfile({ title: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
+                    <input style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none', transition: 'border-color 0.2s' }} value={draftProfile.title} onChange={(event) => updateDraft({ title: event.target.value })} onFocus={(e) => e.currentTarget.style.borderColor = 'var(--cyan)'} onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'} />
                   </div>
                 </div>
               </div>
 
               <div className="drawer-card">
                 <h4>Education</h4>
-                <input value={profile.education} onChange={(event) => updateProfile({ education: event.target.value })} />
+                <input value={draftProfile.education} onChange={(event) => updateDraft({ education: event.target.value })} />
               </div>
               <div className="drawer-card">
                 <h4>Focus</h4>
-                <input value={profile.focus} onChange={(event) => updateProfile({ focus: event.target.value })} />
+                <input value={draftProfile.focus} onChange={(event) => updateDraft({ focus: event.target.value })} />
               </div>
               <div className="drawer-card">
                 <h4>Technologies (comma separated)</h4>
-                <input value={profile.technologies.join(', ')} onChange={(event) => updateProfile({ technologies: event.target.value.split(',').map((tech) => tech.trim()).filter(Boolean) })} />
+                <input value={draftProfile.technologies.join(', ')} onChange={(event) => updateDraft({ technologies: event.target.value.split(',').map((tech) => tech.trim()).filter(Boolean) })} />
               </div>
               <div className="drawer-card">
                 <h4>GitHub</h4>
-                <input value={profile.github} onChange={(event) => updateProfile({ github: event.target.value })} />
+                <input value={draftProfile.github} onChange={(event) => updateDraft({ github: event.target.value })} />
               </div>
               <div className="drawer-card">
                 <h4>LinkedIn</h4>
-                <input value={profile.linkedin} onChange={(event) => updateProfile({ linkedin: event.target.value })} />
+                <input value={draftProfile.linkedin} onChange={(event) => updateDraft({ linkedin: event.target.value })} />
               </div>
               <div className="drawer-card">
                 <h4>Contact</h4>
-                <input value={profile.contact} onChange={(event) => updateProfile({ contact: event.target.value })} />
+                <input value={draftProfile.contact} onChange={(event) => updateDraft({ contact: event.target.value })} />
               </div>
               <div className="drawer-card">
                 <div className="drawer-toggle-row">
                   <span>Public contact email</span>
-                  <button className={`toggle-switch ${profile.contactPublic ? 'on' : ''}`} onClick={() => updateProfile({ contactPublic: !profile.contactPublic })} aria-label="Toggle public contact" />
+                  <button className={`toggle-switch ${draftProfile.contactPublic ? 'on' : ''}`} onClick={() => updateDraft({ contactPublic: !draftProfile.contactPublic })} aria-label="Toggle public contact" />
                 </div>
               </div>
             </div>
 
-            <div className="drawer-section">
-              <p className="eyebrow">SETTINGS</p>
-              <div className="drawer-card">
-                <h4>Theme</h4>
-                <select value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
-                  {themeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                </select>
-              </div>
-              <div className="drawer-card">
-                <h4>Animations</h4>
-                <select value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              <div className="drawer-card">
-                <div className="drawer-toggle-row">
-                  <span>Sound effects</span>
-                  <button className={`toggle-switch ${settings.soundEffects ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, soundEffects: !settings.soundEffects })} aria-label="Toggle sound effects" />
-                </div>
-              </div>
-              <div className="drawer-card">
-                <div className="drawer-toggle-row">
-                  <span>Reduced motion</span>
-                  <button className={`toggle-switch ${settings.reducedMotion ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, reducedMotion: !settings.reducedMotion })} aria-label="Toggle reduced motion" />
-                </div>
-              </div>
-              <div className="drawer-card">
-                <div className="drawer-toggle-row">
-                  <span>Streak tracking</span>
-                  <button className={`toggle-switch ${settings.streakTracking ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, streakTracking: !settings.streakTracking })} aria-label="Toggle streak tracking" />
-                </div>
-              </div>
-            </div>
-
-            <div className="drawer-section">
-              <p className="eyebrow">ACCOUNT</p>
-              {user ? (
-                <div className="drawer-card">
-                  <div className="drawer-toggle-row">
-                    <div>
-                      <h4>Signed in</h4>
-                      <p>{user.email}</p>
-                    </div>
-                    <button className="secondary-btn" onClick={() => setShowLogoutDialog(true)}><LogOut size={14} /> Sign out</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="drawer-card">
-                  <p className="muted">Demo mode — data saves locally. Sign in with Google to sync across devices.</p>
-                </div>
-              )}
-            </div>
           </motion.aside>
-          
-          <AnimatePresence>
-            {showLogoutDialog && (
-              <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }} 
-                style={{ 
-                  position: 'fixed', 
-                  top: 0, left: 0, right: 0, bottom: 0, 
-                  backgroundColor: 'rgba(0, 0, 0, 0.75)', 
-                  backdropFilter: 'blur(8px)', 
-                  zIndex: 9999,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '1rem'
-                }}
-                onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutDialog(false) }}
-              >
-                <motion.div 
-                  initial={{ scale: 0.95, opacity: 0, y: 15 }}
-                  animate={{ scale: 1, opacity: 1, y: 0 }}
-                  exit={{ scale: 0.95, opacity: 0, y: 15 }}
-                  className="drawer-card" 
-                  style={{ 
-                    width: '100%', 
-                    maxWidth: '420px', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    gap: '1.25rem',
-                    background: 'rgba(15, 23, 42, 0.9)',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                    backdropFilter: 'blur(24px)',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
-                    padding: '2rem'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Sign out</h3>
-                    <button className="icon-button" onClick={() => setShowLogoutDialog(false)} aria-label="Cancel sign out">
-                      <X size={24} />
-                    </button>
-                  </div>
-                  <p className="muted" style={{ margin: 0, fontSize: '1.05rem', lineHeight: 1.5 }}>Would you like to remember this account on this device?</p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
-                    <button className="primary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(false); }}>
-                      Remember this account
-                    </button>
-                    <button className="secondary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(true); }}>
-                      Forget this account
-                    </button>
-                    <button className="secondary-btn" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} onClick={() => setShowLogoutDialog(false)}>
-                      Cancel
-                    </button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </>
       ) : null}
     </AnimatePresence>

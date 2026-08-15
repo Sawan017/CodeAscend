@@ -101,33 +101,7 @@ export async function saveSettings(userId: string, settings: Settings) {
   return upsertRow(TABLES.settings, userId, 'settings', settings)
 }
 
-/**
- * Check if a username is available (not already taken by another user).
- * Returns true if available, false if taken.
- */
-export async function checkUsernameAvailability(username: string, excludeUserId?: string): Promise<boolean> {
-  if (!isSupabaseConfigured() || !supabase) return true
-  if (!username || username.trim().length === 0) return false
 
-  const trimmedUsername = username.trim().toLowerCase()
-  
-  const { data, error } = await supabase
-    .from(TABLES.profile)
-    .select('user_id, data')
-    .neq('user_id', excludeUserId || '00000000-0000-0000-0000-000000000000')
-
-  if (error) {
-    console.error('Username availability check failed:', error.message)
-    return true // Allow on error to not block users
-  }
-
-  const taken = data?.some((row) => {
-    const profileData = row.data as UserProfile
-    return profileData.username?.toLowerCase() === trimmedUsername
-  })
-
-  return !taken
-}
 
 /**
  * Fetch all public profiles for user discovery.
@@ -284,15 +258,16 @@ export async function analyzeUserPerformance(performanceHistory: any[]): Promise
 // IDENTITY SYSTEM RPC CALLS
 // ============================================================================
 
-export async function reserveUsername(displayName: string) {
+export async function reserveUsername(username: string, password_input: string) {
   if (!isSupabaseConfigured() || !supabase) {
     throw new Error('Supabase is not configured')
   }
-  const { data, error } = await supabase.rpc('reserve_username', { display_name_input: displayName })
+  const payload: any = { username_input: username, password_input: password_input }
+  const { data, error } = await supabase.rpc('reserve_username', payload)
   if (error) {
     throw new Error(error.message)
   }
-  return data as { id: string; full_username: string; discriminator: string; display_name: string; expires_at: string }
+  return data as { id: string; login_id: string; user_id_number: string; username: string; dummy_email: string }
 }
 
 export async function confirmUsername(identityId: string) {
@@ -304,4 +279,15 @@ export async function confirmUsername(identityId: string) {
     throw new Error(error.message)
   }
   return true
+}
+
+export async function resolveAuthEmail(identifier: string) {
+  if (!isSupabaseConfigured() || !supabase) {
+    throw new Error('Supabase is not configured')
+  }
+  const { data, error } = await supabase.rpc('resolve_login_email', { identifier })
+  if (error) {
+    throw new Error(error.message)
+  }
+  return data as string | null
 }

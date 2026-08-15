@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { User, Check, X, MessageSquare, UserMinus, Users, UserPlus } from 'lucide-react'
+import { User, Check, X, MessageSquare, UserMinus, Users, UserPlus, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import type { FriendRelationship } from '../../types'
 import { fetchPublicProfiles } from '../../lib/api'
@@ -20,9 +20,10 @@ type FriendsPanelProps = {
   onRemove: (userId: string) => void
   onOpenProfile: (userId: string) => void
   onMessage: (userId: string) => void
+  onOpenSearch?: () => void
 }
 
-export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject, onRemove, onOpenProfile, onMessage }: FriendsPanelProps) {
+export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject, onRemove, onOpenProfile, onMessage, onOpenSearch }: FriendsPanelProps) {
   const [activeTab, setActiveTab] = useState<'friends' | 'requests'>('friends')
   const [publicProfiles, setPublicProfiles] = useState<PublicUser[]>([])
   const [loading, setLoading] = useState(true)
@@ -64,9 +65,18 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
 
   return (
     <div className="section-shell">
-      <div className="card-heading" style={{ marginBottom: '1.5rem' }}>
-        <p className="eyebrow">SOCIAL NETWORK</p>
+      <div className="card-heading" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <p className="eyebrow" style={{ margin: 0 }}>SOCIAL NETWORK</p>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {onOpenSearch && (
+            <button 
+              className="secondary-btn"
+              onClick={onOpenSearch}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <Search size={16} /> Find Developers
+            </button>
+          )}
           <button 
             className={`secondary-btn ${activeTab === 'friends' ? 'active' : ''}`}
             onClick={() => setActiveTab('friends')}

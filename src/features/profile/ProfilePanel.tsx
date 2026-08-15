@@ -17,7 +17,7 @@ const LANGUAGE_OPTIONS = [
   'Java', 'C++', 'C#', 'Go', 'Rust', 'SQL',
 ]
 
-export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, onUpdateProfile }: ProfilePanelProps) {
+export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, onUpdateProfile, onEditProfile }: ProfilePanelProps & { onEditProfile?: () => void }) {
   const level = calculateLevel(progression.xp)
   const nameColorClass = getNameColorClass(level)
   const [customLang, setCustomLang] = useState('')
@@ -55,6 +55,11 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
       <div className="panel" style={{ padding: '2rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
           <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--cyan)', margin: 0, textTransform: 'uppercase' }}>Operative Profile</p>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            {onEditProfile && (
+              <button className="secondary-btn" onClick={onEditProfile}>Edit Profile</button>
+            )}
+          </div>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
@@ -64,7 +69,7 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
                 {profile.avatar ? <img src={profile.avatar} alt={profile.displayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : profile.displayName?.[0] || 'U'}
               </div>
               <div>
-                <h3 className={nameColorClass} style={{ fontSize: '2rem', margin: '0 0 0.5rem 0', fontWeight: 700, letterSpacing: '-0.02em' }}>{profile.displayName || profile.username}</h3>
+                <h3 className={nameColorClass} style={{ fontSize: '2rem', margin: '0 0 0.5rem 0', fontWeight: 700, letterSpacing: '-0.02em' }}>{profile.displayName}</h3>
                 <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '1rem' }}>@{profile.username} <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.2)' }}>|</span> {profile.title}</p>
               </div>
             </div>

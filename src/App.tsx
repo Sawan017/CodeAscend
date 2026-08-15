@@ -38,6 +38,7 @@ import { ChatPanel } from './features/chat/ChatPanel'
 import { ProjectDetail } from './features/projects/ProjectDetail'
 import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
+import { SettingsPanel } from './features/settings/SettingsPanel'
 import { saveFriendsState, saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
 
@@ -124,6 +125,19 @@ function App() {
       streak: streakResult.newStreak,
       lastActiveDate: streakResult.lastDate,
     }
+    const activeLoginId = typeof window !== 'undefined' ? window.localStorage.getItem('current_login_id') : null;
+    if (activeLoginId && stored.profile) {
+      if (!stored.profile.arinova_id) {
+        stored.profile.arinova_id = activeLoginId;
+      }
+      if (!stored.profile.displayName) {
+        stored.profile.displayName = 'Player';
+      }
+      if (!stored.profile.username) {
+        stored.profile.username = activeLoginId;
+      }
+    }
+
     return {
       progression: initialProg,
       goals: stored.goals.length ? stored.goals : goals,
@@ -337,12 +351,15 @@ function App() {
       
       // Determine if this is a genuinely NEW user (no profile AND no progression AND no settings)
       const isNewUser = !remote.profile && !remote.progression && !remote.settings
+      const activeLoginId = window.localStorage.getItem('current_login_id')
 
       if (isNewUser) {
         // 1. BRAND-NEW USER: Initialize and persist their first-time state
         const initialProfile = {
           ...empty.profile,
-          displayName: user.name || empty.profile.displayName,
+          displayName: activeLoginId || (user.name !== 'Player' ? user.name : null) || empty.profile.displayName,
+          username: activeLoginId || empty.profile.username,
+          arinova_id: activeLoginId || undefined,
           avatar: user.avatarUrl || empty.profile.avatar,
           contact: user.email || empty.profile.contact
         }
@@ -365,7 +382,39 @@ function App() {
         
       } else {
         // 2. EXISTING USER: Load their persisted data exactly as it is
-        if (remote.profile) setProfileState(remote.profile)
+        if (remote.profile) {
+          const loadedProfile = { ...remote.profile }
+          
+          if (activeLoginId) {
+            // Retroactively fix missing arinova_id
+            if (!loadedProfile.arinova_id) {
+              loadedProfile.arinova_id = activeLoginId
+            }
+            // Retroactively fix missing username
+            if (!loadedProfile.username) {
+              loadedProfile.username = activeLoginId
+            }
+          }
+          
+          setProfileState(loadedProfile)
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem('futureme-profile', JSON.stringify(loadedProfile))
+          }
+        } else if (activeLoginId) {
+          // Fallback if remote profile is missing but user is not completely new
+          const fallbackProfile = {
+            ...empty.profile,
+            displayName: 'Player',
+            username: activeLoginId,
+            arinova_id: activeLoginId,
+            avatar: user.avatarUrl || empty.profile.avatar,
+            contact: user.email || empty.profile.contact
+          }
+          setProfileState(fallbackProfile)
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem('futureme-profile', JSON.stringify(fallbackProfile))
+          }
+        }
         if (remote.progression) setProgression(remote.progression)
         if (remote.goals) setGoalState(remote.goals)
         if (remote.projects) setProjectState(remote.projects)
@@ -394,6 +443,7 @@ function App() {
   }, [user, isConfigured])
 
   // Safe persistence: only saves when state mutates AFTER hydration
+  usePersist(profileState, user, dataLoaded, saveProfile)
   usePersist(progression, user, dataLoaded, saveProgressionData)
   usePersist(goalState, user, dataLoaded, saveGoals)
   usePersist(skillState, user, dataLoaded, saveSkills)
@@ -401,7 +451,7 @@ function App() {
   usePersist(achievementState, user, dataLoaded, saveAchievements)
   usePersist(badgeState, user, dataLoaded, saveBadges)
   usePersist(settings, user, dataLoaded, saveSettings)
-  usePersist(profileState, user, dataLoaded, saveProfile)
+
   usePersist(friendState, user, dataLoaded, saveFriendsState)
   usePersist(chatState, user, dataLoaded, saveChatState)
 
@@ -682,8 +732,7 @@ function App() {
             <TopBar 
               progression={progression} 
               profile={profileState} 
-              onOpenDrawer={() => setDrawerOpen(true)} 
-              onOpenSearch={() => setUserSearchOpen(true)}
+              onOpenSettings={() => selectSection('settings')}
               activeSession={activeSession}
               activeSessionElapsed={activeSessionElapsed}
               onOpenActiveSession={() => {
@@ -738,7 +787,7 @@ function App() {
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <AnimatePresence mode="wait">
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} />}
+                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} onEditProfile={() => setDrawerOpen(true)} />}
                     {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
                     {route.view === 'project_detail' && <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} />}
                     {route.view === 'learning' && <SkillsPanel 
@@ -801,6 +850,7 @@ function App() {
                       <FriendsPanel
                         friendState={friendState}
                         incomingRequests={incomingRequests}
+                        onOpenSearch={() => setUserSearchOpen(true)}
                         onAccept={(id) => {
                           setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships, { userId: id, status: 'accepted', createdAt: new Date().toISOString() }] }))
                           setIncomingRequests(prev => prev.filter(r => r !== id))
@@ -855,6 +905,9 @@ function App() {
                         <CareerWorld activeSection={route.view as SectionId} onSelectSection={selectSection} progression={progression} profile={profileState} />
                       </div>
                     )}
+                    {route.view === 'settings' && (
+                      <SettingsPanel settings={settings} onSettingsChange={setSettings} onSignOut={signOut} />
+                    )}
                   </AnimatePresence>
                 </motion.section>
               </div>
@@ -889,7 +942,26 @@ function App() {
         </div>
       )}
 
-      <ProfileDrawer open={drawerOpen} profile={profileState} settings={settings} user={user} onClose={() => setDrawerOpen(false)} onSettingsChange={setSettings} onProfileChange={setProfileState} onSignOut={signOut} />
+      <ProfileDrawer 
+        open={drawerOpen} 
+        profile={profileState} 
+        onClose={() => setDrawerOpen(false)} 
+        onProfileChange={setProfileState}
+        onSaveProfile={async (updatedProfile) => {
+          setProfileState(updatedProfile)
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem('futureme-profile', JSON.stringify(updatedProfile))
+          }
+          if (user) {
+            const success = await saveProfile(user.id, updatedProfile)
+            if (success) {
+              push('Profile saved successfully', 'info')
+            } else {
+              push('Failed to save profile to database', 'info')
+            }
+          }
+        }}
+      />
       <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(userId) => { setViewingUserId(userId); setUserSearchOpen(false) }} />
       <PublicProfileViewer
         userId={viewingUserId}

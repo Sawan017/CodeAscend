@@ -1,0 +1,113 @@
+-- ============================================================
+-- FIX AUTH USERS REQUIRED TOKENS MIGRATION
+-- ============================================================
+
+-- 1. Update any existing users created manually that have NULL tokens.
+-- GoTrue expects these columns to be empty strings ('') and crashes with "Database error querying schema" if they are NULL.
+UPDATE auth.users
+SET 
+  confirmation_token = coalesce(confirmation_token, ''),
+  recovery_token = coalesce(recovery_token, ''),
+  email_change_token_new = coalesce(email_change_token_new, ''),
+  email_change = coalesce(email_change, ''),
+  phone = coalesce(phone, ''),
+  phone_change = coalesce(phone_change, ''),
+  phone_change_token = coalesce(phone_change_token, ''),
+  email_change_token_current = coalesce(email_change_token_current, ''),
+  email_change_confirm_status = coalesce(email_change_confirm_status, 0),
+  reauthentication_token = coalesce(reauthentication_token, '')
+WHERE 
+  confirmation_token IS NULL OR
+  recovery_token IS NULL OR
+  email_change_token_new IS NULL OR
+  email_change IS NULL OR
+  phone IS NULL OR
+  phone_change IS NULL OR
+  phone_change_token IS NULL OR
+  email_change_token_current IS NULL OR
+  reauthentication_token IS NULL;
+
+-- 2. Update reserve_username to supply empty strings to these fields to prevent the issue for future signups.
+CREATE OR REPLACE FUNCTION public.reserve_username(username_input text, password_input text)
+RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions, auth
+AS $$
+DECLARE
+  norm_name text;
+  rand_disc integer;
+  str_disc text;
+  full_id text;
+  new_identity_id uuid;
+  new_auth_user_id uuid;
+  dummy_email text;
+  enc_pass text;
+  max_attempts integer := 100;
+  attempts integer := 0;
+BEGIN
+  norm_name := username_input;
+  
+  if not norm_name ~ '^[a-zA-Z0-9_ ]{4,12}$' then
+    raise exception 'Username must be 4-12 characters.';
+  end if;
+  
+  if length(password_input) < 6 then
+    raise exception 'Password must be at least 6 characters.';
+  end if;
+
+  loop
+    attempts := attempts + 1;
+    if attempts > max_attempts then
+      raise exception 'Failed to generate a unique discriminator after % attempts.', max_attempts;
+    end if;
+    
+    rand_disc := floor(random() * (9999 - 11 + 1)) + 11;
+    str_disc := to_char(rand_disc, 'FM0000');
+    full_id := norm_name || '#' || str_disc;
+    
+    if not exists (select 1 from public.user_identities where login_id = full_id) then
+      exit;
+    end if;
+  end loop;
+
+  new_identity_id := gen_random_uuid();
+  new_auth_user_id := gen_random_uuid();
+  dummy_email := 'id_' || new_identity_id::text || '@example.com';
+  
+  enc_pass := extensions.crypt(password_input, extensions.gen_salt('bf'));
+
+  -- Insert into auth.users directly, ensuring we provide empty strings for fields that cause GoTrue to panic if NULL.
+  INSERT INTO auth.users (
+    id, instance_id, email, encrypted_password, email_confirmed_at, 
+    aud, role, created_at, updated_at, 
+    confirmation_token, recovery_token, email_change_token_new, email_change,
+    phone, phone_change, phone_change_token, email_change_token_current, reauthentication_token
+  ) VALUES (
+    new_auth_user_id, '00000000-0000-0000-0000-000000000000', dummy_email, enc_pass, now(), 
+    'authenticated', 'authenticated', now(), now(), 
+    '', '', '', '', 
+    '', '', '', '', ''
+  );
+  
+  INSERT INTO auth.identities (
+    id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+  ) VALUES (
+    new_auth_user_id, new_auth_user_id, jsonb_build_object('sub', new_auth_user_id::text, 'email', dummy_email), 'email', dummy_email, now(), now(), now()
+  );
+
+  insert into public.user_identities (
+    id, user_id, username, normalized_name, user_id_number, login_id, status, role
+  ) values (
+    new_identity_id, new_auth_user_id, username_input, norm_name, str_disc, full_id, 'ACTIVE', 'user'
+  );
+  
+  return json_build_object(
+    'id', new_identity_id,
+    'login_id', full_id,
+    'user_id_number', str_disc,
+    'username', username_input,
+    'dummy_email', dummy_email
+  );
+END;
+$$;
