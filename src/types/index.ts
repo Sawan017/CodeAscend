@@ -1,4 +1,4 @@
-export type SectionId = 'dashboard' | 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat' | 'career_world' | 'login'
+export type SectionId = 'dashboard' | 'profile' | 'projects' | 'learning' | 'goals' | 'achievements' | 'future' | 'friends' | 'chat' | 'career_world' | 'login' | 'settings'
 
 export type SkillStatus = 'LOCKED' | 'LEARNING' | 'MASTERED'
 export type GoalStatus = 'ACTIVE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED'
@@ -46,6 +46,7 @@ export interface UserProfile {
   id?: string
   userId?: string
   username: string
+  arinova_id?: string
   displayName: string
   avatar?: string
   bio?: string

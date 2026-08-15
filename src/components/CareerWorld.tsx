@@ -39,7 +39,7 @@ export function CareerWorld({ activeSection, onSelectSection, progression, profi
   const levelLabel = String(level).padStart(2, '0')
   const xpLabel = progression.xp.toLocaleString()
   const { progress } = calculateProgressToNextLevel(progression.xp)
-  const playerName = (profile?.displayName || profile?.username || 'DEVELOPER').toUpperCase()
+  const playerName = (profile?.arinova_id || profile?.displayName || profile?.username || 'DEVELOPER').toUpperCase()
 
   return (
     <motion.section

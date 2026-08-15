@@ -1,18 +1,18 @@
-import { UserCircle2, Search, PlayCircle } from 'lucide-react'
+import { PlayCircle, Settings as SettingsIcon } from 'lucide-react'
 import type { Progression, UserProfile, ActiveSessionState } from '../types'
 import { XpProgressBar } from './XpProgressBar'
 
 type TopBarProps = {
   progression: Progression
   profile: UserProfile
-  onOpenDrawer: () => void
-  onOpenSearch?: () => void
+
+  onOpenSettings?: () => void
   activeSession?: ActiveSessionState | null
   activeSessionElapsed?: number
   onOpenActiveSession?: () => void
 }
 
-export function TopBar({ progression, profile, onOpenDrawer, onOpenSearch, activeSession, activeSessionElapsed, onOpenActiveSession }: TopBarProps) {
+export function TopBar({ progression, profile, onOpenSettings, activeSession, activeSessionElapsed, onOpenActiveSession }: TopBarProps) {
   const formatTime = (totalSeconds: number) => {
     const m = Math.floor(Math.abs(totalSeconds) / 60)
     const s = Math.abs(totalSeconds) % 60
@@ -32,7 +32,7 @@ export function TopBar({ progression, profile, onOpenDrawer, onOpenSearch, activ
         <div style={{ width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--cyan), var(--primary))', borderRadius: '8px', boxShadow: '0 0 15px rgba(6,182,212,0.4)' }} />
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <span style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.2em', color: 'var(--text-muted)', textTransform: 'uppercase', lineHeight: 1 }}>SYSTEM LOGGED</span>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>{profile.displayName || profile.username}</h2>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>{profile.displayName}</h2>
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -58,18 +58,16 @@ export function TopBar({ progression, profile, onOpenDrawer, onOpenSearch, activ
         </div>
         <style>{`
           @media (min-width: 768px) {
-            .desktop-only-xp { display: block !important; }
+            .desktop-only-xp { display: block !important; width: 250px; }
           }
         `}</style>
         
-        {onOpenSearch && (
-          <button style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onOpenSearch} onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}>
-            <Search size={18} />
+
+        {onOpenSettings && (
+          <button style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onOpenSettings} onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }} aria-label="Settings">
+            <SettingsIcon size={18} />
           </button>
         )}
-        <button style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }} onClick={onOpenDrawer} onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }} onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}>
-          <UserCircle2 size={18} />
-        </button>
       </div>
     </header>
   )

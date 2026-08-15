@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { isSupabaseConfigured, supabase } from './supabase'
-import { clearStorage } from '../utils/storage'
 export type AuthUser = {
   id: string
   email?: string
@@ -85,13 +84,54 @@ export function useAuth() {
   const signOut = async (forgetAccount: boolean = false) => {
     if (!isSupabaseConfigured() || !supabase) return
     
-    clearStorage()
+    // Manage multi-account "remembered accounts" logic
+    const currentLoginId = window.localStorage.getItem('current_login_id')
+    if (currentLoginId) {
+      let rememberedAccounts: string[] = []
+      try {
+        const stored = window.localStorage.getItem('remembered_accounts')
+        if (stored) rememberedAccounts = JSON.parse(stored)
+      } catch (e) {
+        // Reset if malformed
+        rememberedAccounts = []
+      }
+
+      if (forgetAccount) {
+        // Forget account: remove current from the list
+        rememberedAccounts = rememberedAccounts.filter(id => id !== currentLoginId)
+      } else {
+        // Remember account: add current to the list if not already there
+        if (!rememberedAccounts.includes(currentLoginId)) {
+          rememberedAccounts.push(currentLoginId)
+        }
+      }
+
+      window.localStorage.setItem('remembered_accounts', JSON.stringify(rememberedAccounts))
+      
+      // Clear current_login_id BEFORE we call signOut!
+      // This is vital because customStorage dynamically uses current_login_id for the storage key.
+      // If we clear it first, the BASE key (which is empty) is passed to customStorage.removeItem.
+      // This preserves the actual user's session natively in localStorage!
+      window.localStorage.removeItem('current_login_id')
+    }
 
     if (forgetAccount) {
+      // Force Google account chooser if they use Google login
       window.localStorage.setItem('futureme-force-chooser', 'true')
+      // Global sign out - this revokes the session on the server.
+      // Note: Because we cleared current_login_id above, customStorage won't remove the specific key locally here.
+      // But we must manually remove the local session from our custom storage bucket.
+      if (currentLoginId) {
+        const baseKey = 'sb-' + new URL(import.meta.env.VITE_SUPABASE_URL || '').hostname.split('.')[0] + '-auth-token'
+        window.localStorage.removeItem(`${baseKey}-${currentLoginId}`)
+        window.sessionStorage.removeItem(`${baseKey}-${currentLoginId}`)
+      }
+      await supabase.auth.signOut()
+    } else {
+      // Local sign out (clears Supabase's in-memory session)
+      await supabase.auth.signOut({ scope: 'local' })
     }
     
-    await supabase.auth.signOut()
     setUser(null)
     setIsNewUser(false)
   }
