@@ -1035,3 +1035,25 @@ h4 { font-size: 1rem; }
   .chat-window { display: flex !important; }
 }
 
+/* Settings drawer responsive */
+@media (max-width: 768px) {
+  .settings-split-pane {
+    flex-direction: column !important;
+  }
+  .settings-sidebar {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 1rem !important;
+    gap: 0.5rem !important;
+  }
+  .settings-sidebar button {
+    width: auto !important;
+    white-space: nowrap;
+    padding: 0.6rem 1rem !important;
+  }
+}

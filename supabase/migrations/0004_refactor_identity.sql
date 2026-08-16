@@ -4,7 +4,12 @@
 -- ============================================================
 
 -- 1. Safely rename the column
-ALTER TABLE public.user_identities RENAME COLUMN arinova_id TO login_id;
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_identities' AND column_name = 'arinova_id') THEN
+    EXECUTE 'ALTER TABLE public.user_identities RENAME COLUMN arinova_id TO login_id';
+  END IF;
+END $$;
 
 -- 2. Drop all old CHECK constraints dynamically to ensure a clean slate
 DO $$ 

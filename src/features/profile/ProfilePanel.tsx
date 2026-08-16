@@ -70,7 +70,7 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
               </div>
               <div>
                 <h3 className={nameColorClass} style={{ fontSize: '2rem', margin: '0 0 0.5rem 0', fontWeight: 700, letterSpacing: '-0.02em' }}>{profile.displayName}</h3>
-                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '1rem' }}>@{profile.username} <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.2)' }}>|</span> {profile.title}</p>
+                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '1rem' }}>@{profile.login_id || profile.arinova_id || profile.username} <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.2)' }}>|</span> {profile.title}</p>
               </div>
             </div>
             

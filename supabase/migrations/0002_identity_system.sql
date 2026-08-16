@@ -29,7 +29,12 @@ create table if not exists public.user_identities (
   )
 );
 
-create index if not exists idx_user_identities_full_username on public.user_identities(full_username);
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_identities' AND column_name = 'full_username') THEN
+    EXECUTE 'create index if not exists idx_user_identities_full_username on public.user_identities(full_username)';
+  END IF;
+END $$;
 create index if not exists idx_user_identities_normalized_name on public.user_identities(normalized_name);
 create index if not exists idx_user_identities_user_id on public.user_identities(user_id);
 
@@ -37,12 +42,14 @@ create index if not exists idx_user_identities_user_id on public.user_identities
 alter table public.user_identities enable row level security;
 
 -- Policies
+drop policy if exists "Identities are viewable by everyone" on public.user_identities;
 create policy "Identities are viewable by everyone" on public.user_identities for select using (true);
 
 -- Insert/Update are NOT allowed directly by users to enforce strict constraints.
 -- All writes must go through the SECURITY DEFINER RPC functions.
 
 -- Updated at trigger
+drop trigger if exists set_updated_at on public.user_identities;
 create trigger set_updated_at before update on public.user_identities for each row execute function public.set_updated_at();
 
 -- ============================================================

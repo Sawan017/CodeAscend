@@ -23,11 +23,19 @@ export function useAuth() {
     // Restore session on mount
     supabase.auth.getSession().then(({ data }) => {
       const session = data.session
+      
+      const getValidEmail = (email?: string) => {
+        if (!email) return undefined;
+        if (email.includes('@example.com') || email.startsWith('id_') || email.includes('...temp...')) return undefined;
+        return email;
+      };
+
       if (session?.user) {
+        const validEmail = getValidEmail(session.user.email);
         const authUser = {
           id: session.user.id,
-          email: session.user.email,
-          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? session.user.email ?? 'Player',
+          email: validEmail,
+          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? validEmail ?? 'Player',
           avatarUrl: session.user.user_metadata?.avatar_url,
         }
         setUser(authUser)
@@ -37,12 +45,19 @@ export function useAuth() {
     })
 
     // Listen to auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const getValidEmail = (email?: string) => {
+        if (!email) return undefined;
+        if (email.includes('@example.com') || email.startsWith('id_') || email.includes('...temp...')) return undefined;
+        return email;
+      };
+
       if (session?.user) {
+        const validEmail = getValidEmail(session.user.email);
         const authUser = {
           id: session.user.id,
-          email: session.user.email,
-          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? session.user.email ?? 'Player',
+          email: validEmail,
+          name: session.user.user_metadata?.full_name ?? session.user.user_metadata?.name ?? validEmail ?? 'Player',
           avatarUrl: session.user.user_metadata?.avatar_url,
         }
         setUser(authUser)

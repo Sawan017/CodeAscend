@@ -10,6 +10,8 @@ type PublicUser = {
   displayName: string;
   avatar?: string;
   level: number;
+  login_id?: string;
+  arinova_id?: string;
 }
 
 type ChatPanelProps = {
@@ -203,7 +205,7 @@ export function ChatPanel({ activeUserId, chatState, friendState, incomingMessag
                     style={{ margin: 0, cursor: 'pointer' }}
                     onClick={() => onOpenProfile(activeFriend.userId)}
                   >{activeFriend.displayName}</h4>
-                  <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>@{activeFriend.username}</p>
+                  <p className="muted" style={{ margin: 0, fontSize: '0.8rem' }}>@{activeFriend.login_id || activeFriend.arinova_id || activeFriend.username}</p>
                 </div>
               </div>
 

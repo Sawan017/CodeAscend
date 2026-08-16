@@ -104,8 +104,8 @@ export function PublicProfileViewer({ userId, activeUserId, friendState, onClose
                   )}
                 </div>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>{data.profile.arinova_id || data.profile.displayName}</h2>
-                  <p className="muted" style={{ margin: '0.25rem 0' }}>@{data.profile.username}</p>
+                  <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>{data.profile.displayName}</h2>
+                  <p className="muted" style={{ margin: '0.25rem 0' }}>@{data.profile.login_id || data.profile.arinova_id || data.profile.username}</p>
                   {data.profile.title && <div className="chip" style={{ marginTop: '0.5rem' }}>{data.profile.title}</div>}
                 </div>
                 <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
