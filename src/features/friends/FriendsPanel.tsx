@@ -10,6 +10,8 @@ type PublicUser = {
   displayName: string;
   avatar?: string;
   level: number;
+  login_id?: string;
+  arinova_id?: string;
 }
 
 type FriendsPanelProps = {
@@ -120,7 +122,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <h4 style={{ margin: 0, cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => onOpenProfile(friend.userId)}>{friend.displayName}</h4>
-                      <p className="muted" style={{ margin: '0', fontSize: '0.85rem' }}>@{friend.username} • Lvl {friend.level}</p>
+                      <p className="muted" style={{ margin: '0', fontSize: '0.85rem' }}>@{friend.login_id || friend.arinova_id || friend.username} • Lvl {friend.level}</p>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button className="icon-button" onClick={() => onMessage(friend.userId)} aria-label="Message" title="Message">
@@ -158,7 +160,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <h4 style={{ margin: 0, cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => onOpenProfile(req.userId)}>{req.displayName}</h4>
-                        <p className="muted" style={{ margin: '0', fontSize: '0.85rem' }}>@{req.username} • Lvl {req.level}</p>
+                        <p className="muted" style={{ margin: '0', fontSize: '0.85rem' }}>@{req.login_id || req.arinova_id || req.username} • Lvl {req.level}</p>
                       </div>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button className="icon-button" onClick={() => onAccept(req.userId)} aria-label="Accept" title="Accept Request" style={{ color: '#10b981', background: 'rgba(16,185,129,0.1)' }}>

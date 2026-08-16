@@ -12,7 +12,7 @@ type UserSearchProps = {
 
 export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
   const [query, setQuery] = useState('')
-  const [profiles, setProfiles] = useState<Array<{ userId: string; username: string; displayName: string; avatar?: string; level: number }>>([])
+  const [profiles, setProfiles] = useState<Array<{ userId: string; username: string; displayName: string; avatar?: string; level: number; login_id?: string; arinova_id?: string }>>([])
   const [loading, setLoading] = useState(false)
   const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null)
 
@@ -158,7 +158,7 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
                       </div>
                       <div className="user-info">
                         <h4>{profile.displayName}</h4>
-                        <p className="muted">@{profile.username} · Level {profile.level}</p>
+                        <p className="muted">@{profile.login_id || profile.arinova_id || profile.username} · Level {profile.level}</p>
                       </div>
                     </motion.button>
                   ))
@@ -180,7 +180,7 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
                   </div>
                   <div>
                     <h4>{selectedProfile.displayName}</h4>
-                    <p className="muted">@{selectedProfile.username} · Level {selectedProfile.level}</p>
+                    <p className="muted">@{selectedProfile.login_id || selectedProfile.arinova_id || selectedProfile.username} · Level {selectedProfile.level}</p>
                   </div>
                 </div>
 

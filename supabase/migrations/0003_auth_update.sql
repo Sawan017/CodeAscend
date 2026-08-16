@@ -1,6 +1,11 @@
 -- ============================================================
 -- 1. IDENTITIES TABLE
 -- ============================================================
+
+-- Disable function body checking to prevent crashes during replay when 
+-- obsolete columns like arinova_id are referenced in these historical functions.
+SET check_function_bodies = off;
+
 CREATE TABLE IF NOT EXISTS public.user_identities (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete set null,
@@ -46,10 +51,21 @@ ALTER TABLE public.user_identities
   ADD CONSTRAINT chk_identities_id_range check (
     user_id_number::integer > 10 OR 
     role in ('moderator', 'co_owner', 'owner', 'official', 'admin')
-  ),
-  ADD CONSTRAINT chk_identities_arinova_id check (arinova_id = ('ARINOVA#' || user_id_number));
+  );
 
-CREATE INDEX IF NOT EXISTS idx_user_identities_arinova_id on public.user_identities(arinova_id);
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_identities' AND column_name = 'arinova_id') THEN
+    EXECUTE 'ALTER TABLE public.user_identities ADD CONSTRAINT chk_identities_arinova_id check (arinova_id = (''ARINOVA#'' || user_id_number))';
+  END IF;
+END $$;
+
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_identities' AND column_name = 'arinova_id') THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_user_identities_arinova_id on public.user_identities(arinova_id)';
+  END IF;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_user_identities_normalized_name on public.user_identities(normalized_name);
 CREATE INDEX IF NOT EXISTS idx_user_identities_user_id on public.user_identities(user_id);
 
@@ -65,43 +81,54 @@ END $$;
 -- ============================================================
 CREATE SEQUENCE IF NOT EXISTS public.arinova_user_id_seq START WITH 11;
 
--- Migrate any existing usernames from the JSON profiles table into user_identities
-INSERT INTO public.user_identities (user_id, username, normalized_name, user_id_number, arinova_id, status, role)
-WITH new_users AS (
-  SELECT 
-    p.user_id,
-    (p.data->>'username') as username,
-    (p.data->>'arinova_id') as orig_arinova_id
-  FROM public.profiles p
-  WHERE p.key = 'profile' 
-    AND p.data->>'username' IS NOT NULL
-    AND (p.data->>'username') ~ '^[a-zA-Z0-9_]{4,12}$'
-    AND NOT EXISTS (
-      SELECT 1 FROM public.user_identities u WHERE u.user_id = p.user_id
+DO $$ 
+DECLARE
+  target_col text;
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_identities' AND column_name = 'arinova_id') THEN
+    target_col := 'arinova_id';
+  ELSE
+    target_col := 'login_id';
+  END IF;
+
+  EXECUTE format('
+    INSERT INTO public.user_identities (user_id, username, normalized_name, user_id_number, %I, status, role)
+    WITH new_users AS (
+      SELECT 
+        p.user_id,
+        (p.data->>''username'') as username,
+        (p.data->>''arinova_id'') as orig_arinova_id
+      FROM public.profiles p
+      WHERE p.key = ''profile'' 
+        AND p.data->>''username'' IS NOT NULL
+        AND (p.data->>''username'') ~ ''^[a-zA-Z0-9_]{4,12}$''
+        AND NOT EXISTS (
+          SELECT 1 FROM public.user_identities u WHERE u.user_id = p.user_id
+        )
+    ),
+    assigned_ids AS (
+      SELECT 
+        user_id,
+        username,
+        CASE 
+          WHEN orig_arinova_id IS NOT NULL AND orig_arinova_id ~ ''#[0-9]{4}$'' THEN
+            substring(orig_arinova_id from ''#([0-9]{4})$'')
+          ELSE
+            to_char(nextval(''public.arinova_user_id_seq''), ''FM0000'')
+        END as user_id_number
+      FROM new_users
     )
-),
-assigned_ids AS (
-  SELECT 
-    user_id,
-    username,
-    CASE 
-      WHEN orig_arinova_id IS NOT NULL AND orig_arinova_id ~ '#[0-9]{4}$' THEN
-        substring(orig_arinova_id from '#([0-9]{4})$')
-      ELSE
-        to_char(nextval('public.arinova_user_id_seq'), 'FM0000')
-    END as user_id_number
-  FROM new_users
-)
-SELECT 
-  user_id,
-  username,
-  username as normalized_name,
-  user_id_number,
-  'ARINOVA#' || user_id_number as arinova_id,
-  'ACTIVE' as status,
-  'user' as role
-FROM assigned_ids
-ON CONFLICT (normalized_name) DO NOTHING;
+    SELECT 
+      user_id,
+      username,
+      username as normalized_name,
+      user_id_number,
+      ''ARINOVA#'' || user_id_number as mapped_id,
+      ''ACTIVE'' as status,
+      ''user'' as role
+    FROM assigned_ids;
+  ', target_col);
+END $$;
 
 
 -- ============================================================
@@ -168,6 +195,7 @@ $$;
 
 
 -- Admin Assign Reserved Identity
+DROP FUNCTION IF EXISTS public.admin_assign_reserved_identity;
 CREATE OR REPLACE FUNCTION public.admin_assign_reserved_identity(
   user_id_input uuid,
   username_input text,

@@ -1,0 +1,937 @@
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
+  UserCircle, Palette, Bell, Lock, Users, Globe, Award, HardDrive, HelpCircle
+} from 'lucide-react'
+import type { Settings, ThemeMode, UserProfile } from '../../types'
+import { supabase } from '../../lib/supabase'
+
+type SettingsDrawerProps = {
+  open: boolean
+  onClose: () => void
+  settings: Settings
+  onSettingsChange: (next: Settings) => void
+  onSignOut?: (forgetAccount: boolean) => void
+  profile: UserProfile
+}
+
+const themeOptions: Array<{ value: ThemeMode; label: string }> = [
+  { value: 'dark', label: 'Dark' },
+  { value: 'light', label: 'Light' },
+  { value: 'system', label: 'System' },
+  { value: 'midnight', label: 'Midnight' },
+  { value: 'aurora', label: 'Aurora' },
+]
+
+type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'social' | 'language' | 'learning' | 'data' | 'help'
+
+const TABS: Array<{ id: TabId, label: string, icon: any }> = [
+  { id: 'account', label: 'Account', icon: Shield },
+  { id: 'profile', label: 'Profile & Personalization', icon: UserCircle },
+  { id: 'appearance', label: 'Appearance', icon: Palette },
+  { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'privacy', label: 'Privacy & Security', icon: Lock },
+  { id: 'social', label: 'Social', icon: Users },
+  { id: 'language', label: 'Language & Region', icon: Globe },
+  { id: 'learning', label: 'Learning / Experience', icon: Award },
+  { id: 'data', label: 'Data & Storage', icon: HardDrive },
+  { id: 'help', label: 'Help & About', icon: HelpCircle },
+]
+
+export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile }: SettingsDrawerProps) {
+  const [activeTab, setActiveTab] = useState<TabId>('account')
+  
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  
+  const [authUserEmail, setAuthUserEmail] = useState<string | null>(null)
+  const [isLinkingEmail, setIsLinkingEmail] = useState(false)
+  const [linkEmailError, setLinkEmailError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!supabase) return
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      const googleIdentity = user?.identities?.find(id => id.provider === 'google')
+      if (googleIdentity?.identity_data?.email) {
+        setAuthUserEmail(googleIdentity.identity_data.email)
+      } else if (user && user.email && !user.email.includes('...temp...') && !user.email.includes('@example.com') && !user.email.startsWith('id_')) {
+        setAuthUserEmail(user.email)
+      } else {
+        setAuthUserEmail(null)
+      }
+    })
+  }, [profile])
+
+  const handleLinkEmail = async () => {
+    if (!supabase) return
+    setIsLinkingEmail(true)
+    setLinkEmailError(null)
+
+    const { error } = await supabase.auth.linkIdentity({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    })
+    
+    setIsLinkingEmail(false)
+    if (error) {
+      setLinkEmailError(error.message)
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!supabase) return
+    setIsDeleting(true)
+    setDeleteError(null)
+
+    const { error } = await supabase.rpc('delete_user_account')
+
+    if (error) {
+      setIsDeleting(false)
+      setDeleteError(error.message)
+    } else {
+      await supabase.auth.signOut()
+      window.location.reload()
+    }
+  }
+
+  // Placeholder handler
+  const handlePlaceholderToggle = () => {
+    // Intentionally no-op for placeholders
+  }
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'account':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Account</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your core account identity and recovery options.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.75rem', borderRadius: '12px' }}>
+                  <Shield size={24} />
+                </div>
+                <div>
+                  <h5 style={{ margin: 0, fontSize: '1.05rem', color: '#fff' }}>Secure Your Account</h5>
+                  <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    Your permanent User ID never changes. Adding an email lets you recover and access your account on other devices.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Permanent User ID</span>
+                <div style={{ padding: '0.75rem 1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', color: '#fff', border: '1px solid rgba(255,255,255,0.05)', fontSize: '1rem', fontWeight: 500 }}>
+                  {profile.login_id || profile.arinova_id || profile.username}
+                </div>
+              </div>
+
+              {authUserEmail ? (
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <CheckCircle size={18} color="#10b981" />
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Linked Email</p>
+                    <p style={{ margin: 0, fontSize: '1rem', color: '#fff', fontWeight: 500 }}>{authUserEmail}</p>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Your account is not secured with an email yet.</p>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button 
+                      className="primary-btn" 
+                      onClick={handleLinkEmail} 
+                      disabled={isLinkingEmail}
+                      style={{ width: '100%', padding: '0.85rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: isLinkingEmail ? 'not-allowed' : 'pointer' }}
+                    >
+                      <Mail size={16} />
+                      {isLinkingEmail ? 'Connecting...' : 'Add Email'}
+                    </button>
+                  </div>
+                  {linkEmailError && (
+                    <div style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', color: '#ef4444', fontSize: '0.85rem' }}>
+                      {linkEmailError}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Display Name</h4>
+              <input type="text" disabled value={profile.username} style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }} />
+              <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>* Display name changes are managed in your Profile Panel.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Account Recovery & Status</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Account Status</span>
+                  <span style={{ padding: '0.25rem 0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 500 }}>Active</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Connected Accounts</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{authUserEmail ? 'Google' : 'None'}</span>
+                </div>
+              </div>
+            </div>
+
+            {onSignOut && (
+              <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h5 style={{ margin: 0, fontSize: '1rem', color: '#fff' }}>Sign Out</h5>
+                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sign out of your current session.</p>
+                </div>
+                <button 
+                  onClick={() => setShowLogoutDialog(true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 500, transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)' }}
+                >
+                  <LogOut size={16} />
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        )
+      
+      case 'profile':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Profile & Personalization</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Customize how you appear to other users.</p>
+            </div>
+            
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Profile Details</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Avatar</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+                    <button className="secondary-btn" style={{ padding: '0.5rem 1rem' }}>Change Avatar</button>
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Bio</label>
+                  <textarea disabled placeholder="Tell us about yourself..." style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none', resize: 'vertical', minHeight: '80px' }} />
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Visibility</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Profile visibility</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Public</option>
+                    <option>Friends Only</option>
+                    <option>Private</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Show online status</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle online status" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Allow friend requests</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle friend requests" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Allow messages</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle messages" />
+                </div>
+              </div>
+            </div>
+            
+            <button className="secondary-btn" style={{ padding: '0.75rem', justifyContent: 'center' }}>Preview Profile</button>
+          </div>
+        )
+
+      case 'appearance':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Appearance</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Customize the look and feel of the application.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ marginBottom: '1rem', color: '#fff' }}>Theme</h4>
+              <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }} value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
+                {themeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+              </select>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ marginBottom: '1rem', color: '#fff' }}>Interface Style</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Accent Color</span>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {['#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#f59e0b'].map(c => (
+                      <div key={c} style={{ width: '24px', height: '24px', borderRadius: '50%', background: c, opacity: 0.5, cursor: 'not-allowed' }} />
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Compact Layout</span>
+                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle compact layout" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Custom Background</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Upload</button>
+                </div>
+              </div>
+            </div>
+            
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ marginBottom: '1rem', color: '#fff' }}>Motion & Feedback</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Animations</label>
+                  <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }} value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Reduced motion</span>
+                  <button className={`toggle-switch ${settings.reducedMotion ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, reducedMotion: !settings.reducedMotion })} aria-label="Toggle reduced motion" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Sound effects</span>
+                  <button className={`toggle-switch ${settings.soundEffects ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, soundEffects: !settings.soundEffects })} aria-label="Toggle sound effects" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'notifications':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Notifications</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage when and how you are notified.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h4 style={{ margin: 0, color: '#fff' }}>Enable All Notifications</h4>
+                <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle all notifications" />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Messages</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle messages" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Friend requests</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle friend requests" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Group activity</span>
+                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle group activity" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Mentions</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle mentions" />
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Updates & Activity</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Achievements & Badges</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle achievements" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Learning Reminders</span>
+                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle learning reminders" />
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Delivery Methods</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Email Notifications</span>
+                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle email notifications" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Notification Sound</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Default (Chime)</option>
+                    <option>Pop</option>
+                    <option>None</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'privacy':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Privacy & Security</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Keep your account safe and manage data privacy.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Security</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Password</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Change</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Two-Factor Authentication</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Enable</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Active Sessions</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>View (1)</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Privacy</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Blocked Users</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Manage (0)</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Data Collection</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Essential Only</option>
+                    <option>Analytics Allowed</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'social':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Social</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage how you interact with others.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Permissions</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Who can send friend requests</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Everyone</option>
+                    <option>Friends of Friends</option>
+                    <option>No One</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Who can message me</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Friends Only</option>
+                    <option>Everyone</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Who can add me to groups</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Friends Only</option>
+                    <option>Everyone</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Activity</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Show recent activity to friends</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle recent activity" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Sync contacts</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Connect</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'language':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Language & Region</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Set your preferred language and date formats.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Localization</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Language</label>
+                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
+                    <option>English (US)</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Region</label>
+                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
+                    <option>United States</option>
+                    <option>United Kingdom</option>
+                    <option>Canada</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Time Zone</label>
+                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
+                    <option>Automatic (Local)</option>
+                    <option>UTC</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Formats</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Date Format</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>MM/DD/YYYY</option>
+                    <option>DD/MM/YYYY</option>
+                    <option>YYYY-MM-DD</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Time Format</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>12-hour (AM/PM)</option>
+                    <option>24-hour</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'learning':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Learning / Experience</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your progression, XP, and learning settings.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Progression Display</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Show XP</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle XP visibility" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Show Level</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle Level visibility" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Show Badges & Achievements</span>
+                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle Badges visibility" />
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Streaks & Tracking</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Track learning streak</span>
+                  <button className={`toggle-switch ${settings.streakTracking ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, streakTracking: !settings.streakTracking })} aria-label="Toggle streak tracking" />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Leaderboard Visibility</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                    <option>Participate</option>
+                    <option>Hidden</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Activity History</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>View Log</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+
+      case 'data':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Data & Storage</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your personal data, exports, and account deletion.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Manage Data</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Export Account Data</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Request Export</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Clear Local Cache</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Clear (0 MB)</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(239,68,68,0.05)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(239,68,68,0.2)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertTriangle size={18} /> Danger Zone
+              </h4>
+              <p style={{ margin: '0 0 1.5rem 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                Deleting your account is permanent. All your profile data, learning progress, and connections will be permanently wiped.
+              </p>
+              <button 
+                onClick={() => setShowDeleteDialog(true)}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ef4444', color: '#fff', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = '#dc2626' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = '#ef4444' }}
+              >
+                <Trash2 size={16} />
+                Delete Account
+              </button>
+            </div>
+          </div>
+        )
+
+      case 'help':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ marginBottom: '0.5rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Help & About</h3>
+              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Get support and view app information.</p>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Support</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Help Center</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Open</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Report a Problem</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Report</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Feedback</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Submit</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Legal & Info</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Terms of Service</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Read</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#fff' }}>Privacy Policy</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Read</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Version</span>
+                  <span style={{ color: 'var(--text-muted)', fontFamily: 'monospace' }}>1.0.0-beta</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      default:
+        return null
+    }
+  }
+
+  return (
+    <>
+    <AnimatePresence>
+      {open ? (
+        <>
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)', zIndex: 998 }}
+            onClick={onClose}
+          />
+          <motion.aside 
+            initial={{ x: '100%' }} 
+            animate={{ x: 0 }} 
+            exit={{ x: '100%' }} 
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
+            className="settings-drawer" 
+            style={{ 
+              position: 'fixed', top: 0, right: 0, bottom: 0, 
+              width: '100%', maxWidth: '1100px', 
+              backgroundColor: 'rgba(15, 23, 42, 0.95)', 
+              backdropFilter: 'blur(16px)', 
+              borderLeft: '1px solid rgba(255, 255, 255, 0.1)', 
+              zIndex: 999, 
+              display: 'flex', flexDirection: 'column', 
+              boxShadow: '-25px 0 50px -12px rgba(0, 0, 0, 0.5)' 
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#fff' }}>Settings</h2>
+              <button 
+                className="icon-button" 
+                onClick={onClose} 
+                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', transition: 'opacity 0.2s' }}
+                aria-label="Close settings"
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7' }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            {/* Split Pane Content */}
+            <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }} className="settings-split-pane">
+              
+              {/* Sidebar */}
+              <div 
+                className="settings-sidebar"
+                style={{ 
+                  width: '260px', 
+                  minWidth: '260px',
+                  borderRight: '1px solid rgba(255,255,255,0.05)', 
+                  padding: '1.5rem 1rem',
+                  overflowY: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.25rem'
+                }}
+              >
+                {TABS.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.75rem',
+                      width: '100%',
+                      padding: '0.85rem 1rem',
+                      background: activeTab === tab.id ? 'rgba(255,255,255,0.08)' : 'transparent',
+                      color: activeTab === tab.id ? '#fff' : 'var(--text-muted)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontSize: '0.95rem',
+                      fontWeight: activeTab === tab.id ? 500 : 400,
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.background = 'transparent' }}
+                  >
+                    <tab.icon size={18} color={activeTab === tab.id ? '#10b981' : 'currentColor'} />
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Main Content */}
+              <div style={{ flex: 1, overflowY: 'auto', padding: '2rem 3rem' }}>
+                <div style={{ maxWidth: '640px' }}>
+                  {renderTabContent()}
+                </div>
+              </div>
+
+            </div>
+          </motion.aside>
+        </>
+      ) : null}
+    </AnimatePresence>
+
+    <AnimatePresence>
+      {showLogoutDialog && (
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }} 
+          style={{ 
+            position: 'fixed', 
+            top: 0, left: 0, right: 0, bottom: 0, 
+            backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+            backdropFilter: 'blur(8px)', 
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowLogoutDialog(false) }}
+        >
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 15 }}
+            className="drawer-card" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '420px', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '1.25rem',
+              background: 'rgba(15, 23, 42, 0.9)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(24px)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+              padding: '2rem'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Sign out?</h3>
+              <button className="icon-button" style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }} onClick={() => setShowLogoutDialog(false)} aria-label="Cancel sign out">
+                <X size={24} />
+              </button>
+            </div>
+            <p className="muted" style={{ margin: 0, fontSize: '1.05rem', lineHeight: 1.5, color: 'var(--text-muted)' }}>Do you want to forget this account from this device, or keep it remembered?</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+              <button className="primary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(false); }}>
+                Remember account
+              </button>
+              <button className="secondary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(true); }}>
+                Forget account
+              </button>
+              <button className="secondary-btn" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} onClick={() => setShowLogoutDialog(false)}>
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    <AnimatePresence>
+      {showDeleteDialog && (
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }} 
+          style={{ 
+            position: 'fixed', 
+            top: 0, left: 0, right: 0, bottom: 0, 
+            backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+            backdropFilter: 'blur(8px)', 
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget && !isDeleting) setShowDeleteDialog(false) }}
+        >
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 15 }}
+            className="drawer-card" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '480px', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '1.25rem',
+              background: 'rgba(15, 23, 42, 0.95)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              backdropFilter: 'blur(24px)',
+              boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.15)',
+              padding: '2rem'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <AlertTriangle size={24} /> Delete Account?
+              </h3>
+              <button 
+                className="icon-button" 
+                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', opacity: isDeleting ? 0.5 : 1 }} 
+                onClick={() => !isDeleting && setShowDeleteDialog(false)} 
+                disabled={isDeleting}
+                aria-label="Cancel delete"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            
+            <p className="muted" style={{ margin: 0, fontSize: '1.05rem', lineHeight: 1.5, color: '#e2e8f0' }}>
+              This permanently deletes your account, UID, profile, linked email/Google account, projects, progress, XP, achievements, and all other account data. <strong style={{ color: '#ef4444' }}>This action cannot be undone.</strong>
+            </p>
+            
+            {deleteError && (
+              <div style={{ padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', color: '#ef4444', fontSize: '0.85rem' }}>
+                {deleteError}
+              </div>
+            )}
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
+              <button 
+                style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '0.875rem', borderRadius: '8px', fontSize: '1.05rem', fontWeight: 600, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', width: '100%', cursor: isDeleting ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isDeleting ? 0.7 : 1 }} 
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Yes, delete my account permanently'}
+              </button>
+              <button 
+                className="secondary-btn" 
+                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} 
+                onClick={() => setShowDeleteDialog(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+    </>
+  )
+}

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Lock, Eye, EyeOff, ArrowRight, User } from 'lucide-react'
+import { Lock, Eye, EyeOff, ArrowRight, User, X } from 'lucide-react'
 import { useAuth } from '../../lib/auth'
-import { reserveUsername, confirmUsername, resolveAuthEmail } from '../../lib/api'
+import { reserveUsername, resolveAuthEmail } from '../../lib/api'
 import { supabase } from '../../lib/supabase'
 
 export function LoginUI() {
-  const { signInWithGoogle, signInWithEmail, signUpWithEmail, loading: authLoading } = useAuth()
+  const { signInWithGoogle, signInWithEmail, loading: authLoading } = useAuth()
   const [identifier, setIdentifier] = useState('') // Used for Email (signup claim) OR Username/ID (login)
   const [password, setPassword] = useState('') // Used for login
   const [displayName, setDisplayName] = useState('') // Username
@@ -14,7 +14,7 @@ export function LoginUI() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
-  const [signUpStep, setSignUpStep] = useState<'name' | 'credentials'>('name')
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [successIdentity, setSuccessIdentity] = useState<{ id: string; login_id: string; dummy_email: string } | null>(null)
@@ -23,6 +23,7 @@ export function LoginUI() {
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null)
   const [showSavedAccounts, setShowSavedAccounts] = useState(false)
   const [isRestoring, setIsRestoring] = useState(false)
+  const [accountToRemove, setAccountToRemove] = useState<string | null>(null)
 
   useEffect(() => {
     try {
@@ -361,88 +362,166 @@ export function LoginUI() {
             
             {showSavedAccounts ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.1em', marginBottom: '8px', textAlign: 'center' }}>
-                  SELECT AN ACCOUNT
-                </div>
-                {rememberedAccounts.map((account) => {
-                  const isSelected = selectedAccount === account
-                  return (
-                    <button
-                      key={account}
-                      type="button"
-                      disabled={isRestoring}
-                      onClick={async () => {
-                        setSelectedAccount(account)
-                        setIdentifier(account)
-                        setIsRestoring(true)
-                        setError(null)
-                        try {
-                          // 1. Set the active account so customStorage knows which namespace to use
-                          window.localStorage.setItem('current_login_id', account)
-
-                          // 2. We can try to load it from customStorage directly just to pass to setSession,
-                          // which avoids a hard page reload while still strictly using Supabase's native storage formatting.
+                {accountToRemove ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    style={{
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      padding: '24px',
+                      borderRadius: '4px',
+                      textAlign: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '16px'
+                    }}
+                  >
+                    <div style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 600 }}>Remove saved account?</div>
+                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+                      Are you sure you want to remove <span style={{ color: '#00c8ff' }}>{accountToRemove}</span> from this device?
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => setAccountToRemove(null)}
+                        style={{
+                          flex: 1, padding: '12px', background: 'transparent', color: '#fff',
+                          border: '1px solid rgba(255,255,255,0.2)', borderRadius: '2px', fontSize: '0.75rem', cursor: 'pointer'
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newAccounts = rememberedAccounts.filter(a => a !== accountToRemove)
+                          window.localStorage.setItem('remembered_accounts', JSON.stringify(newAccounts))
                           const baseKey = 'sb-' + new URL(import.meta.env.VITE_SUPABASE_URL || '').hostname.split('.')[0] + '-auth-token'
-                          const storedTokenStr = window.localStorage.getItem(`${baseKey}-${account}`) || window.sessionStorage.getItem(`${baseKey}-${account}`)
+                          window.localStorage.removeItem(`${baseKey}-${accountToRemove}`)
+                          window.sessionStorage.removeItem(`${baseKey}-${accountToRemove}`)
                           
-                          if (storedTokenStr) {
-                            const parsed = JSON.parse(storedTokenStr)
-                            if (parsed && parsed.access_token && parsed.refresh_token && supabase) {
-                              const { error } = await supabase.auth.setSession({
-                                access_token: parsed.access_token,
-                                refresh_token: parsed.refresh_token
-                              })
-                              if (!error) {
-                                // Success! Global auth state will redirect
-                                return
-                              }
-                            }
+                          setRememberedAccounts(newAccounts)
+                          setAccountToRemove(null)
+                          if (newAccounts.length === 0) {
+                            setShowSavedAccounts(false)
                           }
-                          // No valid session data in native storage
-                          setShowSavedAccounts(false)
-                        } catch (e) {
-                          console.error('Failed to restore session', e)
-                          setError('Session expired. Please sign in again.')
-                          setShowSavedAccounts(false)
-                        } finally {
-                          setIsRestoring(false)
-                        }
+                        }}
+                        style={{
+                          flex: 1, padding: '12px', background: '#ff3366', color: '#fff',
+                          border: 'none', borderRadius: '2px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <>
+                    <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.1em', marginBottom: '8px', textAlign: 'center' }}>
+                      SELECT AN ACCOUNT
+                    </div>
+                    {rememberedAccounts.map((account) => {
+                      const isSelected = selectedAccount === account
+                      return (
+                        <div key={account} style={{ position: 'relative', width: '100%' }}>
+                          <button
+                            type="button"
+                            disabled={isRestoring}
+                            onClick={async () => {
+                              setSelectedAccount(account)
+                              setIdentifier(account)
+                              setIsRestoring(true)
+                              setError(null)
+                              try {
+                                // 1. Set the active account so customStorage knows which namespace to use
+                                window.localStorage.setItem('current_login_id', account)
+
+                                // 2. We can try to load it from customStorage directly just to pass to setSession,
+                                // which avoids a hard page reload while still strictly using Supabase's native storage formatting.
+                                const baseKey = 'sb-' + new URL(import.meta.env.VITE_SUPABASE_URL || '').hostname.split('.')[0] + '-auth-token'
+                                const storedTokenStr = window.localStorage.getItem(`${baseKey}-${account}`) || window.sessionStorage.getItem(`${baseKey}-${account}`)
+                                
+                                if (storedTokenStr) {
+                                  const parsed = JSON.parse(storedTokenStr)
+                                  if (parsed && parsed.access_token && parsed.refresh_token && supabase) {
+                                    const { error } = await supabase.auth.setSession({
+                                      access_token: parsed.access_token,
+                                      refresh_token: parsed.refresh_token
+                                    })
+                                    if (!error) {
+                                      // Success! Global auth state will redirect
+                                      return
+                                    }
+                                  }
+                                }
+                                // No valid session data in native storage
+                                setShowSavedAccounts(false)
+                              } catch (e) {
+                                console.error('Failed to restore session', e)
+                                setError('Session expired. Please sign in again.')
+                                setShowSavedAccounts(false)
+                              } finally {
+                                setIsRestoring(false)
+                              }
+                            }}
+                            style={{
+                              width: '100%', padding: '16px',
+                              background: isSelected ? 'rgba(0, 200, 255, 0.15)' : 'rgba(0, 200, 255, 0.05)', 
+                              border: `1px solid ${isSelected ? '#00c8ff' : 'rgba(0, 200, 255, 0.2)'}`,
+                              color: isSelected ? '#fff' : '#00c8ff', 
+                              fontSize: '1rem', fontWeight: 600, letterSpacing: '0.05em',
+                              borderRadius: '4px', cursor: isRestoring ? 'wait' : 'pointer', transition: 'all 0.2s',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              opacity: isRestoring ? 0.7 : 1
+                            }}
+                            onMouseEnter={(e) => { if (!isSelected && !isRestoring) e.currentTarget.style.background = 'rgba(0, 200, 255, 0.1)' }}
+                            onMouseLeave={(e) => { if (!isSelected && !isRestoring) e.currentTarget.style.background = 'rgba(0, 200, 255, 0.05)' }}
+                          >
+                            <User size={16} style={{ marginRight: '8px' }} />
+                            {isRestoring && isSelected ? 'RESTORING SESSION...' : account}
+                          </button>
+                          
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              setAccountToRemove(account)
+                            }}
+                            style={{
+                              position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)',
+                              background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)',
+                              cursor: 'pointer', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              borderRadius: '4px', zIndex: 2
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                            onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)'; e.currentTarget.style.background = 'transparent' }}
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+                      )
+                    })}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowSavedAccounts(false)
+                        setSelectedAccount(null)
+                        setIdentifier('')
                       }}
                       style={{
-                        width: '100%', padding: '16px',
-                        background: isSelected ? 'rgba(0, 200, 255, 0.15)' : 'rgba(0, 200, 255, 0.05)', 
-                        border: `1px solid ${isSelected ? '#00c8ff' : 'rgba(0, 200, 255, 0.2)'}`,
-                        color: isSelected ? '#fff' : '#00c8ff', 
-                        fontSize: '1rem', fontWeight: 600, letterSpacing: '0.05em',
-                        borderRadius: '4px', cursor: isRestoring ? 'wait' : 'pointer', transition: 'all 0.2s',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        opacity: isRestoring ? 0.7 : 1
+                        background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
+                        fontSize: '0.8rem', letterSpacing: '0.05em', cursor: 'pointer',
+                        textDecoration: 'underline', textUnderlineOffset: '4px', marginTop: '12px'
                       }}
-                      onMouseEnter={(e) => { if (!isSelected && !isRestoring) e.currentTarget.style.background = 'rgba(0, 200, 255, 0.1)' }}
-                      onMouseLeave={(e) => { if (!isSelected && !isRestoring) e.currentTarget.style.background = 'rgba(0, 200, 255, 0.05)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
                     >
-                      <User size={16} style={{ marginRight: '8px' }} />
-                      {isRestoring && isSelected ? 'RESTORING SESSION...' : account}
+                      Use another ID
                     </button>
-                  )
-                })}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowSavedAccounts(false)
-                    setSelectedAccount(null)
-                    setIdentifier('')
-                  }}
-                  style={{
-                    background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)',
-                    fontSize: '0.8rem', letterSpacing: '0.05em', cursor: 'pointer',
-                    textDecoration: 'underline', textUnderlineOffset: '4px', marginTop: '12px'
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}
-                >
-                  Use another ID
-                </button>
+                  </>
+                )}
               </div>
             ) : (
               <div style={{ position: 'relative' }}>
