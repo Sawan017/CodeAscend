@@ -18,12 +18,22 @@ export function ProjectDetail({
   onDeleteProject,
   onUpdateProject
 }: ProjectDetailProps) {
+  if (!project) {
+    return (
+      <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+        <h2>Project not found</h2>
+        <p>This project may have been deleted or is still loading.</p>
+        <button onClick={onBack} className="secondary-btn" style={{ marginTop: '1rem' }}>Go Back</button>
+      </div>
+    )
+  }
+
   const [isEditing, setIsEditing] = useState(false)
-  const [editName, setEditName] = useState(project.name)
-  const [editDesc, setEditDesc] = useState(project.description)
-  const [editImage, setEditImage] = useState(project.image)
-  const [editGithub, setEditGithub] = useState(project.github)
-  const [editDemo, setEditDemo] = useState(project.demo)
+  const [editName, setEditName] = useState(project.name || '')
+  const [editDesc, setEditDesc] = useState(project.description || '')
+  const [editImage, setEditImage] = useState(project.image || '')
+  const [editGithub, setEditGithub] = useState(project.github || '')
+  const [editDemo, setEditDemo] = useState(project.demo || '')
 
   const handleSave = () => {
     onUpdateProject?.({
@@ -154,20 +164,28 @@ export function ProjectDetail({
 
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Features</h3>
-            <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', lineHeight: '1.8' }}>
-              {project.features.map(feature => (
-                <li key={feature}>{feature}</li>
-              ))}
-            </ul>
+            {(!project.features || project.features.length === 0) ? (
+              <p style={{ color: 'var(--text-muted)' }}>No features documented yet.</p>
+            ) : (
+              <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', lineHeight: '1.8' }}>
+                {project.features.map(feature => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div>
             <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>What I Learned</h3>
-            <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', lineHeight: '1.8' }}>
-              {project.whatILearned.map(item => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            {(!project.whatILearned || project.whatILearned.length === 0) ? (
+              <p style={{ color: 'var(--text-muted)' }}>No learnings documented yet.</p>
+            ) : (
+              <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', lineHeight: '1.8' }}>
+                {project.whatILearned.map(item => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
@@ -190,10 +208,10 @@ export function ProjectDetail({
           </div>
 
           <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-strong)' }}>
-            <h4 style={{ marginBottom: '1rem', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Technologies</h4>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {project.technologies.map(tech => (
-                <span key={tech} style={{ padding: '0.25rem 0.75rem', background: 'rgba(255,255,255,0.1)', borderRadius: '16px', fontSize: '0.875rem' }}>
+            <h4 style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Technologies</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2rem' }}>
+              {(project.technologies || []).map(tech => (
+                <span key={tech} style={{ padding: '0.25rem 0.75rem', background: 'var(--bg-surface-sunken)', color: 'var(--cyan)', borderRadius: '16px', fontSize: '0.85rem', border: '1px solid var(--border-strong)' }}>
                   {tech}
                 </span>
               ))}
