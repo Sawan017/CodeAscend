@@ -57,8 +57,10 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
     }
     
     if (!supabase) return
-    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('[Auth Trace] SettingsDrawer onAuthStateChange:', event, 'Session:', session?.user?.id)
       if (open && (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED')) {
+        console.log('[Auth Trace] Triggering checkGithubConnection from event:', event)
         checkGithubConnection()
       }
     })
@@ -90,12 +92,14 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
   const connectGitHub = async () => {
     if (!supabase) return
-    const { error } = await supabase.auth.linkIdentity({ 
+    console.log('[Auth Trace] Initiating linkIdentity for github')
+    const { data, error } = await supabase.auth.linkIdentity({ 
       provider: 'github',
       options: {
         redirectTo: window.location.origin + '?settings=account'
       }
     })
+    console.log('[Auth Trace] linkIdentity response:', data, error)
     if (error) setGithubMessage('Failed to connect GitHub: ' + error.message)
   }
 

@@ -86,6 +86,9 @@ function App() {
 
   useEffect(() => {
     // Check for OAuth callback errors
+    console.log('[Auth Trace] App mounted with URL:', window.location.href)
+    console.log('[Auth Trace] search:', window.location.search, 'hash:', window.location.hash)
+
     const params = new URLSearchParams(window.location.hash.replace('#', '?'))
     const error = params.get('error') || new URLSearchParams(window.location.search).get('error')
     const errorDescription = params.get('error_description') || new URLSearchParams(window.location.search).get('error_description')
