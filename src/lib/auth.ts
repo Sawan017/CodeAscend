@@ -45,7 +45,8 @@ export function useAuth() {
     })
 
     // Listen to auth changes
-    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[Auth Trace] Global onAuthStateChange:', event, 'Session:', session?.user?.id)
       const getValidEmail = (email?: string) => {
         if (!email) return undefined;
         if (email.includes('@example.com') || email.startsWith('id_') || email.includes('...temp...')) return undefined;
