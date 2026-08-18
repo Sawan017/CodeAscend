@@ -599,7 +599,7 @@ h4 { font-size: 1rem; }
 .drawer-card h4 { margin-bottom: 2px; }
 .drawer-card p { color: var(--text-muted); font-size: 0.9rem; }
 .avatar-badge {
-  width: 52px; height: 52px; border-radius: 16px;
+  width: 52px; height: 52px; border-radius: 50%;
   display: grid; place-items: center;
   font-size: 1.4rem; font-weight: 700;
   color: #fff;
@@ -856,7 +856,7 @@ h4 { font-size: 1rem; }
   display: flex; align-items: center; gap: 14px;
 }
 .avatar-badge.large {
-  width: 64px; height: 64px; border-radius: 18px;
+  width: 64px; height: 64px; border-radius: 50%;
   font-size: 1.8rem;
 }
 .preview-stats {
@@ -1056,4 +1056,22 @@ h4 { font-size: 1rem; }
     white-space: nowrap;
     padding: 0.6rem 1rem !important;
   }
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+.hover-overlay-container:hover .hover-overlay {
+  opacity: 1 !important;
 }

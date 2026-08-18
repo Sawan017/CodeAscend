@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
-import { User, Check, X, MessageSquare, UserMinus, Users, UserPlus, Search } from 'lucide-react'
+import { Check, X, MessageSquare, UserMinus, Users, UserPlus, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Avatar } from '../../components/Avatar'
 import type { FriendRelationship } from '../../types'
 import { fetchPublicProfiles } from '../../lib/api'
 
@@ -25,7 +26,7 @@ type FriendsPanelProps = {
   onOpenSearch?: () => void
 }
 
-export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject, onRemove, onOpenProfile, onMessage, onOpenSearch }: FriendsPanelProps) {
+export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject, onRemove, onOpenProfile, onMessage, onOpenSearch, onlineUsers = [] }: FriendsPanelProps & { onlineUsers?: string[] }) {
   const [activeTab, setActiveTab] = useState<'friends' | 'requests'>('friends')
   const [publicProfiles, setPublicProfiles] = useState<PublicUser[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,7 +35,8 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
     let mounted = true
     const load = async () => {
       setLoading(true)
-      const profiles = await fetchPublicProfiles()
+      const neededIds = [...new Set([...friendState.relationships.map(r => r.userId), ...incomingRequests])]
+      const profiles = await fetchPublicProfiles(neededIds)
       if (!mounted) return
       setPublicProfiles(profiles)
       setLoading(false)
@@ -117,8 +119,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                 {friends.map(friend => (
                   <motion.div key={friend.userId} variants={item} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
                     <div className="avatar-badge" style={{ width: '48px', height: '48px', flexShrink: 0, cursor: 'pointer', position: 'relative' }} onClick={() => onOpenProfile(friend.userId)}>
-                      {friend.avatar ? <img src={friend.avatar} alt={friend.displayName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={24} />}
-                      <div style={{ position: 'absolute', bottom: -2, right: -2, width: '14px', height: '14px', background: '#10b981', borderRadius: '50%', border: '2px solid var(--surface-sunken)', zIndex: 2 }} />
+                      <Avatar src={friend.avatar} alt={friend.displayName} size={48} isOnline={onlineUsers.includes(friend.userId)} showStatus={true} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <h4 style={{ margin: 0, cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => onOpenProfile(friend.userId)}>{friend.displayName}</h4>
@@ -155,8 +156,8 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                 >
                   {incoming.map(req => (
                     <motion.div key={req.userId} variants={item} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem' }}>
-                      <div className="avatar-badge" style={{ width: '48px', height: '48px', flexShrink: 0, cursor: 'pointer' }} onClick={() => onOpenProfile(req.userId)}>
-                        {req.avatar ? <img src={req.avatar} alt={req.displayName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={24} />}
+                      <div className="avatar-badge" style={{ width: '48px', height: '48px', flexShrink: 0, cursor: 'pointer', position: 'relative' }} onClick={() => onOpenProfile(req.userId)}>
+                        <Avatar src={req.avatar} alt={req.displayName} size={48} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <h4 style={{ margin: 0, cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} onClick={() => onOpenProfile(req.userId)}>{req.displayName}</h4>
@@ -192,8 +193,8 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                 >
                   {outgoing.map(req => (
                     <motion.div key={req.userId} variants={item} whileHover={{ y: -2 }} className="panel" style={{ background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', opacity: 0.7 }}>
-                      <div className="avatar-badge" style={{ width: '40px', height: '40px', flexShrink: 0 }}>
-                        {req.avatar ? <img src={req.avatar} alt={req.displayName} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={20} />}
+                      <div className="avatar-badge" style={{ width: '40px', height: '40px', flexShrink: 0, position: 'relative' }}>
+                        <Avatar src={req.avatar} alt={req.displayName} size={40} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <h4 style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{req.displayName}</h4>

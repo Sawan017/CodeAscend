@@ -1,4 +1,4 @@
 -- Clear dummy emails from the contact field in public.profiles
-UPDATE public.profiles
-SET contact = ''
-WHERE contact LIKE '%@example.com' OR contact LIKE 'id_%' OR contact LIKE '%...temp...%';
+-- UPDATE public.profiles
+-- SET contact = ''
+-- WHERE contact LIKE '%@example.com' OR contact LIKE 'id_%' OR contact LIKE '%...temp...%';

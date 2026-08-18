@@ -71,7 +71,12 @@ function BadgeArtwork({ isEarned, icon, tier }: BadgeArtworkProps) {
   )
 }
 
-export function AchievementsPanel({ achievements, dynamicMilestones, onSelectAchievement }: AchievementsPanelProps) {
+export function AchievementsPanel({ achievements, dynamicMilestones }: AchievementsPanelProps) {
+  console.log("DEBUG: RENDER AchievementsPanel mounted = true", { 
+    dynamicMilestonesCount: dynamicMilestones?.length, 
+    achievementsCount: achievements?.length 
+  })
+  
   const [activeCategory, setActiveCategory] = useState<MilestoneCategory>('All')
 
   const filteredMilestones = dynamicMilestones.filter(m => activeCategory === 'All' || m.category === activeCategory)
@@ -83,8 +88,8 @@ export function AchievementsPanel({ achievements, dynamicMilestones, onSelectAch
       <div className="panel hero-panel-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <p className="eyebrow">MILESTONES</p>
-            <h2 style={{ margin: 0 }}>Career Milestones</h2>
+            <p className="eyebrow">ACHIEVEMENTS</p>
+            <h2 style={{ margin: 0 }}>Career Achievements</h2>
           </div>
           <div className="hud-chip">
             <span style={{ color: 'var(--cyan)' }}>Earned: {earnedCount}/{totalCount}</span>
@@ -189,33 +194,6 @@ export function AchievementsPanel({ achievements, dynamicMilestones, onSelectAch
         )}
       </div>
       
-      <div className="panel">
-        <p className="eyebrow">ACHIEVEMENTS</p>
-        <div className="achievement-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
-          {achievements.map((achievement) => (
-            <motion.button 
-              key={achievement.id} 
-              whileHover={{ y: -3, scale: 1.01 }} 
-              className={`achievement-card ${achievement.unlocked ? 'unlocked' : ''}`} 
-              onClick={() => onSelectAchievement(achievement.id)}
-              style={{
-                borderColor: achievement.unlocked ? 'var(--cyan)' : 'var(--border)',
-                opacity: achievement.unlocked ? 1 : 0.6
-              }}
-            >
-              <div className="achievement-icon" style={{ 
-                  background: achievement.unlocked ? 'rgba(34,211,238,0.15)' : 'rgba(255,255,255,0.05)',
-                  color: achievement.unlocked ? 'var(--cyan)' : 'inherit'
-                }}>{achievement.icon}</div>
-              <div>
-                <h4 style={{ margin: '0 0 4px 0' }}>{achievement.title}</h4>
-                <p style={{ margin: '0 0 8px 0', fontSize: '0.85rem' }}>{achievement.description}</p>
-                <small className="muted">{achievement.unlocked ? `Unlocked ${achievement.dateUnlocked}` : achievement.unlockCondition}</small>
-              </div>
-            </motion.button>
-          ))}
-        </div>
-      </div>
     </div>
   )
 }

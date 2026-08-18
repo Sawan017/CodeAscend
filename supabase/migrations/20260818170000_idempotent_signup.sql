@@ -1,21 +1,7 @@
 -- ============================================================
--- FIX AUTH IDENTITIES MIGRATION
+-- IDEMPOTENT RESERVE USERNAME
 -- ============================================================
 
--- 1. Update existing auth.identities to ensure the newly required 'email' column is not NULL.
--- Recent versions of Supabase GoTrue added an 'email' column to auth.identities.
--- If this column is NULL, GoTrue panics on login when reading the identities table, 
--- returning "Database error querying schema".
-DO $$ 
-BEGIN
-  -- We use a DO block to safely check if the column exists before updating, 
-  -- just in case it's a slightly older Supabase version.
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'auth' AND table_name = 'identities' AND column_name = 'email') THEN
-    -- EXECUTE 'UPDATE auth.identities SET email = lower(provider_id) WHERE email IS NULL AND provider = ''email''';
-  END IF;
-END $$;
-
--- 2. Ensure reserve_username inserts the email column into auth.identities if it exists
 CREATE OR REPLACE FUNCTION public.reserve_username(username_input text, password_input text)
 RETURNS json
 LANGUAGE plpgsql
@@ -33,6 +19,13 @@ DECLARE
   enc_pass text;
   max_attempts integer := 100;
   attempts integer := 0;
+  
+  -- Variables for idempotency check
+  existing_id uuid;
+  existing_login_id text;
+  existing_disc text;
+  existing_username text;
+  existing_email text;
 BEGIN
   norm_name := username_input;
   
@@ -44,6 +37,29 @@ BEGIN
     raise exception 'Password must be at least 6 characters.';
   end if;
 
+  -- 1. Idempotency Check
+  -- If this exact username and password combination was successfully registered in the last 15 minutes,
+  -- return the existing identity instead of blindly creating an orphan auth.users row.
+  SELECT ui.id, ui.login_id, ui.user_id_number, ui.username, u.email
+  INTO existing_id, existing_login_id, existing_disc, existing_username, existing_email
+  FROM public.user_identities ui
+  JOIN auth.users u ON u.id = ui.user_id
+  WHERE ui.username = username_input
+  AND ui.created_at > now() - interval '15 minutes'
+  AND u.encrypted_password = extensions.crypt(password_input, u.encrypted_password)
+  LIMIT 1;
+
+  IF existing_id IS NOT NULL THEN
+    return json_build_object(
+      'id', existing_id,
+      'login_id', existing_login_id,
+      'user_id_number', existing_disc,
+      'username', existing_username,
+      'dummy_email', existing_email
+    );
+  END IF;
+
+  -- 2. New Registration Flow
   loop
     attempts := attempts + 1;
     if attempts > max_attempts then
@@ -66,6 +82,7 @@ BEGIN
   enc_pass := extensions.crypt(password_input, extensions.gen_salt('bf'));
 
   -- Insert into auth.users directly.
+  -- Add the permanent login_id to raw_user_meta_data under display_name.
   INSERT INTO auth.users (
     id, instance_id, email, encrypted_password, email_confirmed_at, 
     aud, role, created_at, updated_at, 
@@ -76,27 +93,15 @@ BEGIN
     new_auth_user_id, '00000000-0000-0000-0000-000000000000', dummy_email, enc_pass, now(), 
     'authenticated', 'authenticated', now(), now(), 
     '', '', '', '', 
-    NULL, NULL, NULL, '', '',
-    '{}'::jsonb, '{}'::jsonb, false, false, false, 0
+    NULL, '', '', '', '',
+    '{}'::jsonb, jsonb_build_object('display_name', full_id), false, false, false, 0
   );
   
-  -- Insert into auth.identities, dynamically providing the 'email' column if it exists to prevent panics
-  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema = 'auth' AND table_name = 'identities' AND column_name = 'email') THEN
-    EXECUTE format('
-      INSERT INTO auth.identities (
-        id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at, email
-      ) VALUES (
-        %L, %L, %L, ''email'', %L, now(), now(), now(), %L
-      )', 
-      new_auth_user_id, new_auth_user_id, jsonb_build_object('sub', new_auth_user_id::text, 'email', dummy_email), dummy_email, dummy_email
-    );
-  ELSE
-    INSERT INTO auth.identities (
-      id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
-    ) VALUES (
-      new_auth_user_id, new_auth_user_id, jsonb_build_object('sub', new_auth_user_id::text, 'email', dummy_email), 'email', dummy_email, now(), now(), now()
-    );
-  END IF;
+  INSERT INTO auth.identities (
+    id, user_id, identity_data, provider, provider_id, last_sign_in_at, created_at, updated_at
+  ) VALUES (
+    new_auth_user_id, new_auth_user_id, jsonb_build_object('sub', new_auth_user_id::text, 'email', dummy_email), 'email', dummy_email, now(), now(), now()
+  );
 
   insert into public.user_identities (
     id, user_id, username, normalized_name, user_id_number, login_id, status, role
@@ -113,3 +118,8 @@ BEGIN
   );
 END;
 $$;
+
+GRANT EXECUTE ON FUNCTION public.reserve_username(text, text) TO anon, authenticated, service_role;
+
+-- Force PostgREST schema cache reload
+NOTIFY pgrst, 'reload schema';

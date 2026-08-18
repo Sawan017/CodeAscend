@@ -52,18 +52,57 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [linkEmailError, setLinkEmailError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!supabase) return
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      const googleIdentity = user?.identities?.find(id => id.provider === 'google')
-      if (googleIdentity?.identity_data?.email) {
-        setAuthUserEmail(googleIdentity.identity_data.email)
-      } else if (user && user.email && !user.email.includes('...temp...') && !user.email.includes('@example.com') && !user.email.startsWith('id_')) {
-        setAuthUserEmail(user.email)
-      } else {
-        setAuthUserEmail(null)
+    if (!supabase || !open) return
+    const sb = supabase
+
+    const isDummyEmail = (email?: string | null) => {
+      if (!email) return true
+      if (email.includes('@example.com')) return true
+      if (email.includes('@internal.arinova.com')) return true
+      if (email.includes('...temp...')) return true
+      if (email.startsWith('id_')) return true
+      return false
+    }
+
+    const detectLinkedEmail = async () => {
+      // Try getUser() first — this makes an authenticated API call that returns
+      // the full user object including identities.
+      const { data: { user }, error } = await sb.auth.getUser()
+      
+      if (!error && user) {
+        // Check for a Google identity first (most reliable for linked accounts)
+        const googleIdentity = user.identities?.find(id => id.provider === 'google')
+        if (googleIdentity?.identity_data?.email) {
+          setAuthUserEmail(googleIdentity.identity_data.email)
+          return
+        }
+        // Fallback: check the user's primary email
+        if (!isDummyEmail(user.email)) {
+          setAuthUserEmail(user.email!)
+          return
+        }
       }
-    })
-  }, [profile])
+
+      // Fallback: try getSession() which reads from local storage
+      // This handles the case where getUser() fails due to session timing
+      const { data: { session } } = await sb.auth.getSession()
+      if (session?.user) {
+        const googleIdentity = session.user.identities?.find(id => id.provider === 'google')
+        if (googleIdentity?.identity_data?.email) {
+          setAuthUserEmail(googleIdentity.identity_data.email)
+          return
+        }
+        if (!isDummyEmail(session.user.email)) {
+          setAuthUserEmail(session.user.email!)
+          return
+        }
+      }
+
+      setAuthUserEmail(null)
+    }
+
+    detectLinkedEmail()
+  }, [open, profile])
 
   const handleLinkEmail = async () => {
     if (!supabase) return
@@ -97,11 +136,6 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       await supabase.auth.signOut()
       window.location.reload()
     }
-  }
-
-  // Placeholder handler
-  const handlePlaceholderToggle = () => {
-    // Intentionally no-op for placeholders
   }
 
   const renderTabContent = () => {
