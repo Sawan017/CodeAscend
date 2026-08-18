@@ -60,7 +60,7 @@ export function EditProfilePanel({ profile, badges = [], projects = [], skills =
 
   const handleSave = async () => {
     setIsUploading(true)
-    let nextProfile = { ...draftProfile }
+    const nextProfile = { ...draftProfile }
 
     const targetUserId = userId || profile.userId || profile.id
 

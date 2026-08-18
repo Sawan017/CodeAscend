@@ -40,7 +40,7 @@ export function useAuth() {
         }
         setUser(authUser)
       }
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setLoading(false)
     })
 
@@ -65,7 +65,7 @@ export function useAuth() {
         setUser(null)
         setIsNewUser(false)
       }
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setLoading(false)
     })
 

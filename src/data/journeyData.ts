@@ -33,53 +33,7 @@ export const profile: UserProfile = {
 
 
 
-export const projects: Project[] = [
-  {
-    id: 'futureme',
-    name: 'FutureMe',
-    description: 'An interactive career journey experience that turns personal growth into a living digital world.',
-    image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=900&q=80',
-    technologies: ['React', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
-    languageId: 'typescript',
-    status: 'BUILDING',
-    progress: 78,
-    github: 'https://github.com',
-    demo: 'https://futureme.dev',
-    features: ['Cinematic entry', 'Interactive world map', 'Progression system'],
-    whatILearned: ['Designing experience-driven interfaces', 'Thinking in systems', 'Building modular UI architecture'],
-    startDate: '2025-06-01',
-  },
-  {
-    id: 'command-center',
-    name: 'Command Center',
-    description: 'A developer dashboard for tracking habits, goals, and shipping momentum across projects.',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=900&q=80',
-    technologies: ['React', 'Node.js', 'MongoDB'],
-    languageId: 'javascript',
-    status: 'BUILDING',
-    progress: 58,
-    github: 'https://github.com',
-    demo: 'https://example.com',
-    features: ['Goal tracking', 'Milestone analytics', 'Progress visuals'],
-    whatILearned: ['Data-driven product thinking', 'State orchestration', 'Polished dashboard UX'],
-    startDate: '2025-03-15',
-  },
-  {
-    id: 'ai-studio',
-    name: 'AI Studio',
-    description: 'A light AI-assisted workspace for exploring prompts, summarizing notes, and building workflows.',
-    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=900&q=80',
-    technologies: ['Python', 'FastAPI', 'React'],
-    languageId: 'python',
-    status: 'PLANNING',
-    progress: 34,
-    github: 'https://github.com',
-    demo: 'https://example.com',
-    features: ['Prompt experimentation', 'Structured outputs', 'Simple workflow engine'],
-    whatILearned: ['AI API design', 'Prompt iteration', 'Thinking in user loops'],
-    startDate: '2025-07-04',
-  },
-]
+export const projects: Project[] = []
 
 export const skills: Skill[] = [
   {
@@ -274,8 +228,7 @@ export const achievements: Achievement[] = [
     title: 'FIRST WEBSITE',
     description: 'Built a first polished digital experience that felt real.',
     unlockCondition: 'Complete your first shipped web experience',
-    unlocked: true,
-    dateUnlocked: '2025-10-10',
+    unlocked: false,
   },
   {
     id: 'first-react',
@@ -316,10 +269,9 @@ export const futureMilestones: FutureMilestone[] = [
 ]
 
 export const timelineEvents: TimelineEvent[] = [
-  { id: 't-1', date: '2024', title: 'Started JavaScript', description: 'Built confidence through practice and problem solving.', category: 'Learning', relatedProject: 'futureme', relatedSkill: 'JavaScript' },
+  { id: 't-1', date: '2024', title: 'Started JavaScript', description: 'Built confidence through practice and problem solving.', category: 'Learning', relatedSkill: 'JavaScript' },
   { id: 't-2', date: '2025', title: 'Built first serious project', description: 'Shifted from exercises to product-minded builds.', category: 'Project', relatedProject: 'command-center', relatedSkill: 'React' },
-  { id: 't-3', date: '2025', title: 'Learned React', description: 'Moved into component-based thinking and UI systems.', category: 'Learning', relatedProject: 'futureme', relatedSkill: 'React' },
-  { id: 't-4', date: '2026', title: 'Built FutureMe', description: 'Turned personal progress into an interactive narrative.', category: 'Project', relatedProject: 'futureme', relatedSkill: 'React' },
+  { id: 't-3', date: '2025', title: 'Learned React', description: 'Moved into component-based thinking and UI systems.', category: 'Learning', relatedSkill: 'React' },
   { id: 't-5', date: '2026', title: 'Exploring backend', description: 'Started connecting interfaces to durable systems.', category: 'Learning', relatedProject: 'command-center', relatedSkill: 'Backend' },
   { id: 't-6', date: '2027', title: 'Internship', description: 'A major step toward real professional impact.', category: 'Career', relatedProject: 'ai-studio', relatedSkill: 'AI / ML' },
 ]

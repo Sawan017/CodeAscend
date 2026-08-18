@@ -104,6 +104,22 @@ export interface Project {
   startDate?: string
   completed?: boolean
   completedDate?: string
+  provider?: 'github' | 'linkedin'
+  externalId?: string
+  syncDate?: string
+}
+
+export interface ExternalProjectRecord {
+  id: string
+  user_id: string
+  provider: 'github' | 'linkedin'
+  external_id: string
+  status: 'in_progress' | 'completed'
+  xp_awarded: number
+  metadata: any
+  last_synced_at: string
+  created_at: string
+  updated_at: string
 }
 
 export interface Skill {
@@ -182,7 +198,7 @@ export interface TimelineEvent {
   title: string
   description: string
   category: string
-  relatedProject: string
+  relatedProject?: string
   relatedSkill: string
 }
 

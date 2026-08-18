@@ -297,3 +297,95 @@ export function evaluateDynamicMilestones(progression: Progression, skills: Skil
     }
   })
 }
+
+export function generateTimelineEvents(projects: import('../types').Project[], skills: import('../types').Skill[], _achievements: import('../types').Achievement[]): import('../types').TimelineEvent[] {
+  const events: import('../types').TimelineEvent[] = []
+
+  const jsSkill = skills.find(s => s.name.toLowerCase().includes('javascript'))
+  if (jsSkill && jsSkill.started) {
+    events.push({ id: 't-js', date: jsSkill.started.slice(0, 4), title: 'Started JavaScript', description: 'Began practicing core logic and problem solving.', category: 'Learning', relatedSkill: jsSkill.name, relatedProject: undefined })
+  }
+
+  const reactSkill = skills.find(s => s.name.toLowerCase().includes('react'))
+  if (reactSkill && reactSkill.started) {
+    events.push({ id: 't-react', date: reactSkill.started.slice(0, 4), title: 'Started React', description: 'Moved into component-based thinking and UI systems.', category: 'Learning', relatedSkill: reactSkill.name, relatedProject: undefined })
+  }
+  
+  const backendSkill = skills.find(s => s.name.toLowerCase().includes('backend') || s.name.toLowerCase().includes('node'))
+  if (backendSkill && backendSkill.started) {
+    events.push({ id: 't-backend', date: backendSkill.started.slice(0, 4), title: 'Exploring Backend', description: 'Started connecting interfaces to durable systems.', category: 'Learning', relatedSkill: backendSkill.name, relatedProject: undefined })
+  }
+
+  const completedProjects = projects.filter(p => p.completed || p.status === 'COMPLETED')
+  if (completedProjects.length > 0) {
+    const firstProj = completedProjects.sort((a, b) => (a.completedDate || a.startDate || '').localeCompare(b.completedDate || b.startDate || ''))[0]
+    const dateStr = firstProj.completedDate || firstProj.startDate || new Date().toISOString().slice(0, 10)
+    events.push({ id: 't-first-proj', date: dateStr.slice(0, 4), title: 'First Serious Project', description: `Completed ${firstProj.name}. Shifted from exercises to product builds.`, category: 'Project', relatedProject: firstProj.id, relatedSkill: firstProj.languageId || 'Code' })
+  }
+
+  // Sort events chronologically
+  return events.sort((a, b) => a.date.localeCompare(b.date))
+}
+
+export function generateFutureMilestones(_progression: import('../types').Progression, projects: import('../types').Project[], skills: import('../types').Skill[], _goals: import('../types').Goal[]): import('../types').FutureMilestone[] {
+  const milestones: import('../types').FutureMilestone[] = []
+  
+  const hasJS = skills.some(s => s.name.toLowerCase().includes('javascript') && s.status !== 'LOCKED')
+  const hasReact = skills.some(s => s.name.toLowerCase().includes('react') && s.status !== 'LOCKED')
+  const hasBackend = skills.some(s => (s.name.toLowerCase().includes('backend') || s.name.toLowerCase().includes('node')) && s.status !== 'LOCKED')
+  const completedProjectsCount = projects.filter(p => p.completed || p.status === 'COMPLETED').length
+  const currentYear = new Date().getFullYear().toString()
+
+  // 1. Learning Foundation
+  if (!hasJS || !hasReact) {
+     milestones.push({
+       id: 'fm-react',
+       year: currentYear,
+       title: 'Master Frontend Basics',
+       description: 'Get comfortable with JS and React to build interactive UIs.',
+       category: 'Learning',
+       locked: true
+     })
+  }
+
+  // 2. Build First App
+  if (hasReact && completedProjectsCount === 0) {
+     milestones.push({
+       id: 'fm-proj-1',
+       year: currentYear,
+       title: 'Ship Your First App',
+       description: 'Use your frontend skills to build and deploy a complete project.',
+       category: 'Project',
+       locked: true
+     })
+  }
+
+  // 3. Expand to Backend
+  if (completedProjectsCount >= 1 && !hasBackend) {
+     milestones.push({
+       id: 'fm-backend',
+       year: currentYear,
+       title: 'Learn Backend Development',
+       description: 'Start learning Node.js or databases to make fullstack apps.',
+       category: 'Learning',
+       locked: true
+     })
+  }
+
+  return milestones
+}
+
+export function calculateExternalProjectXP(status: 'in_progress' | 'completed', currentXpAwarded: number): number {
+  const MAX_IN_PROGRESS = 50;
+  const COMPLETED_XP = 150;
+  
+  if (status === 'completed') {
+    return Math.max(0, COMPLETED_XP - currentXpAwarded);
+  }
+  
+  if (status === 'in_progress') {
+    return Math.max(0, MAX_IN_PROGRESS - currentXpAwarded);
+  }
+  
+  return 0;
+}
