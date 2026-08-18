@@ -100,13 +100,9 @@ function App() {
       window.history.replaceState(null, '', window.location.pathname)
     }
 
-    // Refresh session if we just came back from an OAuth flow successfully
+    // If we just came back from an OAuth flow successfully
     if (params.get('access_token')) {
-      supabase?.auth.refreshSession().then(({ error }) => {
-        if (!error) {
-           push('Account successfully connected!', 'info')
-        }
-      })
+      push('Account successfully connected!', 'info')
       window.history.replaceState(null, '', window.location.pathname + window.location.search)
     }
 

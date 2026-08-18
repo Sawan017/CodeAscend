@@ -13,7 +13,10 @@ export async function fetchGitHubRepos(token: string) {
       Accept: 'application/vnd.github.v3+json'
     }
   })
-  if (!res.ok) throw new Error('Failed to fetch GitHub repos')
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('401 Unauthorized: GitHub token expired')
+    throw new Error(`Failed to fetch GitHub repos: ${res.statusText}`)
+  }
   return res.json()
 }
 
@@ -24,6 +27,9 @@ export async function fetchRepoLanguages(token: string, owner: string, repo: str
       Accept: 'application/vnd.github.v3+json'
     }
   })
-  if (!res.ok) throw new Error('Failed to fetch repo languages')
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('401 Unauthorized: GitHub token expired')
+    throw new Error(`Failed to fetch repo languages: ${res.statusText}`)
+  }
   return res.json()
 }
