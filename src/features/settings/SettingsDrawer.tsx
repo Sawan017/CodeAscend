@@ -52,13 +52,28 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [githubMessage, setGithubMessage] = useState('')
 
   useEffect(() => {
-    checkGithubConnection()
+    if (open) {
+      checkGithubConnection()
+    }
+    
+    if (!supabase) return
+    const { data: listener } = supabase.auth.onAuthStateChange((event) => {
+      if (open && (event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED')) {
+        checkGithubConnection()
+      }
+    })
+
+    return () => {
+      listener.subscription.unsubscribe()
+    }
   }, [open])
 
   const checkGithubConnection = async () => {
     if (!supabase) return
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
+
+    console.log('checkGithubConnection user identities:', user.identities, 'app_metadata:', user.app_metadata)
 
     const githubLinked = user.app_metadata?.providers?.includes('github') || user.identities?.some(i => i.provider === 'github')
     setGithubConnected(!!githubLinked)
@@ -75,7 +90,12 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
   const connectGitHub = async () => {
     if (!supabase) return
-    const { error } = await supabase.auth.linkIdentity({ provider: 'github' })
+    const { error } = await supabase.auth.linkIdentity({ 
+      provider: 'github',
+      options: {
+        redirectTo: window.location.origin + '?settings=account'
+      }
+    })
     if (error) setGithubMessage('Failed to connect GitHub: ' + error.message)
   }
 

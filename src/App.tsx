@@ -85,6 +85,40 @@ function App() {
   const [route, setRoute] = useState<Route>(parseHash)
 
   useEffect(() => {
+    // Check for OAuth callback errors
+    const params = new URLSearchParams(window.location.hash.replace('#', '?'))
+    const error = params.get('error') || new URLSearchParams(window.location.search).get('error')
+    const errorDescription = params.get('error_description') || new URLSearchParams(window.location.search).get('error_description')
+    
+    if (error) {
+      console.error('OAuth Callback Error:', error, errorDescription)
+      push(`Authentication Error: ${errorDescription || error}`, 'info')
+      // Clean up URL
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+
+    // Refresh session if we just came back from an OAuth flow successfully
+    if (params.get('access_token')) {
+      supabase?.auth.refreshSession().then(({ error }) => {
+        if (!error) {
+           push('Account successfully connected!', 'info')
+        }
+      })
+      window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    }
+
+    // Open settings if requested
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get('settings') === 'account') {
+      setSettingsOpen(true)
+      // Clean up search param
+      searchParams.delete('settings')
+      const newSearch = searchParams.toString() ? '?' + searchParams.toString() : ''
+      window.history.replaceState(null, '', window.location.pathname + newSearch + window.location.hash)
+    }
+  }, [])
+
+  useEffect(() => {
     if (user) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setEntered(true)
