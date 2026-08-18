@@ -50,6 +50,7 @@ export interface UserProfile {
   login_id?: string
   displayName: string
   avatar?: string
+  banner?: string
   bio?: string
   title: string
   introduction: string
@@ -58,11 +59,13 @@ export interface UserProfile {
   technologies: string[]
   github: string
   linkedin: string
+  portfolio?: string
   contact: string
   contactPublic: boolean
   level: number
   xp: number
   createdAt?: string
+  displayedAchievements?: string[]
 }
 
 export interface Language {
@@ -159,6 +162,7 @@ export interface Achievement {
   unlockCondition: string
   unlocked: boolean
   dateUnlocked?: string
+  xpReward?: number
 }
 
 export interface Badge {
@@ -264,11 +268,18 @@ export interface ChatMessage {
   content: string
   timestamp: string
   deleted?: boolean
+  deletedForEveryone?: boolean
+  editedAt?: string
+  isFailed?: boolean
 }
 
 export interface ChatState {
   messages: ChatMessage[]
   lastRead: Record<string, string> // friendId -> timestamp
+  hiddenMessages?: string[]
+  mutedUsers?: string[]
+  blockedUsers?: string[]
+  clearedChats?: Record<string, string> // friendId -> timestamp of when chat was cleared
 }
 
 

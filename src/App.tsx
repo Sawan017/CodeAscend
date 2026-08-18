@@ -29,7 +29,8 @@ import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadge
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { usePersist } from './hooks/usePersist'
-import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills, fetchIncomingFriendRequests, fetchIncomingMessages } from './lib/api'
+import { supabase } from './lib/supabase'
+import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills, fetchIncomingMessages, fetchSocialNetwork, acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest, lookupLoginIdByAuthUserId, sendChatMessage } from './lib/api'
 import { useToasts } from './hooks/useToasts'
 import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
@@ -39,7 +40,7 @@ import { ProjectDetail } from './features/projects/ProjectDetail'
 import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
 import { SettingsDrawer } from './features/settings/SettingsDrawer'
-import { saveFriendsState, saveChatState } from './lib/api'
+import { saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
@@ -171,6 +172,7 @@ function App() {
   const [chatState, setChatState] = useState<import('./types').ChatState>(initialData.chat)
   const [incomingMessages, setIncomingMessages] = useState<import('./types').ChatMessage[]>([])
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
 
   const [activeSession, setActiveSession] = useState<import('./types').ActiveSessionState | null>(initialData.activeSession)
@@ -198,6 +200,33 @@ function App() {
     }
     return () => window.clearInterval(interval)
   }, [activeSession])
+
+  useEffect(() => {
+    if (!user || !supabase) return;
+    
+    const channel = supabase.channel('online-users')
+    
+    channel.on('presence', { event: 'sync' }, () => {
+      const newState = channel.presenceState()
+      const onlineIds = new Set<string>()
+      for (const key in newState) {
+        newState[key].forEach((presence: any) => {
+          if (presence.userId) onlineIds.add(presence.userId)
+        })
+      }
+      setOnlineUsers(Array.from(onlineIds))
+    })
+    
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await channel.track({ userId: user.id })
+      }
+    })
+    
+    return () => {
+      channel.unsubscribe()
+    }
+  }, [user])
 
   const completeActiveSession = async () => {
     if (!activeSession) return
@@ -269,18 +298,59 @@ function App() {
   }
 
   const handleOnboardingComplete = () => {
-    // Explicitly zero out everything to ensure no mock data leaks
-    setProgression(p => ({ ...p, xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0 }))
+    // Explicitly zero out everything else to ensure no mock data leaks
     setProjectState([])
     setGoalState([])
     setSkillState([])
-    setAchievementState([])
     setBadgeState([])
+    
+    // Determine if they already got Journey Begins
+    const hasJb = achievementState.some(a => a.id === 'journey-begins' && a.unlocked)
+    
+    const initialAchievements = achievements.map(a => 
+      a.id === 'journey-begins' 
+        ? { ...a, unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10), xpReward: 500 } 
+        : a
+    )
+    
+    setAchievementState(initialAchievements)
+    setProgression(p => ({ 
+      ...p, 
+      xp: hasJb ? p.xp : p.xp + 500, 
+      level: 1, 
+      projectsCompleted: 0, 
+      goalsCompleted: 0, 
+      skillsMastered: 0, 
+      achievements: hasJb ? p.achievements : p.achievements + 1, 
+      badges: 0, 
+      streak: 0, 
+      longestStreak: 0 
+    }))
+
+    setProfileState(prev => {
+      const prevDisplayed = prev.displayedAchievements || []
+      const newProfile = !prevDisplayed.includes('journey-begins') 
+        ? { ...prev, displayedAchievements: ['journey-begins', ...prevDisplayed] }
+        : prev
+        
+      if (user) {
+        saveProfile(user.id, newProfile)
+      }
+      return newProfile
+    })
+
     setSettings(s => ({ ...s, onboarded: true }))
     
-    // Explicitly force a save of the initial profile so they are marked as an existing user
+    if (!hasJb) {
+      setTimeout(() => {
+        push('Achievement unlocked: Journey Begins +500 XP', 'unlock', 5000)
+        playSoundEffect('unlock', settings.soundEffects)
+      }, 500)
+    }
+
     if (user) {
-      saveProfile(user.id, profileState)
+      saveAchievements(user.id, initialAchievements)
+      // Progression is auto-saved by usePersist when the state updates
     }
   }
 
@@ -348,41 +418,154 @@ function App() {
     
     hydratedFromRemote.current = false
     setDataLoaded(false)
-    fetchAllUserData(user.id).then((remote) => {
+
+    // CRITICAL FIX: Resolve the permanent login_id from user_identities BEFORE
+    // loading any profile data. This ensures that OAuth logins (Google) and
+    // session restores always map back to the correct permanent Arinova ID.
+    const resolveAndLoad = async () => {
+      let activeLoginId = window.localStorage.getItem('current_login_id')
+
+      // If current_login_id is not in localStorage (e.g. OAuth redirect, session restore),
+      // look it up from the user_identities table using the auth UUID.
+      if (!activeLoginId || activeLoginId.includes('@')) {
+        const resolvedLoginId = await lookupLoginIdByAuthUserId(user.id)
+        if (resolvedLoginId) {
+          // Migrate the session token from the un-namespaced key to the namespaced key.
+          // When Google OAuth redirected back, GoTrue stored the session under the base key
+          // (because current_login_id was not set yet). Now that we know the login_id,
+          // we must move the token so the custom storage adapter can find it.
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+          let hostname = ''
+          try { hostname = new URL(supabaseUrl).hostname.split('.')[0] } catch (_) { /* */ }
+          const baseKey = `sb-${hostname}-auth-token`
+          const existingToken = window.localStorage.getItem(baseKey) || window.sessionStorage.getItem(baseKey)
+          
+          activeLoginId = resolvedLoginId
+          window.localStorage.setItem('current_login_id', resolvedLoginId)
+          window.localStorage.setItem('auth_remember_me', 'true')
+
+          // Copy the session token to the namespaced key and remove the old one
+          if (existingToken) {
+            const namespacedKey = `${baseKey}-${resolvedLoginId}`
+            window.localStorage.setItem(namespacedKey, existingToken)
+            window.localStorage.removeItem(baseKey)
+            window.sessionStorage.removeItem(baseKey)
+          }
+
+          // Force the Supabase client to re-read the session from the new key location
+          if (supabase) {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) {
+              // Session wasn't picked up — try to set it explicitly from the stored token
+              const namespacedKey = `${baseKey}-${resolvedLoginId}`
+              const tokenStr = window.localStorage.getItem(namespacedKey)
+              if (tokenStr) {
+                try {
+                  const parsed = JSON.parse(tokenStr)
+                  if (parsed?.access_token && parsed?.refresh_token) {
+                    await supabase.auth.setSession({
+                      access_token: parsed.access_token,
+                      refresh_token: parsed.refresh_token
+                    })
+                  }
+                } catch (_) { /* ignore parse errors */ }
+              }
+            }
+          }
+        }
+      }
+      
+      let remote = await fetchAllUserData(user.id)
       if (!remote) return
+      
+      // FALLBACK: If lookupLoginIdByAuthUserId failed (e.g. due to RLS) and activeLoginId is STILL null,
+      // but the user DOES have an existing profile, we can extract the login_id from the profile itself!
+      // This is necessary because Google OAuth redirects clear the local storage state.
+      if (!activeLoginId && remote.profile) {
+        const profileLoginId = remote.profile.login_id || remote.profile.arinova_id || remote.profile.username;
+        if (profileLoginId && profileLoginId !== 'player') {
+          activeLoginId = profileLoginId;
+          
+          // Now that we have the login_id, we MUST migrate the session token from the base key to the namespaced key
+          // just like we would have done above, so the custom storage adapter can find it for future requests.
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
+          let hostname = ''
+          try { hostname = new URL(supabaseUrl).hostname.split('.')[0] } catch (_) { /* */ }
+          const baseKey = `sb-${hostname}-auth-token`
+          const existingToken = window.localStorage.getItem(baseKey) || window.sessionStorage.getItem(baseKey)
+          
+          window.localStorage.setItem('current_login_id', activeLoginId)
+          window.localStorage.setItem('auth_remember_me', 'true')
+          
+          if (existingToken) {
+            const namespacedKey = `${baseKey}-${activeLoginId}`
+            window.localStorage.setItem(namespacedKey, existingToken)
+            window.localStorage.removeItem(baseKey)
+            window.sessionStorage.removeItem(baseKey)
+            
+            // Force the Supabase client to re-read the session from the new key location
+            if (supabase) {
+              const { data: { session } } = await supabase.auth.getSession()
+              if (!session) {
+                try {
+                  const parsed = JSON.parse(existingToken)
+                  if (parsed?.access_token && parsed?.refresh_token) {
+                    await supabase.auth.setSession({
+                      access_token: parsed.access_token,
+                      refresh_token: parsed.refresh_token
+                    })
+                  }
+                } catch (_) { /* ignore parse errors */ }
+              }
+            }
+          }
+          
+          // Re-fetch data using the fully configured storage key to ensure all data loads cleanly
+          remote = await fetchAllUserData(user.id)
+          if (!remote) return
+        }
+      }
       
       const empty = getEmptyState()
       
       // Determine if this is a genuinely NEW user (no profile AND no progression AND no settings)
       const isNewUser = !remote.profile && !remote.progression && !remote.settings
-      const activeLoginId = window.localStorage.getItem('current_login_id')
 
       if (isNewUser) {
         // 1. BRAND-NEW USER: Initialize and persist their first-time state
+        // Do NOT award Journey Begins XP here, because handleOnboardingComplete will wipe it out.
+        // It will be awarded precisely when they finish the onboarding wizard.
+        const initialProgression = {
+          ...empty.progression,
+          xp: 0,
+          achievements: 0
+        }
         const initialProfile = {
           ...empty.profile,
           displayName: activeLoginId || (user.name !== 'Player' ? user.name : null) || empty.profile.displayName,
           username: activeLoginId || empty.profile.username,
           arinova_id: activeLoginId || undefined,
           avatar: user.avatarUrl || empty.profile.avatar,
-          contact: user.email || empty.profile.contact
+          contact: user.email || empty.profile.contact,
+          displayedAchievements: []
         }
         
         setProfileState(initialProfile)
-        setProgression(empty.progression)
+        setProgression(initialProgression)
         setGoalState(empty.goals)
         setProjectState(empty.projects)
         setSkillState(empty.skills)
-        setAchievementState(empty.achievements)
+        setAchievementState(achievements) // load base achievements with all unlocked: false
         setBadgeState(empty.badges)
         setSettings(empty.settings) // onboarded is false by default
         setFriendState(empty.friends)
         setChatState(empty.chat)
-
+        
         // Automatically persist the initial records to Supabase so they exist
         saveProfile(user.id, initialProfile)
-        saveProgressionData(user.id, empty.progression)
+        saveProgressionData(user.id, initialProgression)
         saveSettings(user.id, empty.settings)
+        saveAchievements(user.id, achievements)
         
       } else {
         // 2. EXISTING USER: Load their persisted data exactly as it is
@@ -427,13 +610,64 @@ function App() {
             window.localStorage.setItem('futureme-profile', JSON.stringify(fallbackProfile))
           }
         }
-        if (remote.progression) setProgression(remote.progression)
+        let loadedProgression = remote.progression || empty.progression
+        let loadedAchievements = remote.achievements || empty.achievements
+
+        // --- BACKFILL: Journey Begins ---
+        // Ensure existing users have the achievement record without awarding any duplicate XP.
+        const jbIndex = loadedAchievements.findIndex((a: any) => a.id === 'journey-begins')
+        const hasJourneyBegins = jbIndex !== -1 && loadedAchievements[jbIndex].unlocked
+
+        if (!hasJourneyBegins) {
+          // Safely add or unlock the achievement itself
+          if (jbIndex !== -1) {
+            loadedAchievements[jbIndex] = { ...loadedAchievements[jbIndex], unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10), xpReward: 500 }
+          } else {
+            const defaultJb = achievements.find((a: any) => a.id === 'journey-begins')
+            if (defaultJb) {
+              loadedAchievements = [
+                { ...defaultJb, unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10), xpReward: 500 },
+                ...loadedAchievements
+              ]
+            }
+          }
+          
+          // Ensure it is displayed on the profile
+          setProfileState(prev => {
+            const prevDisplayed = prev.displayedAchievements || []
+            if (!prevDisplayed.includes('journey-begins')) {
+              const updatedProfile = { ...prev, displayedAchievements: ['journey-begins', ...prevDisplayed] }
+              saveProfile(user.id, updatedProfile)
+              if (typeof window !== 'undefined') {
+                window.localStorage.setItem('futureme-profile', JSON.stringify(updatedProfile))
+              }
+              return updatedProfile
+            }
+            return prev
+          })
+          
+          // Atomic persist to database to lock it in
+          // (XP is purposely NOT modified here so existing users do not receive duplicated XP)
+          saveAchievements(user.id, loadedAchievements)
+        }
+        // --- END BACKFILL ---
+
+        setProgression(loadedProgression)
+        setAchievementState(loadedAchievements)
         if (remote.goals) setGoalState(remote.goals)
         if (remote.projects) setProjectState(remote.projects)
         if (remote.skills) setSkillState(remote.skills)
-        if (remote.achievements) setAchievementState(remote.achievements)
         if (remote.badges) setBadgeState(remote.badges)
-        if (remote.friends) setFriendState(remote.friends)
+        
+        // CRITICAL FIX: Fetch actual social network state instead of relying on legacy profile.data.friends JSON
+        try {
+          const network = await fetchSocialNetwork(user.id)
+          setFriendState({ relationships: network.relationships })
+          setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id))
+        } catch (err) {
+          console.error("Failed to fetch social network", err)
+          if (remote.friends) setFriendState(remote.friends)
+        }
         if (remote.chat) setChatState(remote.chat)
         
         if (remote.settings) {
@@ -444,14 +678,15 @@ function App() {
         }
       }
 
-      fetchIncomingFriendRequests(user.id).then(reqs => setIncomingRequests(reqs))
       fetchIncomingMessages(user.id).then(msgs => setIncomingMessages(msgs))
 
       setTimeout(() => {
         hydratedFromRemote.current = true
         setDataLoaded(true)
       }, 0)
-    })
+    }
+
+    resolveAndLoad()
   }, [user, isConfigured])
 
   // Safe persistence: only saves when state mutates AFTER hydration
@@ -463,8 +698,6 @@ function App() {
   usePersist(achievementState, user, dataLoaded, saveAchievements)
   usePersist(badgeState, user, dataLoaded, saveBadges)
   usePersist(settings, user, dataLoaded, saveSettings)
-
-  usePersist(friendState, user, dataLoaded, saveFriendsState)
   usePersist(chatState, user, dataLoaded, saveChatState)
 
   // Show a toast and sound when the player levels up or gains XP
@@ -478,40 +711,63 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [progression.xp, settings.soundEffects])
 
+  const evaluatingRewardsRef = useRef(false)
+
   // Automated badge & achievement evaluator
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      const { updatedBadges, updatedAchievements, newEarnedBadges, newUnlockedAchievements } = evaluateAchievementsAndBadges(
-        progression,
-        goalState,
-        projectState,
-        skillState,
-        achievementState,
-        badgeState
-      )
+    if (evaluatingRewardsRef.current) return
+    
+    // Quick check if there is anything to unlock BEFORE attempting to mutate state
+    const { newEarnedBadges, newUnlockedAchievements } = evaluateAchievementsAndBadges(
+      progression, goalState, projectState, skillState, achievementState, badgeState
+    )
 
-      if (newEarnedBadges.length > 0) {
-        setBadgeState(updatedBadges)
-        newEarnedBadges.forEach((b) => {
-          setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.badge, badges: p.badges + 1 }))
-          push(`Badge earned: ${b.title} +${XP_REWARDS.badge} XP`, 'badge')
-          playSoundEffect('badge', settings.soundEffects)
-        })
+    if (newEarnedBadges.length === 0 && newUnlockedAchievements.length === 0) {
+      return // Nothing to do
+    }
+
+    evaluatingRewardsRef.current = true
+
+    // We have rewards! Let's update all state atomically 
+    const { updatedBadges, updatedAchievements } = evaluateAchievementsAndBadges(
+      progression, goalState, projectState, skillState, achievementState, badgeState
+    )
+
+    if (newEarnedBadges.length > 0) {
+      setBadgeState(updatedBadges)
+      let totalBadgeXp = 0
+      newEarnedBadges.forEach((b) => {
+        totalBadgeXp += XP_REWARDS.badge
+        push(`Badge earned: ${b.title} +${XP_REWARDS.badge} XP`, 'badge')
+      })
+      if (totalBadgeXp > 0) {
+        setProgression(p => ({ ...p, xp: p.xp + totalBadgeXp, badges: p.badges + newEarnedBadges.length }))
       }
+    }
 
-      if (newUnlockedAchievements.length > 0) {
-        setAchievementState(updatedAchievements)
-        newUnlockedAchievements.forEach((a) => {
-          setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.achievement, achievements: p.achievements + 1 }))
-          push(`Achievement unlocked: ${a.title} +${XP_REWARDS.achievement} XP`, 'unlock')
-          playSoundEffect('unlock', settings.soundEffects)
-        })
+    if (newUnlockedAchievements.length > 0) {
+      setAchievementState(updatedAchievements)
+      let totalAchXp = 0
+      newUnlockedAchievements.forEach((a) => {
+        const reward = a.xpReward || XP_REWARDS.achievement
+        totalAchXp += reward
+        push(`Achievement unlocked: ${a.title} +${reward} XP`, 'unlock')
+      })
+      if (totalAchXp > 0) {
+        setProgression(p => ({ ...p, xp: p.xp + totalAchXp, achievements: p.achievements + newUnlockedAchievements.length }))
       }
-    }, 0)
+    }
+    
+    if (newEarnedBadges.length > 0 || newUnlockedAchievements.length > 0) {
+      playSoundEffect('unlock', settings.soundEffects)
+    }
 
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progression.xp, goalState, projectState, skillState])
+    // Release the lock after a short delay to allow React to commit the state
+    setTimeout(() => {
+      evaluatingRewardsRef.current = false
+    }, 150)
+
+  }, [progression, goalState, projectState, skillState, achievementState, badgeState])
 
   const completedGoals = goalState.filter((goal) => goal.status === 'COMPLETED').length
   const masteredSkills = skillState.filter((skill) => skill.status === 'MASTERED').length
@@ -537,12 +793,14 @@ function App() {
       if (skill.id !== id) return skill
       const nextStatus = skill.status === 'MASTERED' ? 'LEARNING' : 'MASTERED'
       if (nextStatus === 'MASTERED') {
-        setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
-        push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
-        playSoundEffect('unlock', settings.soundEffects)
-        return { ...skill, status: 'MASTERED' as const, progress: 100, completed: new Date().toISOString().slice(0, 10) }
+        if (!skill.completed) {
+          setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
+          push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
+          playSoundEffect('unlock', settings.soundEffects)
+        }
+        return { ...skill, status: 'MASTERED' as const, progress: 100, completed: skill.completed || new Date().toISOString().slice(0, 10) }
       }
-      return { ...skill, status: 'LEARNING' as const, completed: '' }
+      return { ...skill, status: 'LEARNING' as const } // Do not clear completed date so they can't farm XP
     }))
   }
 
@@ -777,6 +1035,7 @@ function App() {
                       {section.id === 'chat' && (
                         (() => {
                           const unreadTotal = incomingMessages.filter(m => {
+                            if (chatState.mutedUsers?.includes(m.senderId)) return false
                             const lastRead = chatState.lastRead[m.senderId] || '1970-01-01T00:00:00.000Z'
                             return new Date(m.timestamp) > new Date(lastRead)
                           }).length
@@ -798,9 +1057,9 @@ function App() {
               <div className="main-stage">
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <AnimatePresence mode="wait">
-                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
-                    {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
+                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
+                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} achievements={achievementState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
+                    {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} badges={badgeState} projects={projectState} skills={skillState} achievements={achievementState} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
                       if (typeof window !== 'undefined') {
                         window.localStorage.setItem('futureme-profile', JSON.stringify(updatedProfile))
@@ -874,55 +1133,134 @@ function App() {
                     {route.view === 'achievement_detail' && <AchievementDetail achievement={achievementState.find(a => a.id === route.id)!} onBack={goBack} />}
                     {route.view === 'badge_detail' && <BadgeDetail badge={badgeState.find(b => b.id === route.id)!} onBack={goBack} />}
                     {route.view === 'friends' && (
-                      <FriendsPanel
-                        friendState={friendState}
-                        incomingRequests={incomingRequests}
-                        onOpenSearch={() => setUserSearchOpen(true)}
-                        onAccept={(id) => {
-                          setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships, { userId: id, status: 'accepted', createdAt: new Date().toISOString() }] }))
-                          setIncomingRequests(prev => prev.filter(r => r !== id))
-                          push('Friend request accepted!', 'info')
-                        }}
-                        onReject={(id) => {
-                          setIncomingRequests(prev => prev.filter(r => r !== id))
-                          push('Friend request rejected.', 'info')
-                        }}
-                        onRemove={(id) => {
-                          setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
-                          push('Friend removed.', 'info')
-                        }}
-                        onOpenProfile={(id) => { setViewingUserId(id) }}
-                        onMessage={(id) => {
-                          setActiveFriendIdForChat(id)
-                          navigate({ view: 'chat' })
-                        }}
-                      />
-                    )}
+                        <FriendsPanel
+                          onlineUsers={onlineUsers}
+                          friendState={friendState}
+                          incomingRequests={incomingRequests}
+                          onOpenSearch={() => setUserSearchOpen(true)}
+                          onAccept={async (id) => {
+                            // Find the request ID
+                            try {
+                              const network = await fetchSocialNetwork(user!.id)
+                              const request = network.incomingRequests.find((r: any) => r.sender_id === id)
+                              if (request) {
+                                await acceptFriendRequest(request.id)
+                                setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships.filter(r => r.userId !== id), { userId: id, status: 'accepted', createdAt: new Date().toISOString() }] }))
+                                setIncomingRequests(prev => prev.filter(r => r !== id))
+                                push('Friend request accepted!', 'info')
+                              }
+                            } catch (err: any) {
+                              push('Failed to accept request.', 'info')
+                            }
+                          }}
+                          onReject={async (id) => {
+                            try {
+                              const network = await fetchSocialNetwork(user!.id)
+                              const request = network.incomingRequests.find((r: any) => r.sender_id === id)
+                              if (request) {
+                                await rejectFriendRequest(request.id)
+                                setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
+                                setIncomingRequests(prev => prev.filter(r => r !== id))
+                                push('Friend request rejected.', 'info')
+                              }
+                            } catch (err: any) {
+                              push('Failed to reject request.', 'info')
+                            }
+                          }}
+                          onRemove={async (id) => {
+                            try {
+                              await removeFriend(id)
+                              setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
+                              push('Friend removed.', 'info')
+                            } catch (err: any) {
+                              push('Failed to remove friend.', 'info')
+                            }
+                          }}
+                          onOpenProfile={(id) => { setViewingUserId(id) }}
+                          onMessage={(id) => {
+                            setActiveFriendIdForChat(id)
+                            navigate({ view: 'chat' })
+                          }}
+                        />
+                      )}
                     {route.view === 'chat' && (
-                      <ChatPanel
-                        activeUserId={user?.id || ''}
-                        chatState={chatState}
+                      <ChatPanel 
+                        activeUserId={user?.id || ''} 
+                        chatState={chatState} 
                         friendState={friendState}
                         incomingMessages={incomingMessages}
-                        onSendMessage={(receiverId, content) => {
-                          const msg = {
-                            id: Math.random().toString(36).substring(7),
-                            conversationId: [user?.id || '', receiverId].sort().join('_'),
-                            senderId: user?.id || '',
-                            receiverId,
-                            content,
-                            timestamp: new Date().toISOString()
+                        onSendMessage={async (receiverId, content) => {
+                          const msgId = Math.random().toString(36).substring(7)
+                          const timestamp = new Date().toISOString()
+                          
+                          try {
+                            const newMsg = await sendChatMessage(receiverId, msgId, content, timestamp)
+                            if (newMsg) {
+                              setChatState(prev => ({ ...prev, messages: [...(prev.messages || []), newMsg] }))
+                            }
+                          } catch (err: any) {
+                            console.error("SEND MESSAGE RPC FAILED:", err);
+                            // If it fails (e.g. blocked), keep it in the UI as a failed message.
+                            const failedMsg = {
+                              id: msgId,
+                              conversationId: [user?.id || '', receiverId].sort().join('_'),
+                              senderId: user?.id || '',
+                              receiverId,
+                              content,
+                              timestamp,
+                              isFailed: true
+                            }
+                            setChatState(prev => ({ ...prev, messages: [...(prev.messages || []), failedMsg] }))
                           }
-                          setChatState(prev => ({ ...prev, messages: [...prev.messages, msg] }))
+                        }}
+                        onEditMessage={(messageId, newContent) => {
+                          setChatState(prev => ({
+                            ...prev,
+                            messages: (prev.messages || []).map(m => m.id === messageId ? { ...m, content: newContent, editedAt: new Date().toISOString() } : m)
+                          }))
+                        }}
+                        onDeleteForMe={(messageId) => {
+                          setChatState(prev => ({
+                            ...prev,
+                            hiddenMessages: [...(prev.hiddenMessages || []), messageId]
+                          }))
+                        }}
+                        onDeleteForEveryone={(messageId) => {
+                          setChatState(prev => ({
+                            ...prev,
+                            messages: (prev.messages || []).map(m => m.id === messageId ? { ...m, deletedForEveryone: true, content: '' } : m)
+                          }))
                         }}
                         onMarkRead={(friendId, timestamp) => {
-                          setChatState(prev => ({ ...prev, lastRead: { ...prev.lastRead, [friendId]: timestamp } }))
+                          setChatState(prev => ({ ...prev, lastRead: { ...(prev.lastRead || {}), [friendId]: timestamp } }))
                         }}
-                        onOpenProfile={(id) => { setViewingUserId(id) }}
+                        onToggleMute={(friendId) => {
+                          setChatState(prev => {
+                            const muted = prev.mutedUsers || []
+                            return { ...prev, mutedUsers: muted.includes(friendId) ? muted.filter(id => id !== friendId) : [...muted, friendId] }
+                          })
+                        }}
+                        onToggleBlock={(friendId) => {
+                          setChatState(prev => {
+                            const blocked = prev.blockedUsers || []
+                            const newState = { ...prev, blockedUsers: blocked.includes(friendId) ? blocked.filter(id => id !== friendId) : [...blocked, friendId] }
+                            if (user) saveChatState(user.id, newState)
+                            return newState
+                          })
+                        }}
+                        onClearChat={(friendId) => {
+                          setChatState(prev => ({
+                            ...prev,
+                            clearedChats: { ...(prev.clearedChats || {}), [friendId]: new Date().toISOString() }
+                          }))
+                        }}
                         activeFriendId={activeFriendIdForChat}
                         onSetActiveFriendId={setActiveFriendIdForChat}
+                        onOpenProfile={(id) => { setViewingUserId(id); setUserSearchOpen(true) }}
+                        onlineUsers={onlineUsers}
                       />
                     )}
+
                     {route.view === 'future' && (
                       <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />
                     )}
@@ -977,22 +1315,66 @@ function App() {
       />
 
 
-      <UserSearch open={userSearchOpen} onClose={() => setUserSearchOpen(false)} onSelectUser={(userId) => { setViewingUserId(userId); setUserSearchOpen(false) }} />
+      <UserSearch 
+        open={userSearchOpen} 
+        onClose={() => setUserSearchOpen(false)} 
+        onSelectUser={(userId) => { setViewingUserId(userId); setUserSearchOpen(false) }}
+        activeUserId={user?.id}
+        friendState={friendState}
+        onSendRequest={async (id) => {
+          if (id === user?.id) return
+          try {
+            await sendFriendRequest(id)
+            setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships, { userId: id, status: 'pending_outgoing', createdAt: new Date().toISOString() }] }))
+            push('Friend request sent!', 'info')
+          } catch (err: any) {
+            push(err.message || 'Failed to send request.', 'info')
+          }
+        }}
+      />
       <PublicProfileViewer
         userId={viewingUserId}
         activeUserId={user?.id}
         friendState={friendState}
-        onSendRequest={(id) => {
-          if (id === user?.id) return
-          setFriendState((prev: FriendState) => {
-            if (prev.relationships.find((r) => r.userId === id)) return prev
-            return { relationships: [...prev.relationships, { userId: id, status: 'pending_outgoing', createdAt: new Date().toISOString() }] }
+        chatState={chatState}
+        onlineUsers={onlineUsers}
+        onToggleBlock={(friendId) => {
+          setChatState(prev => {
+            const blocked = prev.blockedUsers || []
+            const newState = { ...prev, blockedUsers: blocked.includes(friendId) ? blocked.filter(id => id !== friendId) : [...blocked, friendId] }
+            if (user) saveChatState(user.id, newState)
+            return newState
           })
-          push('Friend request sent!', 'info')
         }}
-        onRemoveFriend={(id) => {
-          setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
-          push('Friend removed.', 'info')
+        onToggleMute={(friendId) => {
+          setChatState(prev => {
+            const muted = prev.mutedUsers || []
+            const newState = { ...prev, mutedUsers: muted.includes(friendId) ? muted.filter(id => id !== friendId) : [...muted, friendId] }
+            if (user) saveChatState(user.id, newState)
+            return newState
+          })
+        }}
+        onSendRequest={async (id) => {
+          if (id === user?.id) return
+          try {
+            await sendFriendRequest(id)
+            setFriendState((prev: FriendState) => {
+              if (prev.relationships.find((r) => r.userId === id)) return prev
+              return { relationships: [...prev.relationships, { userId: id, status: 'pending_outgoing', createdAt: new Date().toISOString() }] }
+            })
+            push('Friend request sent!', 'info')
+          } catch (err: any) {
+            push(err.message || 'Failed to send request.', 'info')
+          }
+        }}
+        onRemoveFriend={async (id) => {
+          try {
+            await removeFriend(id)
+            setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
+            push('Friend removed.', 'info')
+          } catch (err: any) {
+            push('Failed to remove friend.', 'info')
+          }
         }}
         onMessage={(id) => {
           setActiveFriendIdForChat(id)

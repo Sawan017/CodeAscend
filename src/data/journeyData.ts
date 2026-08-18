@@ -260,6 +260,15 @@ export const badges: Badge[] = [
 
 export const achievements: Achievement[] = [
   {
+    id: 'journey-begins',
+    icon: '✨',
+    title: 'Journey Begins',
+    description: 'Your journey starts here. Create your account and take your first step toward mastery.',
+    unlockCondition: 'Create your account',
+    unlocked: false,
+    xpReward: 500,
+  },
+  {
     id: 'first-website',
     icon: '◉',
     title: 'FIRST WEBSITE',

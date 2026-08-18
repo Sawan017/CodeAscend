@@ -42,6 +42,7 @@ export function LoginUI() {
 
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isSubmitting || authLoading) return
     if (displayName.length < 4 || displayName.length > 12 || !/^[a-zA-Z0-9_]+$/.test(displayName)) {
       setError('Username must be 4-12 characters (letters, numbers, underscores).')
       return
@@ -69,6 +70,7 @@ export function LoginUI() {
 
   const handleContinueToDashboard = async () => {
     if (!successIdentity) return
+    if (isSubmitting || authLoading) return
     setIsSubmitting(true)
     setError(null)
     try {
@@ -99,6 +101,7 @@ export function LoginUI() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isSubmitting || authLoading) return
     if (!identifier) {
       setError('Please provide an identifier')
       return
@@ -125,10 +128,17 @@ export function LoginUI() {
         window.localStorage.setItem('auth_remember_me', rememberMe ? 'true' : 'false')
         
         // Delegate actual password verification to Supabase Auth
-        await signInWithEmail(resolvedEmail, password)
+        const authData = await signInWithEmail(resolvedEmail, password)
         
         // Always save the current login ID so signOut knows which account to manage
-        window.localStorage.setItem('current_login_id', identifier)
+        // IMPORTANT: We must use the permanent login_id, not the identifier (which might be an email)
+        let finalLoginId = identifier
+        if (identifier.includes('@') && authData?.user) {
+          const { data } = await supabase!.from('user_identities').select('login_id').eq('user_id', authData.user.id).limit(1).single()
+          if (data) finalLoginId = data.login_id
+        }
+        
+        window.localStorage.setItem('current_login_id', finalLoginId)
       }
     } catch (err: any) {
       let msg = err.message || 'Authentication failed. Please try again.'

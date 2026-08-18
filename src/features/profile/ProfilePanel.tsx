@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { Goal, Progression, UserProfile, Skill } from '../../types'
 import { calculateLevel, getNameColorClass, calculateProgressToNextLevel } from '../../lib/progression'
 import { XpProgressBar } from '../../components/XpProgressBar'
+import { Avatar } from '../../components/Avatar'
+import { MilestonesSection } from '../../components/MilestonesSection'
 
 type ProfilePanelProps = {
   profile: UserProfile
@@ -9,6 +11,7 @@ type ProfilePanelProps = {
   skills: Skill[]
   goals: Goal[]
   goalsCompleted: number
+  achievements: import('../../types').Achievement[]
   onUpdateProfile: (next: UserProfile) => void
 }
 
@@ -17,7 +20,13 @@ const LANGUAGE_OPTIONS = [
   'Java', 'C++', 'C#', 'Go', 'Rust', 'SQL',
 ]
 
-export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, onUpdateProfile, onEditProfile }: ProfilePanelProps & { onEditProfile?: () => void }) {
+export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, achievements, onUpdateProfile, onEditProfile }: ProfilePanelProps & { onEditProfile?: () => void }) {
+  const safeAchievements = achievements || [];
+  const unlocked = safeAchievements.filter(a => a.unlocked);
+  console.log("DEBUG: RENDER ProfilePanel mounted = true", { 
+    totalAchievements: safeAchievements.length, 
+    unlockedCount: unlocked.length 
+  })
   const level = calculateLevel(progression.xp)
   const nameColorClass = getNameColorClass(level)
   const [customLang, setCustomLang] = useState('')
@@ -65,8 +74,8 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div style={{ width: '100px', height: '100px', borderRadius: '24px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(6,182,212,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '3rem', fontWeight: 600, color: '#fff', boxShadow: '0 0 20px rgba(6,182,212,0.15)', overflow: 'hidden' }}>
-                {profile.avatar ? <img src={profile.avatar} alt={profile.displayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : profile.displayName?.[0] || 'U'}
+              <div style={{ borderRadius: '50%', border: '1px solid rgba(6,182,212,0.3)', boxShadow: '0 0 20px rgba(6,182,212,0.15)' }}>
+                <Avatar src={profile.avatar} alt={profile.displayName} size={100} />
               </div>
               <div>
                 <h3 className={nameColorClass} style={{ fontSize: '2rem', margin: '0 0 0.5rem 0', fontWeight: 700, letterSpacing: '-0.02em' }}>{profile.displayName}</h3>
@@ -156,6 +165,10 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
               <strong style={{ fontSize: '1.5rem', color: '#fff' }}>{goalsCompleted}</strong>
             </div>
           </div>
+        </div>
+
+        <div className="panel" style={{ padding: '1.5rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <MilestonesSection achievements={achievements} displayedIds={profile.displayedAchievements} maxVisible={12} />
         </div>
 
         <div className="panel" style={{ padding: '1.5rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}>

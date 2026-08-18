@@ -1,78 +1,82 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, User } from 'lucide-react'
+import { Search, X, UserPlus, Check, Clock } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import type { UserProfile } from '../types'
-import { fetchPublicProfiles, fetchPublicProfileByUsername } from '../lib/api'
+import type { FriendState } from '../types'
+import { Avatar } from './Avatar'
+import { searchDeveloperByLoginId } from '../lib/api'
 
 type UserSearchProps = {
   open: boolean
   onClose: () => void
   onSelectUser: (userId: string) => void
+  activeUserId?: string
+  friendState?: FriendState
+  onSendRequest?: (userId: string) => void
 }
 
-export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
+export function UserSearch({ open, onClose, onSelectUser, activeUserId, friendState, onSendRequest }: UserSearchProps) {
   const [query, setQuery] = useState('')
-  const [profiles, setProfiles] = useState<Array<{ userId: string; username: string; displayName: string; avatar?: string; level: number; login_id?: string; arinova_id?: string }>>([])
+  const [profiles, setProfiles] = useState<Array<{ userId: string; username: string; displayName: string; avatar?: string; level: number; login_id?: string; xp: number }>>([])
   const [loading, setLoading] = useState(false)
-  const [selectedProfile, setSelectedProfile] = useState<UserProfile | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   useEffect(() => {
-    if (open) {
-      loadProfiles()
+    if (!open) {
+      setQuery('')
+      setProfiles([])
+      setErrorMsg(null)
     }
   }, [open])
 
-  async function loadProfiles() {
-    setLoading(true)
-    const publicProfiles = await fetchPublicProfiles()
-    setProfiles(publicProfiles)
-    setLoading(false)
-  }
-
   async function handleSearch() {
+    setErrorMsg(null)
     if (!query.trim()) {
-      loadProfiles()
+      setProfiles([])
       return
     }
 
     setLoading(true)
-    const profile = await fetchPublicProfileByUsername(query.trim())
+    const profile = await searchDeveloperByLoginId(query.trim())
     if (profile) {
       setProfiles([profile])
-      setSelectedProfile({
-        userId: profile.userId,
-        username: profile.username,
-        displayName: profile.displayName,
-        avatar: profile.avatar,
-        bio: profile.bio,
-        title: profile.title || '',
-        introduction: '',
-        education: '',
-        focus: '',
-        technologies: [],
-        github: '',
-        linkedin: '',
-        contact: '',
-        contactPublic: false,
-        level: profile.level,
-        xp: profile.xp,
-      })
     } else {
       setProfiles([])
-      setSelectedProfile(null)
+      setErrorMsg('Developer not found')
     }
     setLoading(false)
   }
 
-  function handleSelectProfile(profile: UserProfile) {
-    setSelectedProfile(profile)
+  function getRelationshipStatus(userId: string) {
+    if (!friendState) return 'none'
+    const rel = friendState.relationships.find(r => r.userId === userId)
+    if (!rel) return 'none'
+    return rel.status // 'accepted', 'pending_outgoing', 'pending_incoming'
   }
 
-  function handleViewFullProfile() {
-    if (selectedProfile && selectedProfile.userId) {
-      onSelectUser(selectedProfile.userId)
-      onClose()
+  function renderActionButton(profile: any) {
+    if (profile.userId === activeUserId) {
+      return <button className="secondary-btn" disabled>You cannot add yourself</button>
     }
+    
+    const status = getRelationshipStatus(profile.userId)
+    
+    if (status === 'accepted') {
+      return <button className="secondary-btn" disabled style={{ color: 'var(--primary)', borderColor: 'var(--primary)' }}><Check size={16} /> Already Friends</button>
+    }
+    
+    if (status === 'pending_outgoing') {
+      return <button className="secondary-btn" disabled><Clock size={16} /> Request Sent</button>
+    }
+
+    if (status === 'pending_incoming') {
+      return <button className="primary-btn" onClick={() => onSelectUser(profile.userId)}>Review Request</button>
+    }
+
+    return (
+      <button className="primary-btn" onClick={() => onSendRequest && onSendRequest(profile.userId)}>
+        <UserPlus size={16} /> Add Friend
+      </button>
+    )
   }
 
   return (
@@ -106,100 +110,46 @@ export function UserSearch({ open, onClose, onSelectUser }: UserSearchProps) {
             <div className="search-box">
               <input
                 type="text"
-                placeholder="Search by User ID..."
+                placeholder="Search exact User ID (e.g. test#1234)"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <button className="secondary-btn" onClick={handleSearch}>
+              <button className="secondary-btn" onClick={handleSearch} disabled={loading}>
                 <Search size={16} />
               </button>
             </div>
 
-            {!selectedProfile ? (
-              <div className="user-list">
-                {loading ? (
-                  <p className="muted">Loading...</p>
-                ) : profiles.length === 0 ? (
-                  <p className="muted">No users found</p>
-                ) : (
-                  profiles.map((profile) => (
-                    <motion.button
-                      key={profile.userId}
-                      whileHover={{ scale: 1.02 }}
-                      className="user-card"
-                      onClick={() =>
-                        handleSelectProfile({
-                          userId: profile.userId,
-                          username: profile.username,
-                          displayName: profile.displayName,
-                          avatar: profile.avatar,
-                          bio: '',
-                          title: '',
-                          introduction: '',
-                          education: '',
-                          focus: '',
-                          technologies: [],
-                          github: '',
-                          linkedin: '',
-                          contact: '',
-                          contactPublic: false,
-                          level: profile.level,
-                          xp: 0,
-                        })
-                      }
-                    >
-                      <div className="user-avatar">
-                        {profile.avatar ? (
-                          <img src={profile.avatar} alt={profile.displayName || 'User'} />
-                        ) : (
-                          <User size={20} />
-                        )}
+            <div className="user-list">
+              {loading ? (
+                <p className="muted">Searching...</p>
+              ) : errorMsg ? (
+                <p className="muted" style={{ color: 'var(--danger, #ef4444)' }}>{errorMsg}</p>
+              ) : profiles.length === 0 ? (
+                <p className="muted">Enter a permanent User ID to search.</p>
+              ) : (
+                profiles.map((profile) => (
+                  <motion.div
+                    key={profile.userId}
+                    className="user-card"
+                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'default' }}
+                  >
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                      <div onClick={() => onSelectUser(profile.userId)} style={{ cursor: 'pointer' }}>
+                        <Avatar src={profile.avatar} alt={profile.displayName} size={40} />
                       </div>
                       <div className="user-info">
-                        <h4>{profile.displayName}</h4>
-                        <p className="muted">@{profile.login_id || profile.arinova_id || profile.username} · Level {profile.level}</p>
+                        <h4 onClick={() => onSelectUser(profile.userId)} style={{ cursor: 'pointer' }}>{profile.displayName}</h4>
+                        <p className="muted">@{profile.login_id} Level {profile.level}</p>
                       </div>
-                    </motion.button>
-                  ))
-                )}
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="profile-preview"
-              >
-                <div className="preview-header">
-                  <div className="avatar-badge large">
-                    {selectedProfile.avatar ? (
-                      <img src={selectedProfile.avatar} alt={selectedProfile.displayName || 'User'} />
-                    ) : (
-                      (selectedProfile.displayName?.charAt(0).toUpperCase() || '?')
-                    )}
-                  </div>
-                  <div>
-                    <h4>{selectedProfile.displayName}</h4>
-                    <p className="muted">@{selectedProfile.login_id || selectedProfile.arinova_id || selectedProfile.username} · Level {selectedProfile.level}</p>
-                  </div>
-                </div>
-
-                {selectedProfile.bio && <p className="copy">{selectedProfile.bio}</p>}
-                {selectedProfile.title && <p className="muted">{selectedProfile.title}</p>}
-
-                <div className="preview-stats">
-                  <div><strong>{selectedProfile.xp}</strong><span>XP</span></div>
-                  <div><strong>{selectedProfile.level}</strong><span>Level</span></div>
-                </div>
-
-                <button className="primary-btn" onClick={handleViewFullProfile}>
-                  View Full Profile
-                </button>
-                <button className="secondary-btn" onClick={() => setSelectedProfile(null)}>
-                  Back to Search
-                </button>
-              </motion.div>
-            )}
+                    </div>
+                    <div>
+                      {renderActionButton(profile)}
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
           </motion.div>
         </>
       )}
