@@ -1399,10 +1399,6 @@ function App() {
             }
           })
         }}
-        onAwardXp={(xp) => {
-          setProgression(p => ({ ...p, xp: p.xp + xp }))
-          push(`Imported GitHub XP! +${xp} XP`, 'xp')
-        }}
       />
 
 
