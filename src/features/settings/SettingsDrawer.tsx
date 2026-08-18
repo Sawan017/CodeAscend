@@ -65,6 +65,18 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       }
     })
 
+    // Auto-sync if requested from URL
+    if (open && window.location.search.includes('sync=github')) {
+      const searchParams = new URLSearchParams(window.location.search)
+      searchParams.delete('sync')
+      const newSearch = searchParams.toString() ? '?' + searchParams.toString() : ''
+      window.history.replaceState(null, '', window.location.pathname + newSearch + window.location.hash)
+      // Small delay to ensure state and tokens are flushed
+      setTimeout(() => {
+        syncGitHubProjects()
+      }, 500)
+    }
+
     return () => {
       listener.subscription.unsubscribe()
     }
@@ -90,13 +102,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
     }
   }
 
-  const connectGitHub = async () => {
+  const connectGitHub = async (autoSync: boolean = false) => {
     if (!supabase) return
     console.log('[Auth Trace] Initiating linkIdentity for github')
     const { data, error } = await supabase.auth.linkIdentity({ 
       provider: 'github',
       options: {
-        redirectTo: window.location.origin + '?settings=account'
+        redirectTo: window.location.origin + '?settings=account' + (autoSync ? '&sync=github' : '')
       }
     })
     console.log('[Auth Trace] linkIdentity response:', data, error)
@@ -113,7 +125,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       const token = await getGitHubToken()
       if (!token) {
         setGithubMessage('GitHub session expired. Reconnecting to refresh token...')
-        setTimeout(() => connectGitHub(), 1500)
+        setTimeout(() => connectGitHub(true), 1500)
         return
       }
 
@@ -181,7 +193,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
     } catch (err: any) {
       if (err.message?.includes('401') || err.status === 401 || err.message?.includes('Bad credentials')) {
         setGithubMessage('GitHub token expired. Reconnecting to refresh...')
-        setTimeout(() => connectGitHub(), 1500)
+        setTimeout(() => connectGitHub(true), 1500)
       } else {
         setGithubMessage('Error syncing GitHub: ' + err.message)
       }
@@ -380,7 +392,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
                 <div>
                   {!githubConnected ? (
-                    <button className="primary-btn" onClick={connectGitHub}>Connect GitHub</button>
+                    <button className="primary-btn" onClick={() => connectGitHub()}>Connect GitHub</button>
                   ) : (
                     <button className="secondary-btn" onClick={syncGitHubProjects} disabled={syncingGithub}>
                       {syncingGithub ? 'Syncing...' : 'Sync Projects'}
