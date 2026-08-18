@@ -112,8 +112,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
       const token = await getGitHubToken()
       if (!token) {
-        setGithubMessage('GitHub session expired. Please reconnect.')
-        setSyncingGithub(false)
+        setGithubMessage('GitHub session expired. Reconnecting to refresh token...')
+        setTimeout(() => connectGitHub(), 1500)
         return
       }
 
@@ -179,7 +179,12 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       setGithubMessage(`Sync complete: ${newProjects.length} imported, ${repos.length - newProjects.length} updated.`)
 
     } catch (err: any) {
-      setGithubMessage('Error syncing GitHub: ' + err.message)
+      if (err.message?.includes('401') || err.status === 401 || err.message?.includes('Bad credentials')) {
+        setGithubMessage('GitHub token expired. Reconnecting to refresh...')
+        setTimeout(() => connectGitHub(), 1500)
+      } else {
+        setGithubMessage('Error syncing GitHub: ' + err.message)
+      }
     } finally {
       setSyncingGithub(false)
     }
