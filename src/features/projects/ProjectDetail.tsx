@@ -142,7 +142,10 @@ export function ProjectDetail({
             </div>
           ) : (
             <>
-              <h1 style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--cyan)' }}>{project.name}</h1>
+              <h1 style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--cyan)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                {project.name}
+                {project.provider === 'github' && <span style={{ fontSize: '1rem', padding: '4px 10px', background: 'var(--primary)', color: 'white', borderRadius: '8px' }}>GitHub Sync</span>}
+              </h1>
               <p style={{ fontSize: '1.25rem', lineHeight: '1.6', marginBottom: '2rem', color: 'var(--text-muted)' }}>
                 {project.description}
               </p>

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import type { Goal, Progression, UserProfile, Skill } from '../../types'
 import { calculateLevel, getNameColorClass, calculateProgressToNextLevel } from '../../lib/progression'
 import { XpProgressBar } from '../../components/XpProgressBar'
@@ -15,12 +14,7 @@ type ProfilePanelProps = {
   onUpdateProfile: (next: UserProfile) => void
 }
 
-const LANGUAGE_OPTIONS = [
-  'TypeScript', 'JavaScript', 'React', 'Node.js', 'Python', 'Tailwind CSS',
-  'Java', 'C++', 'C#', 'Go', 'Rust', 'SQL',
-]
-
-export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, achievements, onUpdateProfile, onEditProfile }: ProfilePanelProps & { onEditProfile?: () => void }) {
+export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, achievements, onEditProfile }: ProfilePanelProps & { onEditProfile?: () => void }) {
   const safeAchievements = achievements || [];
   const unlocked = safeAchievements.filter(a => a.unlocked);
   console.log("DEBUG: RENDER ProfilePanel mounted = true", { 
@@ -29,7 +23,6 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
   })
   const level = calculateLevel(progression.xp)
   const nameColorClass = getNameColorClass(level)
-  const [customLang, setCustomLang] = useState('')
 
   const skillProgressions = skills.map(skill => {
     const xp = skill.subtopics?.filter(s => s.status === 'Completed').reduce((acc, sub) => acc + (sub.xpReward || 0), 0) || 0;
@@ -42,20 +35,6 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
       levelProgress
     }
   }).sort((a, b) => b.xp - a.xp)
-
-  const toggleLanguage = (lang: string) => {
-    const tech = profile.technologies.includes(lang)
-      ? profile.technologies.filter((t) => t !== lang)
-      : [...profile.technologies, lang]
-    onUpdateProfile({ ...profile, technologies: tech })
-  }
-
-  const addCustomLanguage = () => {
-    const lang = customLang.trim()
-    if (!lang || profile.technologies.includes(lang)) return
-    onUpdateProfile({ ...profile, technologies: [...profile.technologies, lang] })
-    setCustomLang('')
-  }
 
   const activeGoals = goals.filter((goal) => goal.status !== 'COMPLETED').slice(0, 3)
 
@@ -94,32 +73,21 @@ export function ProfilePanel({ profile, progression, skills, goals, goalsComplet
             <div>
               <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase' }}>Technical Capabilities</p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                {LANGUAGE_OPTIONS.map((lang) => {
-                  const selected = profile.technologies.includes(lang)
-                  return (
-                    <button
-                      key={lang}
-                      style={{ padding: '0.5rem 1rem', background: selected ? 'rgba(6,182,212,0.1)' : 'rgba(255,255,255,0.02)', color: selected ? 'var(--cyan)' : 'var(--text-muted)', border: `1px solid ${selected ? 'rgba(6,182,212,0.3)' : 'rgba(255,255,255,0.05)'}`, borderRadius: '100px', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s' }}
-                      onClick={() => toggleLanguage(lang)}
-                      onMouseEnter={(e) => { if (!selected) e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }} onMouseLeave={(e) => { if (!selected) e.currentTarget.style.background = 'rgba(255,255,255,0.02)' }}
-                    >
-                      {selected ? '✦ ' : ''}{lang}
-                    </button>
-                  )
-                })}
-                {profile.technologies.filter((t) => !LANGUAGE_OPTIONS.includes(t)).map((t) => (
-                  <button key={t} style={{ padding: '0.5rem 1rem', background: 'rgba(6,182,212,0.1)', color: 'var(--cyan)', border: '1px solid rgba(6,182,212,0.3)', borderRadius: '100px', fontSize: '0.85rem', cursor: 'pointer' }} onClick={() => toggleLanguage(t)}>✦ {t}</button>
+                {skills.filter(s => s.progress >= 50).map(skill => (
+                  <div
+                    key={skill.id}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      background: 'rgba(6,182,212,0.1)',
+                      color: 'var(--cyan)',
+                      border: '1px solid rgba(6,182,212,0.3)',
+                      borderRadius: '100px',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    {skill.name}{skill.progress === 100 ? ' • M' : ''}
+                  </div>
                 ))}
-              </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  placeholder="Define new parameter..."
-                  value={customLang}
-                  onChange={(e) => setCustomLang(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') addCustomLanguage() }}
-                  style={{ flex: 1, padding: '0.75rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.85rem', outline: 'none' }}
-                />
-                <button style={{ padding: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, transition: 'background 0.2s' }} onClick={addCustomLanguage} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>Integrate</button>
               </div>
             </div>
           </div>

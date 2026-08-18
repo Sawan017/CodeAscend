@@ -403,3 +403,57 @@ export async function sendChatMessage(receiverId: string, msgId: string, content
   }
   return data
 }
+
+// --- External Integrations ---
+
+export async function fetchExternalProjects(userId: string) {
+  if (!supabase) return []
+  const { data, error } = await supabase
+    .from('external_projects')
+    .select('*')
+    .eq('user_id', userId)
+  
+  if (error) {
+    console.error('Error fetching external projects:', error)
+    return []
+  }
+  return data
+}
+
+export async function upsertExternalProject(record: Partial<import('../types').ExternalProjectRecord>) {
+  if (!supabase) throw new Error('Supabase not configured')
+  if (!record.user_id || !record.provider || !record.external_id) {
+    throw new Error('Missing required fields for external project')
+  }
+
+  // Fetch existing to preserve fields like xp_awarded if not explicitly provided
+  const { data: existing } = await supabase
+    .from('external_projects')
+    .select('*')
+    .eq('user_id', record.user_id)
+    .eq('provider', record.provider)
+    .eq('external_id', record.external_id)
+    .single()
+
+  const { data, error } = await supabase
+    .from('external_projects')
+    .upsert({
+      user_id: record.user_id,
+      provider: record.provider,
+      external_id: record.external_id,
+      status: record.status || existing?.status || 'in_progress',
+      xp_awarded: record.xp_awarded !== undefined ? record.xp_awarded : (existing?.xp_awarded || 0),
+      metadata: record.metadata || existing?.metadata || {},
+      last_synced_at: new Date().toISOString()
+    }, {
+      onConflict: 'user_id,provider,external_id'
+    })
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error upserting external project:', error)
+    throw error
+  }
+  return data
+}

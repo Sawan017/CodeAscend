@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { IntegrationsTab } from './IntegrationsTab'
 import { 
   LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
   UserCircle, Palette, Bell, Lock, Users, Globe, Award, HardDrive, HelpCircle
@@ -14,6 +15,11 @@ type SettingsDrawerProps = {
   onSettingsChange: (next: Settings) => void
   onSignOut?: (forgetAccount: boolean) => void
   profile: UserProfile
+  userId?: string
+  projects?: import('../../types').Project[]
+  onAddProjects?: (projects: import('../../types').Project[]) => void
+  onAddLanguages?: (languages: string[]) => void
+  onAwardXp?: (xp: number) => void
 }
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
@@ -24,11 +30,12 @@ const themeOptions: Array<{ value: ThemeMode; label: string }> = [
   { value: 'aurora', label: 'Aurora' },
 ]
 
-type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'social' | 'language' | 'learning' | 'data' | 'help'
+type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'social' | 'language' | 'learning' | 'data' | 'help' | 'integrations'
 
 const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'account', label: 'Account', icon: Shield },
   { id: 'profile', label: 'Profile & Personalization', icon: UserCircle },
+  { id: 'integrations', label: 'Integrations', icon: Globe },
   { id: 'appearance', label: 'Appearance', icon: Palette },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'privacy', label: 'Privacy & Security', icon: Lock },
@@ -39,7 +46,7 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'help', label: 'Help & About', icon: HelpCircle },
 ]
 
-export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile }: SettingsDrawerProps) {
+export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, projects, onAddProjects, onAddLanguages, onAwardXp }: SettingsDrawerProps) {
   const [activeTab, setActiveTab] = useState<TabId>('account')
   
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
@@ -140,6 +147,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'integrations':
+        return <IntegrationsTab projects={projects || []} onAddProjects={onAddProjects || (() => {})} onAddLanguages={onAddLanguages || (() => {})} userId={userId || ''} onAwardXp={onAwardXp || (() => {})} />
       case 'account':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

@@ -18,14 +18,14 @@ import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
-import { milestones, futureMilestones, timelineEvents } from './data/journeyData'
+import { milestones } from './data/journeyData'
 import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './data/learningData'
 import { allTimeDistributions } from './data/timeDistributions/index'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 
 import { loadInitialState, getEmptyState } from './utils/storage'
 import { LoginUI } from './features/auth/LoginUI'
-import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges, evaluateDynamicMilestones } from './lib/progression'
+import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges, evaluateDynamicMilestones, generateTimelineEvents, generateFutureMilestones } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
 import { usePersist } from './hooks/usePersist'
@@ -613,6 +613,14 @@ function App() {
         let loadedProgression = remote.progression || empty.progression
         let loadedAchievements = remote.achievements || empty.achievements
 
+        // --- BACKFILL: Lock FutureMe-granted 'first-website' ---
+        // If the user was granted 'first-website' by default, lock it so they must earn it legitimately.
+        const fwIndex = loadedAchievements.findIndex((a: any) => a.id === 'first-website')
+        if (fwIndex !== -1 && loadedAchievements[fwIndex].unlocked) {
+           loadedAchievements[fwIndex] = { ...loadedAchievements[fwIndex], unlocked: false }
+           delete loadedAchievements[fwIndex].dateUnlocked
+        }
+
         // --- BACKFILL: Journey Begins ---
         // Ensure existing users have the achievement record without awarding any duplicate XP.
         const jbIndex = loadedAchievements.findIndex((a: any) => a.id === 'journey-begins')
@@ -655,7 +663,10 @@ function App() {
         setProgression(loadedProgression)
         setAchievementState(loadedAchievements)
         if (remote.goals) setGoalState(remote.goals)
-        if (remote.projects) setProjectState(remote.projects)
+        if (remote.projects) {
+          const filteredProjects = remote.projects.filter((p: any) => p.id !== 'futureme')
+          setProjectState(filteredProjects)
+        }
         if (remote.skills) setSkillState(remote.skills)
         if (remote.badges) setBadgeState(remote.badges)
         
@@ -671,7 +682,8 @@ function App() {
         if (remote.chat) setChatState(remote.chat)
         
         if (remote.settings) {
-          setSettings(remote.settings)
+          // Ensure existing users are marked as onboarded even if the flag is missing
+          setSettings({ ...remote.settings, onboarded: true })
         } else {
           // Fallback if settings are somehow missing but user is not new
           setSettings(s => ({ ...s, onboarded: true }))
@@ -700,16 +712,32 @@ function App() {
   usePersist(settings, user, dataLoaded, saveSettings)
   usePersist(chatState, user, dataLoaded, saveChatState)
 
+  const hasSyncedInitialLevel = useRef(false)
+
   // Show a toast and sound when the player levels up or gains XP
   useEffect(() => {
+    if (!dataLoaded) {
+      hasSyncedInitialLevel.current = false
+      return
+    }
+
     const level = calculateLevel(progression.xp)
+
+    if (!hasSyncedInitialLevel.current) {
+      // First time dataLoaded is true, silently synchronize the level ref.
+      // This prevents hydration batching from appearing as a level up.
+      prevLevelRef.current = level
+      hasSyncedInitialLevel.current = true
+      return
+    }
+
     if (level > prevLevelRef.current) {
       push(`LEVEL UP! You reached level ${level}`, 'level', 4000)
       playSoundEffect('level', settings.soundEffects)
     }
     prevLevelRef.current = level
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [progression.xp, settings.soundEffects])
+  }, [progression.xp, settings.soundEffects, dataLoaded])
 
   const evaluatingRewardsRef = useRef(false)
 
@@ -806,13 +834,53 @@ function App() {
 
 
 
-  const markProjectCompleted = (projectId: string) => {
-    setProjectState((prev) => prev.map((project) => {
-      if (project.id !== projectId || project.completed) return project
-      setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.projectCompleted, projectsCompleted: p.projectsCompleted + 1 }))
-      push(`Project completed! +${XP_REWARDS.projectCompleted} XP`, 'unlock')
-      playSoundEffect('unlock', settings.soundEffects)
-      return { ...project, completed: true, completedDate: new Date().toISOString().slice(0, 10), progress: 100, status: 'COMPLETED' }
+  const markProjectCompleted = async (projectId: string) => {
+    const project = projectState.find(p => p.id === projectId)
+    if (!project || project.completed) return
+
+    let finalXp: number = XP_REWARDS.projectCompleted
+
+    if (project.provider && project.externalId && user?.id) {
+      // It's an external project
+      const { supabase } = await import('./lib/supabase')
+      if (supabase) {
+        const { data: existing } = await supabase.from('external_projects').select('*').eq('user_id', user.id).eq('provider', project.provider).eq('external_id', project.externalId).single()
+        
+        const { calculateExternalProjectXP } = await import('./lib/progression')
+        const targetXp = calculateExternalProjectXP('completed', existing?.xp_awarded || 0)
+        
+        finalXp = targetXp
+        
+        if (finalXp > 0) {
+          await supabase.from('external_projects').upsert({
+            ...(existing || { user_id: user.id, provider: project.provider, external_id: project.externalId }),
+            status: 'completed',
+            xp_awarded: (existing?.xp_awarded || 0) + finalXp,
+            last_synced_at: new Date().toISOString()
+          }, { onConflict: 'user_id,provider,external_id' })
+        } else {
+          await supabase.from('external_projects').upsert({
+            ...(existing || { user_id: user.id, provider: project.provider, external_id: project.externalId }),
+            status: 'completed',
+            last_synced_at: new Date().toISOString()
+          }, { onConflict: 'user_id,provider,external_id' })
+        }
+      }
+    }
+
+    setProjectState((prev) => prev.map((p) => {
+      if (p.id !== projectId || p.completed) return p
+      
+      if (finalXp > 0) {
+        setProgression((prog) => ({ ...prog, xp: prog.xp + finalXp, projectsCompleted: prog.projectsCompleted + 1 }))
+        push(`Project completed! +${finalXp} XP`, 'unlock')
+        playSoundEffect('unlock', settings.soundEffects)
+      } else {
+        setProgression((prog) => ({ ...prog, projectsCompleted: prog.projectsCompleted + 1 }))
+        push('Project completed!', 'info')
+      }
+      
+      return { ...p, completed: true, completedDate: new Date().toISOString().slice(0, 10), progress: 100, status: 'COMPLETED' }
     }))
   }
 
@@ -1262,7 +1330,7 @@ function App() {
                     )}
 
                     {route.view === 'future' && (
-                      <TimelinePanel milestones={milestones} futureMilestones={futureMilestones} timelineEvents={timelineEvents} onNavigateSection={selectSection} />
+                      <TimelinePanel milestones={milestones} futureMilestones={generateFutureMilestones(progression, projectState, skillState, goalState)} timelineEvents={generateTimelineEvents(projectState, skillState, achievementState)} onNavigateSection={selectSection} />
                     )}
                     {route.view === 'career_world' && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -1312,6 +1380,29 @@ function App() {
         onSettingsChange={setSettings}
         onSignOut={signOut}
         profile={profileState}
+        userId={user?.id}
+        projects={projectState}
+        onAddProjects={(newProjs) => setProjectState(prev => [...newProjs, ...prev])}
+        onAddLanguages={(langs) => {
+          langs.forEach(lang => {
+            if (!skillState.some(s => s.name.toLowerCase() === lang.toLowerCase())) {
+              addSkill({
+                id: crypto.randomUUID(),
+                name: lang,
+                progress: 0,
+                status: 'LEARNING',
+                started: new Date().toISOString(),
+                completed: '',
+                relatedProjects: [],
+                notes: ''
+              })
+            }
+          })
+        }}
+        onAwardXp={(xp) => {
+          setProgression(p => ({ ...p, xp: p.xp + xp }))
+          push(`Imported GitHub XP! +${xp} XP`, 'xp')
+        }}
       />
 
 
@@ -1383,7 +1474,7 @@ function App() {
         onClose={() => setViewingUserId(null)}
       />
       <Toasts toasts={toasts} onDismiss={dismiss} />
-      <Celebration xp={progression.xp} />
+      {dataLoaded && <Celebration xp={progression.xp} />}
     </div>
   )
 }

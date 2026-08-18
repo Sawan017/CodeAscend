@@ -127,7 +127,10 @@ export function ProjectsPanel({
             >
               <div style={{ width: '80px', height: '80px', borderRadius: '12px', background: `url(${p.image}) center/cover no-repeat`, border: '1px solid rgba(255,255,255,0.1)' }} />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff' }}>{p.name}</h4>
+                <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {p.provider === 'github' && <span style={{ fontSize: '0.7rem', padding: '2px 6px', background: 'var(--primary)', color: 'white', borderRadius: '4px' }}>GitHub</span>}
+                  {p.name}
+                </h4>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>{p.description}</p>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {p.technologies.slice(0, 3).map((tech) => (
