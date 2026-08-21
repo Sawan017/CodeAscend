@@ -7,6 +7,8 @@ import {
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
 import { HelpCenterModal } from './HelpCenterModal'
+import { ReportProblemModal } from './ReportProblemModal'
+import { SubmitFeedbackModal } from './SubmitFeedbackModal'
 import { formatAppDateTime } from '../../lib/dateFormatting'
 import { supabase } from '../../lib/supabase'
 import { fetchAllUserData } from '../../lib/api'
@@ -374,6 +376,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showRemoveGithubDialog, setShowRemoveGithubDialog] = useState(false)
   const [showHelpCenter, setShowHelpCenter] = useState(false)
+  const [showReportModal, setShowReportModal] = useState(false)
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
   
   const disconnectGitHub = async () => {
     if (!supabase) return
@@ -1174,11 +1178,11 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Report a Problem</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Report</button>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowReportModal(true)}>Report</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Feedback</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Submit</button>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowFeedbackModal(true)}>Submit</button>
                 </div>
               </div>
             </div>
@@ -1595,6 +1599,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       )}
     </AnimatePresence>
 
+      <ReportProblemModal isOpen={showReportModal} onClose={() => setShowReportModal(false)} userId={userId || ''} />
+      <SubmitFeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} userId={userId || ''} />
       <HelpCenterModal 
         isOpen={showHelpCenter} 
         onClose={() => setShowHelpCenter(false)} 

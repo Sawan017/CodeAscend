@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
-import { Compass, GraduationCap, House, Layers3, Target, Trophy, X } from 'lucide-react'
+import { Compass, GraduationCap, House, Shield, Layers3, Target, Trophy, X , } from 'lucide-react'
 import { useEffect, useRef, useState, Suspense } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
 import { OnboardingScreen } from './features/auth/OnboardingScreen'
@@ -12,6 +12,7 @@ import { Toasts } from './components/Toasts'
 import { Celebration } from './components/Celebration'
 import { GoalsPanel } from './features/goals/GoalsPanel'
 import { Dashboard } from './features/dashboard/Dashboard'
+import { AdminSupportDashboard } from './features/admin/AdminSupportDashboard'
 import { BadgeDetail } from './features/achievements/BadgeDetail'
 import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
@@ -305,6 +306,16 @@ function App() {
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
+  const [isGlobalAdmin, setIsGlobalAdmin] = useState(false)
+  
+  useEffect(() => {
+    async function checkAdmin() {
+      const { data } = await supabase!.rpc('is_admin')
+      setIsGlobalAdmin(!!data)
+    }
+    checkAdmin()
+  }, [])
+
 
   useEffect(() => {
     setDateFormattingSettings(settings)
@@ -1270,12 +1281,27 @@ function App() {
                     </motion.button>
                   )
                 })}
-              </aside>
+              
+            {isGlobalAdmin && (
+              <motion.button 
+                whileHover={{ scale: 1.03, y: -2 }} 
+                whileTap={{ scale: 0.97 }} 
+                className={`nav-item ${route.view === 'admin_support' ? 'active' : ''}`}
+                onClick={() => selectSection('admin_support' as any)}
+                title="Admin Support"
+                style={{ marginTop: 'auto', border: '1px solid #f59e0b', color: '#f59e0b' }}
+              >
+                <Shield size={20} />
+                <span className="desktop-only" style={{ flex: 1 }}>Admin Support</span>
+              </motion.button>
+            )}
+          </aside>
 
               <div className="main-stage">
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <ErrorBoundary>
                   <AnimatePresence mode="wait">
+                    {route.view === 'admin_support' && isGlobalAdmin && <AdminSupportDashboard onBack={() => navigate({ view: 'dashboard' })} />}
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
                     {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
                     {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
