@@ -259,10 +259,19 @@ export function GroupChatWindow({
             <p style={{ fontSize: '0.85rem' }}>Start the conversation!</p>
           </div>
         ) : (
-          messages.map(msg => {
+          messages.map((msg, idx) => {
             const isMe = msg.sender_id === activeUserId
             const senderProfile = profiles[msg.sender_id]
             const senderName = isMe ? 'You' : (senderProfile?.displayName || 'Unknown')
+
+            const nextMsg = messages[idx + 1]
+            const isSameMinuteAsNext = nextMsg &&
+              msg.sender_id === nextMsg.sender_id &&
+              new Date(msg.created_at).getMinutes() === new Date(nextMsg.created_at).getMinutes() &&
+              new Date(msg.created_at).getHours() === new Date(nextMsg.created_at).getHours() &&
+              new Date(msg.created_at).toDateString() === new Date(nextMsg.created_at).toDateString()
+            
+            const showTimestamp = !isSameMinuteAsNext;
 
             return (
               <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.75rem' }}>
@@ -287,14 +296,14 @@ export function GroupChatWindow({
                     </span>
                   )}
                   <div style={{ 
-                    padding: '0.5rem 0.75rem 1.25rem 0.75rem', 
+                    padding: '0.4rem 0.65rem', 
                     background: isMe ? 'var(--cyan)' : 'var(--surface-sunken)', 
                     color: isMe ? '#000' : '#fff', 
                     borderRadius: '16px',
                     borderBottomRightRadius: isMe ? '4px' : '16px',
                     borderBottomLeftRadius: !isMe ? '4px' : '16px',
                     position: 'relative',
-                    minWidth: '100px'
+                    minWidth: showTimestamp ? '75px' : 'auto'
                   }}>
                     <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
                       {msg.deleted_for_everyone ? (
@@ -302,20 +311,26 @@ export function GroupChatWindow({
                       ) : (
                         msg.content
                       )}
+                      {showTimestamp && (
+                        <span style={{ display: 'inline-block', width: (msg.edited_at && !msg.deleted_for_everyone) ? '85px' : '55px', height: '1px' }} />
+                      )}
                     </div>
-                    <span style={{ 
-                      position: 'absolute', 
-                      bottom: '4px', 
-                      right: '8px', 
-                      fontSize: '0.65rem', 
-                      color: isMe ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.5)',
-                      display: 'flex',
-                      gap: '4px',
-                      alignItems: 'center'
-                    }}>
-                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      {msg.edited_at && !msg.deleted_for_everyone && <span style={{ fontStyle: 'italic' }}>(edited)</span>}
-                    </span>
+                    {showTimestamp && (
+                      <span style={{ 
+                        position: 'absolute', 
+                        bottom: '4px', 
+                        right: '8px', 
+                        fontSize: '0.65rem', 
+                        color: isMe ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.4)',
+                        display: 'flex',
+                        gap: '4px',
+                        alignItems: 'center',
+                        lineHeight: 1
+                      }}>
+                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {msg.edited_at && !msg.deleted_for_everyone && <span style={{ fontStyle: 'italic' }}>(edited)</span>}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
