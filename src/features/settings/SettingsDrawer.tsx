@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
-  UserCircle, Palette, Bell, Lock, Globe, Award, HardDrive, HelpCircle
+  UserCircle, Palette, Bell, Lock, Globe, HardDrive, HelpCircle
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
@@ -67,7 +67,7 @@ const themeOptions: Array<{ value: ThemeMode; label: string }> = [
   { value: 'aurora', label: 'Aurora' },
 ]
 
-type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'language' | 'learning' | 'data' | 'help'
+type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'language' | 'data' | 'help'
 
 const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'account', label: 'Account', icon: Shield },
@@ -76,7 +76,6 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'privacy', label: 'Privacy & Security', icon: Lock },
   { id: 'language', label: 'Language & Region', icon: Globe },
-  { id: 'learning', label: 'Learning / Experience', icon: Award },
   { id: 'data', label: 'Data & Storage', icon: HardDrive },
   { id: 'help', label: 'Help & About', icon: HelpCircle },
 ]
@@ -1008,55 +1007,6 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             </div>
           </div>
         )
-      case 'learning':
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Learning / Experience</h3>
-              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your progression, XP, and learning settings.</p>
-            </div>
-
-            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Progression Display</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Show XP</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle XP visibility" />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Show Level</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle Level visibility" />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Show Badges & Achievements</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle Badges visibility" />
-                </div>
-              </div>
-            </div>
-
-            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Streaks & Tracking</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Track learning streak</span>
-                  <button className={`toggle-switch ${settings.streakTracking ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, streakTracking: !settings.streakTracking })} aria-label="Toggle streak tracking" />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Leaderboard Visibility</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Participate</option>
-                    <option>Hidden</option>
-                  </select>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Activity History</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>View Log</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-
       case 'data':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
