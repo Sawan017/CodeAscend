@@ -1108,11 +1108,7 @@ function App() {
 
   return (
     <MotionConfig reducedMotion={settings.reducedMotion ? 'always' : 'user'}>
-      <div className={`app-shell ${settings.theme} ${settings.compactLayout ? 'compact' : ''} ${settings.reducedMotion ? 'reduced-motion' : 'animation-' + (settings.animationIntensity || 'high')} ${settings.customBackground ? 'custom-bg' : ''}`}
-        style={{
-          ...(settings.accentColor ? { '--primary': settings.accentColor, '--cyan': settings.accentColor } : {}),
-          ...(settings.customBackground ? { backgroundImage: `url(${settings.customBackground})` } : {})
-        } as React.CSSProperties}>
+      <div className={`app-shell ${settings.theme} ${settings.reducedMotion ? 'reduced-motion' : 'animation-' + (settings.animationIntensity || 'high')}`}>
       <div className="noise" />
       <div className="aurora aura-a" />
       <div className="aurora aura-b" />

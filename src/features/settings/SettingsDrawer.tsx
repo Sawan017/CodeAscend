@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
@@ -6,7 +6,6 @@ import {
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { supabase } from '../../lib/supabase'
-import { uploadProfileImage } from '../../lib/storage_upload'
 
 type SettingsDrawerProps = {
   open: boolean
@@ -55,26 +54,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [githubUsername, setGithubUsername] = useState<string | null>(null)
   const [syncingGithub, setSyncingGithub] = useState(false)
   const [githubMessage, setGithubMessage] = useState('')
-  const [uploadingBg, setUploadingBg] = useState(false)
-  const bgInputRef = useRef<HTMLInputElement>(null)
 
 
-  const handleBgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !userId) return
-    try {
-      setUploadingBg(true)
-      const base64 = await uploadProfileImage(userId, file, 'banner')
-      if (base64) {
-        onSettingsChange({ ...settings, customBackground: base64 })
-      }
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setUploadingBg(false)
-      if (bgInputRef.current) bgInputRef.current.value = ''
-    }
-  }
 
   useEffect(() => {
     if (open) {
@@ -450,17 +431,17 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Account</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Account</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your core account identity and recovery options.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.5rem' }}>
                 <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.75rem', borderRadius: '12px' }}>
                   <Shield size={24} />
                 </div>
                 <div>
-                  <h5 style={{ margin: 0, fontSize: '1.05rem', color: '#fff' }}>Secure Your Account</h5>
+                  <h5 style={{ margin: 0, fontSize: '1.05rem', color: 'var(--text-main)' }}>Secure Your Account</h5>
                   <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                     Your permanent User ID never changes. Adding an email lets you recover and access your account on other devices.
                   </p>
@@ -469,17 +450,17 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
               <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Permanent User ID</span>
-                <div style={{ padding: '0.75rem 1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', color: '#fff', border: '1px solid rgba(255,255,255,0.05)', fontSize: '1rem', fontWeight: 500 }}>
+                <div style={{ padding: '0.75rem 1rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', color: 'var(--text-main)', border: '1px solid var(--border)', fontSize: '1rem', fontWeight: 500 }}>
                   {profile.login_id || profile.arinova_id || profile.username}
                 </div>
               </div>
 
               {authUserEmail ? (
-                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-strong)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <CheckCircle size={18} color="#10b981" />
                   <div style={{ flex: 1 }}>
                     <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Linked Email</p>
-                    <p style={{ margin: 0, fontSize: '1rem', color: '#fff', fontWeight: 500 }}>{authUserEmail}</p>
+                    <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', fontWeight: 500 }}>{authUserEmail}</p>
                   </div>
                 </div>
               ) : (
@@ -505,32 +486,32 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               )}
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Display Name</h4>
-              <input type="text" disabled value={profile.username} style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }} />
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Display Name</h4>
+              <input type="text" disabled value={profile.username} style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }} />
               <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>* Display name changes are managed in your Profile Panel.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Account Recovery & Status</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Account Recovery & Status</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Account Status</span>
+                  <span style={{ color: 'var(--text-main)' }}>Account Status</span>
                   <span style={{ padding: '0.25rem 0.75rem', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 500 }}>Active</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Connected Accounts</span>
+                  <span style={{ color: 'var(--text-main)' }}>Connected Accounts</span>
                   <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{authUserEmail ? 'Google' : 'None'}</span>
                 </div>
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Connected External Accounts</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Connected External Accounts</h4>
               
               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.25rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <div>
-                  <h5 style={{ margin: '0 0 0.25rem 0', color: '#fff', fontSize: '1rem' }}>GitHub</h5>
+                  <h5 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-main)', fontSize: '1rem' }}>GitHub</h5>
                   <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                     {githubConnected ? (
                       <>
@@ -570,9 +551,9 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             </div>
 
             {onSignOut && (
-              <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h5 style={{ margin: 0, fontSize: '1rem', color: '#fff' }}>Sign Out</h5>
+                  <h5 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)' }}>Sign Out</h5>
                   <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sign out of your current session.</p>
                 </div>
                 <button 
@@ -593,26 +574,26 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Profile & Personalization</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Profile & Personalization</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Customize how you appear to other users.</p>
             </div>
             
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Visibility</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Visibility</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Profile visibility</span>
+                  <span style={{ color: 'var(--text-main)' }}>Profile visibility</span>
                   <select 
                     value={profile.isPublic === false ? 'private' : 'public'}
                     onChange={(e) => onProfileChange?.({ ...profile, isPublic: e.target.value === 'public' })}
-                    style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
                   >
                     <option value="public">Public</option>
                     <option value="private">Private</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Show online status</span>
+                  <span style={{ color: 'var(--text-main)' }}>Show online status</span>
                   <button 
                     className={`toggle-switch ${settings.showOnlineStatus !== false ? 'on' : ''}`}
                     onClick={() => onSettingsChange({ ...settings, showOnlineStatus: settings.showOnlineStatus === false })}
@@ -620,7 +601,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Allow friend requests</span>
+                  <span style={{ color: 'var(--text-main)' }}>Allow friend requests</span>
                   <button 
                     className={`toggle-switch ${settings.allowFriendRequests !== false ? 'on' : ''}`}
                     onClick={() => onSettingsChange({ ...settings, allowFriendRequests: settings.allowFriendRequests === false })}
@@ -628,7 +609,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Allow messages</span>
+                  <span style={{ color: 'var(--text-main)' }}>Allow messages</span>
                   <button 
                     className={`toggle-switch ${settings.allowMessages !== false ? 'on' : ''}`}
                     onClick={() => onSettingsChange({ ...settings, allowMessages: settings.allowMessages === false })}
@@ -644,62 +625,35 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Appearance</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Appearance</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Customize the look and feel of the application.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ marginBottom: '1rem', color: '#fff' }}>Theme</h4>
-              <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }} value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Theme</h4>
+              <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
                 {themeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
             </div>
-
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ marginBottom: '1rem', color: '#fff' }}>Interface Style</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Accent Color</span>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    {['#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#f59e0b'].map(c => (
-                      <div key={c} style={{ width: '24px', height: '24px', borderRadius: '50%', background: c, opacity: 0.5, cursor: 'not-allowed' }} />
-                    ))}
-                  </div>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Compact Layout</span>
-                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle compact layout" />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Custom Background</span>
-                  <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    {settings.customBackground && (
-                      <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => onSettingsChange({ ...settings, customBackground: undefined })}>Reset</button>
-                    )}
-                    <input type="file" accept="image/jpeg, image/png, image/webp" ref={bgInputRef} style={{ display: 'none' }} onChange={handleBgUpload} />
-                    <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled={uploadingBg} onClick={() => bgInputRef.current?.click()}>{uploadingBg ? 'Uploading...' : 'Upload'}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
             
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ marginBottom: '1rem', color: '#fff' }}>Motion & Feedback</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Motion & Feedback</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Animations</label>
-                  <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: '#fff', fontSize: '0.9rem', outline: 'none' }} value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
+                  <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
+                    <option value="off">Off</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Reduced motion</span>
+                  <span style={{ color: 'var(--text-main)' }}>Reduced motion</span>
                   <button className={`toggle-switch ${settings.reducedMotion ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, reducedMotion: !settings.reducedMotion })} aria-label="Toggle reduced motion" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Sound effects</span>
+                  <span style={{ color: 'var(--text-main)' }}>Sound effects</span>
                   <button className={`toggle-switch ${settings.soundEffects ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, soundEffects: !settings.soundEffects })} aria-label="Toggle sound effects" />
                 </div>
               </div>
@@ -711,59 +665,59 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Notifications</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Notifications</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage when and how you are notified.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h4 style={{ margin: 0, color: '#fff' }}>Enable All Notifications</h4>
+                <h4 style={{ margin: 0, color: 'var(--text-main)' }}>Enable All Notifications</h4>
                 <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle all notifications" />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Messages</span>
+                  <span style={{ color: 'var(--text-main)' }}>Messages</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle messages" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Friend requests</span>
+                  <span style={{ color: 'var(--text-main)' }}>Friend requests</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle friend requests" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Group activity</span>
+                  <span style={{ color: 'var(--text-main)' }}>Group activity</span>
                   <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle group activity" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Mentions</span>
+                  <span style={{ color: 'var(--text-main)' }}>Mentions</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle mentions" />
                 </div>
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Updates & Activity</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Updates & Activity</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Achievements & Badges</span>
+                  <span style={{ color: 'var(--text-main)' }}>Achievements & Badges</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle achievements" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Learning Reminders</span>
+                  <span style={{ color: 'var(--text-main)' }}>Learning Reminders</span>
                   <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle learning reminders" />
                 </div>
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Delivery Methods</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Delivery Methods</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Email Notifications</span>
+                  <span style={{ color: 'var(--text-main)' }}>Email Notifications</span>
                   <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle email notifications" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Notification Sound</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Notification Sound</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>Default (Chime)</option>
                     <option>Pop</option>
                     <option>None</option>
@@ -778,38 +732,38 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Privacy & Security</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Privacy & Security</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Keep your account safe and manage data privacy.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Security</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Security</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Password</span>
+                  <span style={{ color: 'var(--text-main)' }}>Password</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Change</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Two-Factor Authentication</span>
+                  <span style={{ color: 'var(--text-main)' }}>Two-Factor Authentication</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Enable</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Active Sessions</span>
+                  <span style={{ color: 'var(--text-main)' }}>Active Sessions</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>View (1)</button>
                 </div>
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Privacy</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Privacy</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Blocked Users</span>
+                  <span style={{ color: 'var(--text-main)' }}>Blocked Users</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Manage (0)</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Data Collection</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Data Collection</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>Essential Only</option>
                     <option>Analytics Allowed</option>
                   </select>
@@ -823,31 +777,31 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Social</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Social</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage how you interact with others.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Permissions</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Permissions</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Who can send friend requests</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Who can send friend requests</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>Everyone</option>
                     <option>Friends of Friends</option>
                     <option>No One</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Who can message me</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Who can message me</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>Friends Only</option>
                     <option>Everyone</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Who can add me to groups</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Who can add me to groups</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>Friends Only</option>
                     <option>Everyone</option>
                   </select>
@@ -855,15 +809,15 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </div>
             </div>
             
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Activity</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Activity</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Show recent activity to friends</span>
+                  <span style={{ color: 'var(--text-main)' }}>Show recent activity to friends</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle recent activity" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Sync contacts</span>
+                  <span style={{ color: 'var(--text-main)' }}>Sync contacts</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Connect</button>
                 </div>
               </div>
@@ -875,16 +829,16 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Language & Region</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Language & Region</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Set your preferred language and date formats.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Localization</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Localization</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Language</label>
-                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
+                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
                     <option>English (US)</option>
                     <option>Spanish</option>
                     <option>French</option>
@@ -892,7 +846,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Region</label>
-                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
+                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
                     <option>United States</option>
                     <option>United Kingdom</option>
                     <option>Canada</option>
@@ -900,7 +854,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Time Zone</label>
-                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
+                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
                     <option>Automatic (Local)</option>
                     <option>UTC</option>
                   </select>
@@ -908,20 +862,20 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Formats</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Formats</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Date Format</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Date Format</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>MM/DD/YYYY</option>
                     <option>DD/MM/YYYY</option>
                     <option>YYYY-MM-DD</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Time Format</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Time Format</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>12-hour (AM/PM)</option>
                     <option>24-hour</option>
                   </select>
@@ -935,44 +889,44 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Learning / Experience</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Learning / Experience</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your progression, XP, and learning settings.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Progression Display</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Progression Display</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Show XP</span>
+                  <span style={{ color: 'var(--text-main)' }}>Show XP</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle XP visibility" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Show Level</span>
+                  <span style={{ color: 'var(--text-main)' }}>Show Level</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle Level visibility" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Show Badges & Achievements</span>
+                  <span style={{ color: 'var(--text-main)' }}>Show Badges & Achievements</span>
                   <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle Badges visibility" />
                 </div>
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Streaks & Tracking</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Streaks & Tracking</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Track learning streak</span>
+                  <span style={{ color: 'var(--text-main)' }}>Track learning streak</span>
                   <button className={`toggle-switch ${settings.streakTracking ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, streakTracking: !settings.streakTracking })} aria-label="Toggle streak tracking" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Leaderboard Visibility</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Leaderboard Visibility</span>
+                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
                     <option>Participate</option>
                     <option>Hidden</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Activity History</span>
+                  <span style={{ color: 'var(--text-main)' }}>Activity History</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>View Log</button>
                 </div>
               </div>
@@ -984,19 +938,19 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Data & Storage</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Data & Storage</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage your personal data, exports, and account deletion.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Manage Data</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Manage Data</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Export Account Data</span>
+                  <span style={{ color: 'var(--text-main)' }}>Export Account Data</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Request Export</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Clear Local Cache</span>
+                  <span style={{ color: 'var(--text-main)' }}>Clear Local Cache</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Clear (0 MB)</button>
                 </div>
               </div>
@@ -1011,7 +965,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </p>
               <button 
                 onClick={() => setShowDeleteDialog(true)}
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ef4444', color: '#fff', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: '#ef4444', color: 'var(--text-main)', border: 'none', padding: '0.6rem 1.25rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, transition: 'all 0.2s' }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = '#dc2626' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = '#ef4444' }}
               >
@@ -1026,37 +980,37 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: '#fff' }}>Help & About</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Help & About</h3>
               <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Get support and view app information.</p>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Support</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Support</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Help Center</span>
+                  <span style={{ color: 'var(--text-main)' }}>Help Center</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Open</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Report a Problem</span>
+                  <span style={{ color: 'var(--text-main)' }}>Report a Problem</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Report</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Feedback</span>
+                  <span style={{ color: 'var(--text-main)' }}>Feedback</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Submit</button>
                 </div>
               </div>
             </div>
 
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Legal & Info</h4>
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Legal & Info</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Terms of Service</span>
+                  <span style={{ color: 'var(--text-main)' }}>Terms of Service</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Read</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#fff' }}>Privacy Policy</span>
+                  <span style={{ color: 'var(--text-main)' }}>Privacy Policy</span>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Read</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
@@ -1103,11 +1057,11 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
           >
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: '#fff' }}>Settings</h2>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-main)' }}>Settings</h2>
               <button 
                 className="icon-button" 
                 onClick={onClose} 
-                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', transition: 'opacity 0.2s' }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', transition: 'opacity 0.2s' }}
                 aria-label="Close settings"
                 onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.7' }}
                 onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
@@ -1214,7 +1168,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Sign out?</h3>
-              <button className="icon-button" style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }} onClick={() => setShowLogoutDialog(false)} aria-label="Cancel sign out">
+              <button className="icon-button" style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }} onClick={() => setShowLogoutDialog(false)} aria-label="Cancel sign out">
                 <X size={24} />
               </button>
             </div>
@@ -1226,7 +1180,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <button className="secondary-btn" style={{ padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} onClick={() => { setShowLogoutDialog(false); onSignOut?.(true); }}>
                 Forget account
               </button>
-              <button className="secondary-btn" style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} onClick={() => setShowLogoutDialog(false)}>
+              <button className="secondary-btn" style={{ background: 'transparent', border: '1px solid var(--border-strong)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} onClick={() => setShowLogoutDialog(false)}>
                 Cancel
               </button>
             </div>
@@ -1278,7 +1232,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </h3>
               <button 
                 className="icon-button" 
-                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', opacity: isDeleting ? 0.5 : 1 }} 
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', opacity: isDeleting ? 0.5 : 1 }} 
                 onClick={() => !isDeleting && setShowDeleteDialog(false)} 
                 disabled={isDeleting}
                 aria-label="Cancel delete"
@@ -1299,7 +1253,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '0.75rem' }}>
               <button 
-                style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '0.875rem', borderRadius: '8px', fontSize: '1.05rem', fontWeight: 600, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', width: '100%', cursor: isDeleting ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isDeleting ? 0.7 : 1 }} 
+                style={{ background: '#ef4444', color: 'var(--text-main)', border: 'none', padding: '0.875rem', borderRadius: '8px', fontSize: '1.05rem', fontWeight: 600, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', width: '100%', cursor: isDeleting ? 'not-allowed' : 'pointer', transition: 'all 0.2s', opacity: isDeleting ? 0.7 : 1 }} 
                 onClick={handleDeleteAccount}
                 disabled={isDeleting}
               >
@@ -1307,7 +1261,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </button>
               <button 
                 className="secondary-btn" 
-                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} 
+                style={{ background: 'transparent', border: '1px solid var(--border-strong)', padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', width: '100%' }} 
                 onClick={() => setShowDeleteDialog(false)}
                 disabled={isDeleting}
               >
@@ -1344,7 +1298,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             exit={{ scale: 0.95, opacity: 0, y: 15 }}
             style={{
               background: 'var(--bg-panel)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid var(--border-strong)',
               borderRadius: '16px',
               padding: '2rem',
               maxWidth: '400px',
@@ -1359,7 +1313,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Remove GitHub account?</h3>
               <button 
                 className="icon-button" 
-                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }} 
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }} 
                 onClick={() => setShowRemoveGithubDialog(false)} 
                 aria-label="Cancel"
               >
@@ -1379,7 +1333,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </button>
               <button 
                 className="primary-btn" 
-                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', background: '#ef4444', color: '#fff', border: 'none' }} 
+                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', background: '#ef4444', color: 'var(--text-main)', border: 'none' }} 
                 onClick={disconnectGitHub}
               >
                 Remove
