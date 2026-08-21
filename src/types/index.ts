@@ -280,6 +280,9 @@ export interface Settings {
   notifyLearningReminders?: boolean
   notifyBrowser?: boolean
   notificationSound?: string
+  whoCanFriendRequest?: 'everyone' | 'friends_of_friends' | 'none'
+  whoCanMessage?: 'everyone' | 'friends'
+  whoCanGroup?: 'everyone' | 'friends'
   allowFriendRequests?: boolean
   allowMessages?: boolean
   accentColor?: string
