@@ -269,6 +269,10 @@ export interface Settings {
   streakTracking: boolean
   onboarded?: boolean
   activePathways?: string[]
+  profileVisibility?: 'public' | 'friends' | 'private'
+  showOnlineStatus?: boolean
+  allowFriendRequests?: boolean
+  allowMessages?: boolean
 }
 
 export interface FriendRelationship {
