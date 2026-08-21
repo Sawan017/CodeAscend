@@ -101,19 +101,25 @@ export function GroupChatWindow({
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false)
   const contextMenuRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (contextMenu && contextMenuRef.current) {
+    if (contextMenu && contextMenuRef.current && chatContainerRef.current) {
       const rect = contextMenuRef.current.getBoundingClientRect()
+      const chatRect = chatContainerRef.current.getBoundingClientRect()
+      
       let newX = contextMenu.x
       let newY = contextMenu.y
-      if (newX + rect.width > window.innerWidth - 8) {
-        newX = window.innerWidth - rect.width - 8
+      
+      if (newX + rect.width > chatRect.right - 8) {
+        newX = chatRect.right - rect.width - 8
       }
-      if (newY + rect.height > window.innerHeight - 8) {
-        newY = window.innerHeight - rect.height - 8
+      if (newY + rect.height > chatRect.bottom - 8) {
+        newY = chatRect.bottom - rect.height - 8
       }
-      newX = Math.max(8, newX)
-      newY = Math.max(8, newY)
+      
+      newX = Math.max(chatRect.left + 8, newX)
+      newY = Math.max(chatRect.top + 8, newY)
+      
       if (newX !== contextMenu.x || newY !== contextMenu.y) {
         setContextMenu(prev => prev ? { ...prev, x: newX, y: newY } : null)
       }
@@ -177,7 +183,7 @@ export function GroupChatWindow({
   const myRole = members.find(m => m.user_id === activeUserId)?.role || 'member'
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div ref={chatContainerRef} style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', height: '100%' }}>
       {infoOpen ? (
         <GroupInfoPanel 
           group={group}
