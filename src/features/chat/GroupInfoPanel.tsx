@@ -1,11 +1,14 @@
 // @ts-nocheck
 import { Trash2 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Shield, ShieldAlert, UserMinus, LogOut, Edit2, UserPlus } from 'lucide-react'
 import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember } from '../../hooks/useGroupChat'
 import { supabase } from '../../lib/supabase'
+import { AddMembersModal } from './AddMembersModal'
+import { ConfirmDialog } from './ConfirmDialog'
+import { uploadProfileImage } from '../../lib/storage_upload'
 
 export function GroupInfoPanel({
   group,
@@ -34,6 +37,52 @@ export function GroupInfoPanel({
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(group.name)
   const [editDesc, setEditDesc] = useState(group.description || '')
+  
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [previewImage, setPreviewImage] = useState<{ file: File, dataUrl: string } | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!validTypes.includes(file.type)) {
+      alert('Please select a JPG, PNG, or WEBP image.')
+      return
+    }
+    
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      if (ev.target?.result) {
+        setPreviewImage({ file, dataUrl: ev.target.result as string })
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleSaveImage = async () => {
+    if (!previewImage) return
+    try {
+      setUploadingImage(true)
+      const optimizedBase64 = await uploadProfileImage(activeUserId, previewImage.file, 'avatar')
+      if (optimizedBase64) {
+        onUpdateGroup({ avatar: optimizedBase64 })
+      }
+      setPreviewImage(null)
+    } catch (err) {
+      console.error('Failed to upload image:', err)
+      alert('Failed to upload image. Please try again.')
+    } finally {
+      setUploadingImage(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleCancelImage = () => {
+    setPreviewImage(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
   const [addMembersOpen, setAddMembersOpen] = useState(false)
   const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
@@ -71,7 +120,63 @@ export function GroupInfoPanel({
 
       <div style={{ padding: '20px', flex: 1, overflowY: 'auto' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '24px' }}>
-          <Avatar src={group.avatar}  size={80} />
+          <div style={{ position: 'relative', marginBottom: previewImage ? '8px' : '0' }}>
+            <Avatar src={previewImage ? previewImage.dataUrl : group.avatar} size={80} />
+            {isAdmin && !previewImage && (
+              <>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  accept="image/jpeg, image/png, image/webp" 
+                  onChange={handleImageSelect} 
+                  style={{ display: 'none' }} 
+                />
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  style={{ 
+                    position: 'absolute', 
+                    bottom: 0, 
+                    right: 0, 
+                    background: 'var(--cyan)', 
+                    color: '#000', 
+                    border: '2px solid var(--bg-surface)', 
+                    borderRadius: '50%', 
+                    width: '28px', 
+                    height: '28px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    cursor: uploadingImage ? 'not-allowed' : 'pointer',
+                    opacity: uploadingImage ? 0.5 : 1
+                  }}
+                  title="Change Group Image"
+                >
+                  <Edit2 size={14} />
+                </button>
+              </>
+            )}
+          </div>
+          
+          {previewImage && (
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px', marginBottom: '12px' }}>
+              <button 
+                onClick={handleSaveImage} 
+                disabled={uploadingImage}
+                style={{ padding: '6px 16px', background: 'var(--cyan)', color: '#000', border: 'none', borderRadius: '100px', cursor: uploadingImage ? 'not-allowed' : 'pointer', fontSize: '0.85rem', fontWeight: 600, opacity: uploadingImage ? 0.7 : 1 }}
+              >
+                {uploadingImage ? 'Saving...' : 'Save'}
+              </button>
+              <button 
+                onClick={handleCancelImage} 
+                disabled={uploadingImage}
+                style={{ padding: '6px 16px', background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: '100px', cursor: uploadingImage ? 'not-allowed' : 'pointer', fontSize: '0.85rem', opacity: uploadingImage ? 0.7 : 1 }}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+
           {isEditing ? (
             <div style={{ width: '100%', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <input value={editName} onChange={e => setEditName(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '8px', borderRadius: '6px', color: '#fff' }} />
