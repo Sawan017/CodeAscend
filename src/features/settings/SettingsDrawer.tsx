@@ -7,8 +7,8 @@ import {
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
 import { HelpCenterModal } from './HelpCenterModal'
-import { ReportProblemModal } from './ReportProblemModal'
 import { SubmitFeedbackModal } from './SubmitFeedbackModal'
+import { UserSupportTickets } from '../support/UserSupportTickets'
 import { formatAppDateTime } from '../../lib/dateFormatting'
 import { supabase } from '../../lib/supabase'
 import { fetchAllUserData } from '../../lib/api'
@@ -376,8 +376,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showRemoveGithubDialog, setShowRemoveGithubDialog] = useState(false)
   const [showHelpCenter, setShowHelpCenter] = useState(false)
-  const [showReportModal, setShowReportModal] = useState(false)
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+    const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+  const [showUserTickets, setShowUserTickets] = useState(false)
   
   const disconnectGitHub = async () => {
     if (!supabase) return
@@ -572,6 +572,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   }
 
   const renderTabContent = () => {
+    if (showUserTickets) return <UserSupportTickets userId={userId || ''} onBack={() => setShowUserTickets(false)} />
     switch (activeTab) {
 
       case 'account':
@@ -1177,8 +1178,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowHelpCenter(true)}>Open</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Report a Problem</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowReportModal(true)}>Report</button>
+                  <span style={{ color: 'var(--text-main)' }}>My Support Tickets</span>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowUserTickets(true)}>View</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Feedback</span>
@@ -1599,7 +1600,6 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       )}
     </AnimatePresence>
 
-      <ReportProblemModal isOpen={showReportModal} onClose={() => setShowReportModal(false)} userId={userId || ''} />
       <SubmitFeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} userId={userId || ''} />
       <HelpCenterModal 
         isOpen={showHelpCenter} 
