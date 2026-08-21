@@ -195,6 +195,24 @@ export function useGroupChat(userId: string | undefined) {
     await supabase.from('chat_group_members').delete().eq('group_id', groupId).eq('user_id', targetUserId)
   }
 
+  const updateMemberRole = async (groupId: string, targetUserId: string, role: 'owner' | 'admin' | 'member') => {
+    if (!supabase) return
+    const { error } = await supabase.rpc('update_group_member_role', {
+      p_group_id: groupId,
+      p_target_user_id: targetUserId,
+      p_new_role: role
+    })
+    if (error) {
+      console.error('Failed to update role:', error)
+      throw error
+    }
+  }
+
+  const deleteGroup = async (groupId: string) => {
+    if (!supabase) return
+    await supabase.from('chat_groups').delete().eq('id', groupId)
+  }
+
   const editGroupMessage = async (messageId: string, newContent: string) => {
     if (!supabase) return
     await supabase.from('chat_group_messages')
