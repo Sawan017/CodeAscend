@@ -14,6 +14,7 @@ export function GroupInfoPanel({
   onClose,
   onRemoveMember,
   onUpdateRole,
+  onAddMembers,
   onLeaveGroup,
   onDeleteGroup,
   onUpdateGroup
@@ -24,6 +25,7 @@ export function GroupInfoPanel({
   onClose: () => void
   onRemoveMember: (uid: string) => void
   onUpdateRole: (uid: string, role: 'owner'|'admin'|'member') => void
+  onAddMembers: (uids: string[]) => void
   onLeaveGroup: () => void
   onDeleteGroup: () => void
   onUpdateGroup: (updates: Partial<ChatGroup>) => void
@@ -32,6 +34,9 @@ export function GroupInfoPanel({
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(group.name)
   const [editDesc, setEditDesc] = useState(group.description || '')
+  const [addMembersOpen, setAddMembersOpen] = useState(false)
+  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false)
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
 
   const myRole = members.find(m => m.user_id === activeUserId)?.role || 'member'
   const isOwner = myRole === 'owner'
@@ -56,7 +61,7 @@ export function GroupInfoPanel({
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-panel)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-surface)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button className="icon-button" onClick={onClose} style={{ marginLeft: '-0.5rem' }}>
           <X size={20} />
@@ -90,7 +95,14 @@ export function GroupInfoPanel({
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <h4 style={{ margin: '0 0 12px', fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Members ({members.length})</h4>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Members ({members.length})</h4>
+            {isAdmin && (
+              <button onClick={() => setAddMembersOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}>
+                <UserPlus size={14} /> Add
+              </button>
+            )}
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {members.map(m => {
               const p = profiles[m.user_id]
@@ -127,15 +139,46 @@ export function GroupInfoPanel({
       </div>
       <div style={{ padding: '20px', borderTop: '1px solid var(--border)' }}>
         {isOwner ? (
-          <button onClick={onDeleteGroup} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgba(255, 69, 58, 0.1)', color: '#ff453a', border: '1px solid rgba(255, 69, 58, 0.2)', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>
+          <button onClick={() => setDeleteConfirmOpen(true)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgba(255, 69, 58, 0.1)', color: '#ff453a', border: '1px solid rgba(255, 69, 58, 0.2)', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>
             <Trash2 size={16} /> Delete Group
           </button>
         ) : (
-          <button onClick={onLeaveGroup} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgba(255, 69, 58, 0.1)', color: '#ff453a', border: '1px solid rgba(255, 69, 58, 0.2)', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>
+          <button onClick={() => setLeaveConfirmOpen(true)} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: 'rgba(255, 69, 58, 0.1)', color: '#ff453a', border: '1px solid rgba(255, 69, 58, 0.2)', borderRadius: '8px', cursor: 'pointer', fontWeight: 500 }}>
             <LogOut size={16} /> Leave Group
           </button>
         )}
       </div>
+      
+      {addMembersOpen && (
+        <AddMembersModal
+          activeUserId={activeUserId}
+          existingMemberIds={members.map(m => m.user_id)}
+          onClose={() => setAddMembersOpen(false)}
+          onAddMembers={onAddMembers}
+        />
+      )}
+      
+      {leaveConfirmOpen && (
+        <ConfirmDialog
+          title="Leave Group"
+          message="Are you sure you want to leave this group? You won't be able to send or receive new messages."
+          confirmText="Leave Group"
+          danger
+          onConfirm={onLeaveGroup}
+          onCancel={() => setLeaveConfirmOpen(false)}
+        />
+      )}
+      
+      {deleteConfirmOpen && (
+        <ConfirmDialog
+          title="Delete Group"
+          message="Are you sure you want to completely delete this group? This action cannot be undone."
+          confirmText="Delete Group"
+          danger
+          onConfirm={onDeleteGroup}
+          onCancel={() => setDeleteConfirmOpen(false)}
+        />
+      )}
     </div>
   )
 }

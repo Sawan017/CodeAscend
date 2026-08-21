@@ -141,6 +141,7 @@ export function ChatPanel(props: ChatPanelProps) {
                     onClose={() => setActiveGroupId(null)}
                     onRemoveMember={uid => removeMember(activeGroupId, uid)}
                     onUpdateRole={(uid, role) => updateMemberRole(activeGroupId, uid, role)}
+                    onAddMembers={uids => addMembers(activeGroupId, uids)}
                     onLeaveGroup={() => { removeMember(activeGroupId, props.activeUserId); setActiveGroupId(null); }}
                     onDeleteGroup={() => { deleteGroup(activeGroupId); setActiveGroupId(null); }}
                     onUpdateGroup={(updates) => updateGroup(activeGroupId, updates)}

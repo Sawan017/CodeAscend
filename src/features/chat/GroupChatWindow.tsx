@@ -7,6 +7,7 @@ import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember, ChatGroupMessage } from '../../hooks/useGroupChat'
 import { supabase } from '../../lib/supabase'
 import { GroupInfoPanel } from './GroupInfoPanel'
+import { ConfirmDialog } from './ConfirmDialog'
 
 
 type ContextMenuState = {
@@ -59,6 +60,7 @@ export function GroupChatWindow({
   onClose,
   onRemoveMember,
   onUpdateRole,
+  onAddMembers,
   onLeaveGroup,
   onDeleteGroup,
   onUpdateGroup,
@@ -77,6 +79,7 @@ export function GroupChatWindow({
   onClose: () => void
   onRemoveMember: (uid: string) => void
   onUpdateRole: (uid: string, role: 'owner'|'admin'|'member') => void
+  onAddMembers: (uids: string[]) => void
   onLeaveGroup: () => void
   onDeleteGroup: () => void
   onUpdateGroup: (updates: Partial<ChatGroup>) => void
@@ -96,6 +99,7 @@ export function GroupChatWindow({
   const [editDraft, setEditDraft] = useState('')
   const [contextMenu, setContextMenu] = useState<ContextMenuState>(null)
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false)
   const contextMenuRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (contextMenu && contextMenuRef.current) {
@@ -182,6 +186,7 @@ export function GroupChatWindow({
           onClose={() => setInfoOpen(false)}
           onRemoveMember={onRemoveMember}
           onUpdateRole={onUpdateRole}
+          onAddMembers={onAddMembers}
           onLeaveGroup={onLeaveGroup}
           onDeleteGroup={onDeleteGroup}
           onUpdateGroup={onUpdateGroup}
@@ -208,7 +213,7 @@ export function GroupChatWindow({
               position: 'absolute', 
               top: '100%', 
               right: 0, 
-              background: 'var(--bg-panel)', 
+              background: 'var(--bg-surface)', 
               border: '1px solid var(--border)', 
               borderRadius: '8px', 
               padding: '0.5rem', 
@@ -229,10 +234,8 @@ export function GroupChatWindow({
                 label="Clear Chat"
                 danger
                 onClick={() => {
-                  if (window.confirm('Are you sure you want to clear this chat for yourself?')) {
-                    onClearChat?.()
-                    setHeaderMenuOpen(false)
-                  }
+                  setClearConfirmOpen(true)
+                  setHeaderMenuOpen(false)
                 }}
               />
               <MenuItem
@@ -349,7 +352,7 @@ export function GroupChatWindow({
             position: 'fixed', 
             left: contextMenu.x, 
             top: contextMenu.y, 
-            background: 'var(--bg-panel)', 
+            background: 'var(--bg-surface)', 
             border: '1px solid var(--border)', 
             borderRadius: '8px', 
             padding: '0.5rem', 
@@ -398,6 +401,19 @@ export function GroupChatWindow({
           />
         </div>,
         document.body
+      )}
+      {clearConfirmOpen && (
+        <ConfirmDialog
+          title="Clear Chat"
+          message="Are you sure you want to clear this chat history for yourself? This will hide past messages but won't delete them for other members."
+          confirmText="Clear Chat"
+          danger
+          onConfirm={() => {
+            onClearChat?.()
+            setClearConfirmOpen(false)
+          }}
+          onCancel={() => setClearConfirmOpen(false)}
+        />
       )}
     </div>
   )
