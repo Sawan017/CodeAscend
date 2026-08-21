@@ -1,4 +1,4 @@
-import type { TopicComplexity, SubtopicProgress, SkillType, TopicSize, SubtopicDifficulty } from '../types'
+import type { TopicComplexity, SubtopicProgress, SkillType, TopicSize, SubtopicDifficulty, Skill } from '../types'
 import { allTimeDistributions } from './timeDistributions/index'
 
 export const TOPIC_SIZE_BASE_TIME: Record<TopicSize, number> = {
@@ -10401,6 +10401,44 @@ export const SKILL_REGISTRY: SkillDefinition[] = [
   }
 ];
 
+export const generateDynamicCurriculum = (skillName: string): Curriculum => {
+  const name = skillName || 'Skill';
+  return [
+    {
+      domain: `Getting Started with ${name}`,
+      topics: [
+        { title: `Introduction to ${name}`, complexity: 'Simple', size: 'Small' },
+        { title: `${name} Environment & Setup`, complexity: 'Simple', size: 'Medium' },
+        { title: `Basic Syntax & Usage`, complexity: 'Medium', size: 'Medium' }
+      ]
+    },
+    {
+      domain: `Core Architecture`,
+      topics: [
+        { title: `${name} Core Concepts`, complexity: 'Medium', size: 'Large' },
+        { title: `Data & State Management`, complexity: 'Medium', size: 'Large' },
+        { title: `Common Patterns`, complexity: 'Medium', size: 'Medium' }
+      ]
+    },
+    {
+      domain: `Advanced Topics`,
+      topics: [
+        { title: `Advanced Techniques`, complexity: 'Hard', size: 'Medium' },
+        { title: `Performance & Optimization`, complexity: 'Hard', size: 'Large' },
+        { title: `Security & Best Practices`, complexity: 'Hard', size: 'Medium' }
+      ]
+    },
+    {
+      domain: `Ecosystem`,
+      topics: [
+        { title: `Tooling & Integration`, complexity: 'Medium', size: 'Medium' },
+        { title: `Testing & Debugging`, complexity: 'Hard', size: 'Medium' },
+        { title: `Deployment & Production`, complexity: 'Medium', size: 'Medium' }
+      ]
+    }
+  ];
+};
+
 export const resolveSkill = (input: string): SkillDefinition => {
   const normalized = input.toLowerCase().trim()
   
@@ -10416,15 +10454,7 @@ export const resolveSkill = (input: string): SkillDefinition => {
     type: 'OTHER',
     aliases: [],
     primaryDomainId: 'independent',
-    curriculum: [
-      {
-        domain: 'Custom Learning',
-        topics: [
-          { title: 'Fundamentals', complexity: 'Simple', size: 'Medium' },
-          { title: 'Core Concepts', complexity: 'Medium', size: 'Large' }
-        ]
-      }
-    ]
+    curriculum: generateDynamicCurriculum(input)
   }
 }
 
@@ -10459,8 +10489,54 @@ export const generateSubtopicsForSkill = (skillDef: SkillDefinition): SubtopicPr
       })
     })
   })
-
+  
   return subtopics
+}
+
+export const expandSkillSubtopicsIfNeeded = (skill: Skill): Skill => {
+  const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+  
+  // 1. Repair malformed subtopics that accidentally got the UUID embedded in their title
+  let hasMalformed = false;
+  const cleansedSubtopics = (skill.subtopics || []).map(st => {
+    if (uuidRegex.test(st.title) || st.title.includes(skill.id)) {
+      hasMalformed = true;
+      const correctName = skill.canonicalName || skill.name || 'Skill';
+      return {
+        ...st,
+        title: st.title.replace(uuidRegex, correctName).replace(skill.id, correctName)
+      };
+    }
+    return st;
+  });
+
+  // 2. Check if it needs expansion
+  const hasGenericOnly = cleansedSubtopics.length > 0 && cleansedSubtopics.every(st => st.title === 'Fundamentals' || st.title === 'Core Concepts');
+  
+  // If it has enough valid topics and wasn't just repaired, we can skip
+  if (cleansedSubtopics.length >= 6 && !hasGenericOnly && !hasMalformed) {
+    return { ...skill, subtopics: cleansedSubtopics };
+  }
+
+  // 3. Resolve what the curriculum *should* be
+  const resolvedDef = resolveSkill(skill.canonicalName || skill.name);
+  const fullSubtopics = generateSubtopicsForSkill(resolvedDef);
+
+  const existingTitles = new Set(cleansedSubtopics.map(st => st.title.toLowerCase()));
+
+  // 4. Add missing subtopics, preserving existing progress exactly as it is
+  const newSubtopics = [...cleansedSubtopics];
+  
+  fullSubtopics.forEach(st => {
+    if (!existingTitles.has(st.title.toLowerCase())) {
+      newSubtopics.push(st);
+    }
+  });
+
+  return {
+    ...skill,
+    subtopics: newSubtopics
+  };
 }
 
 export const formatEstimatedTime = (timeInMinutes: number): string => {

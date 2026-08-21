@@ -30,7 +30,7 @@ export function saveProgression<T>(value: T, key: keyof typeof STORAGE_KEYS) {
   window.localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value))
 }
 
-import { resolveSkill } from '../data/learningData'
+import { resolveSkill } from '../data/learningData.ts'
 
 export function loadInitialState() {
   return {

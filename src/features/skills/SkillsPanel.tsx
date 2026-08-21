@@ -1,7 +1,7 @@
 import { Plus, X, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import type { Skill } from '../../types'
-import { resolveSkill, PATHWAY_REGISTRY, getSkillsForPathway, SKILL_REGISTRY } from '../../data/learningData'
+import { resolveSkill, PATHWAY_REGISTRY, getSkillsForPathway, SKILL_REGISTRY } from '../../data/learningData.ts'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 
 type SkillsPanelProps = {

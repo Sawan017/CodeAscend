@@ -24,6 +24,10 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data }) => {
       const session = data.session
       
+      if (session?.provider_token) {
+        window.sessionStorage.setItem('github_provider_token', session.provider_token)
+      }
+
       const getValidEmail = (email?: string) => {
         if (!email) return undefined;
         if (email.includes('@example.com') || email.startsWith('id_') || email.includes('...temp...')) return undefined;
@@ -47,6 +51,13 @@ export function useAuth() {
     // Listen to auth changes
     const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('[Auth Trace] Global onAuthStateChange:', event, 'Session:', session?.user?.id)
+      
+      // Capture provider_token securely into sessionStorage so we can use it for GitHub API
+      if (session?.provider_token) {
+        window.sessionStorage.setItem('github_provider_token', session.provider_token)
+        console.log('[Auth Trace] Saved provider_token from onAuthStateChange')
+      }
+
       const getValidEmail = (email?: string) => {
         if (!email) return undefined;
         if (email.includes('@example.com') || email.startsWith('id_') || email.includes('...temp...')) return undefined;
@@ -150,6 +161,7 @@ export function useAuth() {
     
     setUser(null)
     setIsNewUser(false)
+    window.sessionStorage.removeItem('github_provider_token')
   }
 
   const signInWithEmail = async (email: string, password: string) => {

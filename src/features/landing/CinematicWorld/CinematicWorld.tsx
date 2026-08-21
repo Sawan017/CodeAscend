@@ -92,7 +92,7 @@ function ParticleField() {
       const colX = Math.round((p.random - 0.5) * 10) * colSpacing
       const colZ = Math.round((p.random2 - 0.5) * 10) * colSpacing
       const isPillar = p.random3 > 0.5
-      let pos1 = new THREE.Vector3(colX, p.heightOffset, colZ)
+      const pos1 = new THREE.Vector3(colX, p.heightOffset, colZ)
       if (!isPillar) {
          pos1.set(
            (p.random - 0.5) * 100,

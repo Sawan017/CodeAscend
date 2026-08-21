@@ -47,10 +47,18 @@ async function fetchRow<T>(table: TableName, userId: string, key: string): Promi
 }
 
 export async function fetchAllUserData(userId: string) {
-  if (!isSupabaseConfigured()) return null
+  if (!isSupabaseConfigured() || !supabase) return null
 
-  const [profile, progression, goals, projects, skills, achievements, badges, settings, friends, chat] = await Promise.all([
-    fetchRow<UserProfile>(TABLES.profile, userId, 'profile'),
+  const profile = await fetchRow<UserProfile>(TABLES.profile, userId, 'profile')
+  const { data: { session } } = await supabase.auth.getSession()
+  const isOwner = session?.user?.id === userId
+  const isPublic = profile?.isPublic !== false
+
+  if (!isPublic && !isOwner) {
+    return null
+  }
+
+  const [progression, goals, projects, skills, achievements, badges, settings, friends, chat] = await Promise.all([
     fetchRow<Progression>(TABLES.progression, userId, 'progression'),
     fetchRow<Goal[]>(TABLES.goals, userId, 'goals'),
     fetchRow<Project[]>(TABLES.projects, userId, 'projects'),
@@ -149,7 +157,7 @@ export async function fetchPublicProfileByUsername(username: string): Promise<{ 
 
   const profile = data?.find((row) => {
     const profileData = row.data as UserProfile
-    return profileData.username?.toLowerCase() === username.toLowerCase()
+    return profileData.username?.toLowerCase() === username.toLowerCase() && profileData.isPublic !== false
   })
 
   if (!profile) return null
@@ -444,7 +452,8 @@ export async function upsertExternalProject(record: Partial<import('../types').E
       status: record.status || existing?.status || 'in_progress',
       xp_awarded: record.xp_awarded !== undefined ? record.xp_awarded : (existing?.xp_awarded || 0),
       metadata: record.metadata || existing?.metadata || {},
-      last_synced_at: new Date().toISOString()
+      last_synced_at: new Date().toISOString(),
+      is_deleted: false
     }, {
       onConflict: 'user_id,provider,external_id'
     })

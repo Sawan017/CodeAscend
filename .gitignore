@@ -31,3 +31,15 @@ test*.js
 get_schema.js
 tmp_transcript.txt
 scripts/
+
+# Large media & data files (reduce AI context size)
+*.jpg
+*.mp4
+*.mp3
+*.png
+*.gif
+*.webm
+*.wav
+test-learningData.js
+audit_dump.json
+inventory.json

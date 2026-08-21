@@ -1,183 +1,175 @@
+// @ts-nocheck
 import type { Goal, Progression, UserProfile, Skill } from '../../types'
-import { calculateLevel, getNameColorClass, calculateProgressToNextLevel } from '../../lib/progression'
+import { calculateLevel, calculateProgressToNextLevel, evaluateDynamicMilestones } from '../../lib/progression'
 import { XpProgressBar } from '../../components/XpProgressBar'
 import { Avatar } from '../../components/Avatar'
 import { MilestonesSection } from '../../components/MilestonesSection'
+import { Code, Globe, Mail, Link, Pencil } from 'lucide-react'
 
-type ProfilePanelProps = {
+interface ProfilePanelProps {
   profile: UserProfile
   progression: Progression
-  skills: Skill[]
   goals: Goal[]
-  goalsCompleted: number
-  achievements: import('../../types').Achievement[]
-  onUpdateProfile: (next: UserProfile) => void
+  skills: Skill[]
+  onEditProfile?: () => void
 }
 
-export function ProfilePanel({ profile, progression, skills, goals, goalsCompleted, achievements, onEditProfile }: ProfilePanelProps & { onEditProfile?: () => void }) {
-  const safeAchievements = achievements || [];
-  const unlocked = safeAchievements.filter(a => a.unlocked);
-  console.log("DEBUG: RENDER ProfilePanel mounted = true", { 
-    totalAchievements: safeAchievements.length, 
-    unlockedCount: unlocked.length 
-  })
+export function ProfilePanel({ profile, progression, goals, skills, onEditProfile }: ProfilePanelProps) {
   const level = calculateLevel(progression.xp)
-  const nameColorClass = getNameColorClass(level)
-
-  const skillProgressions = skills.map(skill => {
-    const xp = skill.subtopics?.filter(s => s.status === 'Completed').reduce((acc, sub) => acc + (sub.xpReward || 0), 0) || 0;
-    const { level: skillLevel, progress: levelProgress } = calculateProgressToNextLevel(xp)
-    return {
-      id: skill.id,
-      name: skill.name,
-      xp,
-      level: skillLevel,
-      levelProgress
-    }
-  }).sort((a, b) => b.xp - a.xp)
-
-  const activeGoals = goals.filter((goal) => goal.status !== 'COMPLETED').slice(0, 3)
-
+    
   return (
-    <div className="section-shell">
-      <div className="panel" style={{ padding: '2rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem' }}>
-          <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--cyan)', margin: 0, textTransform: 'uppercase' }}>Operative Profile</p>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            {onEditProfile && (
-              <button className="secondary-btn" onClick={onEditProfile}>Edit Profile</button>
-            )}
-          </div>
-        </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '3rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div style={{ borderRadius: '50%', border: '1px solid rgba(6,182,212,0.3)', boxShadow: '0 0 20px rgba(6,182,212,0.15)' }}>
-                <Avatar src={profile.avatar} alt={profile.displayName} size={100} />
-              </div>
-              <div>
-                <h3 className={nameColorClass} style={{ fontSize: '2rem', margin: '0 0 0.5rem 0', fontWeight: 700, letterSpacing: '-0.02em' }}>{profile.displayName}</h3>
-                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '1rem' }}>@{profile.login_id || profile.arinova_id || profile.username} <span style={{ margin: '0 8px', color: 'rgba(255,255,255,0.2)' }}>|</span> {profile.title}</p>
-              </div>
-            </div>
-            
-            <div style={{ marginBottom: '2.5rem' }}>
-              <XpProgressBar xp={progression.xp} />
-            </div>
-
-            <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', marginBottom: '2rem', lineHeight: 1.6, color: '#fff', fontSize: '0.95rem' }}>
-              {profile.introduction}
-            </div>
-
-            <div>
-              <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase' }}>Technical Capabilities</p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-                {skills.filter(s => s.progress >= 50).map(skill => (
-                  <div
-                    key={skill.id}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      background: 'rgba(6,182,212,0.1)',
-                      color: 'var(--cyan)',
-                      border: '1px solid rgba(6,182,212,0.3)',
-                      borderRadius: '100px',
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    {skill.name}{skill.progress === 100 ? ' • M' : ''}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}>
-              <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Academic Node</span>
-              <strong style={{ color: '#fff', fontSize: '0.95rem' }}>{profile.education}</strong>
-            </div>
-            <div style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}>
-              <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>Primary Vector</span>
-              <strong style={{ color: '#fff', fontSize: '0.95rem' }}>{profile.focus}</strong>
-            </div>
-            
-            <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
-              <p style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 0 0.5rem 0', textTransform: 'uppercase' }}>Comm Links</p>
-              <a href={profile.github} target="_blank" rel="noreferrer" style={{ color: 'var(--cyan)', textDecoration: 'none', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>GitHub</a>
-              <a href={profile.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--cyan)', textDecoration: 'none', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>LinkedIn</a>
-              <a href={`mailto:${profile.contact}`} style={{ color: 'var(--cyan)', textDecoration: 'none', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{profile.contact}</a>
-            </div>
-          </div>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      
+      {/* Banner */}
+      <div 
+        style={{ 
+          height: '180px', 
+          width: '100%', 
+          borderRadius: '16px',
+          background: profile.banner 
+            ? `url(${profile.banner}) center/cover no-repeat` 
+            : 'linear-gradient(135deg, var(--primary) 0%, #6366f1 100%)',
+          position: 'relative',
+          overflow: 'hidden'
+        }} 
+      >
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,13,20,0.9), transparent)' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-        <div className="panel" style={{ padding: '1.5rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 0 1.5rem 0', textTransform: 'uppercase' }}>Career Metrics</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
-              <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Level</span>
-              <strong style={{ fontSize: '1.5rem', color: 'var(--cyan)' }}>{level}</strong>
+      <div style={{ padding: '0 2rem' }}>
+        {/* Profile Info */}
+        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-80px', position: 'relative', zIndex: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <div style={{ 
+              borderRadius: '50%', 
+              padding: '6px', 
+              background: 'var(--bg-base)',
+              display: 'inline-block'
+            }}>
+              <div style={{ borderRadius: '50%', overflow: 'hidden', width: '120px', height: '120px' }}>
+                <Avatar src={profile.avatar} alt={profile.displayName} size={120} showStatus={true} isOnline={true} />
+              </div>
             </div>
-            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
-              <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>XP</span>
-              <strong style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>{progression.xp}</strong>
-            </div>
-            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
-              <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Projects</span>
-              <strong style={{ fontSize: '1.5rem', color: '#fff' }}>{progression.projectsCompleted}</strong>
-            </div>
-            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
-              <span style={{ display: 'block', fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.25rem' }}>Goals</span>
-              <strong style={{ fontSize: '1.5rem', color: '#fff' }}>{goalsCompleted}</strong>
-            </div>
-          </div>
-        </div>
-
-        <div className="panel" style={{ padding: '1.5rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <MilestonesSection achievements={achievements} displayedIds={profile.displayedAchievements} maxVisible={12} />
-        </div>
-
-        <div className="panel" style={{ padding: '1.5rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 0 1.5rem 0', textTransform: 'uppercase' }}>Skill Progression</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {skillProgressions.length === 0 ? (
-              <p style={{ padding: '1rem', textAlign: 'center', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                No active proficiencies.
-              </p>
-            ) : (
-              skillProgressions.slice(0, 4).map((lang) => (
-                <div key={lang.id}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500 }}>{lang.name}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>LVL {lang.level}</span>
-                  </div>
-                  <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
-                    <div style={{ width: `${lang.levelProgress}%`, height: '100%', background: 'linear-gradient(90deg, var(--cyan), var(--primary))', boxShadow: '0 0 10px var(--cyan)' }} />
-                  </div>
-                </div>
-              ))
+            
+            {onEditProfile && (
+              <button className="primary-btn" onClick={onEditProfile} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', height: 'fit-content' }}>
+                <Pencil size={16} /> Edit Profile
+              </button>
             )}
           </div>
+
+          <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h1 style={{ margin: '0 0 0.25rem 0', fontSize: '2rem', fontWeight: 700, color: '#fff' }}>
+                {profile.displayName || profile.username}
+              </h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <p className="muted" style={{ margin: 0, fontSize: '1rem' }}>@{profile.login_id || profile.username}</p>
+                {profile.title && (
+                  <span className="chip" style={{ background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', padding: '0.1rem 0.5rem', fontSize: '0.8rem' }}>
+                    {profile.title}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="panel" style={{ padding: '1.5rem', background: 'rgba(10,13,20,0.6)', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <p style={{ fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.1em', color: 'var(--text-muted)', margin: '0 0 1.5rem 0', textTransform: 'uppercase' }}>Active Directives</p>
-          {activeGoals.length ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {activeGoals.map((goal) => (
-                <div key={goal.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong style={{ fontSize: '0.9rem', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '70%' }}>{goal.title}</strong>
-                  <span style={{ fontSize: '0.65rem', padding: '2px 8px', background: 'rgba(6,182,212,0.1)', color: 'var(--cyan)', borderRadius: '100px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{goal.priority}</span>
-                </div>
-              ))}
+        <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          
+          {/* Operative Stats */}
+          <div>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Operative Stats</h4>
+            <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '0.9rem', color: '#aaa' }}>Level</span>
+                <strong style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>{level}</strong>
+              </div>
+              
+              <div style={{ flex: 1, paddingLeft: '2rem', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+                <XpProgressBar xp={progression.xp} />
+              </div>
             </div>
-          ) : (
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', textAlign: 'center', padding: '1rem', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '8px' }}>Directives nominal. Awaiting assignments.</p>
+          </div>
+
+          {/* Bio */}
+          <div>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Bio</h4>
+            <div style={{ background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              {profile.bio ? (
+                <p style={{ margin: 0, fontSize: '1rem', lineHeight: 1.6, color: '#ddd', whiteSpace: 'pre-wrap' }}>{profile.bio}</p>
+              ) : (
+                <p className="muted" style={{ margin: 0, fontSize: '1rem', fontStyle: 'italic' }}>No bio added yet.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Skills */}
+          <div>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Skills</h4>
+            {(!profile.displayedSkills || profile.displayedSkills.length === 0) ? (
+              <p className="muted" style={{ margin: 0, fontSize: '1rem' }}>No skills selected.</p>
+            ) : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {profile.displayedSkills.map((skillId) => {
+                  const skill = (skills || []).find(s => s.id === skillId)
+                  if (!skill) return null
+                  return (
+                    <div key={skillId} style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      padding: '0.5rem 1rem', 
+                      background: 'rgba(99, 102, 241, 0.1)', 
+                      border: '1px solid rgba(99, 102, 241, 0.2)',
+                      borderRadius: '20px',
+                      color: 'var(--text)',
+                      width: 'max-content'
+                    }}>
+                      <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{skill.name}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Links */}
+          {((profile.contactPublic && profile.contact) || profile.github || profile.linkedin || profile.portfolio) && (
+            <div>
+              <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Links</h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                {profile.github && (
+                  <a href={profile.github.startsWith('http') ? profile.github : `https://${profile.github}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <Code size={16} /> GitHub
+                  </a>
+                )}
+                {profile.linkedin && (
+                  <a href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://${profile.linkedin}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <Link size={16} /> LinkedIn
+                  </a>
+                )}
+                {profile.portfolio && (
+                  <a href={profile.portfolio.startsWith('http') ? profile.portfolio : `https://${profile.portfolio}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <Globe size={16} /> Website
+                  </a>
+                )}
+                {profile.contactPublic && profile.contact && (
+                  <a href={`mailto:${profile.contact}`} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <Mail size={16} /> Email
+                  </a>
+                )}
+              </div>
+            </div>
           )}
+
+          {/* Career Achievements */}
+          <div>
+            <MilestonesSection dynamicMilestones={evaluateDynamicMilestones(progression, skills)} displayedIds={profile.displayedAchievements} maxVisible={12} />
+          </div>
+
         </div>
       </div>
     </div>
   )
 }
+

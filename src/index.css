@@ -86,7 +86,7 @@ button { border: 1px solid transparent; }
     radial-gradient(circle at 90% 100%, rgba(168, 85, 247, 0.03), transparent 30%);
   color: var(--text);
   position: relative;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Theme variants */
@@ -120,7 +120,7 @@ button { border: 1px solid transparent; }
   min-height: 100vh;
   position: relative;
   z-index: 2;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .landing-card {
@@ -237,7 +237,7 @@ h4 { font-size: 1rem; }
 .icon-button:hover { border-color: var(--border-strong); background: rgba(59,130,246,0.12); box-shadow: var(--glow-blue); }
 
 .workspace { display: grid; gap: 18px; grid-template-columns: 220px 1fr; min-height: 0; align-items: start; }
-.sidebar { display: flex; flex-direction: column; gap: 10px; position: sticky; top: 20px; }
+.sidebar { display: flex; flex-direction: column; gap: 10px; position: sticky; top: 80px; }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px; border-radius: 14px;
@@ -421,7 +421,7 @@ h4 { font-size: 1rem; }
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(12px);
   position: relative;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .panel::before {

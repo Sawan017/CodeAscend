@@ -13,7 +13,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   </head>
   <body>
+    <div id="global-error" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#300; color:#fff; z-index:999999; padding:2rem; font-family:monospace; overflow:auto;">
+      <h1 style="color:#f55">FATAL RUNTIME ERROR</h1>
+      <pre id="global-error-text" style="white-space:pre-wrap; font-size:14px;"></pre>
+    </div>
+    <script>
+      window.onerror = function(msg, src, lineno, colno, error) {
+        document.getElementById('global-error').style.display = 'block';
+        document.getElementById('global-error-text').innerText += '\n' + (error ? error.stack || error : msg);
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+        document.getElementById('global-error').style.display = 'block';
+        document.getElementById('global-error-text').innerText += '\nPromise Rejection: ' + (event.reason ? event.reason.stack || event.reason : event);
+      });
+    </script>
     <div id="root"></div>
+    <div id="modal-root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
