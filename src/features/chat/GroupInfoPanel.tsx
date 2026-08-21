@@ -2,7 +2,7 @@
 import { Trash2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Shield, ShieldAlert, UserMinus, LogOut, Edit2 } from 'lucide-react'
+import { X, Shield, ShieldAlert, UserMinus, LogOut, Edit2, UserPlus } from 'lucide-react'
 import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember } from '../../hooks/useGroupChat'
 import { supabase } from '../../lib/supabase'
