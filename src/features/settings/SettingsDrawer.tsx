@@ -716,8 +716,35 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Delivery Methods</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Email Notifications</span>
-                  <button className={`toggle-switch ${settings.notifyEmail ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyEmail: !settings.notifyEmail })} aria-label="Toggle email notifications" />
+                  <span style={{ color: 'var(--text-main)' }}>Browser Notifications</span>
+                  <button className={`toggle-switch ${settings.notifyBrowser ? 'on' : ''}`} onClick={async () => {
+                    if (settings.notifyBrowser) {
+                      onSettingsChange({ ...settings, notifyBrowser: false });
+                    } else {
+                      if (!('Notification' in window)) {
+                        alert('Browser notifications are not supported by your browser.');
+                        return;
+                      }
+                      if (Notification.permission === 'granted') {
+                        onSettingsChange({ ...settings, notifyBrowser: true });
+                      } else if (Notification.permission !== 'denied') {
+                        const permission = await Notification.requestPermission();
+                        if (permission === 'granted') {
+                          onSettingsChange({ ...settings, notifyBrowser: true });
+                        } else {
+                          onSettingsChange({ ...settings, notifyBrowser: false });
+                          alert('Browser notification permission is blocked or denied.');
+                        }
+                      } else {
+                        alert('Browser notification permission is currently blocked. Please enable it in your browser settings.');
+                      }
+                    }
+                  }} aria-label="Toggle browser notifications" />
+                {(!('Notification' in window) || ('Notification' in window && Notification.permission === 'denied')) && (
+                  <div style={{ fontSize: '0.8rem', color: 'var(--danger)', marginTop: '-0.5rem' }}>
+                    Permission blocked. Please enable notifications in your browser settings.
+                  </div>
+                )}
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Notification Sound</span>

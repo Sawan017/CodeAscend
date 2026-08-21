@@ -278,7 +278,7 @@ export interface Settings {
   notifyMentions?: boolean
   notifyAchievements?: boolean
   notifyLearningReminders?: boolean
-  notifyEmail?: boolean
+  notifyBrowser?: boolean
   notificationSound?: string
   allowFriendRequests?: boolean
   allowMessages?: boolean
