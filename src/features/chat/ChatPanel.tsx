@@ -42,7 +42,9 @@ export function ChatPanel(props: ChatPanelProps) {
     addMembers,
     removeMember,
     updateMemberRole,
-    deleteGroup
+    deleteGroup,
+    editGroupMessage,
+    deleteGroupMessageForEveryone
   } = useGroupChat(props.activeUserId)
 
   // Switch tabs handler
