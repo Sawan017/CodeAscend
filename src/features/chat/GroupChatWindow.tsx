@@ -252,7 +252,7 @@ export function GroupChatWindow({
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
         {messages.length === 0 ? (
           <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
             <p>No messages yet.</p>
@@ -264,6 +264,30 @@ export function GroupChatWindow({
             const senderProfile = profiles[msg.sender_id]
             const senderName = isMe ? 'You' : (senderProfile?.displayName || 'Unknown')
 
+            const prevMsg = idx > 0 ? messages[idx - 1] : null
+            let isSameMinuteAsPrev = false
+            let isSameSenderAsPrev = false
+
+            if (prevMsg) {
+              isSameSenderAsPrev = msg.sender_id === prevMsg.sender_id
+              if (isSameSenderAsPrev) {
+                const currTime = new Date(msg.created_at)
+                const prevTime = new Date(prevMsg.created_at)
+                if (
+                  currTime.getMinutes() === prevTime.getMinutes() &&
+                  currTime.getHours() === prevTime.getHours() &&
+                  currTime.toDateString() === prevTime.toDateString()
+                ) {
+                  isSameMinuteAsPrev = true
+                }
+              }
+            }
+
+            let marginTop = '16px'
+            if (idx === 0) marginTop = '0px'
+            else if (isSameMinuteAsPrev) marginTop = '2px'
+            else if (isSameSenderAsPrev) marginTop = '8px'
+
             const nextMsg = messages[idx + 1]
             const isSameMinuteAsNext = nextMsg &&
               msg.sender_id === nextMsg.sender_id &&
@@ -274,7 +298,7 @@ export function GroupChatWindow({
             const showTimestamp = !isSameMinuteAsNext;
 
             return (
-              <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.75rem' }}>
+              <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.75rem', marginTop }}>
                 {!isMe && (
                   <Avatar src={senderProfile?.avatar}  size={32} />
                 )}
