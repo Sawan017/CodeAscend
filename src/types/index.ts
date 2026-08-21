@@ -33,6 +33,7 @@ export interface SubtopicProgress {
   baseTime?: number
   baseXP?: number
   status: SubtopicStatus
+  evidence?: Array<{ file: string, strength: 'strong' | 'weak', fingerprint?: string }>
   difficulty?: SubtopicDifficulty
   estimatedTime?: number
   xpReward?: number
@@ -62,10 +63,12 @@ export interface UserProfile {
   portfolio?: string
   contact: string
   contactPublic: boolean
+  isPublic?: boolean
   level: number
   xp: number
   createdAt?: string
   displayedAchievements?: string[]
+  displayedSkills?: string[]
 }
 
 export interface Language {
@@ -107,6 +110,7 @@ export interface Project {
   provider?: 'github' | 'linkedin'
   externalId?: string
   syncDate?: string
+  evidences?: any[]
 }
 
 export interface ExternalProjectRecord {
@@ -238,6 +242,7 @@ export interface Progression {
   perfectScores?: number
   codingChallengesCompleted?: number
   codingChallengesPassed?: number
+  claimedRewards?: string[]
 }
 
 export type MilestoneCategory = 'All' | 'Learning' | 'Coding' | 'Knowledge' | 'XP' | 'Streak' | 'Exploration' | 'Special'

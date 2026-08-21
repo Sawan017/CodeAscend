@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeft, Trash2, CheckCircle, Code, Globe } from 'lucide-react'
 import type { Project } from '../../types'
 
@@ -18,6 +18,23 @@ export function ProjectDetail({
   onDeleteProject,
   onUpdateProject
 }: ProjectDetailProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editName, setEditName] = useState(project?.name || '')
+  const [editDesc, setEditDesc] = useState(project?.description || '')
+  const [editImage, setEditImage] = useState(project?.image || '')
+  const [editGithub, setEditGithub] = useState(project?.github || '')
+  const [editDemo, setEditDemo] = useState(project?.demo || '')
+
+  useEffect(() => {
+    if (project) {
+      setEditName(project.name || '')
+      setEditDesc(project.description || '')
+      setEditImage(project.image || '')
+      setEditGithub(project.github || '')
+      setEditDemo(project.demo || '')
+    }
+  }, [project])
+
   if (!project) {
     return (
       <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>
@@ -27,13 +44,6 @@ export function ProjectDetail({
       </div>
     )
   }
-
-  const [isEditing, setIsEditing] = useState(false)
-  const [editName, setEditName] = useState(project.name || '')
-  const [editDesc, setEditDesc] = useState(project.description || '')
-  const [editImage, setEditImage] = useState(project.image || '')
-  const [editGithub, setEditGithub] = useState(project.github || '')
-  const [editDemo, setEditDemo] = useState(project.demo || '')
 
   const handleSave = () => {
     onUpdateProject?.({
@@ -129,18 +139,20 @@ export function ProjectDetail({
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem' }}>
         <div className="main-content">
-          <div 
-            style={{
-              width: '100%',
-              height: '400px',
-              backgroundImage: `url(${project.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              borderRadius: '16px',
-              marginBottom: '2rem',
-              border: '1px solid var(--border-strong)'
-            }}
-          />
+          {project.image && (
+            <div 
+              style={{
+                width: '100%',
+                height: '400px',
+                backgroundImage: `url(${project.image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                borderRadius: '16px',
+                marginBottom: '2rem',
+                border: '1px solid var(--border-strong)'
+              }}
+            />
+          )}
           {isEditing ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
               <input value={editName} onChange={e => setEditName(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px', fontSize: '2rem' }} />
@@ -164,7 +176,7 @@ export function ProjectDetail({
 
           <div style={{ marginBottom: '2rem' }}>
             <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Features</h3>
-            {(!project.features || project.features.length === 0) ? (
+            {(!project.features || !Array.isArray(project.features) || project.features.length === 0) ? (
               <p style={{ color: 'var(--text-muted)' }}>No features documented yet.</p>
             ) : (
               <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', lineHeight: '1.8' }}>
@@ -177,7 +189,7 @@ export function ProjectDetail({
 
           <div>
             <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>What I Learned</h3>
-            {(!project.whatILearned || project.whatILearned.length === 0) ? (
+            {(!project.whatILearned || !Array.isArray(project.whatILearned) || project.whatILearned.length === 0) ? (
               <p style={{ color: 'var(--text-muted)' }}>No learnings documented yet.</p>
             ) : (
               <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', lineHeight: '1.8' }}>
@@ -210,13 +222,32 @@ export function ProjectDetail({
           <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-strong)' }}>
             <h4 style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Technologies</h4>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2rem' }}>
-              {(project.technologies || []).map(tech => (
+              {(Array.isArray(project.technologies) ? project.technologies : []).map(tech => (
                 <span key={tech} style={{ padding: '0.25rem 0.75rem', background: 'var(--bg-surface-sunken)', color: 'var(--cyan)', borderRadius: '16px', fontSize: '0.85rem', border: '1px solid var(--border-strong)' }}>
                   {tech}
                 </span>
               ))}
             </div>
           </div>
+
+          {project.evidences && project.evidences.length > 0 && (
+            <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', border: '1px solid var(--border-strong)' }}>
+              <h4 style={{ color: 'var(--text-main)', marginBottom: '1rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Detected Concepts</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {project.evidences.map((ev, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
+                    <CheckCircle size={16} color={ev.strength === 'strong' ? '#34c759' : '#ff9500'} />
+                    <span style={{ color: 'var(--text-main)' }}>
+                      {ev.domain} &rarr; {ev.skill} &rarr; {ev.topic} &rarr; {ev.subtopic} &rarr; <span style={{ color: 'var(--cyan)' }}>{ev.filename || ev.file}</span>
+                    </span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginLeft: 'auto', textTransform: 'capitalize' }}>
+                      {ev.strength}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <a 
@@ -242,6 +273,22 @@ export function ProjectDetail({
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', background: 'transparent', borderRadius: '8px', color: '#34c759', border: '1px solid #34c759', cursor: 'pointer', fontWeight: 600, marginTop: '1rem' }}
               >
                 <CheckCircle size={20} /> Mark as Complete
+              </button>
+            )}
+
+            {project.provider === 'github' && (
+              <button 
+                onClick={() => {
+                  console.log('--- PROJECT AUDIT TRAIL ---');
+                  console.log('Project:', project.name);
+                  console.log('External ID:', project.externalId);
+                  console.log('Languages detected:', project.technologies);
+                  console.log('Extracted Evidences:', project.evidences);
+                  alert('Audit log printed to browser console. Open DevTools to inspect full trace of files, evidences, and progression updates.');
+                }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem', background: 'transparent', borderRadius: '8px', color: 'var(--text-muted)', border: '1px solid var(--border-strong)', cursor: 'pointer', fontSize: '0.85rem' }}
+              >
+                Inspect Evidence Audit Log
               </button>
             )}
           </div>

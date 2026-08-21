@@ -19,7 +19,7 @@ import { SkillsPanel } from './features/skills/SkillsPanel'
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
 import { milestones } from './data/journeyData'
-import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway } from './data/learningData'
+import { resolveSkill, generateSubtopicsForSkill, getSkillsForPathway, expandSkillSubtopicsIfNeeded } from './data/learningData.ts'
 import { allTimeDistributions } from './data/timeDistributions/index'
 import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfile, FriendState, Route } from './types'
 
@@ -36,6 +36,7 @@ import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
 import { FriendsPanel } from './features/friends/FriendsPanel'
 import { ChatPanel } from './features/chat/ChatPanel'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { ProjectDetail } from './features/projects/ProjectDetail'
 import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
@@ -93,26 +94,47 @@ function App() {
     const error = params.get('error') || new URLSearchParams(window.location.search).get('error')
     const errorDescription = params.get('error_description') || new URLSearchParams(window.location.search).get('error_description')
     
+    // Capture settings param
+    const searchParams = new URLSearchParams(window.location.search)
+    const shouldOpenSettings = searchParams.get('settings') === 'account'
+
     if (error) {
       console.error('OAuth Callback Error:', error, errorDescription)
       push(`Authentication Error: ${errorDescription || error}`, 'info')
-      // Clean up URL
-      window.history.replaceState(null, '', window.location.pathname)
+      window.sessionStorage.removeItem('github_link_pending')
+      window.sessionStorage.setItem('github_oauth_error', errorDescription || error)
+      // Clean up URL after a short delay so any async auth listeners can see it if needed
+      setTimeout(() => {
+        window.history.replaceState(null, '', window.location.pathname)
+      }, 500)
     }
 
     // If we just came back from an OAuth flow successfully
     if (params.get('access_token')) {
+      const providerToken = params.get('provider_token')
+      if (providerToken) {
+        // Store it so github.ts can use it immediately before Supabase emits the event
+        window.sessionStorage.setItem('github_provider_token', providerToken)
+        console.log('[Auth Trace] Saved provider_token from URL hash')
+      }
       push('Account successfully connected!', 'info')
-      window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      
+      // CRITICAL FIX: Do NOT delete the URL hash immediately!
+      // Supabase's `_initialize()` is asynchronous. If we delete the hash here,
+      // Supabase GoTrue NEVER sees the tokens and NEVER updates the session
+      // with the newly linked identity. We must let Supabase process it.
+      // Supabase will automatically clean the hash when it is done processing.
+      
+    } else if (!error && shouldOpenSettings && window.sessionStorage.getItem('github_link_pending') === 'true') {
+      console.warn('[GitHub OAuth] Returned from OAuth redirect with no access_token and no error — linkIdentity may have failed silently or used PKCE flow.')
     }
 
-    // Open settings if requested
-    const searchParams = new URLSearchParams(window.location.search)
-    if (searchParams.get('settings') === 'account') {
+    // Open settings drawer if requested (e.g. returning from OAuth redirect)
+    if (shouldOpenSettings) {
       setSettingsOpen(true)
-      // Clean up search param
       searchParams.delete('settings')
       const newSearch = searchParams.toString() ? '?' + searchParams.toString() : ''
+      // Keep the hash intact for Supabase
       window.history.replaceState(null, '', window.location.pathname + newSearch + window.location.hash)
     }
   }, [])
@@ -179,7 +201,7 @@ function App() {
     return {
       progression: initialProg,
       goals: stored.goals.length ? stored.goals : goals,
-      skills: stored.skills.length ? stored.skills : [],
+      skills: (stored.skills.length ? stored.skills : []).map(expandSkillSubtopicsIfNeeded),
       projects: stored.projects.length ? stored.projects : projects,
       achievements: stored.achievements.length ? stored.achievements : achievements,
       badges: stored.badges.length ? stored.badges : badges,
@@ -194,7 +216,7 @@ function App() {
   const prevLevelRef = useRef(calculateLevel(initialData.progression.xp))
   const [progression, setProgression] = useState<Progression>(initialData.progression)
   const [goalState, setGoalState] = useState(initialData.goals)
-  const [skillState, setSkillState] = useState(initialData.skills)
+  const [skillState, setSkillState] = useState<Skill[]>(initialData.skills)
   const [projectState, setProjectState] = useState(initialData.projects)
   const [achievementState, setAchievementState] = useState(initialData.achievements)
   const [badgeState, setBadgeState] = useState(initialData.badges)
@@ -302,7 +324,16 @@ function App() {
           difficulty: st.difficulty
         }))
 
-      return { ...s, subtopics: newSubtopics, progress: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : s.progress }
+      const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : s.progress
+      const status = progress === 100 ? 'MASTERED' : s.status
+
+      if (progress === 100 && s.status !== 'MASTERED' && !s.completed) {
+        // Automatically award XP when hitting 100%
+        setProgression(p => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
+        push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
+      }
+
+      return { ...s, subtopics: newSubtopics, progress, status, completed: (progress === 100 && !s.completed) ? new Date().toISOString().slice(0, 10) : s.completed }
     }))
     
     push(`Subtopic completed! +${finalXp} XP`, 'xp')
@@ -644,54 +675,11 @@ function App() {
           }
         }
         let loadedProgression = remote.progression || empty.progression
-        let loadedAchievements = remote.achievements || empty.achievements
-
-        // --- BACKFILL: Lock FutureMe-granted 'first-website' ---
-        // If the user was granted 'first-website' by default, lock it so they must earn it legitimately.
-        const fwIndex = loadedAchievements.findIndex((a: any) => a.id === 'first-website')
-        if (fwIndex !== -1 && loadedAchievements[fwIndex].unlocked) {
-           loadedAchievements[fwIndex] = { ...loadedAchievements[fwIndex], unlocked: false }
-           delete loadedAchievements[fwIndex].dateUnlocked
-        }
-
-        // --- BACKFILL: Journey Begins ---
-        // Ensure existing users have the achievement record without awarding any duplicate XP.
-        const jbIndex = loadedAchievements.findIndex((a: any) => a.id === 'journey-begins')
-        const hasJourneyBegins = jbIndex !== -1 && loadedAchievements[jbIndex].unlocked
-
-        if (!hasJourneyBegins) {
-          // Safely add or unlock the achievement itself
-          if (jbIndex !== -1) {
-            loadedAchievements[jbIndex] = { ...loadedAchievements[jbIndex], unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10), xpReward: 500 }
-          } else {
-            const defaultJb = achievements.find((a: any) => a.id === 'journey-begins')
-            if (defaultJb) {
-              loadedAchievements = [
-                { ...defaultJb, unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10), xpReward: 500 },
-                ...loadedAchievements
-              ]
-            }
-          }
-          
-          // Ensure it is displayed on the profile
-          setProfileState(prev => {
-            const prevDisplayed = prev.displayedAchievements || []
-            if (!prevDisplayed.includes('journey-begins')) {
-              const updatedProfile = { ...prev, displayedAchievements: ['journey-begins', ...prevDisplayed] }
-              saveProfile(user.id, updatedProfile)
-              if (typeof window !== 'undefined') {
-                window.localStorage.setItem('futureme-profile', JSON.stringify(updatedProfile))
-              }
-              return updatedProfile
-            }
-            return prev
-          })
-          
-          // Atomic persist to database to lock it in
-          // (XP is purposely NOT modified here so existing users do not receive duplicated XP)
-          saveAchievements(user.id, loadedAchievements)
-        }
-        // --- END BACKFILL ---
+        const savedAch = remote.achievements || empty.achievements
+        let loadedAchievements = achievements.map(baseAch => {
+          const existing = savedAch.find((a: any) => a.id === baseAch.id)
+          return existing ? { ...baseAch, ...existing } : baseAch
+        })
 
         setProgression(loadedProgression)
         setAchievementState(loadedAchievements)
@@ -700,7 +688,7 @@ function App() {
           const filteredProjects = remote.projects.filter((p: any) => p.id !== 'futureme')
           setProjectState(filteredProjects)
         }
-        if (remote.skills) setSkillState(remote.skills)
+        if (remote.skills) setSkillState(remote.skills.map(expandSkillSubtopicsIfNeeded))
         if (remote.badges) setBadgeState(remote.badges)
         
         // CRITICAL FIX: Fetch actual social network state instead of relying on legacy profile.data.friends JSON
@@ -849,72 +837,87 @@ function App() {
     playSoundEffect('click', settings.soundEffects)
   }
 
-  const toggleSkillMastery = (id: string) => {
-    setSkillState((prev) => prev.map((skill) => {
-      if (skill.id !== id) return skill
-      const nextStatus = skill.status === 'MASTERED' ? 'LEARNING' : 'MASTERED'
-      if (nextStatus === 'MASTERED') {
-        if (!skill.completed) {
-          setProgression((p) => ({ ...p, xp: p.xp + XP_REWARDS.skillMastered, skillsMastered: p.skillsMastered + 1 }))
-          push(`Skill mastered! +${XP_REWARDS.skillMastered} XP`, 'unlock')
-          playSoundEffect('unlock', settings.soundEffects)
-        }
-        return { ...skill, status: 'MASTERED' as const, progress: 100, completed: skill.completed || new Date().toISOString().slice(0, 10) }
-      }
-      return { ...skill, status: 'LEARNING' as const } // Do not clear completed date so they can't farm XP
-    }))
-  }
-
 
 
   const markProjectCompleted = async (projectId: string) => {
     const project = projectState.find(p => p.id === projectId)
     if (!project || project.completed) return
 
-    let finalXp: number = XP_REWARDS.projectCompleted
+    // 1. Generate the stable reward key
+    const rewardKey = project.provider && project.externalId ? `project_${project.provider}_${project.externalId}` : `project_local_${project.id}`
+
+    // 2. Fetch the metadata needed for dynamic XP calculation, if it's an external project
+    let metadata: any = undefined;
+    let baseTargetXp: number = XP_REWARDS.projectCompleted;
 
     if (project.provider && project.externalId && user?.id) {
-      // It's an external project
       const { supabase } = await import('./lib/supabase')
       if (supabase) {
-        const { data: existing } = await supabase.from('external_projects').select('*').eq('user_id', user.id).eq('provider', project.provider).eq('external_id', project.externalId).single()
+        const { data: existing } = await supabase.from('external_projects')
+          .select('metadata')
+          .eq('user_id', user.id)
+          .eq('provider', project.provider)
+          .eq('external_id', project.externalId)
+          .single();
+        
+        metadata = existing?.metadata;
         
         const { calculateExternalProjectXP } = await import('./lib/progression')
-        const targetXp = calculateExternalProjectXP('completed', existing?.xp_awarded || 0)
-        
-        finalXp = targetXp
-        
-        if (finalXp > 0) {
-          await supabase.from('external_projects').upsert({
-            ...(existing || { user_id: user.id, provider: project.provider, external_id: project.externalId }),
-            status: 'completed',
-            xp_awarded: (existing?.xp_awarded || 0) + finalXp,
-            last_synced_at: new Date().toISOString()
-          }, { onConflict: 'user_id,provider,external_id' })
-        } else {
-          await supabase.from('external_projects').upsert({
-            ...(existing || { user_id: user.id, provider: project.provider, external_id: project.externalId }),
-            status: 'completed',
-            last_synced_at: new Date().toISOString()
-          }, { onConflict: 'user_id,provider,external_id' })
-        }
+        // Calculate the raw target XP for this project based ONLY on metadata, 
+        // passing 0 for currentXpAwarded since we use claimedRewards as the ledger.
+        baseTargetXp = calculateExternalProjectXP('completed', 0, metadata);
+
+        // Update the external_project row's status, ignoring xp_awarded logic for the authoritative check
+        await supabase.from('external_projects').upsert({
+          user_id: user.id,
+          provider: project.provider,
+          external_id: project.externalId,
+          status: 'completed',
+          metadata: metadata,
+          last_synced_at: new Date().toISOString()
+        }, { onConflict: 'user_id,provider,external_id' })
       }
     }
 
     setProjectState((prev) => prev.map((p) => {
       if (p.id !== projectId || p.completed) return p
-      
-      if (finalXp > 0) {
-        setProgression((prog) => ({ ...prog, xp: prog.xp + finalXp, projectsCompleted: prog.projectsCompleted + 1 }))
-        push(`Project completed! +${finalXp} XP`, 'unlock')
-        playSoundEffect('unlock', settings.soundEffects)
-      } else {
-        setProgression((prog) => ({ ...prog, projectsCompleted: prog.projectsCompleted + 1 }))
-        push('Project completed!', 'info')
-      }
-      
       return { ...p, completed: true, completedDate: new Date().toISOString().slice(0, 10), progress: 100, status: 'COMPLETED' }
     }))
+    
+    // 3. Read the CURRENT persisted progression.claimedRewards inside a functional update 
+    // to strictly prevent stale closures and ensure atomic ledger updates.
+    setProgression((prog) => {
+       const hasClaimed = prog.claimedRewards?.includes(rewardKey);
+       
+       // 4. If it exists: award 0 XP
+       // 5. If it does not exist: calculate XP, award exactly once
+       const actualXp = hasClaimed ? 0 : baseTargetXp;
+       
+       if (actualXp > 0) {
+          setTimeout(() => {
+             push(`Project completed! +${actualXp} XP`, 'unlock')
+             playSoundEffect('unlock', settings.soundEffects)
+          }, 0)
+          
+          return {
+             ...prog,
+             xp: prog.xp + actualXp,
+             projectsCompleted: prog.projectsCompleted + 1,
+             claimedRewards: [...(prog.claimedRewards || []), rewardKey]
+          }
+       } else {
+          setTimeout(() => {
+             push('Project completed!', 'info')
+          }, 0)
+          
+          return {
+             ...prog,
+             projectsCompleted: prog.projectsCompleted + 1,
+             // DO NOT append another claim or modify the existing claim
+             claimedRewards: prog.claimedRewards || []
+          }
+       }
+    })
   }
 
   const updateProject = (updatedProject: Project) => {
@@ -922,23 +925,47 @@ function App() {
     push('Project updated successfully', 'info')
   }
 
-  const addProject = (newProject: Project) => {
-    setProjectState((prev) => [newProject, ...prev])
-    setActiveProject(newProject)
-    push(`Project added: ${newProject.name}`, 'info')
-    playSoundEffect('click', settings.soundEffects)
-  }
+  const deleteProject = async (projectId: string) => {
+    const projectToDelete = projectState.find(p => p.id === projectId)
+    
+    // If it's a synced external project, remove its tracking record in Codeascend DB
+    if (projectToDelete?.provider && projectToDelete?.externalId && user?.id) {
+      try {
+        const { supabase } = await import('./lib/supabase')
+        if (supabase) {
+          const { error } = await supabase
+            .from('external_projects')
+            .update({ is_deleted: true })
+            .eq('user_id', user.id)
+            .eq('provider', projectToDelete.provider)
+            .eq('external_id', projectToDelete.externalId)
+            
+          if (error) {
+            push('Failed to delete integration record: ' + error.message, 'info')
+            return // Halt deletion if the DB operation fails
+          }
+        }
+      } catch (err: any) {
+        push('Failed to delete project tracking: ' + err.message, 'info')
+        return
+      }
+    }
 
-  const deleteProject = (projectId: string) => {
     setProjectState((prev) => {
       const next = prev.filter((p) => p.id !== projectId)
-      if (activeProject.id === projectId && next.length > 0) {
+      if (activeProject?.id === projectId && next.length > 0) {
         setActiveProject(next[0])
       }
       return next
     })
+    
     push('Project deleted', 'info')
     playSoundEffect('click', settings.soundEffects)
+    
+    // Redirect if we are currently viewing the deleted project
+    if (route.view === 'project_detail') {
+      window.location.hash = '#view=projects'
+    }
   }
 
   const addSkill = (newSkill: Skill) => {
@@ -1157,10 +1184,11 @@ function App() {
 
               <div className="main-stage">
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
+                  <ErrorBoundary>
                   <AnimatePresence mode="wait">
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} achievements={achievementState} goalsCompleted={completedGoals} onUpdateProfile={setProfileState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
-                    {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} badges={badgeState} projects={projectState} skills={skillState} achievements={achievementState} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
+                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
+                    {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
                       if (typeof window !== 'undefined') {
                         window.localStorage.setItem('futureme-profile', JSON.stringify(updatedProfile))
@@ -1175,7 +1203,7 @@ function App() {
                       }
                       navigate({ view: 'profile' })
                     }} />}
-                    {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onAddProject={addProject} onDeleteProject={deleteProject} />}
+                    {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} />}
                     {route.view === 'project_detail' && <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} />}
                     {route.view === 'learning' && <SkillsPanel 
             skills={skillState} 
@@ -1191,7 +1219,6 @@ function App() {
                     {route.view === 'skill_detail' && <SkillDetail 
                       skill={skillState.find(s => s.id === route.id)!} 
                       onBack={goBack} 
-                      onMarkMastered={toggleSkillMastery} 
                       onUpdateNotes={updateSkillNotes} 
                       onStartSession={(subtopic) => {
                         const dist = allTimeDistributions[route.id]?.[subtopic.title];
@@ -1373,6 +1400,7 @@ function App() {
                     )}
 
                   </AnimatePresence>
+                  </ErrorBoundary>
                 </motion.section>
               </div>
             </div>
@@ -1418,19 +1446,221 @@ function App() {
         onAddProjects={(newProjs) => setProjectState(prev => [...newProjs, ...prev])}
         onAddLanguages={(langs) => {
           langs.forEach(lang => {
-            if (!skillState.some(s => s.name.toLowerCase() === lang.toLowerCase())) {
+            // Because state updates are batched, we should check against a robust resolved name if possible.
+            // However, addSkill uses functional updates which is safe. We will rely on addSkill handling the generation.
+            // But wait, addSkill just takes a Skill object! Let's build the complete skill object here.
+            if (!skillState.some(s => s.name.toLowerCase() === lang.toLowerCase() || s.canonicalName?.toLowerCase() === lang.toLowerCase())) {
+              const resolved = resolveSkill(lang);
+              const subtopics = resolved ? generateSubtopicsForSkill(resolved) : [];
+              
               addSkill({
                 id: crypto.randomUUID(),
-                name: lang,
+                name: resolved?.canonicalName || lang,
+                canonicalName: resolved?.canonicalName,
                 progress: 0,
                 status: 'LEARNING',
                 started: new Date().toISOString(),
                 completed: '',
                 relatedProjects: [],
-                notes: ''
+                notes: '',
+                subtopics: subtopics,
+                isIndependent: true,
+                activeDomains: resolved ? [resolved.primaryDomainId, ...(resolved.secondaryDomainIds || [])] : []
               })
             }
           })
+        }}
+        onUpdateProjects={(updatedProjs) => {
+          setProjectState(prev => prev.map(p => updatedProjs.find(u => u.id === p.id) || p))
+        }}
+        onAddEvidences={(evidences) => { 
+          console.log(`[XP Pipeline] onAddEvidences called with ${evidences.length} evidences`);
+          const uniqueSkillNames = Array.from(new Set(evidences.map(e => e.skill)));
+          console.log(`[XP Pipeline] Unique skills to process:`, uniqueSkillNames);
+          
+          setProgression((p) => {
+             let finalXpToAward = 0;
+             const newClaims: string[] = [];
+             
+             uniqueSkillNames.forEach(skillName => {
+                let existing = skillState.find(s => s.canonicalName === skillName || s.name.toLowerCase() === skillName.toLowerCase());
+                let subtopics = existing?.subtopics;
+                
+                if (!subtopics || subtopics.length === 0) {
+                   const resolved = resolveSkill(skillName);
+                   if (resolved) subtopics = generateSubtopicsForSkill(resolved);
+                }
+                
+                if (!subtopics || subtopics.length === 0) return;
+                
+                const skillEvidences = evidences.filter(ev => ev.skill === skillName || (ev.skill && ev.skill.toLowerCase() === skillName.toLowerCase()));
+                const completedThisRun = new Set<string>();
+                
+                skillEvidences.forEach(ev => {
+                   const st = subtopics!.find(t => t.title === ev.subtopic);
+                   if (st) {
+                      const rewardKey = `subtopic_${st.id}`;
+                      const alreadyClaimed = p.claimedRewards?.includes(rewardKey);
+                      
+                      console.log(`[XP Pipeline] Matched evidence '${ev.subtopic}' -> Subtopic '${st.title}' (status: ${st.status}, claimed: ${alreadyClaimed})`);
+                      
+                      // Even if the UI shows it as 'Learning', we trust claimedRewards.
+                      if (st.status !== 'Completed' && !completedThisRun.has(st.id) && !alreadyClaimed) {
+                         completedThisRun.add(st.id);
+                         const baseXP = st.baseXP || 88;
+                         const prime = Math.floor(baseXP * 2.5);
+                         const focused = Math.floor(baseXP * 1.75);
+                         const extended = Math.floor(baseXP * 1.0);
+                         const averageXp = Math.floor((prime + focused + extended) / 3);
+                         
+                         finalXpToAward += averageXp;
+                         newClaims.push(rewardKey);
+                         console.log(`[XP Pipeline] Awarding +${averageXp} XP for completing '${st.title}'`);
+                      }
+                   } else {
+                      console.log(`[XP Pipeline] WARNING: Evidence subtopic '${ev.subtopic}' did NOT match any existing subtopic in skill '${skillName}'`);
+                   }
+                });
+             });
+             
+             if (finalXpToAward > 0) {
+                 console.log(`[XP Pipeline] Total XP to award: +${finalXpToAward}`);
+                 setTimeout(() => {
+                     push(`Auto-completed subtopics! +${finalXpToAward} XP`, 'xp');
+                     playSoundEffect('unlock', settings.soundEffects);
+                 }, 0);
+                 return {
+                     ...p,
+                     xp: p.xp + finalXpToAward,
+                     claimedRewards: [...(p.claimedRewards || []), ...newClaims]
+                 };
+             } else {
+                 console.log(`[XP Pipeline] No new XP to award (already completed or no matches).`);
+             }
+             return p;
+          });
+
+          setSkillState(prev => {
+             let nextState = [...prev];
+             uniqueSkillNames.forEach(skillName => {
+                let existingIdx = nextState.findIndex(s => s.canonicalName === skillName || s.name.toLowerCase() === skillName.toLowerCase());
+                
+                let skill: Skill;
+                if (existingIdx !== -1) {
+                   skill = { ...nextState[existingIdx] };
+                   
+                   if (!skill.subtopics || skill.subtopics.length === 0) {
+                      const resolved = resolveSkill(skillName);
+                      if (resolved) {
+                         skill.subtopics = generateSubtopicsForSkill(resolved);
+                         skill.canonicalName = resolved.canonicalName;
+                         if (!skill.activeDomains) skill.activeDomains = [resolved.primaryDomainId];
+                         if (skill.isIndependent === undefined) skill.isIndependent = true;
+                      }
+                   }
+                } else {
+                   const resolved = resolveSkill(skillName);
+                   if (!resolved) return;
+                   const subtopics = generateSubtopicsForSkill(resolved);
+                   skill = {
+                      id: crypto.randomUUID(),
+                      name: resolved.canonicalName || skillName,
+                      canonicalName: resolved.canonicalName,
+                      progress: 0,
+                      status: 'LEARNING',
+                      started: new Date().toISOString(),
+                      completed: '',
+                      relatedProjects: [],
+                      notes: 'Auto-detected from GitHub',
+                      subtopics,
+                      isIndependent: true,
+                      activeDomains: [resolved.primaryDomainId]
+                   };
+                   nextState.push(skill);
+                   existingIdx = nextState.length - 1;
+                }
+                
+                const skillEvidences = evidences.filter(ev => ev.skill === skill.canonicalName || ev.skill === skill.name || (ev.skill && ev.skill.toLowerCase() === skill.name.toLowerCase()));
+                if (skillEvidences.length === 0) {
+                   nextState[existingIdx] = skill;
+                   return;
+                }
+                
+                const subtopics = skill.subtopics || [];
+                const newSubtopics = [...subtopics];
+                let newlyCompleted = 0;
+                
+                skillEvidences.forEach(ev => {
+                   const subtopicIdx = newSubtopics.findIndex(st => st.title === ev.subtopic);
+                   if (subtopicIdx !== -1) {
+                      const st = newSubtopics[subtopicIdx];
+                      const hasFingerprint = st.evidence?.some(e => e.fingerprint === ev.fingerprint);
+                      
+                      if (!hasFingerprint) {
+                         const isAlreadyCompleted = st.status === 'Completed';
+                         const updatedSt = {
+                            ...st,
+                            evidence: [...(st.evidence || []), { file: ev.filename, strength: ev.strength, fingerprint: ev.fingerprint }]
+                         };
+                         
+                         if (!isAlreadyCompleted) {
+                            updatedSt.status = 'Completed';
+                            updatedSt.completionTimeMinutes = 100;
+                            newlyCompleted++;
+                            console.log(`[XP Pipeline] SkillState: Marked subtopic '${st.title}' as Completed.`);
+                         }
+                         
+                         newSubtopics[subtopicIdx] = updatedSt;
+                      }
+                   }
+                });
+                
+                const completedCount = newSubtopics.filter(st => st.status === 'Completed').length;
+                const totalCount = newSubtopics.length;
+                const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+                
+                const status = progress === 100 ? 'MASTERED' : 'LEARNING';
+                
+                console.log(`[XP Pipeline] SkillState: Skill '${skill.name}' updated. Newly completed: ${newlyCompleted}. Progress: ${progress}%. Status: ${status}`);
+                nextState[existingIdx] = { ...skill, subtopics: newSubtopics, progress, status };
+             });
+             return nextState;
+          });
+        }}
+        onRemoveGithubData={() => {
+           setProjectState(prev => prev.filter(p => p.provider !== 'github'));
+           
+           setSkillState(prev => prev.map(skill => {
+              if (!skill.subtopics) return skill;
+              
+              const newSubtopics = skill.subtopics.map(st => {
+                 if (!st.evidence) return st;
+                 const newEvidence = st.evidence.filter(e => !e.fingerprint?.startsWith('github|'));
+                 return { ...st, evidence: newEvidence };
+              });
+              
+              // Note: We deliberately do not reset completion status or deduct XP here to prevent
+              // punishing the user for manual progress or prior legitimate completions,
+              // matching the requirement to preserve unrelated learning data.
+              
+              return { ...skill, subtopics: newSubtopics };
+           }));
+
+           import('./lib/supabase').then(({ supabase }) => {
+              if (supabase) {
+                 supabase.auth.getUser().then(({ data: { user } }) => {
+                    if (user) {
+                       supabase.from('external_projects').delete().eq('user_id', user.id).eq('provider', 'github').then(() => {
+                          push('GitHub account and imported repositories removed', 'info');
+                       });
+                    } else {
+                       push('GitHub repositories removed locally', 'info');
+                    }
+                 });
+              } else {
+                 push('GitHub repositories removed locally', 'info');
+              }
+           });
         }}
       />
 
@@ -1509,3 +1739,8 @@ function App() {
 }
 
 export default App
+
+
+
+
+

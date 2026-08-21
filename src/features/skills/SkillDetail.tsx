@@ -2,15 +2,14 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { ArrowLeft, BookOpen, Award, CheckCircle } from 'lucide-react'
 import type { Skill, SubtopicProgress } from '../../types'
-import { resolveSkill, generateSubtopicsForSkill } from '../../data/learningData'
+import { resolveSkill, generateSubtopicsForSkill } from '../../data/learningData.ts'
 import { allTimeDistributions } from '../../data/timeDistributions/index'
 import { LearningSession } from './LearningSession'
 
 type SkillDetailProps = {
   skill: Skill
   onBack: () => void
-  onMarkMastered: (id: string) => void
-  onUpdateNotes: (id: string, notes: string) => void
+    onUpdateNotes: (id: string, notes: string) => void
   onStartSession?: (subtopic: SubtopicProgress) => void
   onCloseSession?: () => void
   activeSession?: import('../../types').ActiveSessionState | null
@@ -19,7 +18,6 @@ type SkillDetailProps = {
 export function SkillDetail({
   skill,
   onBack,
-  onMarkMastered,
   onUpdateNotes,
   onStartSession,
   onCloseSession,
@@ -54,7 +52,7 @@ export function SkillDetail({
   }
 
 
-  const canonicalSkill = resolveSkill(skill.id);
+  const canonicalSkill = resolveSkill(skill.canonicalName || skill.name);
   const curriculum = canonicalSkill?.curriculum || [];
   
   const completedSubtopicsWithAi = (skill.subtopics || [])
@@ -283,23 +281,7 @@ export function SkillDetail({
         </div>
       </div>
 
-      {skill.status !== 'MASTERED' && (
-        <div style={{ marginTop: '4rem', display: 'flex', justifyContent: 'center' }}>
-          <button 
-            onClick={() => onMarkMastered(skill.id)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem 2rem',
-              background: 'transparent', color: 'var(--cyan)',
-              border: '2px solid var(--cyan)', borderRadius: '100px', fontSize: '1.1rem', fontWeight: 600,
-              cursor: 'pointer', transition: 'all 0.2s'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.background = 'var(--cyan)'; e.currentTarget.style.color = '#000' }}
-            onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyan)' }}
-          >
-            <CheckCircle size={20} /> Mark as Mastered
-          </button>
-        </div>
-      )}
+      
 
       {activeSubtopic && (() => {
         const currentSubtopic = activeSubtopic;
@@ -354,4 +336,6 @@ export function SkillDetail({
     </motion.div>
   )
 }
+
+
 

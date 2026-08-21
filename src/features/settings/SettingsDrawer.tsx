@@ -17,7 +17,10 @@ type SettingsDrawerProps = {
   userId?: string
   projects?: import('../../types').Project[]
   onAddProjects?: (projects: import('../../types').Project[]) => void
+  onUpdateProjects?: (projects: import('../../types').Project[]) => void
   onAddLanguages?: (languages: string[]) => void
+  onAddEvidences?: (evidences: import('../../lib/github-analyzer.ts').ConceptEvidence[]) => void
+  onRemoveGithubData?: () => void
 }
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
@@ -43,7 +46,7 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'help', label: 'Help & About', icon: HelpCircle },
 ]
 
-export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, projects, onAddProjects, onAddLanguages }: SettingsDrawerProps) {
+export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData }: SettingsDrawerProps) {
   const [activeTab, setActiveTab] = useState<TabId>('account')
   
   const [githubConnected, setGithubConnected] = useState(false)
@@ -84,10 +87,51 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
   const checkGithubConnection = async () => {
     if (!supabase) return
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    const wasPending = sessionStorage.getItem('github_link_pending') === 'true'
+    
+    // Check for explicit OAuth errors captured by App.tsx
+    const oauthError = sessionStorage.getItem('github_oauth_error')
+    if (oauthError) {
+      sessionStorage.removeItem('github_oauth_error')
+      sessionStorage.removeItem('github_link_pending')
+      setGithubMessage('GitHub connection failed: ' + oauthError + '. If it says the identity is already linked, please log into the old account and disconnect it first.')
+      return
+    }
 
-    console.log('checkGithubConnection user identities:', user.identities, 'app_metadata:', user.app_metadata)
+    if (wasPending) {
+      sessionStorage.removeItem('github_link_pending')
+      console.log('[GitHub OAuth] Link was pending — fetching latest session and user data...')
+      
+      // If we're returning from a PKCE flow, supabase._initialize is currently exchanging the code.
+      // Calling refreshSession concurrently will break the PKCE flow.
+      const hasCode = window.location.search.includes('code=')
+      
+      if (hasCode) {
+         console.log('[GitHub OAuth] URL contains PKCE code. Waiting for exchangeCodeForSession instead of forcing refresh.')
+         // We don't force a refresh here, we let the onAuthStateChange listener handle the update when it completes.
+      } else {
+        const { data: sessionData } = await supabase.auth.getSession()
+        if (!sessionData.session) {
+          console.warn('[GitHub OAuth] No session found after OAuth return — session may not have been migrated yet')
+        } else {
+          // It's implicit flow or no code, safe to refresh
+          const { error: refreshError } = await supabase.auth.refreshSession()
+          if (refreshError) {
+            console.warn('[GitHub OAuth] Session refresh warning:', refreshError.message)
+          }
+        }
+      }
+    }
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      if (wasPending) {
+        setGithubMessage('Could not verify GitHub connection — session expired. Please sign in again.')
+      }
+      return
+    }
+
+    console.log('[GitHub OAuth] checkGithubConnection:', 'identities:', user.identities, 'app_metadata:', user.app_metadata, 'wasPending:', wasPending)
 
     const githubLinked = user.app_metadata?.providers?.includes('github') || user.identities?.some(i => i.provider === 'github')
     setGithubConnected(!!githubLinked)
@@ -99,13 +143,41 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       } else {
         setGithubUsername('Connected')
       }
+      if (wasPending) {
+        setGithubMessage('')
+      }
+    } else if (wasPending && !window.location.search.includes('code=')) {
+      setGithubMessage('GitHub connection failed. The identity may still be linked to a deleted account. Try again, or revoke access in GitHub Settings first.')
     }
   }
 
   const connectGitHub = async (autoSync: boolean = false) => {
     if (!supabase) return
-    console.log(`[Auth Trace] Initiating ${githubConnected ? 'signInWithOAuth' : 'linkIdentity'} for github`)
     
+    // Verify we have a valid AND UNEXPIRED Supabase session BEFORE attempting linkIdentity.
+    // linkIdentity requires an authenticated session (valid Bearer JWT).
+    // If the token is expired, Supabase API will return "This endpoint requires a valid Bearer token".
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    // Check if missing or expired (buffer of 60 seconds)
+    const isExpired = session ? (session.expires_at ? session.expires_at < (Date.now() / 1000) + 60 : false) : true;
+    
+    if (!session || isExpired) {
+      console.warn('[GitHub OAuth] Session missing or expired. Forcing refresh before linkIdentity...')
+      const { data: refreshData, error: refreshErr } = await supabase.auth.refreshSession()
+      if (refreshErr || !refreshData.session) {
+        console.error('[GitHub OAuth] Session refresh failed:', refreshErr?.message)
+        setGithubMessage('Session expired. Please sign out and sign back in before connecting GitHub.')
+        return
+      }
+    }
+    
+    console.log(`[GitHub OAuth] Initiating ${githubConnected ? 'signInWithOAuth' : 'linkIdentity'} for github`)
+    
+    // Set pending flag BEFORE the redirect so that on return,
+    // checkGithubConnection() knows to refresh the session first.
+    sessionStorage.setItem('github_link_pending', 'true')
+
     const options = {
       redirectTo: window.location.origin + '?settings=account' + (autoSync ? '&sync=github' : '')
     }
@@ -114,8 +186,11 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       ? await supabase.auth.signInWithOAuth({ provider: 'github', options })
       : await supabase.auth.linkIdentity({ provider: 'github', options })
       
-    console.log('[Auth Trace] OAuth initiation response:', data, error)
-    if (error) setGithubMessage('Failed to connect GitHub: ' + error.message)
+    console.log('[GitHub OAuth] OAuth initiation response:', data, error)
+    if (error) {
+      sessionStorage.removeItem('github_link_pending')
+      setGithubMessage('Failed to connect GitHub: ' + error.message)
+    }
   }
 
   const syncGitHubProjects = async () => {
@@ -127,7 +202,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
       const token = await getGitHubToken()
       if (!token) {
-        setGithubMessage('GitHub session expired. Please click "Connect GitHub" to re-authorize.')
+        setGithubMessage('GitHub token missing. Please click "Connect GitHub" to authorize GitHub API access.')
         setSyncingGithub(false)
         return
       }
@@ -139,7 +214,9 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       let updatedCount = 0
 
       const newProjects: import('../../types').Project[] = []
+      const updatedProjects: import('../../types').Project[] = []
       const allNewLanguages = new Set<string>()
+      const allEvidences: import('../../lib/github-analyzer.ts').ConceptEvidence[] = []
 
       for (const repo of repos) {
         if (repo.fork) continue
@@ -151,13 +228,17 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         const techList = Object.keys(languages).slice(0, 5)
         techList.forEach(l => allNewLanguages.add(l))
 
+        const { analyzeRepository } = await import('../../lib/github-analyzer.ts')
+        const analysis = await analyzeRepository(repo.owner.login, repo.name, token)
+        allEvidences.push(...analysis.evidences)
+
         await upsertExternalProject({
           user_id: userId!,
           provider: 'github',
           external_id: externalId,
           status: existingExternal?.status === 'COMPLETED' ? 'completed' : 'in_progress',
-          xp_awarded: existingExternal ? 150 : 0, 
-          metadata: { repo, languages }
+          xp_awarded: undefined, // Let the backend trigger or API handle preserving it
+          metadata: { repo, languages, analysis }
         })
 
         if (!existingExternal) {
@@ -175,20 +256,35 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             whatILearned: [],
             provider: 'github',
             externalId: externalId,
-            syncDate: new Date().toISOString()
+            syncDate: new Date().toISOString(),
+            evidences: analysis.evidences
           })
           importedCount++
         } else {
           updatedCount++
+          const updatedProj = {
+             ...existingExternal,
+             evidences: analysis.evidences,
+             syncDate: new Date().toISOString()
+          };
+          updatedProjects.push(updatedProj);
         }
       }
 
       if (newProjects.length > 0 && onAddProjects) {
         onAddProjects(newProjects)
       }
+      
+      if (updatedProjects.length > 0 && onUpdateProjects) {
+        onUpdateProjects(updatedProjects)
+      }
 
       if (allNewLanguages.size > 0 && onAddLanguages) {
         onAddLanguages(Array.from(allNewLanguages))
+      }
+
+      if (allEvidences.length > 0 && onAddEvidences) {
+        onAddEvidences(allEvidences)
       }
 
       setGithubMessage(`Sync complete: ${newProjects.length} imported, ${repos.length - newProjects.length} updated.`)
@@ -206,6 +302,31 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showRemoveGithubDialog, setShowRemoveGithubDialog] = useState(false)
+  
+  const disconnectGitHub = async () => {
+    if (!supabase) return
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+
+    const githubIdentity = user.identities?.find(i => i.provider === 'github')
+    if (githubIdentity) {
+      const { error } = await supabase.auth.unlinkIdentity(githubIdentity)
+      if (error) {
+         setGithubMessage('Failed to disconnect: ' + error.message)
+         return
+      }
+    }
+    
+    setGithubConnected(false)
+    setGithubUsername(null)
+    setGithubMessage('GitHub account disconnected.')
+    setShowRemoveGithubDialog(false)
+    
+    if (onRemoveGithubData) {
+      onRemoveGithubData()
+    }
+  }
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   
@@ -388,8 +509,19 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.25rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <div>
                   <h5 style={{ margin: '0 0 0.25rem 0', color: '#fff', fontSize: '1rem' }}>GitHub</h5>
-                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                    {githubConnected ? `✓ Connected (${githubUsername})` : '— Not connected'}
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    {githubConnected ? (
+                      <>
+                        ✓ Connected ({githubUsername})
+                        <button 
+                          onClick={() => setShowRemoveGithubDialog(true)}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.1rem', marginLeft: '0.25rem' }}
+                          title="Remove GitHub account"
+                        >
+                          <X size={14} />
+                        </button>
+                      </>
+                    ) : '✗ Not connected'}
                   </p>
                 </div>
                 <div>
@@ -1162,6 +1294,78 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         </motion.div>
       )}
     </AnimatePresence>
+
+    <AnimatePresence>
+      {showRemoveGithubDialog && (
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }}
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.7)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 100000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowRemoveGithubDialog(false) }}
+        >
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 15 }}
+            style={{
+              background: 'var(--bg-panel)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px',
+              padding: '2rem',
+              maxWidth: '400px',
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Remove GitHub account?</h3>
+              <button 
+                className="icon-button" 
+                style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem' }} 
+                onClick={() => setShowRemoveGithubDialog(false)} 
+                aria-label="Cancel"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <p style={{ margin: 0, fontSize: '1.05rem', lineHeight: 1.5, color: 'var(--text-muted)' }}>
+              This will disconnect this GitHub account and remove all repositories imported from it, along with their associated GitHub evidence/project data.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+              <button 
+                className="secondary-btn" 
+                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} 
+                onClick={() => setShowRemoveGithubDialog(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="primary-btn" 
+                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', background: '#ef4444', color: '#fff', border: 'none' }} 
+                onClick={disconnectGitHub}
+              >
+                Remove
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     </>
   )
 }
+

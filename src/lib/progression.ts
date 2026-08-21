@@ -177,9 +177,9 @@ export function evaluateAchievementsAndBadges(
   badges: Badge[]
 ) {
   const currentLevel = calculateLevel(progression.xp)
-  const completedGoalsCount = goals.filter((g) => g.status === 'COMPLETED').length
-  const completedProjectsCount = projects.filter((p) => p.completed || p.status === 'COMPLETED').length
-  const masteredSkillsCount = skills.filter((s) => s.status === 'MASTERED').length
+  const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status === 'COMPLETED').length)
+  const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status === 'COMPLETED').length)
+  const masteredSkillsCount = Math.max(progression.skillsMastered || 0, skills.filter((s) => s.status === 'MASTERED').length)
   const todayStr = new Date().toISOString().slice(0, 10)
 
   const newUnlockedAchievements: Achievement[] = []
@@ -207,6 +207,7 @@ export function evaluateAchievementsAndBadges(
     if (ach.unlocked) return ach
     let unlockedNow = false
 
+    if (ach.id === 'journey-begins') unlockedNow = true
     if (ach.id === 'first-website' && completedProjectsCount >= 1) unlockedNow = true
     if (ach.id === 'first-react' && (completedProjectsCount >= 1 || masteredSkillsCount >= 1)) unlockedNow = true
     if (ach.id === 'first-fullstack' && completedProjectsCount >= 2) unlockedNow = true
@@ -375,16 +376,29 @@ export function generateFutureMilestones(_progression: import('../types').Progre
   return milestones
 }
 
-export function calculateExternalProjectXP(status: 'in_progress' | 'completed', currentXpAwarded: number): number {
-  const MAX_IN_PROGRESS = 50;
-  const COMPLETED_XP = 150;
-  
+export function calculateExternalProjectXP(status: 'in_progress' | 'completed', currentXpAwarded: number, metadata?: any): number {
+  let totalBytes = 0;
+  if (metadata?.languages) {
+    Object.values(metadata.languages).forEach((bytes: any) => {
+      totalBytes += (typeof bytes === 'number' ? bytes : 0);
+    });
+  }
+
+  let maxAllowed = 0;
+  if (totalBytes < 1000) {
+    maxAllowed = 10;
+  } else if (totalBytes < 10000) {
+    maxAllowed = 50;
+  } else {
+    maxAllowed = 150;
+  }
+
   if (status === 'completed') {
-    return Math.max(0, COMPLETED_XP - currentXpAwarded);
+    return Math.max(0, maxAllowed - currentXpAwarded);
   }
   
   if (status === 'in_progress') {
-    return Math.max(0, MAX_IN_PROGRESS - currentXpAwarded);
+    return Math.max(0, Math.floor(maxAllowed / 3) - currentXpAwarded);
   }
   
   return 0;

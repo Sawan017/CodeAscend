@@ -2,6 +2,9 @@ import { supabase } from './supabase'
 
 export async function getGitHubToken(): Promise<string | null> {
   if (!supabase) return null
+  const stored = window.sessionStorage.getItem('github_provider_token')
+  if (stored) return stored
+
   const { data } = await supabase.auth.getSession()
   return data.session?.provider_token || null
 }

@@ -1,0 +1,1 @@
+import { evaluateAchievementsAndBadges } from '../src/lib/progression'; import { projects, skills, achievements } from '../src/data/journeyData'; const badges: any = []; const goals: any = []; const progression: any = { xp: 0 }; console.log(evaluateAchievementsAndBadges(progression, goals, projects, skills, achievements, badges));

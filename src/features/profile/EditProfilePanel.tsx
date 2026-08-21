@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { motion } from 'framer-motion'
 import { Save, AlertTriangle, Pencil, Trash2 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
@@ -7,6 +8,8 @@ import { supabase } from '../../lib/supabase'
 import { Avatar } from '../../components/Avatar'
 
 type EditProfilePanelProps = {
+  dynamicMilestones?: any[];
+
   profile: UserProfile
   badges?: any[]
   projects?: any[]

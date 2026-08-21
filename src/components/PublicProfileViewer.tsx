@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Trophy, Code, Target, BookOpen, Layers3, MessageSquare, UserPlus, UserMinus, ShieldAlert, BellOff, BellRing, MoreVertical, Mail, Globe, Link } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fetchAllUserData } from '../lib/api'
+import { evaluateDynamicMilestones } from '../lib/progression'
 import { Avatar } from './Avatar'
 import { MilestonesSection } from './MilestonesSection'
 import type { UserProfile, Progression, Project, Skill, Goal, Achievement, Badge, FriendRelationship, ChatState } from '../types'
@@ -369,7 +370,7 @@ export function PublicProfileViewer({
                 )}
 
                 {/* Milestones Section */}
-                <MilestonesSection achievements={data.achievements} displayedIds={data.profile.displayedAchievements} maxVisible={12} />
+                <MilestonesSection dynamicMilestones={evaluateDynamicMilestones(data.progression || { xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0 }, data.skills)} displayedIds={data.profile.displayedAchievements} maxVisible={12} />
 
                 {/* Badges Section */}
                 {data.badges.filter(b => b.earned).length > 0 && (
