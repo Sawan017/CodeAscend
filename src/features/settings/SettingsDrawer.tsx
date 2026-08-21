@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
+import { HelpCenterModal } from './HelpCenterModal'
 import { formatAppDateTime } from '../../lib/dateFormatting'
 import { supabase } from '../../lib/supabase'
 import { fetchAllUserData } from '../../lib/api'
@@ -372,6 +373,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [showRemoveGithubDialog, setShowRemoveGithubDialog] = useState(false)
+  const [showHelpCenter, setShowHelpCenter] = useState(false)
   
   const disconnectGitHub = async () => {
     if (!supabase) return
@@ -1168,7 +1170,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Help Center</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Open</button>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowHelpCenter(true)}>Open</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Report a Problem</span>
@@ -1592,7 +1594,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         </motion.div>
       )}
     </AnimatePresence>
+
+      <HelpCenterModal 
+        isOpen={showHelpCenter} 
+        onClose={() => setShowHelpCenter(false)} 
+      />
       <PrivacyModals 
+
         chatState={chatState}
         onChatStateChange={onChatStateChange}
         isPasswordOpen={isPasswordModalOpen}
