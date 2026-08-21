@@ -441,7 +441,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       
       const a = document.createElement('a')
       a.href = url
-      a.download = `codeascend-account-export-${new Date().toISOString().split('T')[0]}.json`
+      a.download = `Arinova-account-export-${new Date().toISOString().split('T')[0]}.json`
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
