@@ -8,6 +8,7 @@ import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
 import { formatAppDateTime } from '../../lib/dateFormatting'
 import { supabase } from '../../lib/supabase'
+import { fetchAllUserData } from '../../lib/api'
 
 
 function LiveSettingsClock() {
@@ -396,6 +397,81 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
     }
   }
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportSuccess, setExportSuccess] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
+  
+  const [cacheSize, setCacheSize] = useState('0 B')
+  const [showCacheDialog, setShowCacheDialog] = useState(false)
+  const [clearSuccess, setClearSuccess] = useState(false)
+
+  const calculateCacheSize = () => {
+    let total = 0
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith('futureme-') && !key.includes('force-chooser')) {
+        const item = localStorage.getItem(key)
+        if (item) {
+          total += (key.length + item.length) * 2 // approx in bytes
+        }
+      }
+    }
+    if (total === 0) return '0 B'
+    if (total < 1024) return `${total} B`
+    if (total < 1024 * 1024) return `${(total / 1024).toFixed(1)} KB`
+    return `${(total / (1024 * 1024)).toFixed(1)} MB`
+  }
+
+  useEffect(() => {
+    if (open) setCacheSize(calculateCacheSize())
+  }, [open])
+
+  const handleExportData = async () => {
+    if (!userId) return
+    setIsExporting(true)
+    setExportError(null)
+    setExportSuccess(false)
+    try {
+      const data = await fetchAllUserData(userId)
+      if (!data) throw new Error('Failed to fetch account data')
+      
+      const dataStr = JSON.stringify(data, null, 2)
+      const blob = new Blob([dataStr], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `codeascend-account-export-${new Date().toISOString().split('T')[0]}.json`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      
+      setExportSuccess(true)
+      setTimeout(() => setExportSuccess(false), 3000)
+    } catch (err: any) {
+      setExportError(err.message || 'Export failed')
+      setTimeout(() => setExportError(null), 3000)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const handleClearCacheConfirm = () => {
+    const keysToRemove: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith('futureme-') && !key.includes('force-chooser')) {
+        keysToRemove.push(key)
+      }
+    }
+    keysToRemove.forEach(k => localStorage.removeItem(k))
+    setCacheSize(calculateCacheSize())
+    setShowCacheDialog(false)
+    setClearSuccess(true)
+    setTimeout(() => setClearSuccess(false), 3000)
+  }
+
   const [deleteError, setDeleteError] = useState<string | null>(null)
   
   const [authUserEmail, setAuthUserEmail] = useState<string | null>(null)
@@ -1017,14 +1093,44 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Manage Data</h4>
+              
+              {exportError && (
+                <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem' }}>
+                  {exportError}
+                </div>
+              )}
+              {exportSuccess && (
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CheckCircle size={16} /> Export downloaded successfully.
+                </div>
+              )}
+              {clearSuccess && (
+                <div style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <CheckCircle size={16} /> Local cache cleared safely.
+                </div>
+              )}
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Export Account Data</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Request Export</button>
+                  <button 
+                    className="secondary-btn" 
+                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} 
+                    onClick={handleExportData}
+                    disabled={isExporting}
+                  >
+                    {isExporting ? 'Exporting...' : 'Request Export'}
+                  </button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Clear Local Cache</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Clear (0 MB)</button>
+                  <button 
+                    className="secondary-btn" 
+                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} 
+                    onClick={() => setShowCacheDialog(true)}
+                  >
+                    Clear ({cacheSize})
+                  </button>
                 </div>
               </div>
             </div>
@@ -1263,6 +1369,75 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       )}
     </AnimatePresence>
 
+
+    <AnimatePresence>
+      {showCacheDialog && (
+        <motion.div 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          exit={{ opacity: 0 }} 
+          style={{ 
+            position: 'fixed', 
+            top: 0, left: 0, right: 0, bottom: 0, 
+            backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+            backdropFilter: 'blur(8px)', 
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
+          }}
+          onClick={(e) => { if (e.target === e.currentTarget) setShowCacheDialog(false) }}
+        >
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0, y: 15 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.95, opacity: 0, y: 15 }}
+            className="drawer-card" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '420px', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '1.25rem',
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--border-strong)',
+              borderRadius: '16px',
+              padding: '2rem',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.5)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <HardDrive size={24} color="#10b981" />
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)' }}>Clear Local Cache</h3>
+            </div>
+            
+            <div style={{ background: 'var(--bg-surface)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border)' }}>
+              <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '0.95rem' }}>
+                Clear local cache? This will remove temporary data stored on this device. <strong>Your account and cloud data will not be deleted.</strong>
+              </p>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+              <button 
+                className="secondary-btn" 
+                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center' }} 
+                onClick={() => setShowCacheDialog(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="primary-btn" 
+                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', background: '#10b981', color: '#fff', border: 'none' }} 
+                onClick={handleClearCacheConfirm}
+              >
+                Clear Cache
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
     <AnimatePresence>
       {showDeleteDialog && (
         <motion.div 
