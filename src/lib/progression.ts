@@ -1,3 +1,4 @@
+import { formatAppDate } from './dateFormatting'
 import type { Achievement, Badge, Goal, NameTier, Progression, Project, Skill, DynamicMilestone } from '../types'
 import { milestoneDefinitions } from '../data/milestoneData'
 
@@ -161,7 +162,7 @@ export function formatDate(iso: string) {
   if (!iso) return 'N/A'
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return iso
-  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+  return formatAppDate(iso)
 }
 
 

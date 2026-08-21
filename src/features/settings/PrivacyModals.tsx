@@ -1,3 +1,4 @@
+import { formatAppDate } from '../../lib/dateFormatting'
 ﻿import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Lock, Shield, UserX } from 'lucide-react'
@@ -218,7 +219,7 @@ export function PrivacyModals({
                             {s.user_agent ? s.user_agent.substring(0, 40) + '...' : 'Unknown Device'}
                           </p>
                           <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '0.8rem' }}>
-                            IP: {s.ip || 'Unknown'} • Last active: {new Date(s.updated_at).toLocaleDateString()}
+                            IP: {s.ip || 'Unknown'} • Last active: {formatAppDate(s.updated_at)}
                           </p>
                         </div>
                         <button 

@@ -6,7 +6,39 @@ import {
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
+import { formatAppDateTime } from '../../lib/dateFormatting'
 import { supabase } from '../../lib/supabase'
+
+
+function LiveSettingsClock() {
+  const [now, setNow] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  return (
+    <div style={{
+      position: 'absolute',
+      bottom: '1rem',
+      right: '1.5rem',
+      fontSize: '0.85rem',
+      color: 'var(--text-muted)',
+      opacity: 0.8,
+      pointerEvents: 'none',
+      userSelect: 'none',
+      background: 'var(--bg-surface-sunken)',
+      padding: '0.4rem 0.8rem',
+      borderRadius: '20px',
+      border: '1px solid var(--border)',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+      zIndex: 10
+    }}>
+      {formatAppDateTime(now)}
+    </div>
+  )
+}
 
 type SettingsDrawerProps = {
   open: boolean
@@ -898,25 +930,49 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Language</label>
-                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
-                    <option>English (US)</option>
-                    <option>Spanish</option>
-                    <option>French</option>
+                  <select 
+                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
+                    value={settings.language || 'en-US'}
+                    onChange={(e) => onSettingsChange({ ...settings, language: e.target.value })}
+                  >
+                    <option value="en-US">English (US)</option>
+                    <option value="en-GB">English (UK)</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="fr-FR">French</option>
                   </select>
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Region</label>
-                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
-                    <option>United States</option>
-                    <option>United Kingdom</option>
-                    <option>Canada</option>
+                  <select 
+                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
+                    value={settings.region || 'US'}
+                    onChange={(e) => onSettingsChange({ ...settings, region: e.target.value })}
+                  >
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="IN">India</option>
                   </select>
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Time Zone</label>
-                  <select disabled style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }}>
-                    <option>Automatic (Local)</option>
-                    <option>UTC</option>
+                  <select 
+                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
+                    value={settings.timezone || 'auto'}
+                    onChange={(e) => onSettingsChange({ ...settings, timezone: e.target.value })}
+                  >
+                    <option value="auto">Automatic (Local)</option>
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">Eastern Time (US/Canada)</option>
+                    <option value="America/Chicago">Central Time (US/Canada)</option>
+                    <option value="America/Denver">Mountain Time (US/Canada)</option>
+                    <option value="America/Los_Angeles">Pacific Time (US/Canada)</option>
+                    <option value="Europe/London">London (GMT)</option>
+                    <option value="Europe/Paris">Paris (CET)</option>
+                    <option value="Asia/Tokyo">Tokyo (JST)</option>
+                    <option value="Asia/Kolkata">India (IST)</option>
+                    <option value="Australia/Sydney">Sydney (AEST)</option>
                   </select>
                 </div>
               </div>
@@ -927,24 +983,31 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Date Format</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>MM/DD/YYYY</option>
-                    <option>DD/MM/YYYY</option>
-                    <option>YYYY-MM-DD</option>
+                  <select 
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    value={settings.dateFormat || 'MM/DD/YYYY'}
+                    onChange={(e) => onSettingsChange({ ...settings, dateFormat: e.target.value })}
+                  >
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Time Format</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>12-hour (AM/PM)</option>
-                    <option>24-hour</option>
+                  <select 
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    value={settings.timeFormat || '12h'}
+                    onChange={(e) => onSettingsChange({ ...settings, timeFormat: e.target.value })}
+                  >
+                    <option value="12h">12-hour (AM/PM)</option>
+                    <option value="24h">24-hour</option>
                   </select>
                 </div>
               </div>
             </div>
           </div>
         )
-
       case 'learning':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -1176,6 +1239,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 ))}
               </div>
 
+              <LiveSettingsClock />
               {/* Main Content */}
               <div style={{ flex: 1, overflowY: 'auto', padding: '2rem 3rem' }}>
                 <div style={{ maxWidth: '640px' }}>

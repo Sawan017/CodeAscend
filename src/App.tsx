@@ -43,6 +43,7 @@ import { AchievementDetail } from './features/achievements/AchievementDetail'
 import { SettingsDrawer } from './features/settings/SettingsDrawer'
 import { NotificationsPanel } from './components/NotificationsPanel'
 import type { NotificationItem } from './components/NotificationsPanel'
+import { setDateFormattingSettings } from './lib/dateFormatting'
 import { saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
 
@@ -304,6 +305,13 @@ function App() {
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
+
+  useEffect(() => {
+    setDateFormattingSettings(settings)
+  }, [settings])
+  useEffect(() => {
+    setDateFormattingSettings(settings)
+  }, [settings])
 
   const [activeSession, setActiveSession] = useState<import('./types').ActiveSessionState | null>(initialData.activeSession)
   const [activeSessionElapsed, setActiveSessionElapsed] = useState(0)

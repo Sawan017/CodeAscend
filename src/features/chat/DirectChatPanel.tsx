@@ -1,3 +1,4 @@
+import { formatAppTime } from '../../lib/dateFormatting'
 import { motion } from 'framer-motion'
 import { Send, ChevronLeft, MessageSquare, MoreVertical, Edit2, X, Copy, CheckSquare, Trash2, Ban, BellOff, Eraser } from 'lucide-react'
 import { useState, useEffect, useRef, useCallback } from 'react'
@@ -380,7 +381,7 @@ export function DirectChatPanel({
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                       <h4 style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '1rem' }}>{conv.friend.displayName}</h4>
                       {conv.lastMsg && <span className="muted" style={{ fontSize: '0.75rem' }}>
-                        {new Date(conv.lastMsg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {formatAppTime(conv.lastMsg.timestamp)}
                       </span>}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.25rem' }}>
@@ -641,7 +642,7 @@ export function DirectChatPanel({
                           
                           {(showTimestamp || (msg.editedAt && !msg.deletedForEveryone) || msg.isFailed) && (
                             <span className="muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: msg.isFailed ? '#ef4444' : 'var(--text-muted)' }}>
-                              {msg.isFailed ? 'Failed to send' : (showTimestamp && new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))}
+                              {msg.isFailed ? 'Failed to send' : (showTimestamp && formatAppTime(msg.timestamp))}
                               {msg.editedAt && !msg.deletedForEveryone && !msg.isFailed && <span>(edited)</span>}
                             </span>
                           )}

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { formatAppTime } from '../../lib/dateFormatting'
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, ChevronLeft, MoreVertical, X, Trash2, Edit2, Shield, Info, Copy, VolumeX, Volume2 } from 'lucide-react'
@@ -361,7 +362,7 @@ export function GroupChatWindow({
                         alignItems: 'center',
                         lineHeight: 1
                       }}>
-                        {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        {formatAppTime(msg.created_at)}
                         {msg.edited_at && !msg.deleted_for_everyone && <span style={{ fontStyle: 'italic' }}>(edited)</span>}
                       </span>
                     )}

@@ -288,6 +288,11 @@ export interface Settings {
   accentColor?: string
   compactLayout?: boolean
   customBackground?: string
+  language?: string
+  region?: string
+  timezone?: string
+  dateFormat?: string
+  timeFormat?: string
 }
 
 export interface FriendRelationship {
