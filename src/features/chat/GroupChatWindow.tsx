@@ -283,10 +283,10 @@ export function GroupChatWindow({
               }
             }
 
-            let marginTop = '16px'
+            let marginTop = '10px'
             if (idx === 0) marginTop = '0px'
             else if (isSameMinuteAsPrev) marginTop = '2px'
-            else if (isSameSenderAsPrev) marginTop = '8px'
+            else if (isSameSenderAsPrev) marginTop = '6px'
 
             const nextMsg = messages[idx + 1]
             const isSameMinuteAsNext = nextMsg &&
@@ -323,9 +323,10 @@ export function GroupChatWindow({
                     padding: '0.4rem 0.65rem', 
                     background: isMe ? 'var(--cyan)' : 'var(--surface-sunken)', 
                     color: isMe ? '#000' : '#fff', 
-                    borderRadius: '16px',
-                    borderBottomRightRadius: isMe ? '4px' : '16px',
-                    borderBottomLeftRadius: !isMe ? '4px' : '16px',
+                    borderTopLeftRadius: '16px',
+                    borderTopRightRadius: '16px',
+                    borderBottomRightRadius: isMe ? '4px' : (!isSameMinuteAsNext ? '16px' : '4px'),
+                    borderBottomLeftRadius: !isMe ? '4px' : (!isSameMinuteAsNext ? '16px' : '4px'),
                     position: 'relative',
                     minWidth: showTimestamp ? '75px' : 'auto'
                   }}>
