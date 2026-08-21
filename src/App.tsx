@@ -254,6 +254,48 @@ function App() {
   const [achievementState, setAchievementState] = useState(initialData.achievements)
   const [badgeState, setBadgeState] = useState(initialData.badges)
   const [settings, setSettings] = useState<Settings>(initialData.settings)
+
+  useEffect(() => {
+    if (!user || !supabase) return;
+    
+    // Initial fetch
+    supabase.from('notifications').select('*').order('created_at', { ascending: false }).limit(50).then(({ data }) => {
+      if (data) setNotifications(data as any[]);
+    });
+
+    // Realtime subscription
+    const sub = supabase.channel('public:notifications')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
+        const newNotif = payload.new as any;
+        setNotifications(prev => [newNotif, ...prev]);
+        
+        if (settings.notificationSound !== 'none') {
+          playSoundEffect(settings.notificationSound === 'pop' ? 'click' : 'badge', settings.soundEffects !== false);
+        }
+
+        // Browser Notifications
+        if (settings.notifyBrowser !== false && 'Notification' in window && Notification.permission === 'granted') {
+          const n = new Notification(newNotif.title, {
+            body: newNotif.body || undefined,
+          });
+          n.onclick = () => {
+            window.focus();
+            handleNotificationNavigate(newNotif.link_type, newNotif.link_id);
+            n.close();
+          };
+        }
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
+        setNotifications(prev => prev.map(n => n.id === payload.new.id ? payload.new as any : n));
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
+        setNotifications(prev => prev.filter(n => n.id !== payload.old.id));
+      })
+      .subscribe();
+
+    return () => { if (supabase) supabase.removeChannel(sub); };
+  }, [user, settings.notifyBrowser, settings.notificationSound, settings.soundEffects]);
+
   const [profileState, setProfileState] = useState<UserProfile>(initialData.profile)
   const [friendState, setFriendState] = useState<FriendState>(initialData.friends)
   const [incomingRequests, setIncomingRequests] = useState<string[]>([])
