@@ -329,7 +329,7 @@ export interface ChatState {
 
 
 
-export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string };
+export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string } | { view: 'admin_support' };
 
 export interface PathwayDefinition {
   id: string
