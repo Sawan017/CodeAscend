@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, ChevronLeft, MoreVertical, X, Trash2, Edit2, Shield, Info, Copy } from 'lucide-react'
+import { Send, ChevronLeft, MoreVertical, X, Trash2, Edit2, Shield, Info, Copy, VolumeX, Volume2 } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember, ChatGroupMessage } from '../../hooks/useGroupChat'
@@ -64,7 +64,10 @@ export function GroupChatWindow({
   onUpdateGroup,
   onEditMessage,
   onDeleteForMe,
-  onDeleteForEveryone
+  onDeleteForEveryone,
+  isMuted,
+  onToggleMute,
+  onClearChat
 }: {
   activeUserId: string
   group: ChatGroup
@@ -80,6 +83,9 @@ export function GroupChatWindow({
   onEditMessage?: (messageId: string, content: string) => void
   onDeleteForMe?: (messageId: string) => void
   onDeleteForEveryone?: (messageId: string) => void
+  isMuted?: boolean
+  onToggleMute?: () => void
+  onClearChat?: () => void
 }) {
   const [draft, setDraft] = useState('')
   const [infoOpen, setInfoOpen] = useState(false)
@@ -91,6 +97,25 @@ export function GroupChatWindow({
   const [contextMenu, setContextMenu] = useState<ContextMenuState>(null)
   const [headerMenuOpen, setHeaderMenuOpen] = useState(false)
   const contextMenuRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (contextMenu && contextMenuRef.current) {
+      const rect = contextMenuRef.current.getBoundingClientRect()
+      let newX = contextMenu.x
+      let newY = contextMenu.y
+      if (newX + rect.width > window.innerWidth - 8) {
+        newX = window.innerWidth - rect.width - 8
+      }
+      if (newY + rect.height > window.innerHeight - 8) {
+        newY = window.innerHeight - rect.height - 8
+      }
+      newX = Math.max(8, newX)
+      newY = Math.max(8, newY)
+      if (newX !== contextMenu.x || newY !== contextMenu.y) {
+        setContextMenu(prev => prev ? { ...prev, x: newX, y: newY } : null)
+      }
+    }
+  }, [contextMenu?.msgId])
+
 
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
@@ -191,6 +216,25 @@ export function GroupChatWindow({
               zIndex: 9999,
               boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
             }}>
+              <MenuItem
+                icon={isMuted ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                label={isMuted ? "Unmute" : "Mute"}
+                onClick={() => {
+                  onToggleMute?.()
+                  setHeaderMenuOpen(false)
+                }}
+              />
+              <MenuItem
+                icon={<Trash2 size={16} />}
+                label="Clear Chat"
+                danger
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to clear this chat for yourself?')) {
+                    onClearChat?.()
+                    setHeaderMenuOpen(false)
+                  }
+                }}
+              />
               <MenuItem
                 icon={<Info size={16} />}
                 label="About Group"

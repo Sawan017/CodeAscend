@@ -128,7 +128,9 @@ export function ChatPanel(props: ChatPanelProps) {
             <div className={'chat-main ' + (!isGroupActive ? 'mobile-hidden' : '')} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--surface)' }}>
               {activeGroupId ? (() => {
                 const hiddenMsgs = props.chatState.hiddenMessages || []
-                const filteredMessages = (groupMessages[activeGroupId] || []).filter(m => !hiddenMsgs.includes(m.id))
+                const clearedAt = props.chatState.clearedChats?.[activeGroupId] || '1970-01-01T00:00:00.000Z'
+                const clearedTime = new Date(clearedAt).getTime()
+                const filteredMessages = (groupMessages[activeGroupId] || []).filter(m => !hiddenMsgs.includes(m.id) && new Date(m.created_at).getTime() > clearedTime)
                 return (
                   <GroupChatWindow 
                     activeUserId={props.activeUserId}
@@ -145,6 +147,9 @@ export function ChatPanel(props: ChatPanelProps) {
                     onEditMessage={editGroupMessage}
                     onDeleteForMe={props.onDeleteForMe}
                     onDeleteForEveryone={deleteGroupMessageForEveryone}
+                    isMuted={(props.chatState.mutedUsers || []).includes(activeGroupId)}
+                    onToggleMute={() => props.onToggleMute?.(activeGroupId)}
+                    onClearChat={() => props.onClearChat?.(activeGroupId)}
                   />
                 )
               })() : (
