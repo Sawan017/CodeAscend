@@ -5,6 +5,7 @@ import {
   UserCircle, Palette, Bell, Lock, Users, Globe, Award, HardDrive, HelpCircle
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
+import { PrivacyModals } from './PrivacyModals'
 import { supabase } from '../../lib/supabase'
 
 type SettingsDrawerProps = {
@@ -16,6 +17,8 @@ type SettingsDrawerProps = {
   profile: UserProfile
   onProfileChange?: (profile: UserProfile) => void
   userId?: string
+  chatState?: import('../../types').ChatState
+  onChatStateChange?: (c: import('../../types').ChatState) => void
   projects?: import('../../types').Project[]
   onAddProjects?: (projects: import('../../types').Project[]) => void
   onUpdateProjects?: (projects: import('../../types').Project[]) => void
@@ -47,7 +50,10 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'help', label: 'Help & About', icon: HelpCircle },
 ]
 
-export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData, onProfileChange }: SettingsDrawerProps) {
+export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, chatState, onChatStateChange, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData, onProfileChange }: SettingsDrawerProps) {
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false)
+  const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<TabId>('account')
   
   const [githubConnected, setGithubConnected] = useState(false)
@@ -776,15 +782,11 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Password</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Change</button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Two-Factor Authentication</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Enable</button>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setIsPasswordModalOpen(true)}>Change</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Active Sessions</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>View (1)</button>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setIsSessionsModalOpen(true)}>View Session(s)</button>
                 </div>
               </div>
             </div>
@@ -794,14 +796,9 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Blocked Users</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Manage (0)</button>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Data Collection</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Essential Only</option>
-                    <option>Analytics Allowed</option>
-                  </select>
+                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setIsBlockedModalOpen(true)}>
+                    Manage {Array.isArray(chatState?.blockedUsers) ? `(${chatState?.blockedUsers?.length || 0})` : '(0)'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -1378,6 +1375,16 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
         </motion.div>
       )}
     </AnimatePresence>
+      <PrivacyModals 
+        chatState={chatState}
+        onChatStateChange={onChatStateChange}
+        isPasswordOpen={isPasswordModalOpen}
+        setIsPasswordOpen={setIsPasswordModalOpen}
+        isSessionsOpen={isSessionsModalOpen}
+        setIsSessionsOpen={setIsSessionsModalOpen}
+        isBlockedOpen={isBlockedModalOpen}
+        setIsBlockedOpen={setIsBlockedModalOpen}
+      />
     </>
   )
 }

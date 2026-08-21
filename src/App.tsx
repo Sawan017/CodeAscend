@@ -1530,6 +1530,8 @@ function App() {
         onClose={() => setSettingsOpen(false)}
         settings={settings}
         onSettingsChange={setSettings}
+        chatState={chatState}
+        onChatStateChange={setChatState}
         onSignOut={signOut}
         profile={profileState}
         userId={user?.id}
