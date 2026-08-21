@@ -274,14 +274,18 @@ function App() {
     
     channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        await channel.track({ userId: user.id })
+        if (settings.showOnlineStatus !== false) {
+          await channel.track({ userId: user.id })
+        } else {
+          await channel.untrack()
+        }
       }
     })
     
     return () => {
       channel.unsubscribe()
     }
-  }, [user])
+  }, [user, settings.showOnlineStatus])
 
   const completeActiveSession = async () => {
     if (!activeSession) return
