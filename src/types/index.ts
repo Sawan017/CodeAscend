@@ -271,6 +271,15 @@ export interface Settings {
   activePathways?: string[]
   profileVisibility?: 'public' | 'friends' | 'private'
   showOnlineStatus?: boolean
+  enableAllNotifications?: boolean
+  notifyMessages?: boolean
+  notifyFriendRequests?: boolean
+  notifyGroupActivity?: boolean
+  notifyMentions?: boolean
+  notifyAchievements?: boolean
+  notifyLearningReminders?: boolean
+  notifyEmail?: boolean
+  notificationSound?: string
   allowFriendRequests?: boolean
   allowMessages?: boolean
   accentColor?: string
