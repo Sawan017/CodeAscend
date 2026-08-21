@@ -110,21 +110,24 @@ export function GroupChatWindow({
       let newX = contextMenu.x
       let newY = contextMenu.y
       
-      if (newX + rect.width > chatRect.right - 8) {
-        newX = chatRect.right - rect.width - 8
+      // If it overflows right, move left of cursor
+      if (newX + rect.width > chatRect.right) {
+        newX = contextMenu.x - rect.width
       }
-      if (newY + rect.height > chatRect.bottom - 8) {
-        newY = chatRect.bottom - rect.height - 8
+      // If it overflows bottom, move above cursor
+      if (newY + rect.height > chatRect.bottom) {
+        newY = contextMenu.y - rect.height
       }
       
-      newX = Math.max(chatRect.left + 8, newX)
-      newY = Math.max(chatRect.top + 8, newY)
+      // Clamp to chat container
+      newX = Math.max(chatRect.left, Math.min(newX, chatRect.right - rect.width))
+      newY = Math.max(chatRect.top, Math.min(newY, chatRect.bottom - rect.height))
       
       if (newX !== contextMenu.x || newY !== contextMenu.y) {
         setContextMenu(prev => prev ? { ...prev, x: newX, y: newY } : null)
       }
     }
-  }, [contextMenu?.msgId])
+  }, [contextMenu])
 
 
   useEffect(() => {
@@ -226,7 +229,7 @@ export function GroupChatWindow({
               minWidth: '150px',
               zIndex: 9999,
               boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}>
+            }} onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
               <MenuItem
                 icon={isMuted ? <Volume2 size={16} /> : <VolumeX size={16} />}
                 label={isMuted ? "Unmute" : "Mute"}
