@@ -672,38 +672,42 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h4 style={{ margin: 0, color: 'var(--text-main)' }}>Enable All Notifications</h4>
-                <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle all notifications" />
+                <button 
+                  className={`toggle-switch ${settings.enableAllNotifications !== false ? 'on' : ''}`} 
+                  onClick={() => onSettingsChange({ ...settings, enableAllNotifications: settings.enableAllNotifications === false ? true : false })} 
+                  aria-label="Toggle all notifications" 
+                />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', opacity: settings.enableAllNotifications === false ? 0.5 : 1, pointerEvents: settings.enableAllNotifications === false ? 'none' : 'auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Messages</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle messages" />
+                  <button className={`toggle-switch ${settings.notifyMessages !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyMessages: settings.notifyMessages === false ? true : false })} aria-label="Toggle messages" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Friend requests</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle friend requests" />
+                  <button className={`toggle-switch ${settings.notifyFriendRequests !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyFriendRequests: settings.notifyFriendRequests === false ? true : false })} aria-label="Toggle friend requests" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Group activity</span>
-                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle group activity" />
+                  <button className={`toggle-switch ${settings.notifyGroupActivity !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyGroupActivity: settings.notifyGroupActivity === false ? true : false })} aria-label="Toggle group activity" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Mentions</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle mentions" />
+                  <button className={`toggle-switch ${settings.notifyMentions !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyMentions: settings.notifyMentions === false ? true : false })} aria-label="Toggle mentions" />
                 </div>
               </div>
             </div>
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Updates & Activity</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', opacity: settings.enableAllNotifications === false ? 0.5 : 1, pointerEvents: settings.enableAllNotifications === false ? 'none' : 'auto' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Achievements & Badges</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle achievements" />
+                  <button className={`toggle-switch ${settings.notifyAchievements !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyAchievements: settings.notifyAchievements === false ? true : false })} aria-label="Toggle achievements" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Learning Reminders</span>
-                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle learning reminders" />
+                  <button className={`toggle-switch ${settings.notifyLearningReminders !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyLearningReminders: settings.notifyLearningReminders === false ? true : false })} aria-label="Toggle learning reminders" />
                 </div>
               </div>
             </div>
@@ -713,14 +717,18 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Email Notifications</span>
-                  <button className="toggle-switch" style={{ opacity: 0.5 }} disabled aria-label="Toggle email notifications" />
+                  <button className={`toggle-switch ${settings.notifyEmail ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyEmail: !settings.notifyEmail })} aria-label="Toggle email notifications" />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Notification Sound</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Default (Chime)</option>
-                    <option>Pop</option>
-                    <option>None</option>
+                  <select 
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    value={settings.notificationSound || 'default'}
+                    onChange={(e) => onSettingsChange({ ...settings, notificationSound: e.target.value })}
+                  >
+                    <option value="default">Default (Chime)</option>
+                    <option value="pop">Pop</option>
+                    <option value="none">None</option>
                   </select>
                 </div>
               </div>

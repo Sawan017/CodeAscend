@@ -41,6 +41,8 @@ import { ProjectDetail } from './features/projects/ProjectDetail'
 import { SkillDetail } from './features/skills/SkillDetail'
 import { AchievementDetail } from './features/achievements/AchievementDetail'
 import { SettingsDrawer } from './features/settings/SettingsDrawer'
+import { NotificationsPanel } from './components/NotificationsPanel'
+import type { NotificationItem } from './components/NotificationsPanel'
 import { saveChatState } from './lib/api'
 import { Users, MessageSquare } from 'lucide-react'
 
@@ -82,6 +84,37 @@ function App() {
   const [entered, setEntered] = useState(false)
 
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [notificationsOpen, setNotificationsOpen] = useState(false)
+  const [notifications, setNotifications] = useState<NotificationItem[]>([])
+  
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markNotificationRead = async (id: string) => {
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    if (supabase) await supabase.from('notifications').update({ read: true }).eq('id', id);
+  }
+
+  const markAllNotificationsRead = async () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    if (supabase && user) await supabase.from('notifications').update({ read: true }).eq('user_id', user.id);
+  }
+
+  const clearAllNotifications = async () => {
+    setNotifications([]);
+    if (supabase && user) await supabase.from('notifications').delete().eq('user_id', user.id);
+  }
+
+  const handleNotificationNavigate = (type: string | null, id: string | null) => {
+    setNotificationsOpen(false);
+    if (!type || !id) return;
+    if (type === 'chat') {
+      navigate({ view: 'chat' as any, id } as any); // Assuming routing handles this
+    } else if (type === 'group_chat') {
+      navigate({ view: 'chat' }); // Basic routing
+    } else if (type === 'profile') {
+      navigate({ view: 'profile' as any, id } as any);
+    }
+  }
   const [userSearchOpen, setUserSearchOpen] = useState(false)
   const [route, setRoute] = useState<Route>(parseHash)
 
@@ -1136,6 +1169,8 @@ function App() {
               progression={progression} 
               profile={profileState} 
               onOpenSettings={() => setSettingsOpen(true)}
+              onOpenNotifications={() => setNotificationsOpen(true)}
+              unreadCount={unreadCount}
               activeSession={activeSession}
               activeSessionElapsed={activeSessionElapsed}
               onOpenActiveSession={() => {
@@ -1439,6 +1474,15 @@ function App() {
         </div>
       )}
 
+      <NotificationsPanel 
+        open={notificationsOpen}
+        onClose={() => setNotificationsOpen(false)}
+        notifications={notifications}
+        onMarkRead={markNotificationRead}
+        onMarkAllRead={markAllNotificationsRead}
+        onClearAll={clearAllNotifications}
+        onNavigate={handleNotificationNavigate}
+      />
       <SettingsDrawer 
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
