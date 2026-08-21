@@ -287,25 +287,36 @@ export function GroupChatWindow({
                     </span>
                   )}
                   <div style={{ 
-                    padding: '0.75rem 1rem', 
+                    padding: '0.5rem 0.75rem 1.25rem 0.75rem', 
                     background: isMe ? 'var(--cyan)' : 'var(--surface-sunken)', 
                     color: isMe ? '#000' : '#fff', 
                     borderRadius: '16px',
                     borderBottomRightRadius: isMe ? '4px' : '16px',
                     borderBottomLeftRadius: !isMe ? '4px' : '16px',
-                    wordBreak: 'break-word',
-                    position: 'relative'
+                    position: 'relative',
+                    minWidth: '100px'
                   }}>
-                    {msg.deleted_for_everyone ? (
-                      <span style={{ fontStyle: 'italic', opacity: 0.7 }}>Message deleted</span>
-                    ) : (
-                      <span style={{ whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{msg.content}</span>
-                    )}
+                    <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+                      {msg.deleted_for_everyone ? (
+                        <span style={{ fontStyle: 'italic', opacity: 0.7 }}>Message deleted</span>
+                      ) : (
+                        msg.content
+                      )}
+                    </div>
+                    <span style={{ 
+                      position: 'absolute', 
+                      bottom: '4px', 
+                      right: '8px', 
+                      fontSize: '0.65rem', 
+                      color: isMe ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.5)',
+                      display: 'flex',
+                      gap: '4px',
+                      alignItems: 'center'
+                    }}>
+                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {msg.edited_at && !msg.deleted_for_everyone && <span style={{ fontStyle: 'italic' }}>(edited)</span>}
+                    </span>
                   </div>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px', marginRight: '4px' }}>
-                    {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    {msg.edited_at && !msg.deleted_for_everyone && <span style={{ marginLeft: '4px', fontStyle: 'italic' }}>(edited)</span>}
-                  </span>
                 </div>
               </div>
             )
