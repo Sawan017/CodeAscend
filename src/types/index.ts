@@ -273,6 +273,9 @@ export interface Settings {
   showOnlineStatus?: boolean
   allowFriendRequests?: boolean
   allowMessages?: boolean
+  accentColor?: string
+  compactLayout?: boolean
+  customBackground?: string
 }
 
 export interface FriendRelationship {

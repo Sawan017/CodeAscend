@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { supabase } from '../../lib/supabase'
+import { uploadProfileImage } from '../../lib/storage_upload'
 
 type SettingsDrawerProps = {
   open: boolean
@@ -54,6 +55,26 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [githubUsername, setGithubUsername] = useState<string | null>(null)
   const [syncingGithub, setSyncingGithub] = useState(false)
   const [githubMessage, setGithubMessage] = useState('')
+  const [uploadingBg, setUploadingBg] = useState(false)
+  const bgInputRef = useRef<HTMLInputElement>(null)
+
+
+  const handleBgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !userId) return
+    try {
+      setUploadingBg(true)
+      const base64 = await uploadProfileImage(userId, file, 'banner')
+      if (base64) {
+        onSettingsChange({ ...settings, customBackground: base64 })
+      }
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setUploadingBg(false)
+      if (bgInputRef.current) bgInputRef.current.value = ''
+    }
+  }
 
   useEffect(() => {
     if (open) {
@@ -651,7 +672,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#fff' }}>Custom Background</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Upload</button>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    {settings.customBackground && (
+                      <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => onSettingsChange({ ...settings, customBackground: undefined })}>Reset</button>
+                    )}
+                    <input type="file" accept="image/jpeg, image/png, image/webp" ref={bgInputRef} style={{ display: 'none' }} onChange={handleBgUpload} />
+                    <button className="primary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled={uploadingBg} onClick={() => bgInputRef.current?.click()}>{uploadingBg ? 'Uploading...' : 'Upload'}</button>
+                  </div>
                 </div>
               </div>
             </div>

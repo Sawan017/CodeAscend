@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
 import { Compass, GraduationCap, House, Layers3, Target, Trophy, X } from 'lucide-react'
 import { useEffect, useRef, useState, Suspense } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
@@ -1103,7 +1103,12 @@ function App() {
   }
 
   return (
-    <div className={`app-shell ${settings.theme}`}>
+    <MotionConfig reducedMotion={settings.reducedMotion ? 'always' : 'user'}>
+      <div className={`app-shell ${settings.theme} ${settings.compactLayout ? 'compact' : ''} ${settings.reducedMotion ? 'reduced-motion' : 'animation-' + (settings.animationIntensity || 'high')} ${settings.customBackground ? 'custom-bg' : ''}`}
+        style={{
+          ...(settings.accentColor ? { '--primary': settings.accentColor, '--cyan': settings.accentColor } : {}),
+          ...(settings.customBackground ? { backgroundImage: `url(${settings.customBackground})` } : {})
+        } as React.CSSProperties}>
       <div className="noise" />
       <div className="aurora aura-a" />
       <div className="aurora aura-b" />
@@ -1734,7 +1739,8 @@ function App() {
       />
       <Toasts toasts={toasts} onDismiss={dismiss} />
       {dataLoaded && <Celebration xp={progression.xp} />}
-    </div>
+      </div>
+    </MotionConfig>
   )
 }
 

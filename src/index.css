@@ -1075,3 +1075,28 @@ h4 { font-size: 1rem; }
 .hover-overlay-container:hover .hover-overlay {
   opacity: 1 !important;
 }
+/* Application-wide settings classes */
+.app-shell.compact {
+  --padding-base: 12px;
+  --gap-base: 8px;
+  --font-size-base: 0.85rem;
+}
+
+.app-shell.reduced-motion *, 
+.app-shell.animation-low * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.app-shell.animation-medium * {
+  animation-duration: 0.5s;
+  transition-duration: 0.15s;
+}
+
+.app-shell.custom-bg {
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+}
