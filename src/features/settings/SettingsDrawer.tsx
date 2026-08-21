@@ -14,6 +14,7 @@ type SettingsDrawerProps = {
   onSettingsChange: (next: Settings) => void
   onSignOut?: (forgetAccount: boolean) => void
   profile: UserProfile
+  onProfileChange?: (profile: UserProfile) => void
   userId?: string
   projects?: import('../../types').Project[]
   onAddProjects?: (projects: import('../../types').Project[]) => void
@@ -46,7 +47,7 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'help', label: 'Help & About', icon: HelpCircle },
 ]
 
-export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData }: SettingsDrawerProps) {
+export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData, onProfileChange }: SettingsDrawerProps) {
   const [activeTab, setActiveTab] = useState<TabId>('account')
   
   const [githubConnected, setGithubConnected] = useState(false)
@@ -576,49 +577,45 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             </div>
             
             <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Profile Details</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Avatar</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-                    <button className="secondary-btn" style={{ padding: '0.5rem 1rem' }}>Change Avatar</button>
-                  </div>
-                </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Bio</label>
-                  <textarea disabled placeholder="Tell us about yourself..." style={{ width: '100%', padding: '0.85rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none', resize: 'vertical', minHeight: '80px' }} />
-                </div>
-              </div>
-            </div>
-
-            <div className="drawer-card" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.5rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>Visibility</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#fff' }}>Profile visibility</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Public</option>
-                    <option>Friends Only</option>
-                    <option>Private</option>
+                  <select 
+                    value={profile.isPublic === false ? 'private' : 'public'}
+                    onChange={(e) => onProfileChange?.({ ...profile, isPublic: e.target.value === 'public' })}
+                    style={{ padding: '0.5rem 1rem', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
+                  >
+                    <option value="public">Public</option>
+                    <option value="private">Private</option>
                   </select>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#fff' }}>Show online status</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle online status" />
+                  <button 
+                    className={`toggle-switch ${settings.showOnlineStatus !== false ? 'on' : ''}`}
+                    onClick={() => onSettingsChange({ ...settings, showOnlineStatus: settings.showOnlineStatus === false })}
+                    aria-label="Toggle online status" 
+                  />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#fff' }}>Allow friend requests</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle friend requests" />
+                  <button 
+                    className={`toggle-switch ${settings.allowFriendRequests !== false ? 'on' : ''}`}
+                    onClick={() => onSettingsChange({ ...settings, allowFriendRequests: settings.allowFriendRequests === false })}
+                    aria-label="Toggle friend requests" 
+                  />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#fff' }}>Allow messages</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle messages" />
+                  <button 
+                    className={`toggle-switch ${settings.allowMessages !== false ? 'on' : ''}`}
+                    onClick={() => onSettingsChange({ ...settings, allowMessages: settings.allowMessages === false })}
+                    aria-label="Toggle messages" 
+                  />
                 </div>
               </div>
             </div>
-            
-            <button className="secondary-btn" style={{ padding: '0.75rem', justifyContent: 'center' }}>Preview Profile</button>
           </div>
         )
 
