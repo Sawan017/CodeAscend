@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
-  UserCircle, Palette, Bell, Lock, Users, Globe, Award, HardDrive, HelpCircle
+  UserCircle, Palette, Bell, Lock, Globe, Award, HardDrive, HelpCircle
 } from 'lucide-react'
 import type { Settings, ThemeMode, UserProfile } from '../../types'
 import { PrivacyModals } from './PrivacyModals'
@@ -35,7 +35,7 @@ const themeOptions: Array<{ value: ThemeMode; label: string }> = [
   { value: 'aurora', label: 'Aurora' },
 ]
 
-type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'social' | 'language' | 'learning' | 'data' | 'help'
+type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'language' | 'learning' | 'data' | 'help'
 
 const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'account', label: 'Account', icon: Shield },
@@ -43,7 +43,6 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'appearance', label: 'Appearance', icon: Palette },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'privacy', label: 'Privacy & Security', icon: Lock },
-  { id: 'social', label: 'Social', icon: Users },
   { id: 'language', label: 'Language & Region', icon: Globe },
   { id: 'learning', label: 'Learning / Experience', icon: Award },
   { id: 'data', label: 'Data & Storage', icon: HardDrive },
@@ -55,6 +54,35 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false)
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<TabId>('account')
+  const [socialUpdating, setSocialUpdating] = useState<string | null>(null)
+  const [socialError, setSocialError] = useState<string | null>(null)
+
+  const handleSocialSettingChange = async (key: string, value: string, relatedKey?: string, relatedValue?: any) => {
+    if (!userId || !supabase) return
+    setSocialError(null)
+    setSocialUpdating(key)
+    const previousSettings = { ...settings }
+    
+    const newSettings = { ...settings, [key]: value }
+    if (relatedKey) {
+      (newSettings as any)[relatedKey] = relatedValue
+    }
+    
+    // Optimistic update
+    onSettingsChange(newSettings)
+    
+    try {
+      const { error } = await supabase.from('profiles').update({ data: newSettings }).eq('user_id', userId).eq('key', 'settings')
+      if (error) throw error
+    } catch (err: any) {
+      setSocialError('Failed to save settings. Reverting...')
+      onSettingsChange(previousSettings)
+      setTimeout(() => setSocialError(null), 3000)
+    } finally {
+      setSocialUpdating(null)
+    }
+  }
+
   
   const [githubConnected, setGithubConnected] = useState(false)
   const [githubUsername, setGithubUsername] = useState<string | null>(null)
@@ -802,55 +830,55 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
               </div>
             </div>
-          </div>
-        )
-
-      case 'social':
-        return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ marginBottom: '0.5rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)' }}>Social</h3>
-              <p style={{ margin: '0.5rem 0 0', color: 'var(--text-muted)' }}>Manage how you interact with others.</p>
-            </div>
-
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Permissions</h4>
+              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Social & Permissions</h4>
+              {socialError && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem' }}>{socialError}</div>}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Who can send friend requests</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Everyone</option>
-                    <option>Friends of Friends</option>
-                    <option>No One</option>
-                  </select>
+                  <span style={{ color: 'var(--text-main)' }}>Who can send me friend requests</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {socialUpdating === 'whoCanFriendRequest' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
+                    <select 
+                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      value={settings.whoCanFriendRequest || (settings.allowFriendRequests === false ? 'none' : 'everyone')}
+                      onChange={(e) => handleSocialSettingChange('whoCanFriendRequest', e.target.value, 'allowFriendRequests', e.target.value !== 'none')}
+                      disabled={socialUpdating === 'whoCanFriendRequest'}
+                    >
+                      <option value="everyone">Everyone</option>
+                      <option value="friends_of_friends">Friends of Friends</option>
+                      <option value="none">No One</option>
+                    </select>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Who can message me</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Friends Only</option>
-                    <option>Everyone</option>
-                  </select>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {socialUpdating === 'whoCanMessage' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
+                    <select 
+                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      value={settings.whoCanMessage || (settings.allowMessages === false ? 'friends' : 'everyone')}
+                      onChange={(e) => handleSocialSettingChange('whoCanMessage', e.target.value, 'allowMessages', true)}
+                      disabled={socialUpdating === 'whoCanMessage'}
+                    >
+                      <option value="everyone">Everyone</option>
+                      <option value="friends">Friends Only</option>
+                    </select>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Who can add me to groups</span>
-                  <select disabled style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}>
-                    <option>Friends Only</option>
-                    <option>Everyone</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Activity</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Show recent activity to friends</span>
-                  <button className="toggle-switch on" style={{ opacity: 0.5 }} disabled aria-label="Toggle recent activity" />
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Sync contacts</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Connect</button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    {socialUpdating === 'whoCanGroup' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
+                    <select 
+                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      value={settings.whoCanGroup || 'everyone'}
+                      onChange={(e) => handleSocialSettingChange('whoCanGroup', e.target.value)}
+                      disabled={socialUpdating === 'whoCanGroup'}
+                    >
+                      <option value="everyone">Everyone</option>
+                      <option value="friends">Friends Only</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
