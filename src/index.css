@@ -1100,3 +1100,72 @@ h4 { font-size: 1rem; }
   background-position: center !important;
   background-attachment: fixed !important;
 }
+
+/* Appearance Override Styles */
+.app-shell.animation-low * {
+  animation-duration: 0.5s !important;
+  transition-duration: 100ms !important;
+}
+.app-shell.animation-medium * {
+  /* Default/Medium */
+}
+.app-shell.animation-high * {
+  /* Inherit defaults from CSS (usually 180ms - 300ms) */
+}
+.app-shell.animation-off *,
+.app-shell.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Light Theme Defs */
+.app-shell.light {
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-sunken: #f1f5f9;
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.15);
+  
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-strong: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-toast: rgba(255, 255, 255, 0.95);
+  
+  --panel-bg: rgba(255, 255, 255, 0.7);
+  --panel-border: rgba(0, 0, 0, 0.06);
+
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
+
+  background: var(--bg-base);
+  color: var(--text-main);
+}
+/* System Theme Override */
+@media (prefers-color-scheme: light) {
+  .app-shell.system {
+    --bg-base: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-surface-sunken: #f1f5f9;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-strong: rgba(0, 0, 0, 0.15);
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-strong: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(0, 0, 0, 0.05);
+    --glass-toast: rgba(255, 255, 255, 0.95);
+    --panel-bg: rgba(255, 255, 255, 0.7);
+    --panel-border: rgba(0, 0, 0, 0.06);
+    background: var(--bg-base);
+    color: var(--text-main);
+  }
+}
