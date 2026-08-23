@@ -1,8 +1,10 @@
 import { formatAppDate } from '../../lib/dateFormatting'
 ﻿import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Lock, Shield, UserX } from 'lucide-react'
+import { X, Lock, Shield, UserX, Eye, EyeOff } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { validatePassword, getPasswordError } from '../../lib/passwordValidation'
+import { PasswordStrengthIndicator } from '../auth/PasswordStrengthIndicator'
 
 export function PrivacyModals({ 
   chatState,
@@ -22,6 +24,7 @@ export function PrivacyModals({
   const [passwordLoading, setPasswordLoading] = useState(false)
   const [passwordError, setPasswordError] = useState('')
   const [passwordSuccess, setPasswordSuccess] = useState(false)
+  const [showPw, setShowPw] = useState(false)
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +33,7 @@ export function PrivacyModals({
     if (!supabase) return
     if (!oldPassword || !newPassword || !confirmPassword) return setPasswordError('All fields required.')
     if (newPassword !== confirmPassword) return setPasswordError('New passwords do not match.')
-    if (newPassword.length < 6) return setPasswordError('Password must be at least 6 characters.')
+    if (!validatePassword(newPassword).isValid) return setPasswordError(getPasswordError())
 
     setPasswordLoading(true)
     const { data: { user } } = await supabase.auth.getUser();
@@ -54,11 +57,17 @@ export function PrivacyModals({
     }
     
     // Update password
-    const { error: updateError } = await supabase.auth.updateUser({ password: newPassword })
+    const { error: updateError } = await supabase.rpc('change_password', { new_password: newPassword })
     
     setPasswordLoading(false)
     if (updateError) {
-      setPasswordError(updateError.message)
+      let msg = updateError.message;
+      if (msg.includes('RATE_LIMIT_EXCEEDED:')) {
+        const secs = parseInt(msg.split('RATE_LIMIT_EXCEEDED:')[1], 10) || 60;
+        const time = secs > 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`;
+        msg = `You're doing that too quickly. Please try again in ${time}.`;
+      }
+      setPasswordError(msg)
     } else {
       setPasswordSuccess(true)
       setTimeout(() => {
@@ -175,18 +184,28 @@ export function PrivacyModals({
             
             <form onSubmit={handlePasswordSubmit}>
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>Current Password</label>
-              <input type="password" style={inputStyle} value={oldPassword} onChange={e => setOldPassword(e.target.value)} required />
+              <div style={{ position: 'relative' }}>
+                <input type={showPw ? 'text' : 'password'} autoComplete="current-password" style={inputStyle} value={oldPassword} onChange={e => setOldPassword(e.target.value)} required aria-label="Current password" />
+                <button type="button" onClick={() => setShowPw(!showPw)} style={{ position: 'absolute', top: '50%', right: '12px', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex' }} aria-label={showPw ? 'Hide password' : 'Show password'}>
+                  {showPw ? <EyeOff size={16} color="var(--text-muted)" /> : <Eye size={16} color="var(--text-muted)" />}
+                </button>
+              </div>
               
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>New Password</label>
-              <input type="password" style={inputStyle} value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength={6} />
+              <div style={{ position: 'relative' }}>
+                <input type={showPw ? 'text' : 'password'} autoComplete="new-password" style={inputStyle} value={newPassword} onChange={e => setNewPassword(e.target.value)} required aria-label="New password" />
+              </div>
+              {newPassword && <div style={{ marginBottom: '1rem' }}><PasswordStrengthIndicator password={newPassword} confirmPassword={confirmPassword} /></div>}
               
               <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>Confirm New Password</label>
-              <input type="password" style={inputStyle} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required minLength={6} />
+              <div style={{ position: 'relative' }}>
+                <input type={showPw ? 'text' : 'password'} autoComplete="new-password" style={inputStyle} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required aria-label="Confirm new password" />
+              </div>
               
               {passwordError && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginTop: 0 }}>{passwordError}</p>}
               {passwordSuccess && <p style={{ color: 'var(--green)', fontSize: '0.85rem', marginTop: 0 }}>Password updated successfully.</p>}
               
-              <button type="submit" style={{...btnStyle, opacity: passwordLoading ? 0.7 : 1}} disabled={passwordLoading}>
+              <button type="submit" style={{...btnStyle, opacity: passwordLoading ? 0.7 : 1}} disabled={passwordLoading || !validatePassword(newPassword).isValid || newPassword !== confirmPassword}>
                 {passwordLoading ? 'Updating...' : 'Update Password'}
               </button>
             </form>

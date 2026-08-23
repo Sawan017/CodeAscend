@@ -3,6 +3,7 @@ import { Avatar } from './Avatar'
 import { MilestonesSection } from './MilestonesSection'
 import type { UserProfile, Skill, Project, Goal, DynamicMilestone, Badge } from '../types'
 import { Code, Globe, Mail, Link } from 'lucide-react'
+import { sanitizeUrl } from '../utils/url'
 
 interface PublicProfileContentProps {
   profile: UserProfile
@@ -119,23 +120,23 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
             <div>
               <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 700 }}>Links</h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {profile.github && (
-                  <a href={profile.github.startsWith('http') ? profile.github : `https://${profile.github}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Code size={14} /> GitHub
-                  </a>
-                )}
-                {profile.linkedin && (
-                  <a href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://${profile.linkedin}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Link size={14} /> LinkedIn
-                  </a>
-                )}
-                {profile.portfolio && (
-                  <a href={profile.portfolio.startsWith('http') ? profile.portfolio : `https://${profile.portfolio}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Globe size={14} /> Website
-                  </a>
-                )}
-                {profile.contactPublic && profile.contact && (
-                  <a href={`mailto:${profile.contact}`} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                  {profile.github && (
+                    <a href={sanitizeUrl(profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                      <Code size={16} /> GitHub
+                    </a>
+                  )}
+                  {profile.linkedin && (
+                    <a href={sanitizeUrl(profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                      <Globe size={16} /> LinkedIn
+                    </a>
+                  )}
+                  {profile.portfolio && (
+                    <a href={sanitizeUrl(profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                      <Link size={16} /> Portfolio
+                    </a>
+                  )}
+                  {profile.contactPublic && profile.contact && (
+                    <a href={sanitizeUrl(`mailto:${profile.contact}`)} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                     <Mail size={14} /> Email
                   </a>
                 )}

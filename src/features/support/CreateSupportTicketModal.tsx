@@ -75,17 +75,11 @@ export function CreateSupportTicketModal({ isOpen, onClose, userId, onSuccess }:
         attachment_path: attachmentPath
       })
 
-      // Trigger AI Support (non-blocking)
-      supabase!.functions.invoke('support-ai', {
-        body: { ticketId: ticketData.id, isNew: true }
-      }).then(({ error }) => {
-        if (error) {
-          console.error("AI trigger returned error:", error);
-          // Fallback if network or invoke fails entirely
-          supabase!.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', ticketData.id).then();
-        }
-      }).catch(e => {
-        console.error("AI trigger caught exception:", e);
+      // Automatically insert AI greeting message exactly once
+      await supabase!.from('support_messages').insert({
+        ticket_id: ticketData.id,
+        sender_type: 'ai',
+        message: "Hi! 👋 I'm Arinova AI Support. How can I help you with this issue today? Tell me what you're experiencing, and I'll do my best to help."
       });
 
       // Clear state before closing/redirecting
@@ -100,7 +94,13 @@ export function CreateSupportTicketModal({ isOpen, onClose, userId, onSuccess }:
         setSuccess(true)
       }
     } catch (e: any) {
-      setError(e.message || 'Failed to submit report.')
+      let msg = e.message || 'Failed to submit report.';
+      if (msg.includes('RATE_LIMIT_EXCEEDED:')) {
+        const secs = parseInt(msg.split('RATE_LIMIT_EXCEEDED:')[1], 10) || 60;
+        const time = secs > 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`;
+        msg = `You're doing that too quickly. Please try again in ${time}.`;
+      }
+      setError(msg)
     } finally {
       setLoading(false)
     }

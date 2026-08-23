@@ -1169,3 +1169,58 @@ h4 { font-size: 1rem; }
     color: var(--text-main);
   }
 }
+
+
+/* Support Markdown Styling */
+.support-markdown {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.support-markdown p {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+.support-markdown p:last-child {
+  margin-bottom: 0;
+}
+.support-markdown ul, .support-markdown ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+}
+.support-markdown li {
+  margin-bottom: 0.25rem;
+}
+.support-markdown strong {
+  font-weight: 700;
+  color: inherit;
+}
+.support-markdown code {
+  background: rgba(128, 128, 128, 0.2);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85em;
+}
+.support-markdown pre {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+.support-markdown pre code {
+  background: none;
+  padding: 0;
+}
+.support-markdown h1, .support-markdown h2, .support-markdown h3, .support-markdown h4 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.support-markdown h3 {
+  font-size: 1.1rem;
+}
+.support-markdown h4 {
+  font-size: 1rem;
+}

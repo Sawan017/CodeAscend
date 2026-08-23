@@ -276,11 +276,11 @@ export async function lookupLoginIdByAuthUserId(authUserId: string): Promise<str
   return data.login_id as string
 }
 
-export async function reserveUsername(username: string, password_input: string) {
+export async function reserveUsername(username: string, password_input: string, terms_version: string = "1.0", privacy_version: string = "1.0") {
   if (!isSupabaseConfigured() || !supabase) {
     throw new Error('Supabase is not configured')
   }
-  const payload: any = { username_input: username, password_input: password_input }
+  const payload: any = { username_input: username, password_input: password_input, terms_version, privacy_version }
   const { data, error } = await supabase.rpc('reserve_username', payload)
   if (error) {
     throw new Error(error.message)
@@ -350,6 +350,11 @@ export async function removeFriend(targetUserId: string) {
 export async function fetchSocialNetwork(userId: string): Promise<{ relationships: import('../types').FriendRelationship[], incomingRequests: any[] }> {
   if (!isSupabaseConfigured() || !supabase) return { relationships: [], incomingRequests: [] };
   
+  // Prevent PostgREST filter AST injection
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(userId)) {
+      return { relationships: [], incomingRequests: [] };
+  }
+
   const relationships: import('../types').FriendRelationship[] = [];
   const incomingRequests: any[] = [];
   
