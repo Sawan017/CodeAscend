@@ -135,7 +135,12 @@ export function LoginUI() {
         if (!signInWithEmail) throw new Error("Email sign in not configured")
         
         // 1. Securely resolve the email for the provided username/login_id
-        const resolvedEmail = await resolveAuthEmail(identifier)
+        let resolvedEmail: string | null = identifier
+        
+        if (!identifier.includes('@')) {
+          // It's a Codeascend ID. Resolve securely using the password to prevent enumeration.
+          resolvedEmail = await resolveAuthEmail(identifier, password)
+        }
         
         if (!resolvedEmail) {
           throw new Error('Invalid login credentials')

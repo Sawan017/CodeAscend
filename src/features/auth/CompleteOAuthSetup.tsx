@@ -29,17 +29,9 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
       }
 
       setIsValidating(true)
-      const { data, error } = await supabase!
-        .from('user_identities')
-        .select('id')
-        .eq('normalized_name', clean)
-        .limit(1)
-
-      if (error) {
-        setUsernameAvailable(null)
-      } else {
-        setUsernameAvailable(data.length === 0)
-      }
+      // Base usernames do not have to be globally unique!
+      // The backend will generate a unique #xxxx discriminator for collisions.
+      setUsernameAvailable(true)
       setIsValidating(false)
     }
 
@@ -53,11 +45,6 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
 
     if (username.length < 4) {
       setError('Username must be at least 4 characters.')
-      return
-    }
-
-    if (usernameAvailable === false) {
-      setError('Username is already taken.')
       return
     }
 
@@ -260,7 +247,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
 
           <button 
             type="submit" 
-            disabled={isSubmitting || username.length < 4 || usernameAvailable === false || !validatePassword(password).isValid || password !== confirmPassword}
+            disabled={isSubmitting || username.length < 4 || !validatePassword(password).isValid || password !== confirmPassword}
             style={{
               marginTop: '0.5rem',
               width: '100%',
@@ -271,8 +258,8 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
               borderRadius: '8px',
               fontSize: '1rem',
               fontWeight: 600,
-              cursor: (isSubmitting || username.length < 4 || usernameAvailable === false || !validatePassword(password).isValid || password !== confirmPassword) ? 'not-allowed' : 'pointer',
-              opacity: (isSubmitting || username.length < 4 || usernameAvailable === false || !validatePassword(password).isValid || password !== confirmPassword) ? 0.7 : 1,
+              cursor: (isSubmitting || username.length < 4 || !validatePassword(password).isValid || password !== confirmPassword) ? 'not-allowed' : 'pointer',
+              opacity: (isSubmitting || username.length < 4 || !validatePassword(password).isValid || password !== confirmPassword) ? 0.7 : 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

@@ -299,11 +299,17 @@ export async function confirmUsername(identityId: string) {
   return true
 }
 
-export async function resolveAuthEmail(identifier: string) {
+export async function resolveAuthEmail(identifier: string, password?: string) {
   if (!isSupabaseConfigured() || !supabase) {
     throw new Error('Supabase is not configured')
   }
-  const { data, error } = await supabase.rpc('resolve_login_email', { identifier })
+  
+  // Secure server-side resolution that requires the password to prevent enumeration
+  const { data, error } = await supabase.rpc('resolve_login_id_secure', { 
+    identifier, 
+    pass: password || '' 
+  })
+  
   if (error) {
     throw new Error(error.message)
   }
