@@ -164,11 +164,15 @@ export function useAuth() {
     window.sessionStorage.removeItem('github_provider_token')
   }
 
-  const signInWithEmail = async (email: string, password: string) => {
+  const signInWithEmail = async (email: string, password: string, options?: { captchaToken?: string }) => {
     if (!isSupabaseConfigured() || !supabase) return null
     setLoading(true)
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password,
+        options: options?.captchaToken ? { captchaToken: options.captchaToken } : undefined
+      })
       if (error) throw error
       return data
     } catch (err) {
