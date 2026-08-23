@@ -26,6 +26,7 @@ import type { Goal, Progression, Project, SectionId, Settings, Skill, UserProfil
 
 import { loadInitialState, getEmptyState } from './utils/storage'
 import { LoginUI } from './features/auth/LoginUI'
+import { CompleteOAuthSetup } from './features/auth/CompleteOAuthSetup'
 import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges, evaluateDynamicMilestones, generateTimelineEvents, generateFutureMilestones } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
@@ -306,6 +307,7 @@ function App() {
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
+  const [needsOAuthSetup, setNeedsOAuthSetup] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [isGlobalAdmin, setIsGlobalAdmin] = useState(false)
   
@@ -701,6 +703,22 @@ function App() {
       const isNewUser = !remote.profile && !remote.progression && !remote.settings
 
       if (isNewUser) {
+        // --- NEW GOOGLE SIGNUP INTERCEPTION ---
+        // Check if the user already has a user_identities row (from email signup).
+        // If not, they signed up via Google and must complete account setup.
+        const { data: identityData } = await supabase!
+          .from('user_identities')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle()
+          
+        if (!identityData) {
+          setNeedsOAuthSetup(true)
+          setDataLoaded(true)
+          return // Halt profile creation and let the UI render the setup screen
+        }
+        // --------------------------------------
+
         // 1. BRAND-NEW USER: Initialize and persist their first-time state
         // Do NOT award Journey Begins XP here, because handleOnboardingComplete will wipe it out.
         // It will be awarded precisely when they finish the onboarding wizard.
@@ -1235,6 +1253,12 @@ function App() {
           <AuthShell onEnter={() => { setEntered(true); window.location.hash = '#view=login'; }} progression={progression} />
         ) : !user ? (
           <LoginUI />
+        ) : needsOAuthSetup ? (
+          <CompleteOAuthSetup 
+            onComplete={() => {
+              window.location.reload()
+            }} 
+          />
         ) : user && !settings.onboarded ? (
           <OnboardingScreen onComplete={handleOnboardingComplete} />
         ) : (
