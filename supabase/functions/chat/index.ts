@@ -1,14 +1,35 @@
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 Deno.serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    
+    // Auth header for rate limit (might be anon)
+    const authHeader = req.headers.get('Authorization');
+    const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader || '' } }
+    });
+
+    const { data: rlData, error: rlError } = await supabaseClient.rpc('consume_edge_rate_limit', {
+      p_action: 'adaptive_learning',
+      p_limit: 20, // 20 requests per hour
+      p_window_seconds: 3600
+    });
+
+    if (rlData && !rlData.allowed) {
+      return new Response(JSON.stringify({ error: 'RATE_LIMIT_EXCEEDED', retry_after: rlData.retry_after }), { 
+        status: 429, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': String(rlData.retry_after) } 
+      });
+    }
+
     const { performanceHistory } = await req.json()
 
     if (!performanceHistory || !Array.isArray(performanceHistory)) {
@@ -57,7 +78,7 @@ Rules:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: 'openai/gpt-oss-20b',
         messages,
         response_format: { type: "json_object" }
       }),

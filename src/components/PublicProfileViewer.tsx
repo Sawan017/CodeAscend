@@ -5,6 +5,7 @@ import { fetchAllUserData } from '../lib/api'
 import { evaluateDynamicMilestones } from '../lib/progression'
 import { Avatar } from './Avatar'
 import { MilestonesSection } from './MilestonesSection'
+import { sanitizeUrl } from '../utils/url'
 import type { UserProfile, Progression, Project, Skill, Goal, Achievement, Badge, FriendRelationship, ChatState } from '../types'
 
 type PublicProfileViewerProps = {
@@ -345,22 +346,22 @@ export function PublicProfileViewer({
                     {((data.profile.contactPublic && data.profile.contact) || data.profile.github || data.profile.linkedin || data.profile.portfolio) && (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: data.profile.bio ? '0.5rem' : '0' }}>
                         {data.profile.github && (
-                          <a href={data.profile.github.startsWith('http') ? data.profile.github : `https://${data.profile.github}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                          <a href={sanitizeUrl(data.profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                             <Code size={16} /> GitHub
                           </a>
                         )}
                         {data.profile.linkedin && (
-                          <a href={data.profile.linkedin.startsWith('http') ? data.profile.linkedin : `https://${data.profile.linkedin}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                            <Link size={16} /> LinkedIn
+                          <a href={sanitizeUrl(data.profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                            <Globe size={16} /> LinkedIn
                           </a>
                         )}
                         {data.profile.portfolio && (
-                          <a href={data.profile.portfolio.startsWith('http') ? data.profile.portfolio : `https://${data.profile.portfolio}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
-                            <Globe size={16} /> Website
+                          <a href={sanitizeUrl(data.profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                            <Link size={16} /> Portfolio
                           </a>
                         )}
                         {data.profile.contactPublic && data.profile.contact && (
-                          <a href={`mailto:${data.profile.contact}`} className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                          <a href={sanitizeUrl(`mailto:${data.profile.contact}`)} className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                             <Mail size={16} /> Email
                           </a>
                         )}

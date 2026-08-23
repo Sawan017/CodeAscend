@@ -290,6 +290,32 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       const allNewLanguages = new Set<string>()
       const allEvidences: import('../../lib/github-analyzer.ts').ConceptEvidence[] = []
 
+      // Identify genuinely new projects first
+      const genuinelyNewCount = repos.filter((repo: any) => !repo.fork && !projects?.find(p => p.provider === 'github' && p.externalId === repo.id.toString())).length
+      
+      if (genuinelyNewCount > 0) {
+        setGithubMessage('Verifying rate limits...')
+        const { data: rlData, error: rlError } = await supabase!.rpc('preview_rate_limit', {
+          p_key: userId + ':create_project',
+          p_limit: 10,
+          p_cost: genuinelyNewCount
+        })
+
+        if (rlError) {
+          setGithubMessage('Rate limit check failed. Please try again.')
+          setSyncingGithub(false)
+          return
+        }
+
+        if (rlData && !rlData.allowed) {
+          const secs = rlData.retry_after || 3600
+          const time = secs > 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`
+          setGithubMessage(`Rate limit exceeded: You can import up to 10 new projects per hour. Please try again in ${time}.`)
+          setSyncingGithub(false)
+          return
+        }
+      }
+
       for (const repo of repos) {
         if (repo.fork) continue
 

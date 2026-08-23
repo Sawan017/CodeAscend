@@ -30,10 +30,13 @@ export function CreateGroupModal({
   useEffect(() => {
     const fetchFriends = async () => {
       if (!supabase) return
-      const { data, error } = await supabase
+      // Enforce strict UUID format to prevent PostgREST filter injection
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(activeUserId)) return;
+
+      const { data } = await supabase
         .from('friendships')
         .select('user_id1, user_id2')
-        .or('user_id1.eq.' + activeUserId + ',user_id2.eq.' + activeUserId)
+        .or(`user_id1.eq.${activeUserId},user_id2.eq.${activeUserId}`)
 
       if (data) {
         const friendIds = data.map(f => f.user_id1 === activeUserId ? f.user_id2 : f.user_id1)

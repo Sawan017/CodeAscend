@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { ArrowLeft, Trash2, CheckCircle, Code, Globe } from 'lucide-react'
 import type { Project } from '../../types'
+import { sanitizeUrl } from '../../utils/url'
 
 type ProjectDetailProps = {
   project: Project
@@ -251,7 +252,7 @@ export function ProjectDetail({
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <a 
-              href={project.github}
+              href={sanitizeUrl(project.github)}
               target="_blank"
               rel="noreferrer"
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', color: 'var(--text-main)', textDecoration: 'none', border: '1px solid var(--border-strong)' }}
@@ -259,7 +260,7 @@ export function ProjectDetail({
               <Code size={20} /> View Source
             </a>
             <a 
-              href={project.demo}
+              href={sanitizeUrl(project.demo)}
               target="_blank"
               rel="noreferrer"
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem', background: 'var(--cyan)', borderRadius: '8px', color: '#000', textDecoration: 'none', fontWeight: 600 }}

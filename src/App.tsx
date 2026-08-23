@@ -306,6 +306,7 @@ function App() {
   const [activeFriendIdForChat, setActiveFriendIdForChat] = useState<string | null>(null)
   const [onlineUsers, setOnlineUsers] = useState<string[]>([])
   const [dataLoaded, setDataLoaded] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [isGlobalAdmin, setIsGlobalAdmin] = useState(false)
   
   useEffect(() => {
@@ -638,7 +639,10 @@ function App() {
       }
       
       let remote = await fetchAllUserData(user.id)
-      if (!remote) return
+      if (!remote) {
+        setLoadError('Failed to retrieve user data. Please check your connection and try again.')
+        return
+      }
       
       // FALLBACK: If lookupLoginIdByAuthUserId failed (e.g. due to RLS) and activeLoginId is STILL null,
       // but the user DOES have an existing profile, we can extract the login_id from the profile itself!
@@ -684,7 +688,10 @@ function App() {
           
           // Re-fetch data using the fully configured storage key to ensure all data loads cleanly
           remote = await fetchAllUserData(user.id)
-          if (!remote) return
+          if (!remote) {
+            setLoadError('Failed to retrieve user data. Please check your connection and try again.')
+            return
+          }
         }
       }
       
@@ -1207,7 +1214,15 @@ function App() {
       <div className="aurora aura-a" />
       <div className="aurora aura-b" />
       <AnimatePresence mode="wait">
-        {loading || (user && !dataLoaded) ? (
+        {loadError ? (
+          <div key="error" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw', gap: '1.5rem', textAlign: 'center', padding: '2rem' }}>
+            <div style={{ color: 'var(--accent-red)', fontSize: '1.5rem', fontWeight: 600 }}>SYSTEM ERROR</div>
+            <div style={{ color: 'var(--text-muted)' }}>{loadError}</div>
+            <button onClick={() => window.location.reload()} className="primary-btn" style={{ marginTop: '1rem' }}>
+              REBOOT SYSTEM
+            </button>
+          </div>
+        ) : loading || (user && !dataLoaded) ? (
           <div key="loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
             <div className="loading-pulse" style={{ color: 'var(--cyan)', fontSize: '1.25rem', animation: 'pulse 1.5s infinite', letterSpacing: '0.1em', fontWeight: 500 }}>
               ESTABLISHING CONNECTION...
@@ -1320,7 +1335,7 @@ function App() {
                       navigate({ view: 'profile' })
                     }} />}
                     {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} />}
-                    {route.view === 'project_detail' && <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} />}
+                    {route.view === 'project_detail' && (projectState.find(p => p.id === route.id) ? <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} /> : <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}><h2>Project Not Found</h2><button onClick={() => navigate({ view: 'projects' })} className="primary-btn">Back to Projects</button></div>)}
                     {route.view === 'learning' && <SkillsPanel 
             skills={skillState} 
             activePathways={settings.activePathways || []}
@@ -1332,7 +1347,7 @@ function App() {
             onDisassociateSkill={disassociateSkillFromDomain}
             onRemoveSkill={removeSkill}
           />}
-                    {route.view === 'skill_detail' && <SkillDetail 
+                    {route.view === 'skill_detail' && (skillState.find(s => s.id === route.id) ? <SkillDetail 
                       skill={skillState.find(s => s.id === route.id)!} 
                       onBack={goBack} 
                       onUpdateNotes={updateSkillNotes} 
@@ -1360,7 +1375,7 @@ function App() {
                         // Just closing modal, session keeps running
                       }}
                       activeSession={activeSession}
-                    />}
+                    /> : <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}><h2>Skill Not Found</h2><button onClick={() => navigate({ view: 'learning' })} className="primary-btn">Back to Skills</button></div>)}
                     {route.view === 'goals' && <GoalsPanel 
                       goals={goalState} 
                       onCompleteActiveSession={completeActiveSession}
@@ -1444,6 +1459,13 @@ function App() {
                             }
                           } catch (err: any) {
                             console.error("SEND MESSAGE RPC FAILED:", err);
+                            let errMsg = err.message || 'Failed to send message';
+                            if (errMsg.includes('RATE_LIMIT_EXCEEDED:')) {
+                              const secs = parseInt(errMsg.split('RATE_LIMIT_EXCEEDED:')[1], 10) || 60;
+                              const time = secs > 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`;
+                              errMsg = `You're sending messages too quickly. Please try again in ${time}.`;
+                            }
+                            push(errMsg, 'info')
                             // If it fails (e.g. blocked), keep it in the UI as a failed message.
                             const failedMsg = {
                               id: msgId,
@@ -1512,6 +1534,15 @@ function App() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                         <HUD progression={progression} completedGoals={completedGoals} masteredSkills={masteredSkills} earnedBadges={earnedBadges} />
                         <CareerWorld activeSection={route.view as SectionId} onSelectSection={selectSection} progression={progression} profile={profileState} />
+                      </div>
+                    )}
+                    {!['admin_support', 'dashboard', 'profile', 'edit_profile', 'projects', 'project_detail', 'learning', 'skill_detail', 'goals', 'achievements', 'achievement_detail', 'badge_detail', 'friends', 'chat', 'future', 'career_world'].includes(route.view) && (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}>
+                        <h1 style={{ fontSize: '4rem', color: 'var(--text-main)', margin: 0, fontWeight: 800 }}>404</h1>
+                        <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>The requested sector could not be located.</p>
+                        <button onClick={() => navigate({ view: 'dashboard' })} className="primary-btn">
+                          Return to Dashboard
+                        </button>
                       </div>
                     )}
 

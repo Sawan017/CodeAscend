@@ -5,6 +5,7 @@ import { XpProgressBar } from '../../components/XpProgressBar'
 import { Avatar } from '../../components/Avatar'
 import { MilestonesSection } from '../../components/MilestonesSection'
 import { Code, Globe, Mail, Link, Pencil } from 'lucide-react'
+import { sanitizeUrl } from '../../utils/url'
 
 interface ProfilePanelProps {
   profile: UserProfile
@@ -139,22 +140,22 @@ export function ProfilePanel({ profile, progression, goals, skills, onEditProfil
               <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Links</h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                 {profile.github && (
-                  <a href={profile.github.startsWith('http') ? profile.github : `https://${profile.github}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                  <a href={sanitizeUrl(profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                     <Code size={16} /> GitHub
                   </a>
                 )}
                 {profile.linkedin && (
-                  <a href={profile.linkedin.startsWith('http') ? profile.linkedin : `https://${profile.linkedin}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Link size={16} /> LinkedIn
+                  <a href={sanitizeUrl(profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <Globe size={16} /> LinkedIn
                   </a>
                 )}
                 {profile.portfolio && (
-                  <a href={profile.portfolio.startsWith('http') ? profile.portfolio : `https://${profile.portfolio}`} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Globe size={16} /> Website
+                  <a href={sanitizeUrl(profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <Link size={16} /> Portfolio
                   </a>
                 )}
                 {profile.contactPublic && profile.contact && (
-                  <a href={`mailto:${profile.contact}`} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                  <a href={sanitizeUrl(`mailto:${profile.contact}`)} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                     <Mail size={16} /> Email
                   </a>
                 )}

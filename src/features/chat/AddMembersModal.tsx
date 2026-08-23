@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import { X, Check } from 'lucide-react'
@@ -24,10 +24,13 @@ export function AddMembersModal({
   useEffect(() => {
     const fetchFriends = async () => {
       if (!supabase) return
+      // Enforce strict UUID format to prevent PostgREST filter injection
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(activeUserId)) return;
+
       const { data } = await supabase
         .from('friendships')
         .select('user_id1, user_id2')
-        .or('user_id1.eq.' + activeUserId + ',user_id2.eq.' + activeUserId)
+        .or(`user_id1.eq.${activeUserId},user_id2.eq.${activeUserId}`)
 
       if (data) {
         const friendIds = data.map(f => f.user_id1 === activeUserId ? f.user_id2 : f.user_id1)

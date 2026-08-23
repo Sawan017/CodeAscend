@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, Eye, EyeOff, ArrowRight, User, X } from 'lucide-react'
 import { useAuth } from '../../lib/auth'
 import { reserveUsername, resolveAuthEmail } from '../../lib/api'
+import { LegalModal } from '../settings/LegalModal'
+import { privacyPolicyText, termsOfServiceText } from '../settings/legalText'
 import { supabase } from '../../lib/supabase'
+import { validatePassword, getPasswordError } from '../../lib/passwordValidation'
+import { PasswordStrengthIndicator } from './PasswordStrengthIndicator'
 
 export function LoginUI() {
   const { signInWithGoogle, signInWithEmail, loading: authLoading } = useAuth()
@@ -14,6 +18,10 @@ export function LoginUI() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
+  const [agreeTerms, setAgreeTerms] = useState(false)
+  const [agreePrivacy, setAgreePrivacy] = useState(false)
+  const [isAdult, setIsAdult] = useState(false)
+  const [showLegalModal, setShowLegalModal] = useState<{isOpen: boolean, type: 'privacy' | 'tos'}>({isOpen: false, type: 'privacy'})
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -43,12 +51,16 @@ export function LoginUI() {
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault()
     if (isSubmitting || authLoading) return
+    if (!agreeTerms || !agreePrivacy || !isAdult) {
+      setError('You must accept the Terms of Service, Privacy Policy, and confirm you are 18 or older to register.')
+      return
+    }
     if (displayName.length < 4 || displayName.length > 12 || !/^[a-zA-Z0-9_]+$/.test(displayName)) {
       setError('Username must be 4-12 characters (letters, numbers, underscores).')
       return
     }
-    if (!createPassword || createPassword.length < 6) {
-      setError('Password must be at least 6 characters.')
+    if (!createPassword || !validatePassword(createPassword).isValid) {
+      setError(getPasswordError())
       return
     }
     if (createPassword !== confirmPassword) {
@@ -58,7 +70,7 @@ export function LoginUI() {
     setError(null)
     setIsSubmitting(true)
     try {
-      const data = await reserveUsername(displayName, createPassword)
+      const data = await reserveUsername(displayName, createPassword, "1.0", "1.0")
       setSuccessIdentity({ id: data.id, login_id: data.login_id, dummy_email: data.dummy_email })
     } catch (err: any) {
       console.error("Signup error:", err)
@@ -92,6 +104,11 @@ export function LoginUI() {
       let msg = err.message || 'Failed to establish session.'
       if (msg.includes('Database error querying schema')) {
         msg = 'Unable to establish session. Please try again.'
+      }
+      if (msg.includes('RATE_LIMIT_EXCEEDED:')) {
+        const secs = parseInt(msg.split('RATE_LIMIT_EXCEEDED:')[1], 10) || 60;
+        const time = secs > 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`;
+        msg = `You're doing that too quickly. Please try again in ${time}.`;
       }
       setError(msg)
     } finally {
@@ -146,6 +163,14 @@ export function LoginUI() {
         msg = 'Authentication service is temporarily unavailable. Please try again in a moment.'
       } else if (msg.includes('Invalid login credentials') || msg.includes('Invalid login')) {
         msg = 'Invalid username or password'
+      } else if (err?.status === 429 || err?.code === 'over_request_rate_limit' || msg.includes('rate limit reached')) {
+        msg = 'Too many failed login attempts. Please wait a few minutes and try again.'
+      } else if (msg.includes('ACCOUNT_COOLDOWN')) {
+        msg = 'Too many failed login attempts. Account temporarily locked for security. Please try again later.'
+      } else if (msg.includes('RATE_LIMIT_EXCEEDED:')) {
+        const secs = parseInt(msg.split('RATE_LIMIT_EXCEEDED:')[1], 10) || 60;
+        const time = secs > 60 ? `${Math.floor(secs/60)}m ${secs%60}s` : `${secs}s`;
+        msg = `You're doing that too quickly. Please try again in ${time}.`;
       } else if (msg.includes('Account created, but identity reservation expired')) {
         msg = 'Unable to create account identity. Please contact support.'
       }
@@ -303,6 +328,8 @@ export function LoginUI() {
                 placeholder="CREATE PASSWORD" 
                 value={createPassword}
                 onChange={(e) => setCreatePassword(e.target.value)}
+                autoComplete="new-password"
+                aria-label="Create password"
                 style={{
                   width: '100%', padding: '16px 48px 16px 48px',
                   background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
@@ -328,6 +355,8 @@ export function LoginUI() {
                 placeholder="CONFIRM PASSWORD" 
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+                aria-label="Confirm password"
                 style={{
                   width: '100%', padding: '16px 48px 16px 48px',
                   background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
@@ -339,6 +368,14 @@ export function LoginUI() {
               />
             </div>
             
+            {/* Live password strength indicator */}
+            {createPassword && (
+              <PasswordStrengthIndicator 
+                password={createPassword} 
+                confirmPassword={confirmPassword}
+              />
+            )}
+            
             <AnimatePresence>
               {error && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
@@ -348,17 +385,31 @@ export function LoginUI() {
               )}
             </AnimatePresence>
 
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem', width: '100%', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} style={{ marginTop: '0.2rem' }} />
+                <span>I agree to the <button type="button" onClick={(e) => { e.preventDefault(); setShowLegalModal({isOpen: true, type: 'tos'}) }} style={{ background: 'none', border: 'none', color: '#00c8ff', cursor: 'pointer', padding: 0 }}>Terms of Service</button>.</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                <input type="checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} style={{ marginTop: '0.2rem' }} />
+                <span>I acknowledge the <button type="button" onClick={(e) => { e.preventDefault(); setShowLegalModal({isOpen: true, type: 'privacy'}) }} style={{ background: 'none', border: 'none', color: '#00c8ff', cursor: 'pointer', padding: 0 }}>Privacy Policy</button> and consent to the processing of my personal data.</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                <input type="checkbox" checked={isAdult} onChange={(e) => setIsAdult(e.target.checked)} style={{ marginTop: '0.2rem' }} />
+                <span>I confirm that I am 18 years of age or older.</span>
+              </label>
+            </div>
             <button 
               type="submit" 
-              disabled={isSubmitting || authLoading}
+              disabled={isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !isAdult || !validatePassword(createPassword).isValid || createPassword !== confirmPassword}
               style={{
                 width: '100%', padding: '16px', marginTop: '8px',
                 background: '#00c8ff', color: '#030407',
                 border: 'none', borderRadius: '2px',
                 fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.15em',
-                cursor: (isSubmitting || authLoading) ? 'not-allowed' : 'pointer',
+                cursor: (isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !isAdult || !validatePassword(createPassword).isValid || createPassword !== confirmPassword) ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                opacity: (isSubmitting || authLoading) ? 0.7 : 1,
+                opacity: (isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !isAdult || !validatePassword(createPassword).isValid || createPassword !== confirmPassword) ? 0.7 : 1,
                 transition: 'all 0.3s ease'
               }}
             >
@@ -577,6 +628,8 @@ export function LoginUI() {
                     placeholder="PASSWORD" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="current-password"
+                    aria-label="Password"
                     style={{
                       width: '100%', padding: '16px 48px 16px 48px',
                       background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
@@ -690,6 +743,12 @@ export function LoginUI() {
           </button>
         </div>
       </motion.div>
+          <LegalModal 
+        isOpen={showLegalModal.isOpen} 
+        onClose={() => setShowLegalModal({isOpen: false, type: 'privacy'})} 
+        title={showLegalModal.type === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+        content={showLegalModal.type === 'privacy' ? privacyPolicyText : termsOfServiceText}
+      />
     </motion.div>
   )
 }

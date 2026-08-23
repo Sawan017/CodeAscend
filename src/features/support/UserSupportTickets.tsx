@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect, useRef } from 'react'
 import { ArrowLeft, MessageSquare, Plus, Paperclip, Send, CheckCircle } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import ReactMarkdown from 'react-markdown'
 import { formatAppDateTime } from '../../lib/dateFormatting'
 import { CreateSupportTicketModal } from './CreateSupportTicketModal'
 
@@ -13,6 +14,7 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, type: 'close' | 'delete' | null}>({isOpen: false, type: null})
 
   useEffect(() => {
     loadTickets()
@@ -95,7 +97,57 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     setSending(false)
   }
 
+
+
+  
+  const executeDeleteTicket = async () => {
+    if (!selectedTicket || selectedTicket.status !== 'closed') return;
+    
+    // Explicitly enforce status on the client side query too, though RLS protects it
+    const { error } = await supabase!.from('support_tickets').delete().eq('id', selectedTicket.id).eq('status', 'closed');
+
+    if (error) {
+      console.error("Failed to delete ticket:", error);
+      console.error("Error deleting ticket: " + error.message);
+      return;
+    }
+
+    // Removed window.alert
+    setSelectedTicket(null);
+    loadTickets();
+    setConfirmModal({isOpen: false, type: null});
+  }
+
+  
+  const executeEndTicket = async () => {
+    if (!selectedTicket) return;
+    
+    // Insert system message for history BEFORE closing, so RLS allows the insert
+    await supabase!.from('support_messages').insert({
+      ticket_id: selectedTicket.id,
+      sender_type: 'system',
+      message: 'Ticket was closed by user.'
+    });
+
+    // Perform update
+    const { error } = await supabase!.from('support_tickets').update({ 
+      status: 'closed', 
+      closed_at: new Date().toISOString(),
+      closed_by: userId
+    }).eq('id', selectedTicket.id);
+
+    if (error) {
+      console.error("Failed to close ticket:", error);
+      return;
+    }
+
+    loadTickets();
+    setSelectedTicket({ ...selectedTicket, status: 'closed' });
+    setConfirmModal({isOpen: false, type: null});
+  }
+
   const handleConfirmResolved = async (resolved: boolean) => {
+
     if (!selectedTicket) return
     if (resolved) {
       await supabase!.from('support_tickets').update({ status: 'closed' }).eq('id', selectedTicket.id)
@@ -145,6 +197,24 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
               {statusLabels[selectedTicket.status]}
             </span>
           </div>
+
+          {selectedTicket.status !== 'closed' && (
+             <button 
+               onClick={() => setConfirmModal({isOpen: true, type: 'close'})} 
+               style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-main)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}
+             >
+               End & Close Ticket
+             </button>
+          )}
+          {selectedTicket.status === 'closed' && (
+             <button 
+               onClick={() => setConfirmModal({isOpen: true, type: 'delete'})} 
+               style={{ background: '#ef444420', border: '1px solid #ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontSize: '0.85rem' }}
+             >
+               Delete Ticket
+             </button>
+          )}
+
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--bg-surface-sunken)' }}>
@@ -189,7 +259,7 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
                   borderBottomLeftRadius: !isMe ? '4px' : '16px',
                   border: isMe ? 'none' : '1px solid var(--border)'
                 }}>
-                  {msg.message}
+                  {isMe ? msg.message : <div className="support-markdown"><ReactMarkdown>{msg.message}</ReactMarkdown></div>}
                 </div>
                 <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.25rem', textAlign: isMe ? 'right' : 'left' }}>
                   {formatAppDateTime(msg.created_at)}
@@ -211,6 +281,12 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
                   No, I still need help
                 </button>
               </div>
+            </div>
+          )}
+          {selectedTicket.status === 'closed' && (
+            <div style={{ background: 'var(--bg-panel)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', textAlign: 'center', marginTop: '1rem' }}>
+              <h4 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-muted)' }}>Ticket Closed</h4>
+              <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem' }}>This conversation has been closed and is now read-only.</p>
             </div>
           )}
         </div>
@@ -235,6 +311,35 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
             </button>
           </div>
         )}
+        
+      {confirmModal.isOpen && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(4px)', zIndex: 1000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{ background: 'var(--bg-panel)', border: '1px solid var(--border)', borderRadius: '12px', padding: '1.5rem', width: '90%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '1rem', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.25rem' }}>
+              {confirmModal.type === 'close' ? 'End & Close Ticket?' : 'Delete Ticket?'}
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+              {confirmModal.type === 'close' 
+                ? 'Are you sure you want to end and close this ticket?' 
+                : 'Delete this ticket permanently? This will delete the ticket and its conversation history and cannot be undone.'}
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+              <button 
+                onClick={() => setConfirmModal({isOpen: false, type: null})}
+                style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-main)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmModal.type === 'close' ? executeEndTicket : executeDeleteTicket}
+                style={{ background: '#ef444420', border: '1px solid #ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}
+              >
+                {confirmModal.type === 'close' ? 'End & Close Ticket' : 'Delete Ticket'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     )
   }
@@ -287,6 +392,9 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
           ))
         )}
       </div>
+
+
+
       <CreateSupportTicketModal 
         isOpen={showReportModal} 
         onClose={() => setShowReportModal(false)} 
