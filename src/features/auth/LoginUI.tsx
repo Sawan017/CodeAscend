@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, Eye, EyeOff, ArrowRight, User, X } from 'lucide-react'
+import { Turnstile } from '@marsidev/react-turnstile'
+import type { TurnstileInstance } from '@marsidev/react-turnstile'
 import { useAuth } from '../../lib/auth'
 import { reserveUsername, resolveAuthEmail } from '../../lib/api'
 import { LegalModal } from '../settings/LegalModal'
@@ -22,6 +24,8 @@ export function LoginUI() {
   const [agreePrivacy, setAgreePrivacy] = useState(false)
   const [isAdult, setIsAdult] = useState(false)
   const [showLegalModal, setShowLegalModal] = useState<{isOpen: boolean, type: 'privacy' | 'tos'}>({isOpen: false, type: 'privacy'})
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileInstance>(null)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -150,7 +154,10 @@ export function LoginUI() {
         window.localStorage.setItem('auth_remember_me', rememberMe ? 'true' : 'false')
         
         // Delegate actual password verification to Supabase Auth
-        const authData = await signInWithEmail(resolvedEmail, password)
+        if (!captchaToken) {
+          throw new Error('Please complete the security check to continue.')
+        }
+        const authData = await signInWithEmail(resolvedEmail, password, { captchaToken })
         
         // Always save the current login ID so signOut knows which account to manage
         // IMPORTANT: We must use the permanent login_id, not the identifier (which might be an email)
@@ -163,9 +170,10 @@ export function LoginUI() {
         window.localStorage.setItem('current_login_id', finalLoginId)
       }
     } catch (err: any) {
+      console.error("EXACT LOGIN ERROR:", err);
       let msg = err.message || 'Authentication failed. Please try again.'
       if (msg.includes('schema cache') || msg.includes('does not exist')) {
-        msg = 'Authentication service is temporarily unavailable. Please try again in a moment.'
+        msg = `Authentication service is temporarily unavailable. Detailed Error: ${err.message}`
       } else if (msg.includes('Invalid login credentials') || msg.includes('Invalid login')) {
         msg = 'Invalid username or password'
       } else if (err?.status === 429 || err?.code === 'over_request_rate_limit' || msg.includes('rate limit reached')) {
@@ -180,6 +188,8 @@ export function LoginUI() {
         msg = 'Unable to create account identity. Please contact support.'
       }
       setError(msg)
+      turnstileRef.current?.reset()
+      setCaptchaToken(null)
     } finally {
       setIsSubmitting(false)
     }
@@ -679,6 +689,17 @@ export function LoginUI() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0' }}>
+                  <Turnstile 
+                    ref={turnstileRef}
+                    siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY as string} 
+                    onSuccess={(token) => setCaptchaToken(token)}
+                    onError={() => setError('Security check failed. Please try again.')}
+                    onExpire={() => setCaptchaToken(null)}
+                    options={{ theme: 'dark' }}
+                  />
+                </div>
 
                 {/* Action Buttons */}
                 <button 
