@@ -42,9 +42,7 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
               background: 'var(--bg-base)',
               display: 'inline-block'
             }}>
-              <div style={{ borderRadius: '50%', overflow: 'hidden', width: '92px', height: '92px' }}>
-                <Avatar src={profile.avatar} alt={profile.displayName} size={92} isOnline={isOnline} showStatus={true} />
-              </div>
+              <Avatar src={profile.avatar} alt={profile.displayName} size={92} isOnline={isOnline} showStatus={true} />
             </div>
           </div>
 
@@ -89,30 +87,40 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
           {/* Skills */}
           <div>
             <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 700 }}>Skills</h4>
-            {(!profile.displayedSkills || profile.displayedSkills.length === 0) ? (
-              <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No skills selected.</p>
-            ) : (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {profile.displayedSkills.map((skillId) => {
-                  const skill = skills?.find(s => s.id === skillId)
-                  if (!skill) return null
-                  return (
-                    <div key={skillId} style={{ 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      padding: '0.4rem 0.75rem', 
-                      background: 'rgba(99, 102, 241, 0.1)', 
-                      border: '1px solid rgba(99, 102, 241, 0.2)',
-                      borderRadius: '16px',
-                      color: 'var(--text)',
-                      width: 'max-content'
-                    }}>
-                      <span style={{ fontWeight: 500, fontSize: '0.85rem' }}>{skill.name}{skill.progress === 100 && <span style={{ marginLeft: '4px', color: 'var(--cyan)', fontWeight: 700 }}>• M</span>}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+            {(() => {
+              const displayableSkills = (profile.displayedSkills || [])
+                .map(id => (skills || []).find(s => s.id === id))
+                .filter(s => s && s.progress >= 50) as any[];
+
+              if (displayableSkills.length === 0) {
+                return <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No skills to display.</p>
+              }
+
+              return (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {displayableSkills.map(skill => {
+                    const isMastered = skill.progress >= 100 || skill.status === 'MASTERED'
+                    return (
+                      <div key={skill.id} style={{ 
+                        display: 'inline-flex', 
+                        alignItems: 'center', 
+                        padding: '0.4rem 0.75rem', 
+                        background: 'rgba(99, 102, 241, 0.1)', 
+                        border: '1px solid rgba(99, 102, 241, 0.2)',
+                        borderRadius: '16px',
+                        color: 'var(--text)',
+                        width: 'max-content'
+                      }}>
+                        <span style={{ fontWeight: 500, fontSize: '0.85rem', display: 'flex', alignItems: 'center' }}>
+                          {skill.name} 
+                          {isMastered && <span style={{ marginLeft: '6px', background: '#10b981', color: '#000', padding: '1px 5px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 800 }}>M</span>}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            })()}
           </div>
 
           {/* Links */}

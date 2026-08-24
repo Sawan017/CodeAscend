@@ -53,7 +53,7 @@ export const milestoneDefinitions: MilestoneDef[] = [
   { id: 'm-code-pass-100', title: 'Architect', description: 'Pass 100 coding challenges.', category: 'Coding', icon: 'Server', targetValue: 100, xpReward: 3000, tier: 'mythic' },
 
   // XP Accumulation
-  { id: 'm-xp-1', title: 'The Beginning', description: 'Earn your first XP points.', category: 'XP', icon: 'Sparkles', targetValue: 1, xpReward: 10, tier: 'bronze' },
+  { id: 'm-xp-1', title: 'The Beginning', description: 'Started Arinova journey.', category: 'XP', icon: 'Sparkles', targetValue: 1, xpReward: 500, tier: 'bronze' },
   { id: 'm-xp-1k', title: 'Rising Star', description: 'Accumulate 1,000 XP.', category: 'XP', icon: 'Sparkles', targetValue: 1000, xpReward: 100, tier: 'bronze' },
   { id: 'm-xp-5k', title: 'Dedicated', description: 'Accumulate 5,000 XP.', category: 'XP', icon: 'Star', targetValue: 5000, xpReward: 500, tier: 'silver' },
   { id: 'm-xp-10k', title: 'High Roller', description: 'Accumulate 10,000 XP.', category: 'XP', icon: 'Star', targetValue: 10000, xpReward: 1000, tier: 'gold' },

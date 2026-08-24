@@ -42,14 +42,15 @@ export function Avatar({ src, alt, size = 48, isOnline, showStatus = false, styl
         <div 
           style={{ 
             position: 'absolute', 
-            bottom: '-2px', 
-            right: '-2px', 
+            bottom: 0, 
+            right: 0, 
+            transform: 'translate(15%, 15%)',
             width: typeof size === 'number' ? `${Math.max(12, size * 0.28)}px` : '14px', 
             height: typeof size === 'number' ? `${Math.max(12, size * 0.28)}px` : '14px', 
             background: isOnline ? '#23a559' : '#80848e', // Discord online green or offline gray
             borderRadius: '50%', 
             border: '2px solid var(--surface-sunken)', 
-            zIndex: 2 
+            zIndex: 10 
           }} 
           title={isOnline ? "Online" : "Offline"} 
         />
