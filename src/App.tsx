@@ -469,46 +469,32 @@ function App() {
     setSkillState([])
     setBadgeState([])
     
-    // Determine if they already got Journey Begins
-    const hasJb = achievementState.some(a => a.id === 'journey-begins' && a.unlocked)
+    // Determine if they already got The Beginning (if they have any XP)
+    const hasTheBeginning = progression.xp > 0
     
-    const initialAchievements = achievements.map(a => 
-      a.id === 'journey-begins' 
-        ? { ...a, unlocked: true, dateUnlocked: new Date().toISOString().slice(0, 10), xpReward: 500 } 
-        : a
-    )
+    const initialAchievements = achievements
     
     setAchievementState(initialAchievements)
     setProgression(p => ({ 
       ...p, 
-      xp: hasJb ? p.xp : p.xp + 500, 
+      xp: hasTheBeginning ? p.xp : p.xp + 500, 
       level: 1, 
       projectsCompleted: 0, 
       goalsCompleted: 0, 
       skillsMastered: 0, 
-      achievements: hasJb ? p.achievements : p.achievements + 1, 
+      achievements: hasTheBeginning ? p.achievements : p.achievements + 1, 
       badges: 0, 
       streak: 0, 
       longestStreak: 0 
     }))
 
-    setProfileState(prev => {
-      const prevDisplayed = prev.displayedAchievements || []
-      const newProfile = !prevDisplayed.includes('journey-begins') 
-        ? { ...prev, displayedAchievements: ['journey-begins', ...prevDisplayed] }
-        : prev
-        
-      if (user) {
-        saveProfile(user.id, newProfile)
-      }
-      return newProfile
-    })
+    // Do not automatically copy earned achievements into displayedAchievements.
 
     setSettings(s => ({ ...s, onboarded: true }))
     
-    if (!hasJb) {
+    if (!hasTheBeginning) {
       setTimeout(() => {
-        push('Achievement unlocked: Journey Begins +500 XP', 'unlock', 5000)
+        push('Achievement unlocked: The Beginning +500 XP', 'unlock', 5000)
         playSoundEffect('unlock', settings.soundEffects)
       }, 500)
     }
@@ -720,7 +706,7 @@ function App() {
         // --------------------------------------
 
         // 1. BRAND-NEW USER: Initialize and persist their first-time state
-        // Do NOT award Journey Begins XP here, because handleOnboardingComplete will wipe it out.
+        // Do NOT award The Beginning XP here, because handleOnboardingComplete will wipe it out.
         // It will be awarded precisely when they finish the onboarding wizard.
         const initialProgression = {
           ...empty.progression,
@@ -1342,7 +1328,7 @@ function App() {
                   <AnimatePresence mode="wait">
                     {route.view === 'admin_support' && isGlobalAdmin && <AdminSupportDashboard onBack={() => navigate({ view: 'dashboard' })} />}
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} goals={goalState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
+                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
                     {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
                       if (typeof window !== 'undefined') {
@@ -1546,7 +1532,7 @@ function App() {
                         }}
                         activeFriendId={activeFriendIdForChat}
                         onSetActiveFriendId={setActiveFriendIdForChat}
-                        onOpenProfile={(id) => { setViewingUserId(id); setUserSearchOpen(true) }}
+                        onOpenProfile={(id) => setViewingUserId(id)}
                         onlineUsers={onlineUsers}
                       />
                     )}

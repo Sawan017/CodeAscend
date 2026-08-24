@@ -173,14 +173,13 @@ export function evaluateAchievementsAndBadges(
   progression: Progression,
   goals: Goal[],
   projects: Project[],
-  skills: Skill[],
+  _skills: Skill[],
   achievements: Achievement[],
   badges: Badge[]
 ) {
   const currentLevel = calculateLevel(progression.xp)
   const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status === 'COMPLETED').length)
   const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status === 'COMPLETED').length)
-  const masteredSkillsCount = Math.max(progression.skillsMastered || 0, skills.filter((s) => s.status === 'MASTERED').length)
   const todayStr = new Date().toISOString().slice(0, 10)
 
   const newUnlockedAchievements: Achievement[] = []
@@ -208,9 +207,8 @@ export function evaluateAchievementsAndBadges(
     if (ach.unlocked) return ach
     let unlockedNow = false
 
-    if (ach.id === 'journey-begins') unlockedNow = true
+
     if (ach.id === 'first-website' && completedProjectsCount >= 1) unlockedNow = true
-    if (ach.id === 'first-react' && (completedProjectsCount >= 1 || masteredSkillsCount >= 1)) unlockedNow = true
     if (ach.id === 'first-fullstack' && completedProjectsCount >= 2) unlockedNow = true
     if (ach.id === 'portfolio-deployed' && completedProjectsCount >= 1) unlockedNow = true
 

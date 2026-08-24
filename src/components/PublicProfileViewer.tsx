@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, User, Trophy, Code, Target, BookOpen, Layers3, MessageSquare, UserPlus, UserMinus, ShieldAlert, BellOff, BellRing, MoreVertical, Mail, Globe, Link } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fetchAllUserData } from '../lib/api'
-import { evaluateDynamicMilestones } from '../lib/progression'
+import { evaluateDynamicMilestones, calculateLevel } from '../lib/progression'
 import { Avatar } from './Avatar'
 import { MilestonesSection } from './MilestonesSection'
 import { sanitizeUrl } from '../utils/url'
@@ -312,15 +312,15 @@ export function PublicProfileViewer({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '0.25rem' }}>
-                      Lvl {data.progression?.level || 1}
+                      Lvl {data.progression ? calculateLevel(data.progression.xp) : 1}
                     </div>
                     <div className="muted" style={{ fontSize: '0.85rem' }}>LEVEL</div>
                   </div>
                   <div style={{ textAlign: 'center', borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
-                      {data.progression?.xp || 0}
+                      {data.skills ? data.skills.filter(s => s.progress >= 50).length : 0}
                     </div>
-                    <div className="muted" style={{ fontSize: '0.85rem' }}>TOTAL XP</div>
+                    <div className="muted" style={{ fontSize: '0.85rem' }}>SKILLS LEARNED</div>
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
@@ -371,7 +371,22 @@ export function PublicProfileViewer({
                 )}
 
                 {/* Milestones Section */}
-                <MilestonesSection dynamicMilestones={evaluateDynamicMilestones(data.progression || { xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0 }, data.skills)} displayedIds={data.profile.displayedAchievements} maxVisible={12} />
+                {(() => {
+                  const dynamic = evaluateDynamicMilestones(data.progression || { xp: 0, level: 1, projectsCompleted: 0, goalsCompleted: 0, skillsMastered: 0, achievements: 0, badges: 0, streak: 0, longestStreak: 0 }, data.skills);
+                  const standard = (data.achievements || []).map(a => ({
+                    id: a.id,
+                    title: a.title,
+                    description: a.description,
+                    category: 'Special' as const,
+                    icon: a.icon === '???' ? 'Award' : (a.icon || 'Award'),
+                    targetValue: 1,
+                    progressValue: a.unlocked ? 1 : 0,
+                    isUnlocked: a.unlocked,
+                    tier: 'bronze' as const
+                  }));
+                  const combined = [...dynamic, ...standard];
+                  return <MilestonesSection dynamicMilestones={combined} displayedIds={data.profile.displayedAchievements} maxVisible={12} />;
+                })()}
 
                 {/* Badges Section */}
                 {data.badges.filter(b => b.earned).length > 0 && (
@@ -396,19 +411,31 @@ export function PublicProfileViewer({
                   {/* Skills */}
                   <div>
                     <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 0 0.75rem 0', color: 'var(--text-muted)' }}>
-                      <Code size={16} /> MASTERED SKILLS
+                      <Code size={16} /> DISPLAYED SKILLS
                     </h4>
-                    {data.skills.filter(s => s.status === 'MASTERED').length === 0 ? (
-                      <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No skills mastered yet.</p>
-                    ) : (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        {data.skills.filter(s => s.status === 'MASTERED').slice(0, 8).map(s => (
-                          <span key={s.id} className="chip" style={{ background: 'var(--surface-sunken)', border: '1px solid var(--border)' }}>
-                            {s.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                    {(() => {
+                      const displayableSkills = (data.profile.displayedSkills || [])
+                        .map(id => (data.skills || []).find(s => s.id === id))
+                        .filter(s => s && s.progress >= 50) as typeof data.skills;
+
+                      if (displayableSkills.length === 0) {
+                        return <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No skills to display.</p>
+                      }
+
+                      return (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                          {displayableSkills.map(s => {
+                            const isMastered = s.progress >= 100 || s.status === 'MASTERED'
+                            return (
+                              <span key={s.id} className="chip" style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--surface-sunken)', border: '1px solid var(--border)' }}>
+                                {s.name}
+                                {isMastered && <span style={{ marginLeft: '6px', background: '#10b981', color: '#000', padding: '1px 5px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 800 }}>M</span>}
+                              </span>
+                            )
+                          })}
+                        </div>
+                      )
+                    })()}
                   </div>
 
                   {/* Projects */}
