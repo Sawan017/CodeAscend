@@ -119,14 +119,15 @@ export function DirectChatPanel({
     let mounted = true
     const load = async () => {
       setLoading(true)
-      const profiles = await fetchPublicProfiles()
+      const neededIds = friendState.relationships.map(r => r.userId)
+      const profiles = await fetchPublicProfiles(neededIds.length > 0 ? neededIds : undefined)
       if (!mounted) return
       setPublicProfiles(profiles)
       setLoading(false)
     }
     load()
     return () => { mounted = false }
-  }, [])
+  }, [friendState.relationships])
 
   // Close menus on outside mousedown (not click — click races with contextmenu) and Escape
   useEffect(() => {

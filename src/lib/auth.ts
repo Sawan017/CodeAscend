@@ -11,6 +11,17 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(isSupabaseConfigured())
   const [isNewUser, setIsNewUser] = useState(false)
+  const [isRecoveringPassword, setIsRecoveringPasswordState] = useState(
+    typeof window !== 'undefined' && window.sessionStorage.getItem('isRecoveringPassword') === 'true'
+  )
+
+  const setIsRecoveringPassword = (val: boolean) => {
+    setIsRecoveringPasswordState(val)
+    if (typeof window !== 'undefined') {
+      if (val) window.sessionStorage.setItem('isRecoveringPassword', 'true')
+      else window.sessionStorage.removeItem('isRecoveringPassword')
+    }
+  }
 
 
   useEffect(() => {
@@ -51,6 +62,10 @@ export function useAuth() {
     // Listen to auth changes
     const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('[Auth Trace] Global onAuthStateChange:', event, 'Session:', session?.user?.id)
+      
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecoveringPassword(true)
+      }
       
       // Capture provider_token securely into sessionStorage so we can use it for GitHub API
       if (session?.provider_token) {
@@ -182,11 +197,15 @@ export function useAuth() {
     }
   }
 
-  const signUpWithEmail = async (email: string, password: string) => {
+  const signUpWithEmail = async (email: string, password: string, options?: { captchaToken?: string }) => {
     if (!isSupabaseConfigured() || !supabase) return null
     setLoading(true)
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password })
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: options?.captchaToken ? { captchaToken: options.captchaToken } : undefined
+      })
       if (error) throw error
       return data
     } catch (err) {
@@ -196,5 +215,51 @@ export function useAuth() {
     }
   }
 
-  return { user, loading, isNewUser, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, isConfigured: isSupabaseConfigured() }
+  const resetPassword = async (email: string, options?: { captchaToken?: string }) => {
+    if (!isSupabaseConfigured() || !supabase) return null
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin,
+        captchaToken: options?.captchaToken
+      })
+      if (error) throw error
+    } catch (err) {
+      console.error('Password reset failed:', err)
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updatePassword = async (password: string) => {
+    if (!isSupabaseConfigured() || !supabase) return null
+    try {
+      const { data, error } = await supabase.auth.updateUser({ password })
+      if (error) throw error
+      
+      // Successfully updated password.
+      // We can also clear the recovery flag immediately so they can proceed.
+      // But we should let the UI render the success state first.
+      return data
+    } catch (err) {
+      console.error('Password update failed:', err)
+      throw err
+    }
+  }
+
+  return { 
+    user, 
+    loading, 
+    isNewUser, 
+    isRecoveringPassword,
+    setIsRecoveringPassword,
+    signInWithGoogle, 
+    signInWithEmail, 
+    signUpWithEmail, 
+    signOut, 
+    resetPassword,
+    updatePassword,
+    isConfigured: isSupabaseConfigured() 
+  }
 }

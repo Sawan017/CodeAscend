@@ -25,7 +25,7 @@ export const profile: UserProfile = {
   technologies: ['TypeScript', 'React', 'Node.js', 'Tailwind CSS', 'Python'],
   github: 'https://github.com',
   linkedin: 'https://linkedin.com',
-  contact: 'hello@futureme.dev',
+  contact: 'hello@arinova.dev',
   contactPublic: false,
   level: 8,
   xp: 3000,

@@ -110,7 +110,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.5rem' }}>Complete Your Account</h2>
           <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: 1.5 }}>
-            Welcome! Please choose a unique Codeascend username and create a password for your account.
+            Welcome! Please choose a unique ARINOVA username and create a password for your account.
           </p>
         </div>
 
@@ -169,7 +169,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
                 borderRadius: '4px',
                 border: '1px solid rgba(255,255,255,0.05)'
               }}>
-                Preview Codeascend ID: <strong style={{ color: 'var(--text-main)' }}>{username.replace(/[^a-zA-Z0-9_ ]/g, '')}#xxxx</strong>
+                Preview ARINOVA ID: <strong style={{ color: 'var(--text-main)' }}>{username.replace(/[^a-zA-Z0-9_ ]/g, '')}#xxxx</strong>
                 <div style={{ marginTop: '2px', opacity: 0.7 }}>A unique 4-digit number will be securely assigned.</div>
               </div>
             )}

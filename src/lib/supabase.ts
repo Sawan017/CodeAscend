@@ -20,7 +20,8 @@ const customStorage = {
   },
   setItem: (key: string, value: string) => {
     const k = getStorageKey(key)
-    if (window.localStorage.getItem('auth_remember_me') === 'true') {
+    // PKCE code verifiers MUST survive cross-tab navigations (e.g., clicking an email link)
+    if (key.includes('-code-verifier') || window.localStorage.getItem('auth_remember_me') === 'true') {
        window.localStorage.setItem(k, value)
        window.sessionStorage.removeItem(k)
     } else {

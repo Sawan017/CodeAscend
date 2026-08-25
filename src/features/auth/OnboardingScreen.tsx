@@ -15,7 +15,7 @@ export function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
           </div>
         </div>
         
-        <p className="eyebrow" style={{ textAlign: 'center' }}>WELCOME TO FUTUREME</p>
+        <p className="eyebrow" style={{ textAlign: 'center' }}>WELCOME TO ARINOVA</p>
         <h1 style={{ textAlign: 'center', marginBottom: '1rem' }}>Start Your Journey</h1>
         
         <p className="landing-copy" style={{ textAlign: 'center', fontSize: '1.1rem', marginBottom: '2.5rem', opacity: 0.9 }}>
