@@ -43,3 +43,7 @@ scripts/
 test-learningData.js
 audit_dump.json
 inventory.json
+
+# Local AI artifacts & temp files
+walkthrough.md
+supabase/.temp/
