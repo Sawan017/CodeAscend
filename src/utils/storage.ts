@@ -65,7 +65,7 @@ export function loadInitialState() {
     achievements: loadProgression<Achievement[]>([], 'achievements'),
     badges: loadProgression<Badge[]>([], 'badges'),
     settings: loadProgression<Settings>({ animationIntensity: 'high', reducedMotion: false, soundEffects: false, theme: 'dark', streakTracking: true, onboarded: false }, 'settings'),
-    profile: loadProgression<UserProfile>({ username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@futureme.dev', contactPublic: false, level: 1, xp: 0 }, 'profile'),
+    profile: loadProgression<UserProfile>({ username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@arinova.dev', contactPublic: false, level: 1, xp: 0 }, 'profile'),
     friends: loadProgression<import('../types').FriendState>({ relationships: [] }, 'friends'),
     chat: loadProgression<import('../types').ChatState>({ messages: [], lastRead: {} }, 'chat'),
     activeSession: loadProgression<import('../types').ActiveSessionState | null>(null, 'activeSession'),
@@ -81,7 +81,7 @@ export function getEmptyState() {
     achievements: [] as Achievement[],
     badges: [] as Badge[],
     settings: { animationIntensity: 'high', reducedMotion: false, soundEffects: false, theme: 'dark', streakTracking: true, onboarded: false } as Settings,
-    profile: { username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@futureme.dev', contactPublic: false, level: 1, xp: 0 } as UserProfile,
+    profile: { username: 'player', displayName: 'Player', avatar: '', bio: '', title: 'Developer', introduction: 'Building skills. Building projects. Building my future.', education: 'Computer Science student', focus: 'Frontend craft and product thinking', technologies: ['TypeScript', 'React'], github: 'https://github.com', linkedin: 'https://linkedin.com', contact: 'hello@arinova.dev', contactPublic: false, level: 1, xp: 0 } as UserProfile,
     friends: { relationships: [] } as import('../types').FriendState,
     chat: { messages: [], lastRead: {} } as import('../types').ChatState,
   }

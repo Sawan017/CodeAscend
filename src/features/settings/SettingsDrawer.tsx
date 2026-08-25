@@ -11,7 +11,7 @@ import { SubmitFeedbackModal } from './SubmitFeedbackModal'
 import { UserSupportTickets } from '../support/UserSupportTickets'
 import { formatAppDateTime } from '../../lib/dateFormatting'
 import { supabase } from '../../lib/supabase'
-import { fetchAllUserData } from '../../lib/api'
+
 
 
 function LiveSettingsClock() {
@@ -51,7 +51,6 @@ type SettingsDrawerProps = {
   onSettingsChange: (next: Settings) => void
   onSignOut?: (forgetAccount: boolean) => void
   profile: UserProfile
-  onProfileChange?: (profile: UserProfile) => void
   userId?: string
   chatState?: import('../../types').ChatState
   onChatStateChange?: (c: import('../../types').ChatState) => void
@@ -84,10 +83,14 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
   { id: 'help', label: 'Help & About', icon: HelpCircle },
 ]
 
-export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, chatState, onChatStateChange, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData, onProfileChange }: SettingsDrawerProps) {
+import { LegalModal } from './LegalModal'
+import { privacyPolicyText, termsOfServiceText } from './legalText'
+
+export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, chatState, onChatStateChange, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData }: SettingsDrawerProps) {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false)
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false)
+  const [showLegalModal, setShowLegalModal] = useState<{ isOpen: boolean, type: 'tos' | 'privacy' }>({ isOpen: false, type: 'privacy' })
   const [activeTab, setActiveTab] = useState<TabId>('account')
   const [socialUpdating, setSocialUpdating] = useState<string | null>(null)
   const [socialError, setSocialError] = useState<string | null>(null)
@@ -464,7 +467,9 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
     setExportError(null)
     setExportSuccess(false)
     try {
-      const data = await fetchAllUserData(userId)
+      if (!supabase) throw new Error('Database not configured')
+      const { data, error } = await supabase.rpc('export_user_data')
+      if (error) throw new Error(error.message)
       if (!data) throw new Error('Failed to fetch account data')
       
       const dataStr = JSON.stringify(data, null, 2)
@@ -582,18 +587,34 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
   }
 
   const handleDeleteAccount = async () => {
-    if (!supabase) return
+    if (!userId) return
     setIsDeleting(true)
     setDeleteError(null)
 
-    const { error } = await supabase.rpc('delete_user_account')
+    try {
+      // Clean up storage attachments via the frontend Storage API
+      try {
+        const { data: files } = await supabase!.storage.from('support_attachments').list(userId)
+        if (files && files.length > 0) {
+          const filePaths = files.map(f => `${userId}/${f.name}`)
+          await supabase!.storage.from('support_attachments').remove(filePaths)
+        }
+      } catch (err) {
+        console.warn('Non-fatal: could not clean up storage attachments', err)
+      }
 
-    if (error) {
+      const { error } = await supabase!.rpc('delete_user_account')
+      
+      if (error) {
+        setDeleteError(error.message)
+      } else {
+        await supabase!.auth.signOut()
+        window.location.reload()
+      }
+    } catch (err: any) {
+      setDeleteError(err.message)
+    } finally {
       setIsDeleting(false)
-      setDeleteError(error.message)
-    } else {
-      await supabase.auth.signOut()
-      window.location.reload()
     }
   }
 
@@ -703,7 +724,12 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
                 <div>
                   {!githubConnected ? (
-                    <button className="primary-btn" onClick={() => connectGitHub()}>Connect GitHub</button>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.5rem' }}>
+                      <button className="primary-btn" onClick={() => connectGitHub()}>Connect GitHub</button>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', maxWidth: '250px', textAlign: 'right', lineHeight: '1.4' }}>
+                        Connecting will redirect you to authorize read-only access to your public repository metadata (names, descriptions, and language statistics) for import.
+                      </span>
+                    </div>
                   ) : (
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button className="secondary-btn" onClick={syncGitHubProjects} disabled={syncingGithub}>
@@ -758,8 +784,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Profile visibility</span>
                   <select 
-                    value={profile.isPublic === false ? 'private' : 'public'}
-                    onChange={(e) => onProfileChange?.({ ...profile, isPublic: e.target.value === 'public' })}
+                    value={settings.profileVisibility || 'public'}
+                    onChange={(e) => onSettingsChange({ ...settings, profileVisibility: e.target.value as 'public' | 'private' | 'friends' })}
                     style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
                   >
                     <option value="public">Public</option>
@@ -1219,11 +1245,11 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Terms of Service</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Read</button>
+                  <button className="secondary-btn" onClick={() => setShowLegalModal({ isOpen: true, type: 'tos' })} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}>Read</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Privacy Policy</span>
-                  <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} disabled>Read</button>
+                  <button className="secondary-btn" onClick={() => setShowLegalModal({ isOpen: true, type: 'privacy' })} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}>Read</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Version</span>
@@ -1524,7 +1550,12 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             </div>
             
             <p className="muted" style={{ margin: 0, fontSize: '1.05rem', lineHeight: 1.5, color: '#e2e8f0' }}>
-              This permanently deletes your account, UID, profile, linked email/Google account, projects, progress, XP, achievements, and all other account data. <strong style={{ color: '#ef4444' }}>This action cannot be undone.</strong>
+              This permanently deletes your account, UID, profile, linked email/Google account, projects, progress, XP, achievements, and all other account data. <br/><br/>
+              <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                Note: Copies of 1-on-1 Direct Messages you have already sent to other users will be retained in their history.
+              </span>
+              <br/><br/>
+              <strong style={{ color: '#ef4444' }}>This action cannot be undone.</strong>
             </p>
             
             {deleteError && (
@@ -1626,6 +1657,12 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       )}
     </AnimatePresence>
 
+      <LegalModal
+        isOpen={showLegalModal.isOpen}
+        onClose={() => setShowLegalModal({ isOpen: false, type: 'privacy' })}
+        title={showLegalModal.type === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+        content={showLegalModal.type === 'privacy' ? privacyPolicyText : termsOfServiceText}
+      />
       <SubmitFeedbackModal isOpen={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} userId={userId || ''} />
       <HelpCenterModal 
         isOpen={showHelpCenter} 

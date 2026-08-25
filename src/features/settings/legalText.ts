@@ -1,4 +1,4 @@
-﻿export const privacyPolicyText = `
+export const privacyPolicyText = `
 # ARINOVA Privacy Policy
 
 **Last Updated**: August 22, 2026
@@ -33,6 +33,7 @@ We use your data strictly to:
 ## 4. Third-Party Services
 To operate ARINOVA, we securely integrate with the following third parties:
 - **Supabase**: Our primary backend database, authentication, and hosting provider. All data is securely processed via Supabase.
+- **Cloudflare Turnstile**: Used to protect our authentication endpoints from automated abuse (e.g., bots, spam). Cloudflare may process your IP address and limited browser telemetry during login/signup to verify human status without tracking you across sites.
 - **Groq (AI Provider)**: When you submit a support ticket, the ticket context and conversation are processed by Groq's APIs using models such as \`openai/gpt-oss-20b\` to provide automated support. **We do not send your private 1-on-1 chat messages to Groq.**
 - **GitHub**: Used for OAuth authentication and developer profile syncing.
 

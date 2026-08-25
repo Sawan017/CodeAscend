@@ -39,6 +39,8 @@ export function PublicProfileViewer({
   const [menuOpen, setMenuOpen] = useState(false)
   const [data, setData] = useState<{
     profile: UserProfile | null
+    privacySettings: { allowFriendRequests: boolean }
+    isLockedView: boolean
     progression: Progression | null
     projects: Project[]
     skills: Skill[]
@@ -59,47 +61,71 @@ export function PublicProfileViewer({
       const res = await fetchAllUserData(userId)
       if (!mounted) return
       
-      if (res) {
-        let profile = res.profile;
-        if (!profile) {
-          // If the profile row hasn't been explicitly created yet, try fetching the public identity
-          const { fetchPublicProfiles } = await import('../lib/api');
-          const pubs = await fetchPublicProfiles([userId]);
-          if (pubs && pubs.length > 0) {
-            const pub = pubs[0];
-            profile = {
-              userId: pub.userId,
-              displayName: pub.displayName,
-              username: pub.username,
-              login_id: pub.login_id,
-              avatar: pub.avatar,
-              level: pub.level,
-              xp: 0,
-              title: '',
-              introduction: '',
-              education: '',
-              focus: '',
-              technologies: [],
-              github: '',
-              linkedin: '',
-              contact: '',
-              contactPublic: false
-            };
-          }
+      let profile = res?.profile || null;
+      let privacySettings = { allowFriendRequests: true };
+      let isLockedView = false;
+      
+      if (!profile) {
+        const { fetchPublicProfiles } = await import('../lib/api')
+        const pubs = await fetchPublicProfiles([userId])
+        if (pubs && pubs.length > 0) {
+          const pub = pubs[0] as any;
+          privacySettings = {
+            allowFriendRequests: pub.allowFriendRequests !== false
+          };
+          // The profile fetch failed, meaning we don't have permission (not public, not friend)
+          isLockedView = pub.profileVisibility !== 'public';
+          
+          profile = {
+            userId: pub.userId,
+            displayName: pub.displayName,
+            username: pub.username,
+            login_id: pub.login_id,
+            avatar: pub.avatar,
+            level: pub.level || 1,
+            xp: pub.xp || 0,
+            isPublic: pub.profileVisibility === 'public',
+            title: pub.profileVisibility === 'public' ? 'Profile' : 'Private Profile',
+            introduction: pub.profileVisibility === 'public' ? '' : 'This user has limited their profile visibility.',
+            education: '',
+            focus: '',
+            technologies: [],
+            github: '',
+            linkedin: '',
+            contact: '',
+            contactPublic: false
+          };
+          setData({
+            profile,
+            privacySettings,
+            isLockedView,
+            progression: null,
+            projects: [],
+            skills: [],
+            goals: [],
+            achievements: [],
+            badges: [],
+          })
+        } else {
+          setData(null)
         }
-        
+      } else {
+        if ((profile as any)._privacySettings) {
+           privacySettings = {
+             allowFriendRequests: (profile as any)._privacySettings.allowFriendRequests !== false
+           };
+        }
         setData({
           profile: profile,
-          progression: res.progression,
-          projects: res.projects || [],
-          skills: res.skills || [],
-          goals: res.goals || [],
-          achievements: res.achievements || [],
-          badges: res.badges || [],
+          privacySettings,
+          isLockedView: false,
+          progression: res?.progression || null,
+          projects: res?.projects || [],
+          skills: res?.skills || [],
+          goals: res?.goals || [],
+          achievements: res?.achievements || [],
+          badges: res?.badges || [],
         })
-      } else {
-        // Force null if nothing returned
-        setData(null)
       }
       setLoading(false)
     }
@@ -158,6 +184,50 @@ export function PublicProfileViewer({
               <p className="muted" style={{ margin: '0 0 2rem 0' }}>This user does not exist or has not set up their profile.</p>
               <button className="primary-btn" onClick={onClose}>Close</button>
             </div>
+          ) : data.isLockedView ? (
+            <div style={{ padding: '4rem 2rem', textAlign: 'center', background: 'var(--bg-surface)', borderRadius: '12px', position: 'relative' }}>
+              <button 
+                onClick={onClose}
+                style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  right: '1rem',
+                  background: 'var(--surface-sunken)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--text-main)',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={16} />
+              </button>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔒</div>
+              <h3 style={{ margin: '0 0 0.5rem 0' }}>Private Profile</h3>
+              <p className="muted" style={{ margin: '0 0 2rem 0' }}>This user's profile is private.</p>
+              
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                {!isSelf && (
+                  isFriend ? (
+                    <button className="secondary-btn" disabled style={{ opacity: 0.7, padding: '0.5rem 1rem' }}>
+                      Friends
+                    </button>
+                  ) : relationship?.status === 'pending_outgoing' ? (
+                    <button className="secondary-btn" disabled style={{ opacity: 0.7, padding: '0.5rem 1rem' }}>
+                      Request Sent
+                    </button>
+                  ) : data.privacySettings?.allowFriendRequests ? (
+                    <button className="primary-btn" onClick={() => onSendRequest(userId)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
+                      <UserPlus size={16} /> Add Friend
+                    </button>
+                  ) : null
+                )}
+              </div>
+            </div>
           ) : (
             <>
               {/* Banner */}
@@ -214,11 +284,11 @@ export function PublicProfileViewer({
                           <button className="secondary-btn" disabled style={{ opacity: 0.7, padding: '0.5rem 1rem' }}>
                             Request Sent
                           </button>
-                        ) : (
+                        ) : data.privacySettings?.allowFriendRequests ? (
                           <button className="primary-btn" onClick={() => onSendRequest(userId)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem' }}>
                             <UserPlus size={16} /> Add Friend
                           </button>
-                        )}
+                        ) : null}
                         
                         <div style={{ position: 'relative' }}>
                           <button 

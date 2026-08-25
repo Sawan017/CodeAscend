@@ -80,8 +80,15 @@ const buildHash = (r: Route) => {
   return `#${params.toString()}`
 }
 
+import { UpdatePasswordUI } from './features/auth/UpdatePasswordUI'
+
+// Centralized Configuration
+export const CONFIG = {
+  MAINTENANCE_MODE: import.meta.env.VITE_MAINTENANCE_MODE === 'true' || false,
+}
+
 function App() {
-  const { user, loading, isConfigured, signOut } = useAuth()
+  const { user, loading, isConfigured, signOut, isRecoveringPassword, setIsRecoveringPassword } = useAuth()
   const hydratedFromRemote = useRef(false)
   const { toasts, push, dismiss } = useToasts()
   const [entered, setEntered] = useState(false)
@@ -1037,7 +1044,7 @@ function App() {
   const deleteProject = async (projectId: string) => {
     const projectToDelete = projectState.find(p => p.id === projectId)
     
-    // If it's a synced external project, remove its tracking record in Codeascend DB
+    // If it's a synced external project, remove its tracking record in ARINOVA DB
     if (projectToDelete?.provider && projectToDelete?.externalId && user?.id) {
       try {
         const { supabase } = await import('./lib/supabase')
@@ -1218,7 +1225,13 @@ function App() {
       <div className="aurora aura-a" />
       <div className="aurora aura-b" />
       <AnimatePresence mode="wait">
-        {loadError ? (
+        {CONFIG.MAINTENANCE_MODE ? (
+          <div key="maintenance" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw', gap: '1.5rem', textAlign: 'center', padding: '2rem' }}>
+            <div style={{ color: 'var(--cyan)', fontSize: '3rem', fontWeight: 800 }}>ARINOVA</div>
+            <div style={{ color: 'var(--text-main)', fontSize: '1.5rem', fontWeight: 600 }}>System Maintenance</div>
+            <div style={{ color: 'var(--text-muted)', maxWidth: '500px', lineHeight: 1.6 }}>We are currently undergoing scheduled maintenance to upgrade your experience. All systems will be back online shortly.</div>
+          </div>
+        ) : loadError ? (
           <div key="error" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw', gap: '1.5rem', textAlign: 'center', padding: '2rem' }}>
             <div style={{ color: 'var(--accent-red)', fontSize: '1.5rem', fontWeight: 600 }}>SYSTEM ERROR</div>
             <div style={{ color: 'var(--text-muted)' }}>{loadError}</div>
@@ -1235,6 +1248,8 @@ function App() {
               <motion.div initial={{ x: '-100%' }} animate={{ x: '100%' }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }} style={{ width: '50%', height: '100%', background: 'var(--cyan)' }} />
             </div>
           </div>
+        ) : isRecoveringPassword ? (
+          <UpdatePasswordUI onComplete={() => setIsRecoveringPassword(false)} />
         ) : (!entered && route.view !== 'login') ? (
           <AuthShell onEnter={() => { setEntered(true); window.location.hash = '#view=login'; }} progression={progression} />
         ) : !user ? (

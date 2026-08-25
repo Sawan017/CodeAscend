@@ -49,11 +49,23 @@ async function fetchRow<T>(table: TableName, userId: string, key: string): Promi
 export async function fetchAllUserData(userId: string) {
   if (!isSupabaseConfigured() || !supabase) return null
 
-  const profile = await fetchRow<UserProfile>(TABLES.profile, userId, 'profile')
   const { data: { session } } = await supabase.auth.getSession()
   const isOwner = session?.user?.id === userId
-  const isPublic = profile?.isPublic !== false
+  
+  let profile: UserProfile | null = null
 
+  if (isOwner) {
+    profile = await fetchRow<UserProfile>(TABLES.profile, userId, 'profile')
+  } else {
+    const { data: publicProfile, error } = await supabase.rpc('get_public_profile', { p_user_id: userId })
+    if (error || !publicProfile) return null
+    profile = publicProfile as UserProfile
+  }
+
+  if (!profile && !isOwner) return null
+
+  // Double check in case of RLS bypass/edge cases
+  const isPublic = profile?.isPublic === true
   if (!isPublic && !isOwner) {
     return null
   }
@@ -135,44 +147,26 @@ export async function fetchPublicProfiles(neededIds?: string[]): Promise<Array<{
     displayName: row.display_name || 'Unknown',
     avatar: row.avatar,
     level: row.level || 1,
-    login_id: row.login_id
+    login_id: row.login_id,
+    profileVisibility: row.profile_visibility || 'public',
+    allowFriendRequests: row.allow_friend_requests !== false
   })) || []
 }
 
 /**
  * Fetch a specific user's public profile by username.
  */
-export async function fetchPublicProfileByUsername(username: string): Promise<{ userId: string; username: string; displayName: string; avatar?: string; level: number; xp: number; bio?: string; title?: string } | null> {
+export async function fetchPublicProfileByUsername(username: string): Promise<{ userId: string; username: string; displayName: string; avatar?: string; level: number; xp: number; bio?: string; title?: string; login_id?: string } | null> {
   if (!isSupabaseConfigured() || !supabase) return null
 
-  const { data, error } = await supabase
-    .from(TABLES.profile)
-    .select('user_id, data')
-    .limit(100)
+  const { data, error } = await supabase.rpc('get_public_profile_by_username', { p_username: username })
 
   if (error) {
-    console.error('Failed to fetch profile:', error.message)
+    console.error('Failed to fetch profile by username:', error.message)
     return null
   }
 
-  const profile = data?.find((row) => {
-    const profileData = row.data as UserProfile
-    return profileData.username?.toLowerCase() === username.toLowerCase() && profileData.isPublic !== false
-  })
-
-  if (!profile) return null
-
-  const profileData = profile.data as UserProfile
-  return {
-    userId: profile.user_id,
-    username: profileData.username,
-    displayName: profileData.displayName,
-    avatar: profileData.avatar,
-    level: profileData.level || 1,
-    xp: profileData.xp || 0,
-    bio: profileData.bio,
-    title: profileData.title,
-  }
+  return data as any || null
 }
 
 export async function fetchIncomingFriendRequests(userId: string): Promise<string[]> {
