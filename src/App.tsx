@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, MotionConfig } from 'framer-motion'
-import { Compass, GraduationCap, House, Shield, Layers3, Target, Trophy, X , } from 'lucide-react'
+import { Compass, GraduationCap, House, Shield, Layers3, Target, Trophy, X, CheckSquare } from 'lucide-react'
 import { useEffect, useRef, useState, Suspense } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
 import { OnboardingScreen } from './features/auth/OnboardingScreen'
@@ -15,6 +15,7 @@ import { BadgeDetail } from './features/achievements/BadgeDetail'
 import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
+
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
 import { milestones } from './data/journeyData'
@@ -55,6 +56,7 @@ const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'future', label: 'Future', icon: Compass },
   { id: 'career_world', label: 'Career', icon: Compass },
+  { id: 'goals', label: 'Goals & To Do', icon: Target },
 ]
 
 const parseHash = (): Route => {
@@ -945,6 +947,10 @@ function App() {
     playSoundEffect('click', settings.soundEffects)
   }
 
+  const updateGoal = (updatedGoal: Goal) => {
+    setGoalState(prev => prev.map(g => g.id === updatedGoal.id ? updatedGoal : g));
+  }
+
 
 
   const markProjectCompleted = async (projectId: string) => {
@@ -1306,20 +1312,10 @@ function App() {
                     }} />}
                     {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} />}
                     {route.view === 'project_detail' && (projectState.find(p => p.id === route.id) ? <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} /> : <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}><h2>Project Not Found</h2><button onClick={() => navigate({ view: 'projects' })} className="primary-btn">Back to Projects</button></div>)}
-                    {route.view === 'learning' && <SkillsPanel 
-            skills={skillState} 
-            activePathways={settings.activePathways || []}
-            onSelectSkill={(id) => navigate({ view: 'skill_detail', id })} 
-            onAddSkill={addSkill} 
-            onStartPathway={startPathway}
-            onRemovePathway={removePathway}
-            onAssociateSkill={associateSkillWithDomain}
-            onDisassociateSkill={disassociateSkillFromDomain}
-            onRemoveSkill={removeSkill}
-          />}
+                    {route.view === 'learning' && <SkillsPanel skills={skillState} activePathways={settings.activePathways || []} onSelectSkill={(id: any) => setRoute({ view: 'skill_detail', id } as any)} onAddSkill={addSkill} onStartPathway={startPathway} onRemovePathway={removePathway} onAssociateSkill={associateSkillWithDomain} onDisassociateSkill={disassociateSkillFromDomain} onRemoveSkill={removeSkill} />}
                     {route.view === 'skill_detail' && (skillState.find(s => s.id === route.id) ? <SkillDetail 
                       skill={skillState.find(s => s.id === route.id)!} 
-                      onBack={goBack} 
+                      onBack={() => navigate({ view: 'learning' })} 
                       onUpdateNotes={updateSkillNotes} 
                       onStartSession={(subtopic) => {
                         const dist = allTimeDistributions[route.id]?.[subtopic.title];
@@ -1346,16 +1342,14 @@ function App() {
                       }}
                       activeSession={activeSession}
                     /> : <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}><h2>Skill Not Found</h2><button onClick={() => navigate({ view: 'learning' })} className="primary-btn">Back to Skills</button></div>)}
-                    {route.view === 'goals' && <GoalsPanel 
-                      goals={goalState} 
-                      onCompleteActiveSession={completeActiveSession}
-                      onCancelActiveSession={cancelActiveSession}
-                      activeSession={activeSession}
-                      activeSessionElapsed={activeSessionElapsed}
-                      onAddGoal={addGoal} 
-                      onRemoveGoal={removeGoal} 
 
-                      onCompleteGoal={markGoalCompleted} 
+                    {route.view === 'goals' && <GoalsPanel skills={skillState} activeSession={activeSession} activeSessionElapsed={activeSessionElapsed} onCancelSession={cancelActiveSession} onCompleteSession={completeActiveSession} onNavigate={navigate} 
+                      goals={goalState} 
+                      onAddGoal={addGoal}
+                      onUpdateGoal={updateGoal}
+                      onRemoveGoal={removeGoal}
+                      onCompleteGoal={markGoalCompleted}
+                      onSelectGoal={() => {}} 
                     />}
 
                     {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
@@ -1501,20 +1495,22 @@ function App() {
                       <TimelinePanel milestones={milestones} futureMilestones={generateFutureMilestones(progression, projectState, skillState, goalState)} timelineEvents={generateTimelineEvents(projectState, skillState, achievementState)} onNavigateSection={selectSection} />
                     )}
                     {route.view === 'career_world' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1.5rem', color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>
-                        <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '3rem', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', maxWidth: '500px' }}>
-                          <Compass size={48} style={{ color: 'var(--cyan)', marginBottom: '1rem' }} />
-                          <h2 style={{ fontSize: '1.8rem', color: '#fff', marginBottom: '1rem', fontWeight: 700 }}>Career is under maintenance</h2>
-                          <p style={{ fontSize: '1.1rem', lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: '2rem' }}>
-                            We're rebuilding this part of your journey. Something better is coming soon.
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1.5rem', textAlign: 'center', padding: '2rem' }}>
+                        <div style={{ background: '#fff', padding: '48px', borderRadius: '24px', border: '1px solid rgba(140, 135, 125, 0.12)', boxShadow: '0 4px 24px -8px rgba(0,0,0,0.08)', maxWidth: '500px' }}>
+                          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(244,63,94,0.1)', color: '#F43F5E', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+                            <Compass size={40} />
+                          </div>
+                          <h2 style={{ fontSize: '2rem', color: '#1E1D1B', marginBottom: '16px', fontWeight: 900 }}>Career path incoming</h2>
+                          <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: '#5A5750', marginBottom: '32px' }}>
+                            We're rebuilding this part of your journey to match the new Arinova experience. Something better is coming soon.
                           </p>
-                          <button onClick={() => navigate({ view: 'dashboard' })} className="primary-btn" style={{ padding: '0.8rem 2rem', fontSize: '1rem', borderRadius: '100px' }}>
+                          <button onClick={() => setRoute({ view: 'dashboard' })} style={{ background: '#F43F5E', color: '#fff', border: 'none', padding: '12px 32px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(244,63,94,0.3)' }}>
                             Back to Home
                           </button>
                         </div>
                       </div>
                     )}
-                    {!['admin_support', 'dashboard', 'profile', 'edit_profile', 'projects', 'project_detail', 'learning', 'skill_detail', 'goals', 'achievements', 'achievement_detail', 'badge_detail', 'friends', 'chat', 'future', 'career_world'].includes(route.view) && (
+                    {!['admin_support', 'dashboard', 'profile', 'edit_profile', 'projects', 'project_detail', 'learning', 'skill_detail', 'goals', 'todo', 'achievements', 'achievement_detail', 'badge_detail', 'friends', 'chat', 'future', 'career_world'].includes(route.view) && (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}>
                         <h1 style={{ fontSize: '4rem', color: 'var(--text-main)', margin: 0, fontWeight: 800 }}>404</h1>
                         <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>The requested sector could not be located.</p>

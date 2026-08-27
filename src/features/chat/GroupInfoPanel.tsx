@@ -110,7 +110,7 @@ export function GroupInfoPanel({
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-surface)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'absolute', inset: 0, background: '#fff', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <button className="icon-button" onClick={onClose} style={{ marginLeft: '-0.5rem' }}>
           <X size={20} />
@@ -140,7 +140,7 @@ export function GroupInfoPanel({
                     right: 0, 
                     background: 'var(--cyan)', 
                     color: '#000', 
-                    border: '2px solid var(--bg-surface)', 
+                    border: '2px solid #fff', 
                     borderRadius: '50%', 
                     width: '28px', 
                     height: '28px', 
@@ -189,7 +189,7 @@ export function GroupInfoPanel({
           ) : (
             <>
               <h2 style={{ margin: '12px 0 4px', fontSize: '1.2rem', color: '#fff', textAlign: 'center' }}>{group.name}</h2>
-              {group.description && <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center' }}>{group.description}</p>}
+              {group.description && <p style={{ margin: 0, fontSize: '0.85rem', color: '#9A958C', textAlign: 'center' }}>{group.description}</p>}
               {isAdmin && (
                 <button onClick={() => setIsEditing(true)} style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '100px', color: 'var(--text)', fontSize: '0.8rem', cursor: 'pointer' }}>
                   <Edit2 size={14} /> Edit Group Info
@@ -201,7 +201,7 @@ export function GroupInfoPanel({
 
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Members ({members.length})</h4>
+            <h4 style={{ margin: 0, fontSize: '0.85rem', color: '#9A958C', textTransform: 'uppercase' }}>Members ({members.length})</h4>
             {isAdmin && (
               <button onClick={() => setAddMembersOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}>
                 <UserPlus size={14} /> Add
@@ -225,10 +225,10 @@ export function GroupInfoPanel({
                   {isAdmin && !isMe && (
                     <div style={{ display: 'flex', gap: '6px' }}>
                       {isOwner && m.role === 'member' && (
-                        <button onClick={() => onUpdateRole(m.user_id, 'admin')} title="Promote to Admin" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Shield size={16} /></button>
+                        <button onClick={() => onUpdateRole(m.user_id, 'admin')} title="Promote to Admin" style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}><Shield size={16} /></button>
                       )}
                       {isOwner && m.role === 'admin' && (
-                        <button onClick={() => onUpdateRole(m.user_id, 'member')} title="Demote to Member" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><ShieldAlert size={16} /></button>
+                        <button onClick={() => onUpdateRole(m.user_id, 'member')} title="Demote to Member" style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}><ShieldAlert size={16} /></button>
                       )}
                       {(isOwner || (isAdmin && m.role === 'member')) && (
                         <button onClick={() => onRemoveMember(m.user_id)} title="Remove Member" style={{ background: 'none', border: 'none', color: '#ff453a', cursor: 'pointer' }}><UserMinus size={16} /></button>
@@ -287,3 +287,4 @@ export function GroupInfoPanel({
     </div>
   )
 }
+

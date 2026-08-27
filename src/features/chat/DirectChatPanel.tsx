@@ -69,7 +69,7 @@ const menuItemDangerStyle: React.CSSProperties = {
 
 const menuItemDisabledStyle: React.CSSProperties = {
   ...menuItemStyle,
-  color: 'var(--text-muted)',
+  color: '#9A958C',
   cursor: 'not-allowed',
   opacity: 0.5,
 }
@@ -393,7 +393,7 @@ export function DirectChatPanel({
                         const isConvMuted = chatState.mutedUsers?.includes(conv.friend.userId);
                         if (isConvMuted) {
                           return (
-                            <span style={{ display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', color: '#9A958C' }}>
                               <BellOff size={16} />
                             </span>
                           );
@@ -489,7 +489,7 @@ export function DirectChatPanel({
                         width: '180px',
                         right: 0,
                         top: 'calc(100% + 4px)',
-                        boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)'
+                        boxShadow: '0 10px 40px rgba(255,255,255,0.8), 0 0 0 1px rgba(255,255,255,0.05)'
                       }} onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
                         <MenuItem
                           icon={<BellOff size={16} />}
@@ -539,7 +539,7 @@ export function DirectChatPanel({
                 }}
               >
                 {activeConversationMsgs.length === 0 ? (
-                  <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
+                  <div style={{ margin: 'auto', textAlign: 'center', color: '#9A958C' }}>
                     <MessageSquare size={48} style={{ opacity: 0.2, margin: '0 auto 1rem auto' }} />
                     <p>No messages yet.</p>
                     <p style={{ fontSize: '0.85rem' }}>Start the conversation with {activeFriend.displayName}!</p>
@@ -620,7 +620,7 @@ export function DirectChatPanel({
                           <div 
                             style={{ 
                               background: msg.deletedForEveryone ? 'transparent' : msg.isFailed ? 'rgba(239, 68, 68, 0.1)' : isMe ? 'var(--primary)' : 'rgba(255, 255, 255, 0.08)', 
-                              color: msg.deletedForEveryone ? 'var(--text-muted)' : msg.isFailed ? '#ef4444' : isMe ? '#000' : 'var(--text)',
+                              color: msg.deletedForEveryone ? '#9A958C' : msg.isFailed ? '#ef4444' : isMe ? '#000' : 'var(--text)',
                               padding: '0.75rem 1rem', 
                               borderRadius: '1rem',
                               borderBottomRightRadius: isMe && !showTimestamp ? '1rem' : isMe ? '0.25rem' : '1rem',
@@ -642,7 +642,7 @@ export function DirectChatPanel({
                           </div>
                           
                           {(showTimestamp || (msg.editedAt && !msg.deletedForEveryone) || msg.isFailed) && (
-                            <span className="muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: msg.isFailed ? '#ef4444' : 'var(--text-muted)' }}>
+                            <span className="muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: msg.isFailed ? '#ef4444' : '#9A958C' }}>
                               {msg.isFailed ? 'Failed to send' : (showTimestamp && formatAppTime(msg.timestamp))}
                               {msg.editedAt && !msg.deletedForEveryone && !msg.isFailed && <span>(edited)</span>}
                             </span>
@@ -692,7 +692,7 @@ export function DirectChatPanel({
               </div>
             </>
           ) : (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#9A958C' }}>
               <MessageSquare size={64} style={{ opacity: 0.1, marginBottom: '1rem' }} />
               <p>Select a conversation to start chatting.</p>
             </div>
@@ -715,7 +715,7 @@ export function DirectChatPanel({
             borderRadius: '0.5rem',
             padding: '0.3rem',
             width: '200px',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
+            boxShadow: '0 10px 40px rgba(255,255,255,0.8), 0 0 0 1px rgba(255,255,255,0.05)',
           }}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
@@ -806,3 +806,4 @@ export function DirectChatPanel({
     </div>
   )
 }
+
