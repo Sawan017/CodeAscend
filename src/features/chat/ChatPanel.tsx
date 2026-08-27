@@ -70,16 +70,16 @@ export function ChatPanel(props: ChatPanelProps) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, height: 'calc(100vh - 140px)' }}>
       {/* Header Tabs */}
-      <div style={{ display: 'flex', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', gap: '1rem', background: 'var(--surface)' }}>
+      <div style={{ display: 'flex', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-light)', gap: '1rem', background: 'var(--bg-surface)' }}>
         <button 
           onClick={() => handleTabSwitch('direct')}
-          style={{ background: activeTab === 'direct' ? 'var(--cyan)' : 'transparent', color: activeTab === 'direct' ? '#000' : 'var(--text)', border: '1px solid ' + (activeTab === 'direct' ? 'var(--cyan)' : 'var(--border)'), padding: '8px 16px', borderRadius: '100px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          style={{ background: activeTab === 'direct' ? 'var(--accent-blue)' : 'transparent', color: activeTab === 'direct' ? '#000' : 'var(--text-main)', border: '1px solid ' + (activeTab === 'direct' ? 'var(--accent-blue)' : 'var(--border-light)'), padding: '8px 16px', borderRadius: '100px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
         >
           Direct Messages
         </button>
         <button 
           onClick={() => handleTabSwitch('groups')}
-          style={{ background: activeTab === 'groups' ? 'var(--cyan)' : 'transparent', color: activeTab === 'groups' ? '#000' : 'var(--text)', border: '1px solid ' + (activeTab === 'groups' ? 'var(--cyan)' : 'var(--border)'), padding: '8px 16px', borderRadius: '100px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          style={{ background: activeTab === 'groups' ? 'var(--accent-blue)' : 'transparent', color: activeTab === 'groups' ? '#000' : 'var(--text-main)', border: '1px solid ' + (activeTab === 'groups' ? 'var(--accent-blue)' : 'var(--border-light)'), padding: '8px 16px', borderRadius: '100px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
         >
           Groups
         </button>
@@ -91,10 +91,10 @@ export function ChatPanel(props: ChatPanelProps) {
         ) : (
           <>
             {/* Group Sidebar */}
-            <div className={'chat-sidebar ' + (isGroupActive ? 'mobile-hidden' : '')} style={{ width: '320px', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: 'var(--surface-sunken)', flexShrink: 0 }}>
-              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={'chat-sidebar ' + (isGroupActive ? 'mobile-hidden' : '')} style={{ width: '320px', borderRight: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', background: 'var(--bg-main)', flexShrink: 0 }}>
+              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h4 style={{ margin: 0 }}>Groups</h4>
-                <button onClick={() => setCreateModalOpen(true)} className="icon-button" style={{ background: 'var(--cyan)', color: '#000', padding: '6px', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
+                <button onClick={() => setCreateModalOpen(true)} className="icon-button" style={{ background: 'var(--accent-blue)', color: '#000', padding: '6px', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
                   <Plus size={16} />
                 </button>
               </div>
@@ -108,7 +108,7 @@ export function ChatPanel(props: ChatPanelProps) {
                       <div 
                         key={g.id}
                         onClick={() => setActiveGroupId(g.id)}
-                        style={{ padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', background: activeGroupId === g.id ? 'var(--surface)' : 'transparent', borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }}
+                        style={{ padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', background: activeGroupId === g.id ? 'var(--bg-surface)' : 'transparent', borderBottom: '1px solid var(--border-light)', transition: 'background 0.2s' }}
                       >
                         <Avatar src={g.avatar}  size={48} />
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -125,7 +125,7 @@ export function ChatPanel(props: ChatPanelProps) {
             </div>
 
             {/* Group Main Content */}
-            <div className={'chat-main ' + (!isGroupActive ? 'mobile-hidden' : '')} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--surface)' }}>
+            <div className={'chat-main ' + (!isGroupActive ? 'mobile-hidden' : '')} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-surface)' }}>
               {activeGroupId ? (() => {
                 const hiddenMsgs = props.chatState.hiddenMessages || []
                 const clearedAt = props.chatState.clearedChats?.[activeGroupId] || '1970-01-01T00:00:00.000Z'

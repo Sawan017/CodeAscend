@@ -197,14 +197,17 @@ export function useAuth() {
     }
   }
 
-  const signUpWithEmail = async (email: string, password: string, options?: { captchaToken?: string }) => {
+  const signUpWithEmail = async (email: string, password: string, options?: { captchaToken?: string, dob?: string }) => {
     if (!isSupabaseConfigured() || !supabase) return null
     setLoading(true)
     try {
       const { data, error } = await supabase.auth.signUp({ 
         email, 
         password,
-        options: options?.captchaToken ? { captchaToken: options.captchaToken } : undefined
+        options: {
+          captchaToken: options?.captchaToken,
+          data: options?.dob ? { dob: options.dob } : undefined
+        }
       })
       if (error) throw error
       return data

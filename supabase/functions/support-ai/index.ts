@@ -122,7 +122,7 @@ RULES:
    - Use bullet points for listing options, causes, or requirements.
    - Use headings (###) when a response contains multiple logical sections (e.g., "What happened", "What to do", "If the problem continues").
    - Bold important terms and actions.
-   - Use inline code (``) for technical values, error codes, and filenames.
+   - Use inline code (\`\`) for technical values, error codes, and filenames.
    - Do NOT turn every single sentence into a separate paragraph. Group related sentences into a short paragraph.
    - Answer the user's question directly before giving additional explanation.
    - Keep responses concise and avoid giant walls of text.
@@ -133,19 +133,44 @@ RULES:
   "resolved": boolean
 }`;
 
+    const sanitizePII = (text: string | undefined): string => {
+      if (!text) return "";
+      let s = text;
+      // Emails
+      s = s.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]');
+      // Cards
+      s = s.replace(/(?:\d[ -]*?){13,19}/g, (match) => {
+        const digits = match.replace(/\D/g, '');
+        return (digits.length >= 13 && digits.length <= 19) ? '[REDACTED_CARD]' : match;
+      });
+      // Phones
+      s = s.replace(/(?:(?:\+|00)\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?)?\d{3,4}[\s-]?\d{3,4}/g, (match) => {
+        const digits = match.replace(/\D/g, '');
+        return (digits.length >= 7 && digits.length <= 15) ? '[REDACTED_PHONE]' : match;
+      });
+      // Identity Numbers (Aadhaar, PAN, SSN pattern approximation)
+      s = s.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '[REDACTED_ID]');
+      s = s.replace(/\b[A-Z]{5}\d{4}[A-Z]\b/gi, '[REDACTED_ID]');
+      // Secrets/Tokens
+      s = s.replace(/Bearer\s+[A-Za-z0-9\-\._~+\/]+=*/gi, 'Bearer [REDACTED_TOKEN]');
+      s = s.replace(/\b(sk_[a-zA-Z0-9_]{10,})\b/g, '[REDACTED_SECRET]');
+      s = s.replace(/(password|passwd|pwd|secret|token)\s*[:=]\s*(\S+)/gi, '$1: [REDACTED_SECRET]');
+      return s;
+    };
+
     const conversationContext = messages?.map((m: any) => {
       const role = m.sender_type === 'ai' ? 'assistant' : (m.sender_type === 'user' ? 'user' : 'assistant');
-      return { role, content: m.message };
+      return { role, content: sanitizePII(m.message) };
     }) || [];
 
     // Always include the original ticket issue as the starting context
     conversationContext.unshift({ 
       role: 'user', 
-      content: `[TICKET INITIALIZED] Category: ${ticket.category}. Subject: ${ticket.subject}. Description: ${ticket.description}` 
+      content: sanitizePII(`[TICKET INITIALIZED] Category: ${ticket.category}. Subject: ${ticket.subject}. Description: ${ticket.description}`)
     });
 
     if (message) {
-      conversationContext.push({ role: 'user', content: message });
+      conversationContext.push({ role: 'user', content: sanitizePII(message) });
     }
 
     const apiMessages = [
