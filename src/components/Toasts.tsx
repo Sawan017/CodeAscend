@@ -4,11 +4,15 @@ import type { Toast } from '../hooks/useToasts'
 type ToastsProps = {
   toasts: Toast[]
   onDismiss: (id: number) => void
+  hasActiveSession?: boolean
 }
 
-export function Toasts({ toasts, onDismiss }: ToastsProps) {
+export function Toasts({ toasts, onDismiss, hasActiveSession }: ToastsProps) {
   return (
-    <div className="toast-stack">
+    <div 
+      className="toast-stack" 
+      style={hasActiveSession ? { top: '150px' } : undefined}
+    >
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div
@@ -26,4 +30,4 @@ export function Toasts({ toasts, onDismiss }: ToastsProps) {
       </AnimatePresence>
     </div>
   )
-}
+}

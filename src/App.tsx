@@ -33,6 +33,7 @@ import { usePersist } from './hooks/usePersist'
 import { supabase } from './lib/supabase'
 import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills, fetchIncomingMessages, fetchSocialNetwork, acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest, lookupLoginIdByAuthUserId, sendChatMessage } from './lib/api'
 import { useToasts } from './hooks/useToasts'
+import { useGitHubSync } from './hooks/useGitHubSync'
 import { UserSearch } from './components/UserSearch'
 import { PublicProfileViewer } from './components/PublicProfileViewer'
 import { FriendsPanel } from './features/friends/FriendsPanel'
@@ -95,6 +96,34 @@ function App() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  const { syncGitHubProjects, syncingGithub, githubMessage } = useGitHubSync(
+    user?.id,
+    projectState,
+    (newProjs) => setProjectState(prev => [...newProjs, ...prev]),
+    (updatedProjs) => setProjectState(prev => prev.map(p => updatedProjs.find(u => u.id === p.id) || p)),
+    (langs) => {
+      langs.forEach(lang => {
+        const resolved = resolveSkill(lang);
+        if (!skillState.some(s => s.id === resolved.id || s.name.toLowerCase() === lang.toLowerCase())) {
+          addSkill({
+            id: resolved.id,
+            name: resolved.name,
+            canonicalName: resolved.canonicalName,
+            status: 'unlocked',
+            progress: 0,
+            xp: 0,
+            isIndependent: true
+          });
+        }
+      });
+    }
+  )
+
+  const addProject = (newProject: import('./types').Project) => {
+    setProjectState((prev) => [newProject, ...prev])
+    push(`Project added: ${newProject.name}`, 'info')
+  }
 
   const markNotificationRead = async (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
@@ -1310,7 +1339,7 @@ function App() {
                       }
                       navigate({ view: 'profile' })
                     }} />}
-                    {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} />}
+                    {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onAddProject={addProject} onSyncGithub={syncGitHubProjects} isSyncingGithub={syncingGithub} githubMessage={githubMessage} />}
                     {route.view === 'project_detail' && (projectState.find(p => p.id === route.id) ? <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} /> : <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}><h2>Project Not Found</h2><button onClick={() => navigate({ view: 'projects' })} className="primary-btn">Back to Projects</button></div>)}
                     {route.view === 'learning' && <SkillsPanel skills={skillState} activePathways={settings.activePathways || []} onSelectSkill={(id: any) => setRoute({ view: 'skill_detail', id } as any)} onAddSkill={addSkill} onStartPathway={startPathway} onRemovePathway={removePathway} onAssociateSkill={associateSkillWithDomain} onDisassociateSkill={disassociateSkillFromDomain} onRemoveSkill={removeSkill} />}
                     {route.view === 'skill_detail' && (skillState.find(s => s.id === route.id) ? <SkillDetail 
@@ -1355,57 +1384,6 @@ function App() {
                     {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
                     {route.view === 'achievement_detail' && <AchievementDetail achievement={achievementState.find(a => a.id === route.id)!} onBack={goBack} />}
                     {route.view === 'badge_detail' && <BadgeDetail badge={badgeState.find(b => b.id === route.id)!} onBack={goBack} />}
-                    {route.view === 'friends' && (
-                        <FriendsPanel
-                          onlineUsers={onlineUsers}
-                          friendState={friendState}
-                          incomingRequests={incomingRequests}
-                          onOpenSearch={() => setUserSearchOpen(true)}
-                          onAccept={async (id) => {
-                            // Find the request ID
-                            try {
-                              const network = await fetchSocialNetwork(user!.id)
-                              const request = network.incomingRequests.find((r: any) => r.sender_id === id)
-                              if (request) {
-                                await acceptFriendRequest(request.id)
-                                setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships.filter(r => r.userId !== id), { userId: id, status: 'accepted', createdAt: new Date().toISOString() }] }))
-                                setIncomingRequests(prev => prev.filter(r => r !== id))
-                                push('Friend request accepted!', 'info')
-                              }
-                            } catch (err: any) {
-                              push('Failed to accept request.', 'info')
-                            }
-                          }}
-                          onReject={async (id) => {
-                            try {
-                              const network = await fetchSocialNetwork(user!.id)
-                              const request = network.incomingRequests.find((r: any) => r.sender_id === id)
-                              if (request) {
-                                await rejectFriendRequest(request.id)
-                                setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
-                                setIncomingRequests(prev => prev.filter(r => r !== id))
-                                push('Friend request rejected.', 'info')
-                              }
-                            } catch (err: any) {
-                              push('Failed to reject request.', 'info')
-                            }
-                          }}
-                          onRemove={async (id) => {
-                            try {
-                              await removeFriend(id)
-                              setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
-                              push('Friend removed.', 'info')
-                            } catch (err: any) {
-                              push('Failed to remove friend.', 'info')
-                            }
-                          }}
-                          onOpenProfile={(id) => { setViewingUserId(id) }}
-                          onMessage={(id) => {
-                            setActiveFriendIdForChat(id)
-                            navigate({ view: 'chat' })
-                          }}
-                        />
-                      )}
                     {route.view === 'chat' && (
                       <ChatPanel 
                         activeUserId={user?.id || ''} 
@@ -1864,7 +1842,7 @@ function App() {
         }}
         onClose={() => setViewingUserId(null)}
       />
-      <Toasts toasts={toasts} onDismiss={dismiss} />
+      <Toasts toasts={toasts} onDismiss={dismiss} hasActiveSession={!!activeSession} />
       {dataLoaded && <Celebration xp={progression.xp} />}
       </div>
     </MotionConfig>
