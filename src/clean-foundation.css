@@ -1,0 +1,312 @@
+/* CODEASCEND V2 - PREMIUM GAMIFIED PLATFORM */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* V3 Warm Ivory/Acrylic Canvas */
+  --bg-canvas: #F9F8F5;
+  --bg-canvas-dark: #F2EFE9;
+  
+  /* Structural Surfaces */
+  --surface-top: #FFFFFF;
+  --surface-mid: #F5F4EF;
+  --surface-inset: #FBFBF9;
+  
+  /* V3 Painterly Acrylic Accents */
+  --accent-green: #3EA354;
+  --accent-green-hover: #328C44;
+  --accent-green-light: rgba(62, 163, 84, 0.08);
+  
+  --accent-blue: #3A82C4;
+  --accent-blue-light: rgba(58, 130, 196, 0.1);
+  
+  --accent-yellow: #E6B022;
+  --accent-yellow-light: rgba(230, 176, 34, 0.12);
+  
+  --accent-orange: #EB7C31;
+  --accent-orange-light: rgba(235, 124, 49, 0.1);
+  
+  --accent-red: #D34B4B;
+  
+  --accent-neutral: #99948A;
+  
+  /* Typography */
+  --text-dark: #1E1D1B;
+  --text-medium: #54514D;
+  --text-muted: #827E77;
+  
+  /* Warm Borders */
+  --border-light: rgba(140, 135, 125, 0.12);
+  --border-medium: rgba(140, 135, 125, 0.22);
+  
+  /* Sophisticated Acrylic Depth */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+  --shadow-float: 0 24px 48px rgba(0, 0, 0, 0.05), 0 8px 16px rgba(0, 0, 0, 0.03);
+  
+  /* Precision Radii (Less Pill-like, more architectural) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  
+  --font-display: 'Nunito', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+body, html, #root {
+  margin: 0; padding: 0; width: 100%;
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  position: static !important;
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  background: var(--bg-canvas) !important;
+}
+
+.world-shell {
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.rpg-app-root {
+  width: 100%; 
+  min-height: 100vh !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: flex; flex-direction: column;
+}
+
+/* -------------------------------------
+   V2 PREMIUM TOP NAVIGATION
+-------------------------------------- */
+.game-top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 70px;
+  background: var(--surface-top);
+  border-bottom: 1px solid var(--border-medium);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.015);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--text-dark);
+  letter-spacing: -0.3px;
+}
+.nav-brand span { color: var(--accent-green); }
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 16px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  background: transparent;
+  border: none;
+  transition: all 0.2s ease;
+}
+.nav-tab:hover { color: var(--text-dark); background: rgba(0,0,0,0.02); }
+.nav-tab.active { color: var(--text-dark); font-weight: 700; }
+.nav-tab.active::after {
+  content: ''; position: absolute; bottom: -1px; left: 12px; right: 12px; height: 3px;
+  background: var(--accent-green); border-radius: 3px 3px 0 0;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-icon-btn {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-muted);
+  transition: all 0.2s;
+}
+.nav-icon-btn:hover {
+  background: var(--surface-mid);
+  color: var(--text-dark);
+}
+
+/* -------------------------------------
+   V2 STRUCTURED GRID LAYOUT
+-------------------------------------- */
+.rpg-app-container {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  padding: 32px 40px;
+  overflow: visible !important;
+}
+.rpg-content-grid {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+/* V3 DASHBOARD CANVAS */
+.rpg-dashboard-canvas {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.rpg-left-col, .rpg-right-col {
+  position: sticky;
+  top: 102px; /* nav height (70) + padding (32) */
+  height: fit-content;
+}
+
+/* Responsive Dashboard Classes */
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.dash-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .rpg-content-grid { grid-template-columns: 260px 1fr; }
+  .rpg-right-col { display: none; }
+}
+@media (max-width: 900px) {
+  .rpg-content-grid { grid-template-columns: 1fr; }
+  .rpg-left-col { display: none; }
+}
+
+/* -------------------------------------
+   TYPOGRAPHY
+-------------------------------------- */
+.game-title { font-family: var(--font-display); font-size: 2.2rem; font-weight: 800; color: var(--text-dark); margin: 0; letter-spacing: -0.5px; line-height: 1.2; }
+.game-section-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px; }
+.game-card-title { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--text-dark); margin: 0; }
+.game-body { font-family: var(--font-body); font-size: 0.95rem; color: var(--text-medium); line-height: 1.6; margin: 0; }
+.game-overline { font-family: var(--font-body); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+
+/* -------------------------------------
+   V2 BUTTONS
+-------------------------------------- */
+.btn-primary {
+  font-family: var(--font-body);
+  background-color: var(--accent-green);
+  color: #FFF;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(47, 160, 85, 0.2), inset 0 1px 0 rgba(255,255,255,0.2);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:hover { background-color: var(--accent-green-hover); box-shadow: 0 6px 16px rgba(47, 160, 85, 0.3), inset 0 1px 0 rgba(255,255,255,0.2); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(1px); box-shadow: none; }
+
+.btn-secondary {
+  font-family: var(--font-body);
+  background-color: var(--surface-top);
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 11px 23px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-secondary:hover { background-color: var(--surface-mid); color: var(--accent-blue); border-color: rgba(44, 128, 202, 0.3); }
+
+/* -------------------------------------
+   DASHBOARD PANELS & CARDS
+-------------------------------------- */
+.dash-panel {
+  background: var(--surface-top);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* -------------------------------------
+   V2 DASHBOARD HERO
+-------------------------------------- */
+.dashboard-hero {
+  background: var(--surface-top);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 48px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  position: relative;
+  overflow: hidden;
+}
+/* Abstract acrylic pattern in hero */
+.dashboard-hero::before {
+  content: ''; position: absolute; right: -50px; bottom: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-green-light) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+.dashboard-hero::after {
+  content: ''; position: absolute; right: 150px; top: -50px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, var(--accent-blue-light) 0%, transparent 60%);
+  border-radius: 50%; pointer-events: none;
+}
+
+/* RESET OLD OVERRIDES */
+.game-world-viewport, .rpg-global-shell, .app-shell, .game-shell, .game-world-map { display: none !important; }

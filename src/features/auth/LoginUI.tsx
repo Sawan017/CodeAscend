@@ -25,12 +25,23 @@ export function LoginUI() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
-  const [isAdult, setIsAdult] = useState(false)
+  const [dob, setDob] = useState('')
   const [showLegalModal, setShowLegalModal] = useState<{isOpen: boolean, type: 'privacy' | 'tos'}>({isOpen: false, type: 'privacy'})
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance>(null)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const calculateAge = (dobString: string) => {
+    if (!dobString) return 0;
+    const birthDate = new Date(dobString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
   const [error, setError] = useState<string | null>(null)
   const [successIdentity, setSuccessIdentity] = useState<{ id: string; login_id: string; dummy_email: string } | null>(null)
   const [rememberMe, setRememberMe] = useState(true)
@@ -58,8 +69,12 @@ export function LoginUI() {
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault()
     if (isSubmitting || authLoading) return
-    if (!agreeTerms || !agreePrivacy || !isAdult) {
-      setError('You must accept the Terms of Service, Privacy Policy, and confirm you are 18 or older to register.')
+    if (!agreeTerms || !agreePrivacy || !dob) {
+      setError('You must accept the legal terms and provide your Date of Birth to register.')
+      return
+    }
+    if (calculateAge(dob) < 18) {
+      setError('ARINOVA is restricted to users aged 18 and above.')
       return
     }
     if (displayName.length < 4 || displayName.length > 12 || !/^[a-zA-Z0-9_]+$/.test(displayName)) {
@@ -106,7 +121,7 @@ export function LoginUI() {
       
       // Use signUpWithEmail to ensure the account is created via Supabase Auth API,
       // which strictly verifies the Turnstile captcha token.
-      const signUpData = await signUpWithEmail(successIdentity.dummy_email, createPassword, { captchaToken })
+      const signUpData = await signUpWithEmail(successIdentity.dummy_email, createPassword, { captchaToken, dob })
       
       if (!signUpData?.session) {
         throw new Error('Sign up blocked or email confirmation required. Please contact support.')
@@ -320,7 +335,7 @@ export function LoginUI() {
               type="submit" 
               className="primary-btn" 
               disabled={isSubmitting || !captchaToken}
-              style={{ padding: '16px', fontSize: '0.9rem', letterSpacing: '0.1em', opacity: (isSubmitting || !captchaToken) ? 0.7 : 1 }}
+              style={{ padding: '12px', fontSize: '0.9rem', letterSpacing: '0.1em', opacity: (isSubmitting || !captchaToken) ? 0.7 : 1 }}
             >
               {isSubmitting ? 'SENDING...' : 'SEND RESET LINK'}
             </button>
@@ -373,7 +388,7 @@ export function LoginUI() {
         style={{
           position: 'relative', zIndex: 10,
           width: '100%', maxWidth: '420px',
-          padding: '48px',
+          padding: '24px 32px',
           background: 'rgba(255, 255, 255, 0.02)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
@@ -395,7 +410,7 @@ export function LoginUI() {
         </h1>
         <p style={{ 
           textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', 
-          letterSpacing: '0.05em', marginBottom: '40px' 
+          letterSpacing: '0.05em', marginBottom: '24px' 
         }}>
           {isSignUp ? 'INITIATE YOUR SEQUENCE' : 'RESUME YOUR SEQUENCE'}
         </p>
@@ -446,7 +461,7 @@ export function LoginUI() {
                 onClick={handleContinueToDashboard}
                 disabled={isSubmitting || authLoading || !captchaToken}
                 style={{
-                  width: '100%', padding: '16px',
+                  width: '100%', padding: '12px',
                   background: '#00c8ff', color: '#030407',
                   border: 'none', borderRadius: '2px',
                   fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.15em',
@@ -461,7 +476,7 @@ export function LoginUI() {
               </button>
             </div>
           ) : (
-          <form onSubmit={handleReserve} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <form onSubmit={handleReserve} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ position: 'relative' }}>
               <User size={16} color="rgba(255,255,255,0.4)" style={{ position: 'absolute', top: '50%', left: '16px', transform: 'translateY(-50%)' }} />
               <input 
@@ -471,7 +486,7 @@ export function LoginUI() {
                 onChange={(e) => setDisplayName(e.target.value)}
                 maxLength={12}
                 style={{
-                  width: '100%', padding: '16px 16px 16px 48px',
+                  width: '100%', padding: '12px 12px 12px 42px',
                   background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
                   color: '#fff', fontSize: '0.85rem', letterSpacing: '0.05em',
                   borderRadius: '2px', outline: 'none', transition: 'border-color 0.3s'
@@ -491,7 +506,7 @@ export function LoginUI() {
                 autoComplete="new-password"
                 aria-label="Create password"
                 style={{
-                  width: '100%', padding: '16px 48px 16px 48px',
+                  width: '100%', padding: '12px 42px 12px 42px',
                   background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
                   color: '#fff', fontSize: '0.85rem', letterSpacing: '0.05em',
                   borderRadius: '2px', outline: 'none', transition: 'border-color 0.3s'
@@ -518,7 +533,7 @@ export function LoginUI() {
                 autoComplete="new-password"
                 aria-label="Confirm password"
                 style={{
-                  width: '100%', padding: '16px 48px 16px 48px',
+                  width: '100%', padding: '12px 42px 12px 42px',
                   background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
                   color: '#fff', fontSize: '0.85rem', letterSpacing: '0.05em',
                   borderRadius: '2px', outline: 'none', transition: 'border-color 0.3s'
@@ -545,31 +560,42 @@ export function LoginUI() {
               )}
             </AnimatePresence>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem', width: '100%', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem', width: '100%', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
                 <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} style={{ marginTop: '0.2rem' }} />
                 <span>I agree to the <button type="button" onClick={(e) => { e.preventDefault(); setShowLegalModal({isOpen: true, type: 'tos'}) }} style={{ background: 'none', border: 'none', color: '#00c8ff', cursor: 'pointer', padding: 0 }}>Terms of Service</button>.</span>
               </label>
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
                 <input type="checkbox" checked={agreePrivacy} onChange={(e) => setAgreePrivacy(e.target.checked)} style={{ marginTop: '0.2rem' }} />
                 <span>I acknowledge the <button type="button" onClick={(e) => { e.preventDefault(); setShowLegalModal({isOpen: true, type: 'privacy'}) }} style={{ background: 'none', border: 'none', color: '#00c8ff', cursor: 'pointer', padding: 0 }}>Privacy Policy</button> and consent to the processing of my personal data.</span>
               </label>
-              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
-                <input type="checkbox" checked={isAdult} onChange={(e) => setIsAdult(e.target.checked)} style={{ marginTop: '0.2rem' }} />
-                <span>I confirm that I am 18 years of age or older.</span>
+              <label style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                <span>Date of Birth (ARINOVA is strictly 18+)</span>
+                <input 
+                  type="date" 
+                  value={dob} 
+                  onChange={(e) => setDob(e.target.value)} 
+                  style={{ 
+                    padding: '0.5rem', 
+                    background: 'rgba(0,0,0,0.2)', 
+                    border: '1px solid rgba(255,255,255,0.1)', 
+                    color: 'white', 
+                    borderRadius: '4px' 
+                  }} 
+                />
               </label>
             </div>
             <button 
               type="submit" 
-              disabled={isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !isAdult || !validatePassword(createPassword).isValid || createPassword !== confirmPassword}
+              disabled={isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !dob || calculateAge(dob) < 18 || !validatePassword(createPassword).isValid || createPassword !== confirmPassword}
               style={{
-                width: '100%', padding: '16px', marginTop: '8px',
+                width: '100%', padding: '12px', marginTop: '8px',
                 background: '#00c8ff', color: '#030407',
                 border: 'none', borderRadius: '2px',
                 fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.15em',
-                cursor: (isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !isAdult || !validatePassword(createPassword).isValid || createPassword !== confirmPassword) ? 'not-allowed' : 'pointer',
+                cursor: (isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !dob || calculateAge(dob) < 18 || !validatePassword(createPassword).isValid || createPassword !== confirmPassword) ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                opacity: (isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !isAdult || !validatePassword(createPassword).isValid || createPassword !== confirmPassword) ? 0.7 : 1,
+                opacity: (isSubmitting || authLoading || !agreeTerms || !agreePrivacy || !dob || calculateAge(dob) < 18 || !validatePassword(createPassword).isValid || createPassword !== confirmPassword) ? 0.7 : 1,
                 transition: 'all 0.3s ease'
               }}
             >
@@ -579,7 +605,7 @@ export function LoginUI() {
           </form>
           )
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             
             {showSavedAccounts ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -687,7 +713,7 @@ export function LoginUI() {
                               }
                             }}
                             style={{
-                              width: '100%', padding: '16px',
+                              width: '100%', padding: '12px',
                               background: isSelected ? 'rgba(0, 200, 255, 0.15)' : 'rgba(0, 200, 255, 0.05)', 
                               border: `1px solid ${isSelected ? '#00c8ff' : 'rgba(0, 200, 255, 0.2)'}`,
                               color: isSelected ? '#fff' : '#00c8ff', 
@@ -754,7 +780,7 @@ export function LoginUI() {
                   onChange={(e) => setIdentifier(e.target.value)}
                   readOnly={!!selectedAccount}
                   style={{
-                    width: '100%', padding: '16px 16px 16px 48px',
+                    width: '100%', padding: '12px 12px 12px 42px',
                     background: selectedAccount ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.3)', 
                     border: '1px solid rgba(255,255,255,0.1)',
                     color: selectedAccount ? '#00c8ff' : '#fff', 
@@ -791,7 +817,7 @@ export function LoginUI() {
                     autoComplete="current-password"
                     aria-label="Password"
                     style={{
-                      width: '100%', padding: '16px 48px 16px 48px',
+                      width: '100%', padding: '12px 42px 12px 42px',
                       background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)',
                       color: '#fff', fontSize: '0.85rem', letterSpacing: '0.05em',
                       borderRadius: '2px', outline: 'none', transition: 'border-color 0.3s'
@@ -867,7 +893,7 @@ export function LoginUI() {
                   type="submit" 
                   disabled={isSubmitting || authLoading}
                   style={{
-                    width: '100%', padding: '16px', marginTop: '8px',
+                    width: '100%', padding: '12px', marginTop: '8px',
                     background: '#00c8ff', color: '#030407',
                     border: 'none', borderRadius: '2px',
                     fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.15em',
@@ -885,7 +911,7 @@ export function LoginUI() {
           </form>
         )}
 
-        <div style={{ display: 'flex', alignItems: 'center', margin: '32px 0', opacity: 0.5 }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '16px 0', opacity: 0.5 }}>
           <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.2)' }} />
           <span style={{ padding: '0 16px', fontSize: '0.7rem', letterSpacing: '0.1em' }}>OR</span>
           <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.2)' }} />
@@ -895,7 +921,7 @@ export function LoginUI() {
           onClick={handleGoogleSignIn}
           disabled={isSubmitting || authLoading}
           style={{
-            width: '100%', padding: '16px',
+            width: '100%', padding: '12px',
             background: 'transparent', color: '#fff',
             border: '1px solid rgba(255,255,255,0.2)', borderRadius: '2px',
             fontSize: '0.8rem', letterSpacing: '0.05em',
@@ -909,7 +935,7 @@ export function LoginUI() {
           CONTINUE WITH GOOGLE
         </button>
 
-        <div style={{ marginTop: '32px', textAlign: 'center' }}>
+        <div style={{ marginTop: '16px', textAlign: 'center' }}>
           <button 
             onClick={() => {
               setIsSignUp(!isSignUp)

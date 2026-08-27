@@ -84,7 +84,150 @@ const TABS: Array<{ id: TabId, label: string, icon: any }> = [
 ]
 
 import { LegalModal } from './LegalModal'
-import { privacyPolicyText, termsOfServiceText } from './legalText'
+import { privacyPolicyText, termsOfServiceText, GRIEVANCE_OFFICER } from './legalText'
+
+// ==========================================================================
+// DPDP Section 14 — Nominee Manager Component
+// ==========================================================================
+type Nominee = {
+  id: string
+  nominee_name: string
+  nominee_email: string
+  nominee_phone: string
+  nominee_relationship: string
+  status: string
+}
+
+function NomineeManager({ userId }: { userId: string }) {
+  const [nominees, setNominees] = useState<Nominee[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [showForm, setShowForm] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [form, setForm] = useState({ nominee_name: '', nominee_email: '', nominee_phone: '', nominee_relationship: '' })
+
+  const fetchNominees = async () => {
+    if (!supabase) return
+    setLoading(true)
+    const { data, error: err } = await supabase.from('user_nominees').select('*').eq('user_id', userId).eq('status', 'active').order('created_at', { ascending: true })
+    if (err) { setError(err.message); setLoading(false); return }
+    setNominees(data || [])
+    setLoading(false)
+  }
+
+  useEffect(() => { fetchNominees() }, [userId])
+
+  const handleSave = async () => {
+    if (!supabase || !form.nominee_name.trim()) { setError('Nominee name is required.'); return }
+    setError(null)
+    if (editingId) {
+      const { error: err } = await supabase.from('user_nominees').update({ nominee_name: form.nominee_name, nominee_email: form.nominee_email, nominee_phone: form.nominee_phone, nominee_relationship: form.nominee_relationship }).eq('id', editingId).eq('user_id', userId)
+      if (err) { setError(err.message); return }
+    } else {
+      const { error: err } = await supabase.from('user_nominees').insert({ user_id: userId, nominee_name: form.nominee_name, nominee_email: form.nominee_email, nominee_phone: form.nominee_phone, nominee_relationship: form.nominee_relationship })
+      if (err) { setError(err.message.includes('Maximum') ? 'You can have at most 3 active nominees.' : err.message); return }
+    }
+    setForm({ nominee_name: '', nominee_email: '', nominee_phone: '', nominee_relationship: '' })
+    setShowForm(false)
+    setEditingId(null)
+    fetchNominees()
+  }
+
+  const handleRemove = async (id: string) => {
+    if (!supabase) return
+    const { error: err } = await supabase.from('user_nominees').update({ status: 'revoked' }).eq('id', id).eq('user_id', userId)
+    if (err) { setError(err.message); return }
+    fetchNominees()
+  }
+
+  const handleEdit = (n: Nominee) => {
+    setForm({ nominee_name: n.nominee_name, nominee_email: n.nominee_email || '', nominee_phone: n.nominee_phone || '', nominee_relationship: n.nominee_relationship || '' })
+    setEditingId(n.id)
+    setShowForm(true)
+  }
+
+  const inputStyle = { width: '100%', padding: '0.6rem 0.75rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '6px', color: 'var(--text-main)', fontSize: '0.85rem', outline: 'none' }
+
+  if (loading) return <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading nominees...</p>
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      {error && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.82rem' }}>{error}</div>}
+      {nominees.length === 0 && !showForm && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>No nominees added yet.</p>}
+      {nominees.map(n => (
+        <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 600 }}>{n.nominee_name}</div>
+            {n.nominee_relationship && <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{n.nominee_relationship}</div>}
+            {n.nominee_email && <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{n.nominee_email}</div>}
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="secondary-btn" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem' }} onClick={() => handleEdit(n)}>Edit</button>
+            <button className="secondary-btn" style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', color: 'var(--danger)' }} onClick={() => handleRemove(n.id)}>Remove</button>
+          </div>
+        </div>
+      ))}
+      {showForm ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+          <input placeholder="Full Name *" value={form.nominee_name} onChange={e => setForm({ ...form, nominee_name: e.target.value })} style={inputStyle} />
+          <input placeholder="Email" value={form.nominee_email} onChange={e => setForm({ ...form, nominee_email: e.target.value })} style={inputStyle} />
+          <input placeholder="Phone" value={form.nominee_phone} onChange={e => setForm({ ...form, nominee_phone: e.target.value })} style={inputStyle} />
+          <input placeholder="Relationship" value={form.nominee_relationship} onChange={e => setForm({ ...form, nominee_relationship: e.target.value })} style={inputStyle} />
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+            <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={handleSave}>{editingId ? 'Update' : 'Add'}</button>
+            <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => { setShowForm(false); setEditingId(null); setForm({ nominee_name: '', nominee_email: '', nominee_phone: '', nominee_relationship: '' }) }}>Cancel</button>
+          </div>
+        </div>
+      ) : (
+        nominees.length < 3 && <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', alignSelf: 'flex-start' }} onClick={() => setShowForm(true)}>+ Add Nominee</button>
+      )}
+    </div>
+  )
+}
+
+// ==========================================================================
+// DPDP — Data Rights Request Form
+// ==========================================================================
+function DataRightsRequestForm({ userId }: { userId: string }) {
+  const [requestType, setRequestType] = useState('access')
+  const [description, setDescription] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmit = async () => {
+    if (!supabase || !description.trim()) { setError('Please describe your request.'); return }
+    setSubmitting(true)
+    setError(null)
+    const { error: err } = await supabase.from('data_subject_requests').insert({ user_id: userId, request_type: requestType, description: description.trim() })
+    if (err) { setError(err.message); setSubmitting(false); return }
+    setSuccess(true)
+    setDescription('')
+    setSubmitting(false)
+    setTimeout(() => setSuccess(false), 4000)
+  }
+
+  const selectStyle = { width: '100%', padding: '0.6rem 0.75rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '6px', color: 'var(--text-main)', fontSize: '0.85rem', outline: 'none' }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+      {error && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.82rem' }}>{error}</div>}
+      {success && <div style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.82rem' }}>Request submitted successfully. We will respond within the applicable timeframe.</div>}
+      <select value={requestType} onChange={e => setRequestType(e.target.value)} style={selectStyle}>
+        <option value="access">Access / Information</option>
+        <option value="correction">Correction</option>
+        <option value="erasure">Erasure / Deletion</option>
+        <option value="portability">Data Portability / Export</option>
+        <option value="withdrawal">Withdrawal of Consent</option>
+        <option value="grievance">Formal Grievance</option>
+        <option value="nomination">Nomination Related</option>
+        <option value="other">Other</option>
+      </select>
+      <textarea placeholder="Describe your request..." value={description} onChange={e => setDescription(e.target.value)} rows={3} style={{ ...selectStyle, resize: 'vertical', fontFamily: 'inherit' }} />
+      <button className="secondary-btn" disabled={submitting || !description.trim()} onClick={handleSubmit} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', alignSelf: 'flex-start', opacity: submitting || !description.trim() ? 0.6 : 1 }}>{submitting ? 'Submitting...' : 'Submit Request'}</button>
+    </div>
+  )
+}
 
 export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSignOut, profile, userId, chatState, onChatStateChange, projects, onAddProjects, onUpdateProjects, onAddLanguages, onAddEvidences, onRemoveGithubData }: SettingsDrawerProps) {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
@@ -996,6 +1139,32 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 </div>
               </div>
             </div>
+
+            {/* DPDP Section 14 — Nominee Management */}
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}>Data Rights Nominee</h4>
+              <p style={{ margin: '0 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                Under Section 14 of the DPDP Act, you may nominate a person to exercise your data rights (access, correction, erasure) in the event of your death or incapacity. You can add up to 3 nominees.
+              </p>
+              {!userId || !supabase ? (
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Sign in to manage your nominees.</p>
+              ) : (
+                <NomineeManager userId={userId} />
+              )}
+            </div>
+
+            {/* DPDP — Data Rights Request */}
+            <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}>Data Rights Request</h4>
+              <p style={{ margin: '0 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                Submit a formal request regarding your personal data (access, correction, erasure, portability, or grievance). For formal grievances, you may also contact the Grievance Officer directly via the Help & About section.
+              </p>
+              {!userId || !supabase ? (
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Sign in to submit a data rights request.</p>
+              ) : (
+                <DataRightsRequestForm userId={userId} />
+              )}
+            </div>
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Social & Permissions</h4>
               {socialError && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem' }}>{socialError}</div>}
@@ -1250,6 +1419,15 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: 'var(--text-main)' }}>Privacy Policy</span>
                   <button className="secondary-btn" onClick={() => setShowLegalModal({ isOpen: true, type: 'privacy' })} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}>Read</button>
+                </div>
+                {GRIEVANCE_OFFICER.name.includes('[') && (
+                  <div style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', padding: '0.5rem', borderRadius: '6px', fontSize: '0.8rem', marginTop: '0.5rem' }}>
+                    <strong>Development / Student Project:</strong> ARINOVA is currently a student/development project. The privacy/data-rights functionality shown here describes the current technical implementation and does not constitute legal certification or a claim of current DPDP compliance.
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: 'var(--text-main)' }}>Data Grievances (DPDP)</span>
+                  <a href={`mailto:${GRIEVANCE_OFFICER.email}?subject=ARINOVA Data Grievance`} className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}>Email Officer</a>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Version</span>

@@ -57,7 +57,7 @@ export async function fetchAllUserData(userId: string) {
   if (isOwner) {
     profile = await fetchRow<UserProfile>(TABLES.profile, userId, 'profile')
   } else {
-    const { data: publicProfile, error } = await supabase.rpc('get_public_profile', { p_user_id: userId })
+    const { data: publicProfile, error } = await supabase!.rpc('get_public_profile', { p_user_id: userId })
     if (error || !publicProfile) return null
     profile = publicProfile as UserProfile
   }
@@ -159,7 +159,7 @@ export async function fetchPublicProfiles(neededIds?: string[]): Promise<Array<{
 export async function fetchPublicProfileByUsername(username: string): Promise<{ userId: string; username: string; displayName: string; avatar?: string; level: number; xp: number; bio?: string; title?: string; login_id?: string } | null> {
   if (!isSupabaseConfigured() || !supabase) return null
 
-  const { data, error } = await supabase.rpc('get_public_profile_by_username', { p_username: username })
+  const { data, error } = await supabase!.rpc('get_public_profile_by_username', { p_username: username })
 
   if (error) {
     console.error('Failed to fetch profile by username:', error.message)
@@ -209,7 +209,7 @@ export async function saveChatState(userId: string, state: import("../types").Ch
 
 export async function fetchIncomingMessages(_userId: string): Promise<import("../types").ChatMessage[]> {
   if (!isSupabaseConfigured() || !supabase) return []
-  const { data, error } = await supabase.rpc('get_incoming_messages')
+  const { data, error } = await supabase!.rpc('get_incoming_messages')
   
   if (error) {
     console.error("Failed to fetch incoming messages:", error.message)
@@ -275,7 +275,7 @@ export async function reserveUsername(username: string, password_input: string, 
     throw new Error('Supabase is not configured')
   }
   const payload: any = { username_input: username, password_input: password_input, terms_version, privacy_version }
-  const { data, error } = await supabase.rpc('reserve_username', payload)
+  const { data, error } = await supabase!.rpc('reserve_username', payload)
   if (error) {
     throw new Error(error.message)
   }
@@ -286,7 +286,7 @@ export async function confirmUsername(identityId: string) {
   if (!isSupabaseConfigured() || !supabase) {
     throw new Error('Supabase is not configured')
   }
-  const { error } = await supabase.rpc('confirm_username', { identity_id: identityId })
+  const { error } = await supabase!.rpc('confirm_username', { identity_id: identityId })
   if (error) {
     throw new Error(error.message)
   }
@@ -299,7 +299,7 @@ export async function resolveAuthEmail(identifier: string, password?: string) {
   }
   
   // Secure server-side resolution that requires the password to prevent enumeration
-  const { data, error } = await supabase.rpc('resolve_login_id_secure', { 
+  const { data, error } = await supabase!.rpc('resolve_login_id_secure', { 
     identifier, 
     pass: password || '' 
   })
@@ -315,7 +315,7 @@ export async function resolveAuthEmail(identifier: string, password?: string) {
 
 export async function searchDeveloperByLoginId(loginId: string) {
   if (!isSupabaseConfigured() || !supabase) return null;
-  const { data, error } = await supabase.rpc('search_user_by_login_id', { query_id: loginId });
+  const { data, error } = await supabase!.rpc('search_user_by_login_id', { query_id: loginId });
   if (error) {
     console.error('Failed to search developer:', error.message);
     return null;
@@ -325,25 +325,25 @@ export async function searchDeveloperByLoginId(loginId: string) {
 
 export async function sendFriendRequest(targetUserId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase.rpc('send_friend_request', { target_user_id: targetUserId });
+  const { error } = await supabase!.rpc('send_friend_request', { target_user_id: targetUserId });
   if (error) throw new Error(error.message);
 }
 
 export async function acceptFriendRequest(requestId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase.rpc('accept_friend_request', { request_id: requestId });
+  const { error } = await supabase!.rpc('accept_friend_request', { request_id: requestId });
   if (error) throw new Error(error.message);
 }
 
 export async function rejectFriendRequest(requestId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase.rpc('reject_friend_request', { request_id: requestId });
+  const { error } = await supabase!.rpc('reject_friend_request', { request_id: requestId });
   if (error) throw new Error(error.message);
 }
 
 export async function removeFriend(targetUserId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase.rpc('remove_friend', { target_user_id: targetUserId });
+  const { error } = await supabase!.rpc('remove_friend', { target_user_id: targetUserId });
   if (error) throw new Error(error.message);
 }
 
@@ -405,7 +405,7 @@ export async function fetchSocialNetwork(userId: string): Promise<{ relationship
 
 export async function sendChatMessage(receiverId: string, msgId: string, content: string, timestamp: string) {
   if (!isSupabaseConfigured() || !supabase) return null
-  const { data, error } = await supabase.rpc('send_chat_message', { 
+  const { data, error } = await supabase!.rpc('send_chat_message', { 
     p_receiver_id: receiverId, 
     p_msg_id: msgId, 
     p_content: content, 
@@ -470,4 +470,19 @@ export async function upsertExternalProject(record: Partial<import('../types').E
     throw error
   }
   return data
+}
+
+export async function checkAgeVerified(): Promise<boolean> {
+  const { data, error } = await supabase!.from('user_dob').select('dob').single()
+  if (error && error.code === 'PGRST116') return false // No rows
+  return !!data
+}
+
+export async function verifyAge(dob: string): Promise<boolean> {
+  const { error } = await supabase!.rpc('verify_user_age', { p_dob: dob })
+  if (error) {
+    console.error('Age verification failed:', error)
+    return false
+  }
+  return true
 }

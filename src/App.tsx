@@ -4,8 +4,6 @@ import { useEffect, useRef, useState, Suspense } from 'react'
 import { AuthShell } from './features/auth/AuthShell'
 import { OnboardingScreen } from './features/auth/OnboardingScreen'
 import { AchievementsPanel } from './features/achievements/AchievementsPanel'
-import { CareerWorld } from './components/CareerWorld'
-import { HUD } from './components/HUD'
 import { EditProfilePanel } from './features/profile/EditProfilePanel'
 import { TopBar } from './components/TopBar'
 import { Toasts } from './components/Toasts'
@@ -51,15 +49,12 @@ import { Users, MessageSquare } from 'lucide-react'
 
 const sections: Array<{ id: SectionId; label: string; icon: typeof House }> = [
   { id: 'dashboard', label: 'Home', icon: House },
-  { id: 'profile', label: 'Profile', icon: House },
+  { id: 'learning', label: 'Learn', icon: GraduationCap },
   { id: 'projects', label: 'Projects', icon: Layers3 },
-  { id: 'learning', label: 'Learning', icon: GraduationCap },
-  { id: 'goals', label: 'Goals', icon: Target },
   { id: 'achievements', label: 'Achievements', icon: Trophy },
-  { id: 'friends', label: 'Network', icon: Users },
   { id: 'chat', label: 'Chat', icon: MessageSquare },
   { id: 'future', label: 'Future', icon: Compass },
-  { id: 'career_world', label: 'Career World', icon: Compass },
+  { id: 'career_world', label: 'Career', icon: Compass },
 ]
 
 const parseHash = (): Route => {
@@ -934,9 +929,6 @@ function App() {
 
   }, [progression, goalState, projectState, skillState, achievementState, badgeState])
 
-  const completedGoals = goalState.filter((goal) => goal.status === 'COMPLETED').length
-  const masteredSkills = skillState.filter((skill) => skill.status === 'MASTERED').length
-  const earnedBadges = badgeState.filter((badge) => badge.earned).length
 
   const markGoalCompleted = (goalId: string) => {
     setGoalState((prev) => prev.filter((goal) => goal.id !== goalId))
@@ -1279,71 +1271,24 @@ function App() {
                   navigate({ view: 'skill_detail', id: activeSession.skillId })
                 }
               }}
+              sections={sections}
+              activeView={route.view}
+              onSelectSection={selectSection}
+              chatUnread={incomingMessages.filter(m => {
+                if (chatState.mutedUsers?.includes(m.senderId)) return false
+                const lastRead = chatState.lastRead[m.senderId] || '1970-01-01T00:00:00.000Z'
+                return new Date(m.timestamp) > new Date(lastRead)
+              }).length}
+              isGlobalAdmin={isGlobalAdmin}
             />
             <div className="workspace">
-              <aside className="sidebar">
-                {sections.map((section) => {
-                  return (
-                    <motion.button 
-                      key={section.id} 
-                      whileHover={{ scale: 1.03, y: -2 }} 
-                      whileTap={{ scale: 0.97 }} 
-                      className={`nav-item ${route.view === section.id || route.view.startsWith(section.id.replace('s', '')) ? 'active' : ''}`}
-                      onClick={() => selectSection(section.id)}
-                      title={section.label}
-                    >
-                      <section.icon size={20} />
-                      <span className="desktop-only" style={{ flex: 1 }}>{section.label}</span>
-                      
-                      {/* Unread indicators */}
-                      {section.id === 'friends' && incomingRequests.length > 0 && (
-                        <div style={{ background: '#ef4444', color: '#fff', fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 6px', borderRadius: '10px' }}>
-                          {incomingRequests.length}
-                        </div>
-                      )}
-                      {section.id === 'chat' && (
-                        (() => {
-                          const unreadTotal = incomingMessages.filter(m => {
-                            if (chatState.mutedUsers?.includes(m.senderId)) return false
-                            const lastRead = chatState.lastRead[m.senderId] || '1970-01-01T00:00:00.000Z'
-                            return new Date(m.timestamp) > new Date(lastRead)
-                          }).length
-                          if (unreadTotal > 0) {
-                            return (
-                              <div style={{ background: 'var(--primary)', color: '#000', fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 6px', borderRadius: '10px' }}>
-                                {unreadTotal}
-                              </div>
-                            )
-                          }
-                          return null
-                        })()
-                      )}
-                    </motion.button>
-                  )
-                })}
-              
-            {isGlobalAdmin && (
-              <motion.button 
-                whileHover={{ scale: 1.03, y: -2 }} 
-                whileTap={{ scale: 0.97 }} 
-                className={`nav-item ${route.view === 'admin_support' ? 'active' : ''}`}
-                onClick={() => selectSection('admin_support' as any)}
-                title="Admin Support"
-                style={{ marginTop: 'auto', border: '1px solid #f59e0b', color: '#f59e0b' }}
-              >
-                <Shield size={20} />
-                <span className="desktop-only" style={{ flex: 1 }}>Admin Support</span>
-              </motion.button>
-            )}
-          </aside>
-
               <div className="main-stage">
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <ErrorBoundary>
                   <AnimatePresence mode="wait">
                     {route.view === 'admin_support' && isGlobalAdmin && <AdminSupportDashboard onBack={() => navigate({ view: 'dashboard' })} />}
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
-                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
+                    {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} isCurrentUser={true} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
                     {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
                       if (typeof window !== 'undefined') {
@@ -1556,9 +1501,17 @@ function App() {
                       <TimelinePanel milestones={milestones} futureMilestones={generateFutureMilestones(progression, projectState, skillState, goalState)} timelineEvents={generateTimelineEvents(projectState, skillState, achievementState)} onNavigateSection={selectSection} />
                     )}
                     {route.view === 'career_world' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                        <HUD progression={progression} completedGoals={completedGoals} masteredSkills={masteredSkills} earnedBadges={earnedBadges} />
-                        <CareerWorld activeSection={route.view as SectionId} onSelectSection={selectSection} progression={progression} profile={profileState} />
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1.5rem', color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>
+                        <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '3rem', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.1)', backdropFilter: 'blur(10px)', maxWidth: '500px' }}>
+                          <Compass size={48} style={{ color: 'var(--cyan)', marginBottom: '1rem' }} />
+                          <h2 style={{ fontSize: '1.8rem', color: '#fff', marginBottom: '1rem', fontWeight: 700 }}>Career is under maintenance</h2>
+                          <p style={{ fontSize: '1.1rem', lineHeight: 1.6, color: 'var(--text-dim)', marginBottom: '2rem' }}>
+                            We're rebuilding this part of your journey. Something better is coming soon.
+                          </p>
+                          <button onClick={() => navigate({ view: 'dashboard' })} className="primary-btn" style={{ padding: '0.8rem 2rem', fontSize: '1rem', borderRadius: '100px' }}>
+                            Back to Home
+                          </button>
+                        </div>
                       </div>
                     )}
                     {!['admin_support', 'dashboard', 'profile', 'edit_profile', 'projects', 'project_detail', 'learning', 'skill_detail', 'goals', 'achievements', 'achievement_detail', 'badge_detail', 'friends', 'chat', 'future', 'career_world'].includes(route.view) && (
@@ -1923,6 +1876,7 @@ function App() {
 }
 
 export default App
+
 
 
 

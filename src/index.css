@@ -1224,3 +1224,176 @@ h4 { font-size: 1rem; }
 .support-markdown h4 {
   font-size: 1rem;
 }
+
+/* ============================================================
+   CODEASCEND V4 — PALWORLD-INSPIRED LIGHT SHELL OVERRIDE
+   This block overrides the dark theme for the main app shell
+   to create a warm, premium, adventure-academy aesthetic.
+   ============================================================ */
+
+/* --- Root variable overrides --- */
+:root {
+  --ca-bg: #F7F7F2;
+  --ca-surface: #FFFFFF;
+  --ca-surface-alt: #F2F1EC;
+  --ca-text: #1E1D1B;
+  --ca-text-secondary: #5A5750;
+  --ca-text-muted: #9A958C;
+  --ca-border: rgba(140, 135, 125, 0.12);
+  --ca-border-strong: rgba(140, 135, 125, 0.22);
+  --ca-green: #3EA354;
+  --ca-green-hover: #328C44;
+  --ca-green-light: rgba(62, 163, 84, 0.08);
+  --ca-green-glow: rgba(62, 163, 84, 0.15);
+  --ca-blue: #3A82C4;
+  --ca-blue-light: rgba(58, 130, 196, 0.08);
+  --ca-gold: #E6B022;
+  --ca-gold-light: rgba(230, 176, 34, 0.1);
+  --ca-orange: #EB7C31;
+  --ca-orange-light: rgba(235, 124, 49, 0.08);
+  --ca-purple: #8B6CC1;
+  --ca-purple-light: rgba(139, 108, 193, 0.08);
+  --ca-red: #D34B4B;
+  --ca-shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+  --ca-shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+  --ca-shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+  --ca-radius: 12px;
+  --ca-radius-lg: 16px;
+  --ca-radius-xl: 20px;
+}
+
+/* --- App shell background override --- */
+.app-shell {
+  background: var(--ca-bg) !important;
+  background-image: none !important;
+  color: var(--ca-text);
+}
+.app-shell.dark, .app-shell.midnight, .app-shell.system, .app-shell.aurora, .app-shell.light {
+  background: var(--ca-bg) !important;
+  background-image: none !important;
+  color: var(--ca-text);
+}
+body {
+  background: var(--ca-bg) !important;
+  color: var(--ca-text);
+}
+
+/* Hide the aurora/noise decorations */
+.noise, .aurora, .aura-a, .aura-b { display: none !important; }
+
+/* --- World shell --- */
+.world-shell {
+  min-height: 100vh;
+  padding: 0 !important;
+  background: var(--ca-bg);
+}
+
+/* --- Top bar / header override --- */
+.world-shell > header,
+header[style*="rgba(9, 10, 12"] {
+  background: var(--ca-surface) !important;
+  border-bottom: 1px solid var(--ca-border) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
+}
+
+/* --- Workspace grid (no sidebar — nav is in top bar) --- */
+.workspace {
+  display: block;
+  min-height: calc(100vh - 56px);
+}
+
+/* --- Sidebar hidden (nav moved to top bar) --- */
+.sidebar {
+  display: none !important;
+}
+
+/* --- Main stage / content area --- */
+.main-stage {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--ca-bg);
+}
+
+/* --- Content card (the wrapper around each page view) --- */
+.content-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+.map-card, .status-card, .panel {
+  background: var(--ca-surface) !important;
+  border: 1px solid var(--ca-border) !important;
+  box-shadow: var(--ca-shadow-sm) !important;
+  backdrop-filter: none !important;
+  color: var(--ca-text);
+}
+
+/* --- rpg-page-container (Dashboard uses this) --- */
+.rpg-page-container {
+  padding: 32px 40px !important;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  overflow: visible !important;
+  height: auto !important;
+  pointer-events: auto;
+}
+
+/* --- Typography for light theme --- */
+h1, h2, h3, h4 { color: var(--ca-text); }
+.eyebrow { color: var(--ca-green); }
+
+/* --- Buttons --- */
+.primary-btn {
+  background: var(--ca-green) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--ca-green-glow);
+  transition: all 0.15s ease;
+}
+.primary-btn:hover {
+  background: var(--ca-green-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* --- Icon button override --- */
+.icon-button {
+  background: var(--ca-surface) !important;
+  border: 1px solid var(--ca-border) !important;
+  color: var(--ca-text-secondary);
+}
+.icon-button:hover {
+  background: var(--ca-surface-alt) !important;
+  border-color: var(--ca-border-strong) !important;
+  box-shadow: none;
+  color: var(--ca-text);
+}
+
+/* --- XP bar override for light theme --- */
+.xp-bar-bg {
+  background: var(--ca-surface-alt) !important;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .workspace {
+    display: block !important;
+  }
+  .rpg-page-container {
+    padding: 20px 16px !important;
+  }
+}
+@media (max-width: 640px) {
+  .rpg-page-container {
+    padding: 16px 12px !important;
+  }
+}

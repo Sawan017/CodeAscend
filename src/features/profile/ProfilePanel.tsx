@@ -1,200 +1,97 @@
-// @ts-nocheck
-import type { Goal, Progression, UserProfile, Skill, Achievement } from '../../types'
-import { calculateLevel, calculateProgressToNextLevel, evaluateDynamicMilestones } from '../../lib/progression'
-import { XpProgressBar } from '../../components/XpProgressBar'
-import { Avatar } from '../../components/Avatar'
-import { MilestonesSection } from '../../components/MilestonesSection'
-import { Code, Globe, Mail, Link, Pencil } from 'lucide-react'
-import { sanitizeUrl } from '../../utils/url'
+import React from 'react';
+import { Settings, Shield, Star, BookOpen, Target } from "lucide-react";
+import type { UserProfile, Progression, Skill, Achievement, Goal, Badge } from "../../types";
 
-interface ProfilePanelProps {
-  profile: UserProfile
-  progression: Progression
-  goals: Goal[]
-  achievements: Achievement[]
-  skills: Skill[]
-  onEditProfile?: () => void
-}
+type ProfilePanelProps = {
+  profile: UserProfile;
+  progression: Progression;
+  skills: Skill[];
+  achievements?: any;
+  goals?: any;
+  badges?: any;
+  isCurrentUser: boolean;
+  onEditProfile: () => void;
+};
 
-export function ProfilePanel({ profile, progression, goals, achievements, skills, onEditProfile }: ProfilePanelProps) {
-  const level = calculateLevel(progression.xp)
-    
+export function ProfilePanel({ profile, progression, skills, isCurrentUser, onEditProfile }: ProfilePanelProps) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
-      {/* Banner */}
-      <div 
-        style={{ 
-          height: '180px', 
-          width: '100%', 
-          borderRadius: '16px',
-          background: profile.banner 
-            ? `url(${profile.banner}) center/cover no-repeat` 
-            : 'linear-gradient(135deg, var(--primary) 0%, #6366f1 100%)',
-          position: 'relative',
-          overflow: 'hidden'
-        }} 
-      >
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,13,20,0.9), transparent)' }} />
+      {/* Profile Header */}
+      <div className="game-panel" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '24px' }}>
+        <div style={{ width: 100, height: 100, borderRadius: '50%', background: 'var(--bg-secondary)', border: '4px solid var(--accent-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 800, color: 'var(--accent-blue)', overflow: 'hidden' }}>
+          {profile.avatar ? <img src={profile.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : profile.displayName.charAt(0).toUpperCase()}
+        </div>
+        
+        <div style={{ flex: 1 }}>
+          <h1 className="game-title">{profile.displayName}</h1>
+          <p className="game-body" style={{ color: 'var(--accent-blue)', fontWeight: 600, textTransform: 'uppercase', marginTop: '4px' }}>{profile.title || 'Developer'}</p>
+          <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>Level {Math.floor(progression.xp / 1000) + 1}</span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-muted)' }}>{progression.xp} XP</span>
+          </div>
+        </div>
+
+        {isCurrentUser && (
+          <button className="game-btn-primary" style={{ background: 'var(--bg-secondary)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={onEditProfile}>
+            <Settings size={18} />
+            Edit Profile
+          </button>
+        )}
       </div>
 
-      <div style={{ padding: '0 2rem' }}>
-        {/* Profile Info */}
-        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-80px', position: 'relative', zIndex: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-            <div style={{ 
-              borderRadius: '50%', 
-              padding: '6px', 
-              background: 'var(--bg-base)',
-              display: 'inline-block'
-            }}>
-              <Avatar src={profile.avatar} alt={profile.displayName} size={120} showStatus={true} isOnline={true} />
-            </div>
-            
-            {onEditProfile && (
-              <button className="primary-btn" onClick={onEditProfile} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', height: 'fit-content' }}>
-                <Pencil size={16} /> Edit Profile
-              </button>
-            )}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+        
+        {/* Skills Overview */}
+        <div className="game-panel">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <BookOpen size={24} color="var(--accent-blue)" />
+            <h2 className="game-section-title">Combat Skills (Tech)</h2>
           </div>
-
-          <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <h1 style={{ margin: '0 0 0.25rem 0', fontSize: '2rem', fontWeight: 700, color: '#fff' }}>
-                {profile.displayName || profile.username}
-              </h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <p className="muted" style={{ margin: 0, fontSize: '1rem' }}>@{profile.login_id || profile.username}</p>
-                {profile.title && (
-                  <span className="chip" style={{ background: 'rgba(255,255,255,0.1)', color: '#ccc', border: 'none', padding: '0.1rem 0.5rem', fontSize: '0.8rem' }}>
-                    {profile.title}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
-          {/* Operative Stats */}
-          <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Operative Stats</h4>
-            <div style={{ display: 'flex', gap: '2rem', alignItems: 'center', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.9rem', color: '#aaa' }}>Level</span>
-                <strong style={{ fontSize: '1.5rem', color: 'var(--primary)' }}>{level}</strong>
-              </div>
-              
-              <div style={{ flex: 1, paddingLeft: '2rem', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
-                <XpProgressBar xp={progression.xp} />
-              </div>
-            </div>
-          </div>
-
-          {/* Bio */}
-          <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Bio</h4>
-            <div style={{ background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              {profile.bio ? (
-                <p style={{ margin: 0, fontSize: '1rem', lineHeight: 1.6, color: '#ddd', whiteSpace: 'pre-wrap' }}>{profile.bio}</p>
-              ) : (
-                <p className="muted" style={{ margin: 0, fontSize: '1rem', fontStyle: 'italic' }}>No bio added yet.</p>
-              )}
-            </div>
-          </div>
-
-          {/* Skills */}
-          <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Skills</h4>
-            {(() => {
-              const displayableSkills = (profile.displayedSkills || [])
-                .map(id => (skills || []).find(s => s.id === id))
-                .filter(s => s && s.progress >= 50) as typeof skills;
-
-              if (displayableSkills.length === 0) {
-                return <p className="muted" style={{ margin: 0, fontSize: '1rem' }}>No skills to display.</p>
-              }
-
-              return (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  {displayableSkills.map(skill => {
-                    const isMastered = skill.progress >= 100 || skill.status === 'MASTERED'
-                    return (
-                      <div key={skill.id} style={{ 
-                        display: 'inline-flex', 
-                        alignItems: 'center', 
-                        padding: '0.5rem 1rem', 
-                        background: 'rgba(99, 102, 241, 0.1)', 
-                        border: '1px solid rgba(99, 102, 241, 0.2)',
-                        borderRadius: '20px',
-                        color: 'var(--text)',
-                        width: 'max-content'
-                      }}>
-                        <span style={{ fontWeight: 500, fontSize: '0.9rem', display: 'flex', alignItems: 'center' }}>
-                          {skill.name} 
-                          {isMastered && <span style={{ marginLeft: '6px', background: '#10b981', color: '#000', padding: '1px 5px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 800 }}>M</span>}
-                        </span>
-                      </div>
-                    )
-                  })}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {skills.slice(0, 4).map(skill => (
+              <div key={skill.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 600 }}>
+                  <span>{skill.name}</span>
+                  <span style={{ color: 'var(--accent-blue)' }}>Lv. {Math.floor(skill.progress / 20) + 1}</span>
                 </div>
-              )
-            })()}
-          </div>
-
-          {/* Links */}
-          {((profile.contactPublic && profile.contact) || profile.github || profile.linkedin || profile.portfolio) && (
-            <div>
-              <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Links</h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                {profile.github && (
-                  <a href={sanitizeUrl(profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Code size={16} /> GitHub
-                  </a>
-                )}
-                {profile.linkedin && (
-                  <a href={sanitizeUrl(profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Globe size={16} /> LinkedIn
-                  </a>
-                )}
-                {profile.portfolio && (
-                  <a href={sanitizeUrl(profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Link size={16} /> Portfolio
-                  </a>
-                )}
-                {profile.contactPublic && profile.contact && (
-                  <a href={sanitizeUrl(`mailto:${profile.contact}`)} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
-                    <Mail size={16} /> Email
-                  </a>
-                )}
+                <div style={{ width: '100%', height: 8, background: 'var(--bg-main)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--border-light)' }}>
+                  <div style={{ width: `${skill.progress}%`, height: '100%', background: 'var(--accent-blue)', borderRadius: 4 }} />
+                </div>
               </div>
-            </div>
-          )}
-
-          {/* Career Achievements */}
-          <div>
-          {(() => {
-            const dynamic = evaluateDynamicMilestones(progression, skills);
-            const standard = (achievements || []).map(a => ({
-              id: a.id,
-              title: a.title,
-              description: a.description,
-              category: 'Special' as const,
-              icon: a.icon === '???' ? 'Award' : (a.icon || 'Award'),
-              targetValue: 1,
-              progressValue: a.unlocked ? 1 : 0,
-              isUnlocked: a.unlocked,
-              tier: 'bronze' as const
-            }));
-            const combined = [...dynamic, ...standard];
-            return <MilestonesSection dynamicMilestones={combined} displayedIds={profile.displayedAchievements} maxVisible={12} />;
-          })()}
+            ))}
           </div>
-
         </div>
+
+        {/* Stats & Activity */}
+        <div className="game-panel">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Shield size={24} color="var(--accent-gold)" />
+            <h2 className="game-section-title">Adventurer Stats</h2>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ padding: '16px', background: 'var(--bg-main)', borderRadius: '12px', border: '1px solid var(--border-light)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>{progression.streak || 0}</div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Day Streak</div>
+            </div>
+            <div style={{ padding: '16px', background: 'var(--bg-main)', borderRadius: '12px', border: '1px solid var(--border-light)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>{progression.badges || 0}</div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Relics Earned</div>
+            </div>
+            <div style={{ padding: '16px', background: 'var(--bg-main)', borderRadius: '12px', border: '1px solid var(--border-light)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>{skills.length}</div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Skills Mastered</div>
+            </div>
+            <div style={{ padding: '16px', background: 'var(--bg-main)', borderRadius: '12px', border: '1px solid var(--border-light)', textAlign: 'center' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>12</div>
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-muted)' }}>Quests Done</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-  )
+  );
 }
-
