@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus } from 'lucide-react'
 import { DirectChatPanel } from './DirectChatPanel'
 import { GroupChatWindow } from './GroupChatWindow'
@@ -11,7 +11,7 @@ import type { ChatMessage, FriendRelationship, ChatState } from '../../types'
 export function ChatPanel(props: any) {
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
   const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'direct' | 'groups'>('direct')
+  const [activeTab, setActiveTab] = useState<'direct' | 'friends' | 'groups'>('direct')
 
   const {
     groups, groupMembers, groupMessages, createGroup, sendGroupMessage,
@@ -19,7 +19,7 @@ export function ChatPanel(props: any) {
     editGroupMessage, deleteGroupMessageForEveryone
   } = useGroupChat(props.activeUserId)
 
-  const handleTabSwitch = (tab: 'direct' | 'groups') => {
+  const handleTabSwitch = (tab: 'direct' | 'friends' | 'groups') => {
     setActiveTab(tab)
     if (tab === 'direct') {
       setActiveGroupId(null)
@@ -36,6 +36,13 @@ export function ChatPanel(props: any) {
     }
   }
 
+  
+  useEffect(() => {
+    if (props.activeFriendId) {
+      setActiveTab('direct')
+    }
+  }, [props.activeFriendId])
+
   const isGroupActive = !!activeGroupId
 
   return (
@@ -50,6 +57,12 @@ export function ChatPanel(props: any) {
           Direct Messages
         </button>
         <button 
+          onClick={() => handleTabSwitch('friends')}
+          style={{ background: activeTab === 'friends' ? '#8B5CF6' : 'transparent', color: activeTab === 'friends' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'friends' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'friends' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
+        >
+          Friends
+        </button>
+        <button 
           onClick={() => handleTabSwitch('groups')}
           style={{ background: activeTab === 'groups' ? '#8B5CF6' : 'transparent', color: activeTab === 'groups' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'groups' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'groups' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
         >
@@ -58,9 +71,15 @@ export function ChatPanel(props: any) {
       </div>
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-        {activeTab === 'direct' ? (
+        {activeTab === 'direct' && (
            <DirectChatPanel {...props} onSetActiveFriendId={handleSetFriendId} />
-        ) : (
+        )}
+        {activeTab === 'friends' && (
+           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '24px' }}>
+             {props.friendsPanel}
+           </div>
+        )}
+        {activeTab === 'groups' && (
           <>
             {/* Group Sidebar */}
             <div className={'chat-sidebar ' + (isGroupActive ? 'mobile-hidden' : '')} style={{ width: '320px', borderRight: '1px solid rgba(140, 135, 125, 0.12)', display: 'flex', flexDirection: 'column', background: '#FAFAFA', flexShrink: 0 }}>
