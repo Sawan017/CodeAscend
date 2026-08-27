@@ -42,69 +42,98 @@ export function TopBar({
 
   const isActive = (id: string) => activeView === id || activeView.startsWith(id.replace('s', ''))
 
+  const SECTION_COLORS: Record<string, { hex: string, rgb: string }> = {
+    'dashboard': { hex: '#3EA354', rgb: '62, 163, 84' },
+    'learning': { hex: '#3B82F6', rgb: '59, 130, 246' },
+    'projects': { hex: '#F59E0B', rgb: '245, 158, 11' },
+    'achievements': { hex: '#EAB308', rgb: '234, 179, 8' },
+    'chat': { hex: '#8B5CF6', rgb: '139, 92, 246' },
+    'goals': { hex: '#14B8A6', rgb: '20, 184, 166' },
+    'todo': { hex: '#8B5CF6', rgb: '139, 92, 246' },
+    'future': { hex: '#06B6D4', rgb: '6, 182, 212' },
+    'career_world': { hex: '#F43F5E', rgb: '244, 63, 94' },
+    'admin_support': { hex: '#F59E0B', rgb: '245, 158, 11' },
+  }
+
   return (
     <header style={{
       display: 'flex', alignItems: 'center',
-      padding: '0 28px', height: '56px',
-      background: '#FFFFFF',
-      borderBottom: '1px solid rgba(140, 135, 125, 0.12)',
-      position: 'sticky', top: 0, zIndex: 100,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+      padding: '0 24px', height: '64px',
+      margin: '16px 24px', borderRadius: '16px',
+      background: 'rgba(252, 253, 255, 0.85)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(140, 135, 125, 0.15)',
+      position: 'sticky', top: '16px', zIndex: 100,
+      boxShadow: '0 4px 24px -6px rgba(0,0,0,0.05)',
       gap: '0',
     }}>
       {/* ── Brand ── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '32px', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: '40px', flexShrink: 0 }}>
         <div style={{
-          width: '26px', height: '26px',
-          background: 'linear-gradient(135deg, #3EA354, #2f855a)',
-          borderRadius: '6px',
+          width: '32px', height: '32px',
+          background: 'linear-gradient(135deg, #3EA354, #2a7a40)',
+          borderRadius: '8px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: '#fff', fontSize: '0.65rem', fontWeight: 900, letterSpacing: '-0.5px',
-        }}>CA</div>
-        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#1E1D1B', letterSpacing: '-0.3px' }}>
-          Code<span style={{ color: '#3EA354' }}>Ascend</span>
-        </span>
+          color: '#fff', fontSize: '0.85rem', fontWeight: 900, letterSpacing: '-0.5px',
+          boxShadow: '0 2px 8px rgba(62, 163, 84, 0.25)'
+        }}>AR</div>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E1D1B', letterSpacing: '-0.3px', lineHeight: 1.1 }}>
+            ARINOVA
+          </span>
+          <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em', color: '#9A958C', textTransform: 'uppercase' }}>
+            Platform
+          </span>
+        </div>
       </div>
 
       {/* ── Nav Tabs ── */}
-      <nav style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '2px', flex: 1, minWidth: 0 }}>
+      <nav style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '4px', flex: 1, minWidth: 0 }}>
         {sections.map((section) => {
           const Icon = section.icon
           const active = isActive(section.id)
+          const theme = SECTION_COLORS[section.id] || SECTION_COLORS['dashboard']
           return (
             <button
               key={section.id}
               onClick={() => onSelectSection?.(section.id)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '6px',
-                padding: '0 14px', height: '100%',
-                background: 'transparent', border: 'none',
-                color: active ? '#3EA354' : '#5A5750',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '8px 14px',
+                background: active ? `rgba(${theme.rgb}, 0.12)` : 'transparent',
+                border: '1px solid',
+                borderColor: active ? `rgba(${theme.rgb}, 0.15)` : 'transparent',
+                borderRadius: '10px',
+                color: active ? theme.hex : '#5A5750',
                 fontSize: '0.85rem', fontWeight: active ? 700 : 600,
                 cursor: 'pointer', position: 'relative',
-                transition: 'color 0.15s',
+                transition: 'all 0.2s ease',
                 whiteSpace: 'nowrap',
               }}
-              onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#1E1D1B'; }}
-              onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#5A5750'; }}
+              onMouseEnter={e => {
+                if (!active) {
+                  e.currentTarget.style.background = `rgba(${theme.rgb}, 0.06)`
+                  e.currentTarget.style.color = '#1E1D1B'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!active) {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = '#5A5750'
+                }
+              }}
             >
-              <Icon size={16} />
+              <Icon size={16} strokeWidth={active ? 2.5 : 2} style={{ color: active ? 'inherit' : `rgba(${theme.rgb}, 0.75)` }} />
               <span className="topnav-label">{section.label}</span>
 
               {/* Chat unread badge */}
               {section.id === 'chat' && chatUnread > 0 && (
                 <span style={{
-                  background: '#3EA354', color: '#fff', fontSize: '0.6rem', fontWeight: 800,
+                  background: theme.hex, color: '#fff', fontSize: '0.6rem', fontWeight: 800,
                   padding: '1px 5px', borderRadius: '8px', lineHeight: 1.3,
+                  marginLeft: '2px'
                 }}>{chatUnread}</span>
-              )}
-
-              {/* Active underline */}
-              {active && (
-                <div style={{
-                  position: 'absolute', bottom: 0, left: '12px', right: '12px',
-                  height: '2.5px', background: '#3EA354', borderRadius: '2px 2px 0 0',
-                }} />
               )}
             </button>
           )
@@ -114,23 +143,32 @@ export function TopBar({
           <button
             onClick={() => onSelectSection?.('admin_support' as any)}
             style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '0 14px', height: '100%',
-              background: 'transparent', border: 'none',
-              color: activeView === 'admin_support' ? '#f59e0b' : '#9A958C',
-              fontSize: '0.85rem', fontWeight: 600,
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: '8px 14px',
+              background: activeView === 'admin_support' ? 'rgba(245, 158, 11, 0.12)' : 'transparent',
+              border: '1px solid',
+              borderColor: activeView === 'admin_support' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
+              borderRadius: '10px',
+              color: activeView === 'admin_support' ? '#d97706' : '#9A958C',
+              fontSize: '0.85rem', fontWeight: activeView === 'admin_support' ? 700 : 600,
               cursor: 'pointer', position: 'relative',
-              transition: 'color 0.15s',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              if (activeView !== 'admin_support') {
+                e.currentTarget.style.background = 'rgba(140, 135, 125, 0.08)'
+                e.currentTarget.style.color = '#1E1D1B'
+              }
+            }}
+            onMouseLeave={e => {
+              if (activeView !== 'admin_support') {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = '#9A958C'
+              }
             }}
           >
-            <Shield size={16} />
+            <Shield size={16} strokeWidth={activeView === 'admin_support' ? 2.5 : 2} />
             <span className="topnav-label">Admin</span>
-            {activeView === 'admin_support' && (
-              <div style={{
-                position: 'absolute', bottom: 0, left: '12px', right: '12px',
-                height: '2.5px', background: '#f59e0b', borderRadius: '2px 2px 0 0',
-              }} />
-            )}
           </button>
         )}
       </nav>
@@ -141,13 +179,13 @@ export function TopBar({
           <button
             onClick={onOpenActiveSession}
             style={{
-              display: 'flex', alignItems: 'center', gap: '5px',
+              display: 'flex', alignItems: 'center', gap: '6px',
               background: 'rgba(62, 163, 84, 0.08)', border: '1px solid rgba(62, 163, 84, 0.2)',
-              color: '#3EA354', padding: '5px 12px', borderRadius: '100px',
-              fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+              color: '#3EA354', padding: '6px 14px', borderRadius: '100px',
+              fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s',
             }}
           >
-            <PlayCircle size={13} />
+            <PlayCircle size={14} />
             {sessionText}
           </button>
         )}
@@ -168,25 +206,27 @@ export function TopBar({
           <button
             style={{
               position: 'relative',
-              background: 'transparent', border: '1px solid rgba(140, 135, 125, 0.12)',
-              borderRadius: '10px', width: '36px', height: '36px',
+              background: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(140, 135, 125, 0.15)',
+              borderRadius: '50%', width: '38px', height: '38px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#5A5750', cursor: 'pointer', transition: 'all 0.15s',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
             }}
             onClick={onOpenNotifications}
             aria-label="Notifications"
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#F2F1EC'; e.currentTarget.style.color = '#1E1D1B'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5A5750'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.color = '#1E1D1B'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.25)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.color = '#5A5750'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.15)'; e.currentTarget.style.transform = 'none'; }}
           >
-            <Bell size={16} />
+            <Bell size={17} />
             {unreadCount > 0 && (
               <span style={{
                 position: 'absolute', top: -3, right: -3,
                 background: '#D34B4B', color: '#fff',
                 fontSize: '0.55rem', fontWeight: 'bold',
-                width: '15px', height: '15px', borderRadius: '50%',
+                width: '16px', height: '16px', borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 border: '2px solid #FFFFFF',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
               }}>
                 {unreadCount > 99 ? '99+' : unreadCount}
               </span>
@@ -197,29 +237,32 @@ export function TopBar({
         {onOpenSettings && (
           <button
             style={{
-              background: 'transparent', border: '1px solid rgba(140, 135, 125, 0.12)',
-              borderRadius: '10px', width: '36px', height: '36px',
+              background: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(140, 135, 125, 0.15)',
+              borderRadius: '50%', width: '38px', height: '38px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#5A5750', cursor: 'pointer', transition: 'all 0.15s',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
             }}
             onClick={onOpenSettings}
             aria-label="Settings"
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#F2F1EC'; e.currentTarget.style.color = '#1E1D1B'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#5A5750'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.color = '#1E1D1B'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.25)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.color = '#5A5750'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.15)'; e.currentTarget.style.transform = 'none'; }}
           >
-            <SettingsIcon size={16} />
+            <SettingsIcon size={17} />
           </button>
         )}
 
         {/* Profile avatar */}
         <div
           style={{
-            width: '34px', height: '34px', borderRadius: '50%',
+            width: '38px', height: '38px', borderRadius: '50%',
             background: profile.avatar ? 'transparent' : 'linear-gradient(135deg, #3EA354, #2f855a)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontSize: '0.8rem', fontWeight: 800,
+            color: '#fff', fontSize: '0.85rem', fontWeight: 800,
             cursor: 'pointer', overflow: 'hidden', flexShrink: 0,
-            border: '2px solid rgba(140, 135, 125, 0.12)',
+            border: '2px solid rgba(255, 255, 255, 0.8)',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+            marginLeft: '4px'
           }}
           onClick={() => onSelectSection?.('profile' as any)}
           title="View Profile"
@@ -234,3 +277,4 @@ export function TopBar({
     </header>
   )
 }
+

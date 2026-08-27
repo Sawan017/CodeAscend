@@ -1,4 +1,5 @@
-import { Star, Map, Zap, ArrowRight, Award, BookOpen, Flame, Lock, Compass, Folder, Target, Mountain, Sun, Cloud, TreePine, MessageSquare, Check } from "lucide-react";
+import React from "react";
+import { Star, Map, Zap, ArrowRight, Award, BookOpen, Flame, Lock, Compass, Folder, Target, Mountain, Sun, Cloud, TreePine, MessageSquare, Check, Plus, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "../../lib/animations";
 import type { Progression, Goal, UserProfile, Route } from "../../types";
@@ -20,23 +21,23 @@ type DashboardProps = {
 
 const getGreeting = () => {
   const hour = new Date().getHours();
-  if (hour < 12) return "GOOD MORNING";
-  if (hour < 18) return "GOOD AFTERNOON";
-  return "GOOD EVENING";
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+  return "Good evening";
 };
 
-/* Shared card style */
 const card = {
   background: '#fff',
-  borderRadius: '16px',
-  border: '1px solid rgba(140,135,125,0.10)',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+  borderRadius: '20px',
+  border: '1px solid rgba(140, 135, 125, 0.12)',
+  boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
+  overflow: 'hidden'
 } as const;
 
 const sectionTitle = {
-  fontSize: '0.8rem',
+  fontSize: '0.85rem',
   fontWeight: 800 as const,
-  color: '#9A958C',
+  color: '#5A5750',
   letterSpacing: '0.08em',
   textTransform: 'uppercase' as const,
   margin: 0,
@@ -52,10 +53,10 @@ export function Dashboard({
   const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression.xp);
 
   const activeSkill = skills.find((s: any) => s.status === 'IN_PROGRESS' || s.status === 'NOT_STARTED');
+  const topSkills = skills.filter((s: any) => s.status !== 'NOT_STARTED').slice(0, 4);
   const activeProjects = projects.filter((p: any) => p.status === 'IN_PROGRESS');
   const earnedBadges = badges.filter((b: any) => b.earned);
   const completedProjectsCount = projects.filter((p: any) => p.status === 'COMPLETED').length;
-  const masteredSkillsCount = skills.filter((s: any) => s.status === 'MASTERED').length;
   const completedGoalsCount = goals.filter((g: any) => g.status === 'COMPLETED').length;
 
   return (
@@ -64,168 +65,183 @@ export function Dashboard({
       variants={staggerContainer}
       initial="hidden"
       animate="visible"
-      style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}
+      style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}
     >
+      <style>{`
+        .dashboard-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; }
+        .compact-stats { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; padding: 20px 32px; gap: 16px; }
+        @media (max-width: 1100px) {
+          .dashboard-grid { grid-template-columns: 1fr; }
+          .stat-divider { display: none; }
+          .compact-stats { justify-content: center; gap: 32px; }
+        }
+        @media (max-width: 768px) {
+          .hero-landscape { display: none; }
+        }
+      `}</style>
+
       {/* ─── HERO ─── */}
       <motion.div variants={fadeInUp} style={{
         ...card,
-        borderRadius: '20px',
-        padding: '40px 44px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        position: 'relative', overflow: 'hidden', minHeight: 0,
-        boxShadow: '0 4px 20px rgba(62, 163, 84, 0.06)',
+        padding: '48px',
+        position: 'relative',
+        background: 'linear-gradient(135deg, #ffffff 0%, #FAFAFA 100%)',
       }}>
-        {/* subtle gradient accent */}
-        <div style={{
-          position: 'absolute', right: '-60px', bottom: '-80px', width: '350px', height: '350px',
-          background: 'radial-gradient(circle, rgba(62,163,84,0.06) 0%, transparent 70%)',
-          borderRadius: '50%', pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', right: '120px', top: '-40px', width: '200px', height: '200px',
-          background: 'radial-gradient(circle, rgba(58,130,196,0.04) 0%, transparent 60%)',
-          borderRadius: '50%', pointerEvents: 'none',
-        }} />
+        <div className="hero-landscape" style={{ position: 'absolute', right: 0, bottom: 0, width: '450px', height: '100%', pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%)', borderRadius: '50%' }} />
+          <div style={{ position: 'absolute', right: '20%', bottom: '-20%', width: '350px', height: '350px', background: 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)', borderRadius: '50%' }} />
+          <Sun size={90} color="#FBBF24" fill="#FDE68A" style={{ position: 'absolute', top: '20px', right: '80px', opacity: 0.9 }} />
+          <Cloud size={60} color="#E2E8F0" fill="#F8FAFC" style={{ position: 'absolute', top: '50px', right: '220px', opacity: 0.8 }} />
+          <Cloud size={45} color="#E2E8F0" fill="#F8FAFC" style={{ position: 'absolute', top: '90px', right: '40px', opacity: 0.6 }} />
+          <Mountain size={180} color="#CBD5E1" fill="#F1F5F9" style={{ position: 'absolute', bottom: '-20px', right: '160px' }} />
+          <Mountain size={220} color="#94A3B8" fill="#E2E8F0" style={{ position: 'absolute', bottom: '-40px', right: '-20px' }} />
+          <TreePine size={70} color="#34D399" fill="#10B981" style={{ position: 'absolute', bottom: '10px', right: '220px' }} />
+          <TreePine size={50} color="#059669" fill="#047857" style={{ position: 'absolute', bottom: '5px', right: '270px' }} />
+          <TreePine size={90} color="#10B981" fill="#059669" style={{ position: 'absolute', bottom: '-5px', right: '90px' }} />
+          <TreePine size={60} color="#34D399" fill="#10B981" style={{ position: 'absolute', bottom: '15px', right: '40px' }} />
+        </div>
 
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '520px' }}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#3EA354', letterSpacing: '0.1em', marginBottom: '10px' }}>
-            {getGreeting()}, {profile.displayName.toUpperCase()} 👋
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '500px' }}>
+          <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#6366F1', letterSpacing: '0.05em', marginBottom: '12px', textTransform: 'uppercase' }}>
+            {getGreeting()}, {profile.displayName} 👋
           </div>
-          <h1 style={{ fontSize: '2.4rem', fontWeight: 900, color: '#1E1D1B', margin: '0 0 12px', lineHeight: 1.1 }}>
+          <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#1E1D1B', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
             Ready to ascend?
           </h1>
-          <p style={{ fontSize: '1rem', color: '#5A5750', lineHeight: 1.6, margin: '0 0 28px', maxWidth: '420px' }}>
-            Keep learning, building, and growing your path. Your next adventure is waiting.
+          <p style={{ fontSize: '1.05rem', color: '#5A5750', lineHeight: 1.6, margin: '0 0 32px' }}>
+            Keep learning, building, and expanding your knowledge. Your next adventure is waiting.
           </p>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
             <button
               onClick={() => onNavigate({ view: 'learning' })}
               style={{
                 background: '#3EA354', color: '#fff', border: 'none',
-                padding: '10px 24px', borderRadius: '10px', fontSize: '0.92rem', fontWeight: 700,
+                padding: '12px 28px', borderRadius: '12px', fontSize: '0.95rem', fontWeight: 700,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
-                boxShadow: '0 3px 12px rgba(62,163,84,0.25)', transition: 'all 0.15s',
+                boxShadow: '0 4px 14px rgba(62,163,84,0.3)', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 5px 16px rgba(62,163,84,0.3)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 3px 12px rgba(62,163,84,0.25)'; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(62,163,84,0.4)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 14px rgba(62,163,84,0.3)'; }}
             >
-              Continue Learning <ArrowRight size={16} />
+              Continue Learning <ArrowRight size={18} />
             </button>
             <button
               onClick={() => onNavigate({ view: 'learning' })}
               style={{
-                background: '#fff', color: '#5A5750', border: '1px solid rgba(140,135,125,0.2)',
-                padding: '10px 24px', borderRadius: '10px', fontSize: '0.92rem', fontWeight: 700,
-                cursor: 'pointer', transition: 'all 0.15s',
+                background: '#fff', color: '#5A5750', border: '1px solid rgba(140,135,125,0.25)',
+                padding: '12px 28px', borderRadius: '12px', fontSize: '0.95rem', fontWeight: 700,
+                cursor: 'pointer', transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#F7F7F2'; e.currentTarget.style.borderColor = 'rgba(140,135,125,0.35)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = 'rgba(140,135,125,0.2)'; }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#F7F7F2'; e.currentTarget.style.color = '#1E1D1B'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#5A5750'; }}
             >
               Explore Skills
             </button>
           </div>
         </div>
-
-        {/* Landscape illustration */}
-        <div style={{ position: 'relative', zIndex: 1, width: '240px', height: '160px', flexShrink: 0 }}>
-          <Sun size={48} style={{ position: 'absolute', top: 4, right: 30, color: '#f6ad55', opacity: 0.7 }} fill="currentColor" />
-          <Cloud size={36} style={{ position: 'absolute', top: 28, right: 100, color: '#d4dbe4', opacity: 0.6 }} fill="currentColor" />
-          <Mountain size={80} style={{ position: 'absolute', bottom: 16, right: 140, color: '#b8dfc8' }} fill="currentColor" />
-          <Mountain size={110} style={{ position: 'absolute', bottom: 8, right: 50, color: '#7cc99a' }} fill="currentColor" />
-          <TreePine size={44} style={{ position: 'absolute', bottom: 0, right: 14, color: '#3EA354' }} fill="currentColor" />
-          <TreePine size={30} style={{ position: 'absolute', bottom: 0, right: 48, color: '#2f855a' }} fill="currentColor" />
-          <TreePine size={36} style={{ position: 'absolute', bottom: 0, right: 110, color: '#48b96a' }} fill="currentColor" />
-        </div>
       </motion.div>
 
-      {/* ─── STATS ROW ─── */}
-      <motion.div variants={fadeInUp} style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+      {/* ─── PLAYER STATS ─── */}
+      <motion.div variants={fadeInUp} style={{ ...card }} className="compact-stats">
         {[
-          { icon: <Zap size={18} />, value: `${currentXp}`, label: 'XP', color: '#3EA354', bg: 'rgba(62,163,84,0.07)' },
-          { icon: <Flame size={18} />, value: `${progression.streak || 0}`, label: 'Streak', color: '#EB7C31', bg: 'rgba(235,124,49,0.07)' },
-          { icon: <Award size={18} />, value: `${earnedBadges.length}`, label: 'Badges', color: '#E6B022', bg: 'rgba(230,176,34,0.07)' },
-          { icon: <Folder size={18} />, value: `${completedProjectsCount}`, label: 'Projects', color: '#3A82C4', bg: 'rgba(58,130,196,0.07)' },
-          { icon: <Target size={18} />, value: `${completedGoalsCount}`, label: 'Goals', color: '#8B6CC1', bg: 'rgba(139,108,193,0.07)' },
-        ].map((stat, i) => (
-          <div key={i} style={{ ...card, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '10px', background: stat.bg, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {stat.icon}
+          { label: 'Experience', value: currentXp, icon: <Zap size={22} />, color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
+          { label: 'Streak', value: progression.streak || 0, icon: <Flame size={22} />, color: '#F97316', bg: 'rgba(249,115,22,0.1)' },
+          { label: 'Badges', value: earnedBadges.length, icon: <Award size={22} />, color: '#EAB308', bg: 'rgba(234,179,8,0.1)' },
+          { label: 'Projects', value: completedProjectsCount, icon: <Folder size={22} />, color: '#06B6D4', bg: 'rgba(6,182,212,0.1)' },
+          { label: 'Goals', value: completedGoalsCount, icon: <Target size={22} />, color: '#A855F7', bg: 'rgba(168,85,247,0.1)' },
+        ].map((stat, i, arr) => (
+          <React.Fragment key={stat.label}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: 48, height: 48, borderRadius: '14px', background: stat.bg, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {stat.icon}
+              </div>
+              <div>
+                <div style={{ fontSize: '1.4rem', fontWeight: 900, color: '#1E1D1B', lineHeight: 1 }}>{stat.value}</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#9A958C', textTransform: 'uppercase', marginTop: '6px', letterSpacing: '0.05em' }}>{stat.label}</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1E1D1B', lineHeight: 1 }}>{stat.value}</div>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#9A958C', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{stat.label}</div>
-            </div>
-          </div>
+            {i < arr.length - 1 && <div className="stat-divider" style={{ width: '1px', height: '40px', background: 'rgba(140,135,125,0.15)' }} />}
+          </React.Fragment>
         ))}
       </motion.div>
 
       {/* ─── EXPERIENCE BAR ─── */}
-      <motion.div variants={fadeInUp} style={{ ...card, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <motion.div variants={fadeInUp} style={{ ...card, padding: '24px 32px', display: 'flex', alignItems: 'center', gap: '24px' }}>
         <div style={{
-          width: '48px', height: '48px', borderRadius: '12px', background: '#3EA354',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0,
+          width: '64px', height: '64px', borderRadius: '16px',
+          background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          color: '#fff', flexShrink: 0, boxShadow: '0 4px 12px rgba(99,102,241,0.3)'
         }}>
-          <span style={{ fontSize: '0.6rem', fontWeight: 800, opacity: 0.8, lineHeight: 1 }}>LVL</span>
-          <span style={{ fontSize: '1.3rem', fontWeight: 900, lineHeight: 1 }}>{level}</span>
+          <span style={{ fontSize: '0.7rem', fontWeight: 800, opacity: 0.9, lineHeight: 1, marginBottom: '2px' }}>LVL</span>
+          <span style={{ fontSize: '1.8rem', fontWeight: 900, lineHeight: 1 }}>{level}</span>
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.85rem', fontWeight: 700, color: '#5A5750' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '0.9rem', fontWeight: 700, color: '#5A5750' }}>
             <span>Experience Progress</span>
-            <span style={{ color: '#3EA354' }}>{currentXp} / {requiredXp} XP ({Math.round(progress)}%)</span>
+            <span style={{ color: '#6366F1' }}>{currentXp} <span style={{ color: '#9A958C' }}>/ {requiredXp} XP</span> ({Math.round(progress)}%)</span>
           </div>
-          <div style={{ height: '8px', background: '#F2F1EC', borderRadius: '4px', overflow: 'hidden' }}>
+          <div style={{ height: '12px', background: 'rgba(140,135,125,0.1)', borderRadius: '6px', overflow: 'hidden', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}>
             <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: progress + '%' }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              style={{ height: '100%', background: 'linear-gradient(90deg, #3EA354, #48b96a)', borderRadius: '4px' }}
+              initial={{ width: 0 }} animate={{ width: progress + '%' }} transition={{ duration: 1, ease: 'easeOut' }}
+              style={{ height: '100%', background: 'linear-gradient(90deg, #3B82F6, #8B5CF6)', borderRadius: '6px' }}
             />
           </div>
         </div>
       </motion.div>
 
-      {/* ─── CONTINUE LEARNING + ACTIVE PROJECTS (2-col) ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
+      {/* ─── MAIN GRID ROW 1 ─── */}
+      <div className="dashboard-grid">
         {/* Continue Learning */}
-        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3 style={sectionTitle}><BookOpen size={14} color="#3EA354" /> CONTINUE LEARNING</h3>
-          <div style={{ ...card, padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={sectionTitle}><BookOpen size={16} color="#3B82F6" /> CONTINUE LEARNING</h3>
+          <div style={{ ...card, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             {activeSkill ? (
               <>
                 <div>
-                  <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#3EA354', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>CURRENT PATHWAY</div>
-                  <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1D1B', margin: '0 0 14px' }}>{activeSkill.name}</h4>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.8rem', fontWeight: 600, color: '#9A958C' }}>
-                    <span>Level {activeSkill.level || 1}</span>
-                    <span>{activeSkill.progress || 0}%</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '12px', background: 'rgba(59,130,246,0.1)', color: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BookOpen size={24} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#3B82F6', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>CURRENT PATHWAY</div>
+                      <h4 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>{activeSkill.name}</h4>
+                    </div>
                   </div>
-                  <div style={{ height: '5px', background: '#F2F1EC', borderRadius: '3px', overflow: 'hidden', marginBottom: '20px' }}>
-                    <div style={{ width: (activeSkill.progress || 0) + '%', height: '100%', background: '#3EA354', borderRadius: '3px' }} />
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 700, color: '#9A958C' }}>
+                    <span>Level {activeSkill.level || 1}</span>
+                    <span style={{ color: '#1E1D1B' }}>{activeSkill.progress || 0}%</span>
+                  </div>
+                  <div style={{ height: '8px', background: 'rgba(140,135,125,0.15)', borderRadius: '4px', overflow: 'hidden', marginBottom: '32px' }}>
+                    <div style={{ width: (activeSkill.progress || 0) + '%', height: '100%', background: '#3B82F6', borderRadius: '4px' }} />
                   </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#E6B022', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Star size={14} fill="currentColor" /> +250 XP
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(140,135,125,0.1)', paddingTop: '20px' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#5A5750', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Zap size={16} color="#EAB308" fill="#FDE047" /> Earn up to +250 XP
                   </span>
                   <button onClick={() => onNavigate({ view: 'learning' })} style={{
-                    background: 'rgba(62,163,84,0.08)', color: '#3EA354', border: '1px solid rgba(62,163,84,0.15)',
-                    padding: '7px 18px', borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem',
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.15s',
+                    background: 'rgba(59,130,246,0.1)', color: '#3B82F6', border: 'none',
+                    padding: '10px 20px', borderRadius: '10px', fontWeight: 700, fontSize: '0.9rem',
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', transition: 'all 0.2s',
                   }}
-                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(62,163,84,0.14)'}
-                    onMouseLeave={e => e.currentTarget.style.background = 'rgba(62,163,84,0.08)'}
-                  >Continue <ArrowRight size={14} /></button>
+                    onMouseEnter={e => { e.currentTarget.style.background = '#3B82F6'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(59,130,246,0.1)'; e.currentTarget.style.color = '#3B82F6'; }}
+                  >Resume <ArrowRight size={16} /></button>
                 </div>
               </>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '12px', padding: '20px 0' }}>
-                <div style={{ width: 52, height: 52, background: '#F7F7F2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9A958C' }}><BookOpen size={24} /></div>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>Ready to start learning?</h4>
-                <p style={{ color: '#9A958C', margin: 0, fontSize: '0.88rem' }}>Choose a skill and begin your journey.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '16px', padding: '32px 0' }}>
+                <div style={{ width: 64, height: 64, background: 'rgba(59,130,246,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>
+                  <BookOpen size={32} />
+                </div>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>Ready to start learning?</h4>
+                <p style={{ color: '#5A5750', margin: 0, fontSize: '0.95rem', maxWidth: '280px' }}>Choose a skill from the academy and begin your journey.</p>
                 <button onClick={() => onNavigate({ view: 'learning' })} style={{
-                  background: '#3EA354', color: '#fff', border: 'none', padding: '8px 20px',
-                  borderRadius: '8px', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer', marginTop: '4px',
+                  background: '#3B82F6', color: '#fff', border: 'none', padding: '12px 28px',
+                  borderRadius: '12px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', marginTop: '12px',
+                  boxShadow: '0 4px 14px rgba(59,130,246,0.3)'
                 }}>Browse Skills</button>
               </div>
             )}
@@ -233,193 +249,139 @@ export function Dashboard({
         </motion.div>
 
         {/* Active Projects */}
-        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3 style={sectionTitle}><Folder size={14} color="#3A82C4" /> ACTIVE PROJECTS</h3>
-          <div style={{ ...card, padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: activeProjects.length > 0 ? 'flex-start' : 'center' }}>
+        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={sectionTitle}><Folder size={16} color="#06B6D4" /> ACTIVE PROJECTS</h3>
+          <div style={{ ...card, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: activeProjects.length > 0 ? 'flex-start' : 'center' }}>
             {activeProjects.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
                 {activeProjects.slice(0, 3).map((project: any) => (
                   <div key={project.id} style={{
-                    padding: '14px 16px', borderRadius: '12px', border: '1px solid rgba(140,135,125,0.10)', background: '#FAFAF8',
+                    padding: '16px 20px', borderRadius: '14px', border: '1px solid rgba(140,135,125,0.12)', background: '#fff',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    cursor: 'pointer', transition: 'all 0.15s',
+                    cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
                   }}
                     onClick={() => onNavigate({ view: 'projects' })}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.borderColor = 'rgba(140,135,125,0.2)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'rgba(140,135,125,0.10)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.06)'; e.currentTarget.style.borderColor = 'rgba(6,182,212,0.3)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)'; e.currentTarget.style.borderColor = 'rgba(140,135,125,0.12)'; }}
                   >
-                    <div>
-                      <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1E1D1B', marginBottom: '3px' }}>{project.name}</div>
-                      <div style={{ fontSize: '0.78rem', color: '#9A958C', fontWeight: 600 }}>{project.techStack?.slice(0, 3).join(', ') || 'Project'}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(6,182,212,0.1)', color: '#06B6D4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Folder size={20} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '1rem', fontWeight: 800, color: '#1E1D1B', marginBottom: '4px' }}>{project.name}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#9A958C', fontWeight: 600 }}>{project.techStack?.slice(0, 3).join(' • ') || 'Project'}</div>
+                      </div>
                     </div>
-                    <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#3A82C4', background: 'rgba(58,130,196,0.08)', padding: '3px 8px', borderRadius: '6px' }}>IN PROGRESS</span>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#06B6D4', background: 'rgba(6,182,212,0.1)', padding: '4px 10px', borderRadius: '8px' }}>IN PROGRESS</span>
                   </div>
                 ))}
+                {activeProjects.length > 3 && (
+                   <button onClick={() => onNavigate({ view: 'projects' })} style={{
+                     marginTop: 'auto', background: 'transparent', border: '1px solid rgba(140,135,125,0.2)', padding: '10px',
+                     borderRadius: '10px', color: '#5A5750', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer'
+                   }}>View All Projects</button>
+                )}
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '12px', padding: '20px 0' }}>
-                <div style={{ width: 52, height: 52, background: '#F7F7F2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9A958C' }}><Folder size={24} /></div>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>No active projects yet.</h4>
-                <p style={{ color: '#9A958C', margin: 0, fontSize: '0.88rem' }}>Start building something and turn ideas into XP.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px', padding: '32px 0' }}>
+                <div style={{ width: 64, height: 64, background: 'rgba(6,182,212,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#06B6D4' }}>
+                  <Folder size={32} />
+                </div>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>No active projects yet.</h4>
+                <p style={{ color: '#5A5750', margin: 0, fontSize: '0.95rem', maxWidth: '280px' }}>Start building something and turn your ideas into XP.</p>
                 <button onClick={() => onNavigate({ view: 'projects' })} style={{
-                  background: 'rgba(58,130,196,0.08)', color: '#3A82C4', border: 'none', padding: '8px 20px',
-                  borderRadius: '8px', fontWeight: 700, fontSize: '0.88rem', cursor: 'pointer', marginTop: '4px',
-                }}>Create Project</button>
+                  background: 'rgba(6,182,212,0.1)', color: '#0891B2', border: 'none', padding: '12px 28px',
+                  borderRadius: '12px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', marginTop: '12px',
+                }}>Explore Projects</button>
               </div>
             )}
           </div>
         </motion.div>
       </div>
 
-      {/* ─── TODAY'S OBJECTIVE + YOUR JOURNEY (2-col) ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: '20px' }}>
-
-        {/* Today's Objective */}
-        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3 style={sectionTitle}><Target size={14} color="#EB7C31" /> TODAY'S OBJECTIVE</h3>
-          <div style={{ ...card, padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(235,124,49,0.07)', color: '#EB7C31', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '14px' }}>
-                <Target size={20} />
-              </div>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E1D1B', margin: '0 0 8px' }}>Complete a learning session</h4>
-              <p style={{ fontSize: '0.88rem', color: '#9A958C', margin: '0 0 20px', lineHeight: 1.5 }}>
-                Maintain your streak by completing at least one lesson today.
-              </p>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#5A5750', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#EB7C31' }} /> Reward: +100 XP
-              </div>
-              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: '#5A5750', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#EB7C31' }} /> Streak → {(progression.streak || 0) + 1} days
-              </div>
-              <button onClick={() => onNavigate({ view: 'learning' })} style={{
-                width: '100%', padding: '10px', background: '#1E1D1B', color: '#fff', border: 'none',
-                borderRadius: '10px', fontWeight: 700, fontSize: '0.88rem', marginTop: '6px', cursor: 'pointer', transition: 'background 0.15s',
-              }}
-                onMouseEnter={e => e.currentTarget.style.background = '#333'}
-                onMouseLeave={e => e.currentTarget.style.background = '#1E1D1B'}
-              >Start Session</button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Your Journey */}
-        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3 style={sectionTitle}><Map size={14} color="#8B6CC1" /> YOUR JOURNEY</h3>
-          <div style={{ ...card, padding: '32px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative', justifyContent: 'space-between', padding: '0 20px' }}>
-              {/* Track */}
-              <div style={{ position: 'absolute', top: '50%', left: '44px', right: '44px', height: '3px', background: '#F2F1EC', transform: 'translateY(-50%)', zIndex: 0, borderRadius: '2px' }} />
-              <div style={{ position: 'absolute', top: '50%', left: '44px', width: '25%', height: '3px', background: '#3EA354', transform: 'translateY(-50%)', zIndex: 0, borderRadius: '2px' }} />
-
-              {[
-                { label: 'Starting Point', icon: <Check size={18} />, done: true, current: false },
-                { label: 'Learning', icon: <Compass size={20} />, done: false, current: true },
-                { label: 'Building', icon: <Lock size={18} />, done: false, current: false },
-                { label: 'Mastery', icon: <Lock size={18} />, done: false, current: false },
-              ].map((node, i) => (
-                <div key={i} style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', transform: i % 2 === 1 ? 'translateY(-16px)' : 'none' }}>
-                  <div style={{
-                    width: node.current ? 48 : 40, height: node.current ? 48 : 40, borderRadius: '50%',
-                    background: node.done ? '#3EA354' : node.current ? '#3A82C4' : '#fff',
-                    color: node.done || node.current ? '#fff' : '#9A958C',
-                    border: !node.done && !node.current ? '2px solid rgba(140,135,125,0.2)' : 'none',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: node.current ? '0 0 0 4px #fff, 0 2px 10px rgba(58,130,196,0.25)' : node.done ? '0 0 0 4px #fff, 0 2px 8px rgba(62,163,84,0.2)' : '0 0 0 3px #fff',
-                  }}>
-                    {node.icon}
+      {/* ─── MAIN GRID ROW 2 ─── */}
+      <div className="dashboard-grid">
+        {/* Skill Mastery */}
+        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={sectionTitle}><Star size={16} color="#8B5CF6" /> SKILL MASTERY</h3>
+          <div style={{ ...card, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: topSkills.length > 0 ? 'flex-start' : 'center' }}>
+            {topSkills.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {topSkills.map((skill: any) => (
+                  <div key={skill.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'rgba(139,92,246,0.1)', color: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Star size={16} />
+                        </div>
+                        <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#1E1D1B' }}>{skill.name}</span>
+                      </div>
+                      <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#5A5750' }}>{skill.progress || 0}%</span>
+                    </div>
+                    <div style={{ height: '6px', background: 'rgba(140,135,125,0.15)', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div style={{ width: (skill.progress || 0) + '%', height: '100%', background: '#8B5CF6', borderRadius: '3px' }} />
+                    </div>
                   </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 800, color: node.done || node.current ? '#1E1D1B' : '#9A958C' }}>{node.label}</div>
-                    {node.current && <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#3A82C4' }}>Current</div>}
-                    {node.done && <div style={{ fontSize: '0.7rem', fontWeight: 700, color: '#3EA354' }}>Done</div>}
-                  </div>
+                ))}
+                <button onClick={() => onNavigate({ view: 'learning' })} style={{
+                  marginTop: 'auto', background: 'transparent', border: '1px dashed rgba(139,92,246,0.3)', padding: '12px',
+                  borderRadius: '10px', color: '#8B5CF6', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                }}>
+                  <Plus size={18} /> Add More Skills
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px', padding: '32px 0' }}>
+                <div style={{ width: 64, height: 64, background: 'rgba(139,92,246,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8B5CF6' }}>
+                  <Star size={32} />
                 </div>
-              ))}
-            </div>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>No skills in progress.</h4>
+                <p style={{ color: '#5A5750', margin: 0, fontSize: '0.95rem', maxWidth: '280px' }}>Start tracking your learning to see your mastery grow.</p>
+              </div>
+            )}
           </div>
         </motion.div>
-      </div>
-
-      {/* ─── ACHIEVEMENTS + QUICK ACTIONS (2-col) ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
         {/* Recent Achievements */}
-        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3 style={sectionTitle}><Star size={14} color="#E6B022" /> RECENT ACHIEVEMENTS</h3>
-          <div style={{ ...card, padding: '24px', flex: 1 }}>
+        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={sectionTitle}><Trophy size={16} color="#EAB308" /> RECENT ACHIEVEMENTS</h3>
+          <div style={{ ...card, padding: '32px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: earnedBadges.length > 0 ? 'flex-start' : 'center' }}>
             {earnedBadges.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', height: '100%' }}>
                 {earnedBadges.slice(0, 3).map((badge: any) => (
-                  <div key={badge.id} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(230,176,34,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', border: '1px solid rgba(230,176,34,0.12)', flexShrink: 0 }}>
+                  <div key={badge.id} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '14px', background: 'linear-gradient(135deg, #FDE047, #EAB308)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', boxShadow: '0 4px 10px rgba(234,179,8,0.3)', flexShrink: 0 }}>
                       {badge.icon || '🏆'}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#1E1D1B', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{badge.title}</div>
-                      <div style={{ fontSize: '0.78rem', color: '#9A958C' }}>{badge.requirement}</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 800, color: '#1E1D1B', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{badge.title}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#5A5750', lineHeight: 1.4 }}>{badge.requirement}</div>
                     </div>
                   </div>
                 ))}
                 <button onClick={() => onNavigate({ view: 'achievements' })} style={{
-                  background: 'transparent', color: '#5A5750', border: '1px solid rgba(140,135,125,0.15)',
-                  padding: '8px', borderRadius: '8px', fontWeight: 700, fontSize: '0.82rem',
-                  cursor: 'pointer', width: '100%', marginTop: '4px', transition: 'all 0.15s',
+                  marginTop: 'auto', background: 'rgba(234,179,8,0.1)', color: '#CA8A04', border: 'none',
+                  padding: '12px', borderRadius: '12px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.background = '#F7F7F2'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(234,179,8,0.15)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(234,179,8,0.1)'}
                 >View All Achievements</button>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '12px', padding: '16px 0' }}>
-                <div style={{ width: 48, height: 48, background: '#F7F7F2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9A958C' }}><Star size={22} /></div>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>Your first achievement is waiting.</h4>
-                <p style={{ color: '#9A958C', margin: 0, fontSize: '0.88rem' }}>Complete a milestone to unlock it.</p>
-                <button onClick={() => onNavigate({ view: 'achievements' })} style={{
-                  background: 'rgba(230,176,34,0.08)', color: '#c9920e', border: 'none', padding: '8px 20px',
-                  borderRadius: '8px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', marginTop: '4px',
-                }}>View Achievements</button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px', padding: '32px 0' }}>
+                <div style={{ width: 64, height: 64, background: 'rgba(234,179,8,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EAB308' }}>
+                  <Trophy size={32} />
+                </div>
+                <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1E1D1B', margin: 0 }}>Your first achievement is waiting.</h4>
+                <p style={{ color: '#5A5750', margin: 0, fontSize: '0.95rem', maxWidth: '280px' }}>Complete a milestone to unlock it.</p>
               </div>
             )}
           </div>
         </motion.div>
-
-        {/* Quick Actions */}
-        <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h3 style={sectionTitle}><Zap size={14} color="#8B6CC1" /> QUICK ACTIONS</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', flex: 1 }}>
-            {[
-              { label: 'Learn a Skill', icon: <BookOpen size={16} />, color: '#3EA354', bg: 'rgba(62,163,84,0.06)', view: 'learning' as const },
-              { label: 'Start a Project', icon: <Folder size={16} />, color: '#3A82C4', bg: 'rgba(58,130,196,0.06)', view: 'projects' as const },
-              { label: 'View Achievements', icon: <Star size={16} />, color: '#E6B022', bg: 'rgba(230,176,34,0.06)', view: 'achievements' as const },
-              { label: 'Open Chat', icon: <MessageSquare size={16} />, color: '#8B6CC1', bg: 'rgba(139,108,193,0.06)', view: 'chat' as const },
-            ].map((action, i) => (
-              <div key={i} onClick={() => onNavigate({ view: action.view })} style={{
-                ...card, padding: '16px', display: 'flex', flexDirection: 'column', gap: '10px',
-                cursor: 'pointer', transition: 'all 0.15s',
-              }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.06)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.03)'; }}
-              >
-                <div style={{ width: 32, height: 32, borderRadius: '8px', background: action.bg, color: action.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{action.icon}</div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#1E1D1B' }}>{action.label}</div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </div>
 
-      {/* ─── FOOTER ─── */}
-      <motion.div variants={fadeInUp} style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        borderTop: '1px solid rgba(140,135,125,0.10)', paddingTop: '20px', marginTop: '8px',
-        color: '#9A958C', fontSize: '0.78rem', fontWeight: 600,
-      }}>
-        <span>CODEASCEND v4.0</span>
-        <span>Your Adventure Continues.</span>
-      </motion.div>
     </motion.div>
   );
 }

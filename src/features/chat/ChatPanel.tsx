@@ -8,46 +8,17 @@ import { useGroupChat } from '../../hooks/useGroupChat'
 import { Avatar } from '../../components/Avatar'
 import type { ChatMessage, FriendRelationship, ChatState } from '../../types'
 
-type ChatPanelProps = {
-  activeUserId: string
-  chatState: ChatState
-  friendState: { relationships: FriendRelationship[] }
-  incomingMessages: ChatMessage[]
-  onSendMessage: (receiverId: string, content: string) => void
-  onMarkRead: (friendId: string, timestamp: string) => void
-  onOpenProfile: (userId: string) => void
-  activeFriendId: string | null
-  onSetActiveFriendId: (userId: string | null) => void
-  onlineUsers?: string[]
-  onEditMessage?: (messageId: string, content: string) => void
-  onDeleteForMe?: (messageId: string) => void
-  onDeleteForEveryone?: (messageId: string) => void
-  onToggleMute?: (friendId: string) => void
-  onToggleBlock?: (friendId: string) => void
-  onClearChat?: (friendId: string) => void
-}
-
-export function ChatPanel(props: ChatPanelProps) {
+export function ChatPanel(props: any) {
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'direct' | 'groups'>('direct')
 
   const {
-    groups,
-    groupMembers,
-    groupMessages,
-    createGroup,
-    sendGroupMessage,
-    updateGroup,
-    addMembers,
-    removeMember,
-    updateMemberRole,
-    deleteGroup,
-    editGroupMessage,
-    deleteGroupMessageForEveryone
+    groups, groupMembers, groupMessages, createGroup, sendGroupMessage,
+    updateGroup, addMembers, removeMember, updateMemberRole, deleteGroup,
+    editGroupMessage, deleteGroupMessageForEveryone
   } = useGroupChat(props.activeUserId)
 
-  // Switch tabs handler
   const handleTabSwitch = (tab: 'direct' | 'groups') => {
     setActiveTab(tab)
     if (tab === 'direct') {
@@ -68,18 +39,19 @@ export function ChatPanel(props: ChatPanelProps) {
   const isGroupActive = !!activeGroupId
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, height: 'calc(100vh - 140px)' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, height: 'calc(100vh - 120px)', background: '#fff', borderRadius: '20px', border: '1px solid rgba(140, 135, 125, 0.12)', boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+      
       {/* Header Tabs */}
-      <div style={{ display: 'flex', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-light)', gap: '1rem', background: 'var(--bg-surface)' }}>
+      <div style={{ display: 'flex', padding: '16px 24px', borderBottom: '1px solid rgba(140, 135, 125, 0.12)', gap: '16px', background: '#FAFAFA' }}>
         <button 
           onClick={() => handleTabSwitch('direct')}
-          style={{ background: activeTab === 'direct' ? 'var(--accent-blue)' : 'transparent', color: activeTab === 'direct' ? '#000' : 'var(--text-main)', border: '1px solid ' + (activeTab === 'direct' ? 'var(--accent-blue)' : 'var(--border-light)'), padding: '8px 16px', borderRadius: '100px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          style={{ background: activeTab === 'direct' ? '#8B5CF6' : 'transparent', color: activeTab === 'direct' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'direct' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'direct' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
         >
           Direct Messages
         </button>
         <button 
           onClick={() => handleTabSwitch('groups')}
-          style={{ background: activeTab === 'groups' ? 'var(--accent-blue)' : 'transparent', color: activeTab === 'groups' ? '#000' : 'var(--text-main)', border: '1px solid ' + (activeTab === 'groups' ? 'var(--accent-blue)' : 'var(--border-light)'), padding: '8px 16px', borderRadius: '100px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          style={{ background: activeTab === 'groups' ? '#8B5CF6' : 'transparent', color: activeTab === 'groups' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'groups' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'groups' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
         >
           Groups
         </button>
@@ -91,29 +63,29 @@ export function ChatPanel(props: ChatPanelProps) {
         ) : (
           <>
             {/* Group Sidebar */}
-            <div className={'chat-sidebar ' + (isGroupActive ? 'mobile-hidden' : '')} style={{ width: '320px', borderRight: '1px solid var(--border-light)', display: 'flex', flexDirection: 'column', background: 'var(--bg-main)', flexShrink: 0 }}>
-              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h4 style={{ margin: 0 }}>Groups</h4>
-                <button onClick={() => setCreateModalOpen(true)} className="icon-button" style={{ background: 'var(--accent-blue)', color: '#000', padding: '6px', borderRadius: '50%', border: 'none', cursor: 'pointer' }}>
-                  <Plus size={16} />
+            <div className={'chat-sidebar ' + (isGroupActive ? 'mobile-hidden' : '')} style={{ width: '320px', borderRight: '1px solid rgba(140, 135, 125, 0.12)', display: 'flex', flexDirection: 'column', background: '#FAFAFA', flexShrink: 0 }}>
+              <div style={{ padding: '24px', borderBottom: '1px solid rgba(140, 135, 125, 0.12)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h4 style={{ margin: 0, fontSize: '1.1rem', color: '#1E1D1B', fontWeight: 800 }}>Groups</h4>
+                <button onClick={() => setCreateModalOpen(true)} style={{ background: '#8B5CF6', color: '#fff', padding: '8px', borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)' }}>
+                  <Plus size={18} />
                 </button>
               </div>
               <div style={{ flex: 1, overflowY: 'auto' }}>
                 {groups.length === 0 ? (
-                  <p className="muted" style={{ padding: '1.5rem', textAlign: 'center' }}>You are not in any groups yet.</p>
+                  <p style={{ padding: '32px 24px', textAlign: 'center', color: '#9A958C', fontSize: '0.95rem' }}>You are not in any groups yet.</p>
                 ) : (
-                  groups.map(g => {
+                  groups.map((g: any) => {
                     const lastMsg = groupMessages[g.id] && groupMessages[g.id].length > 0 ? groupMessages[g.id][groupMessages[g.id].length - 1] : null;
                     return (
                       <div 
                         key={g.id}
                         onClick={() => setActiveGroupId(g.id)}
-                        style={{ padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', background: activeGroupId === g.id ? 'var(--bg-surface)' : 'transparent', borderBottom: '1px solid var(--border-light)', transition: 'background 0.2s' }}
+                        style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', background: activeGroupId === g.id ? '#fff' : 'transparent', borderBottom: '1px solid rgba(140, 135, 125, 0.08)', transition: 'background 0.2s' }}
                       >
-                        <Avatar src={g.avatar}  size={48} />
+                        <Avatar src={g.avatar} size={48} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <h4 style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '1rem' }}>{g.name}</h4>
-                          <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.8rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <h4 style={{ margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '1.05rem', color: '#1E1D1B', fontWeight: 700 }}>{g.name}</h4>
+                          <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#9A958C', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {lastMsg ? lastMsg.content : 'No messages yet'}
                           </p>
                         </div>
@@ -125,26 +97,26 @@ export function ChatPanel(props: ChatPanelProps) {
             </div>
 
             {/* Group Main Content */}
-            <div className={'chat-main ' + (!isGroupActive ? 'mobile-hidden' : '')} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-surface)' }}>
+            <div className={'chat-main ' + (!isGroupActive ? 'mobile-hidden' : '')} style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#fff' }}>
               {activeGroupId ? (() => {
                 const hiddenMsgs = props.chatState.hiddenMessages || []
                 const clearedAt = props.chatState.clearedChats?.[activeGroupId] || '1970-01-01T00:00:00.000Z'
                 const clearedTime = new Date(clearedAt).getTime()
-                const filteredMessages = (groupMessages[activeGroupId] || []).filter(m => !hiddenMsgs.includes(m.id) && new Date(m.created_at).getTime() > clearedTime)
+                const filteredMessages = (groupMessages[activeGroupId] || []).filter((m: any) => !hiddenMsgs.includes(m.id) && new Date(m.created_at).getTime() > clearedTime)
                 return (
                   <GroupChatWindow 
                     activeUserId={props.activeUserId}
-                    group={groups.find(g => g.id === activeGroupId)!}
+                    group={groups.find((g: any) => g.id === activeGroupId)!}
                     members={groupMembers[activeGroupId] || []}
                     messages={filteredMessages}
                     onSendMessage={sendGroupMessage}
                     onClose={() => setActiveGroupId(null)}
-                    onRemoveMember={uid => removeMember(activeGroupId, uid)}
-                    onUpdateRole={(uid, role) => updateMemberRole(activeGroupId, uid, role)}
-                    onAddMembers={uids => addMembers(activeGroupId, uids)}
+                    onRemoveMember={(uid: any) => removeMember(activeGroupId, uid)}
+                    onUpdateRole={(uid: any, role: any) => updateMemberRole(activeGroupId, uid, role)}
+                    onAddMembers={(uids: any) => addMembers(activeGroupId, uids)}
                     onLeaveGroup={() => { removeMember(activeGroupId, props.activeUserId); setActiveGroupId(null); }}
                     onDeleteGroup={() => { deleteGroup(activeGroupId); setActiveGroupId(null); }}
-                    onUpdateGroup={(updates) => updateGroup(activeGroupId, updates)}
+                    onUpdateGroup={(updates: any) => updateGroup(activeGroupId, updates)}
                     onEditMessage={editGroupMessage}
                     onDeleteForMe={props.onDeleteForMe}
                     onDeleteForEveryone={deleteGroupMessageForEveryone}
@@ -154,7 +126,7 @@ export function ChatPanel(props: ChatPanelProps) {
                   />
                 )
               })() : (
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9A958C', fontSize: '1.1rem' }}>
                   <p>Select a group to start chatting</p>
                 </div>
               )}
@@ -167,7 +139,7 @@ export function ChatPanel(props: ChatPanelProps) {
         <CreateGroupModal 
           activeUserId={props.activeUserId}
           onClose={() => setCreateModalOpen(false)}
-          onCreate={async (name, desc, avatar, members) => {
+          onCreate={async (name: string, desc: string, avatar: string, members: any[]) => {
             try {
               const group = await createGroup(name, desc, avatar, members)
               setCreateModalOpen(false)
@@ -185,3 +157,4 @@ export function ChatPanel(props: ChatPanelProps) {
     </div>
   )
 }
+

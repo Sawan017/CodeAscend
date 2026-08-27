@@ -74,17 +74,17 @@ export function AddMembersModal({
       style={{ position: 'fixed', inset: 0, zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(5px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'var(--bg-surface)', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '500px', maxHeight: 'calc(100vh - 2rem)', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px rgba(0,0,0,0.5)', margin: '1rem' }}>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: '#fff', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '500px', maxHeight: 'calc(100vh - 2rem)', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px rgba(255,255,255,0.8)', margin: '1rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#fff' }}>Add Members</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={20} /></button>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}><X size={20} /></button>
         </div>
 
         <div style={{ maxHeight: '300px', overflowY: 'auto', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px', marginBottom: '16px' }}>
           {loading ? (
-            <div style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading friends...</div>
+            <div style={{ padding: '10px', textAlign: 'center', color: '#9A958C' }}>Loading friends...</div>
           ) : availableFriends.length === 0 ? (
-            <div style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>No available friends to add.</div>
+            <div style={{ padding: '10px', textAlign: 'center', color: '#9A958C' }}>No available friends to add.</div>
           ) : (
             availableFriends.map(f => (
               <div key={f.userId} onClick={() => toggleFriend(f.userId)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', borderRadius: '6px', background: selectedFriends.includes(f.userId) ? 'rgba(6, 182, 212, 0.1)' : 'transparent', cursor: 'pointer', transition: 'all 0.2s' }}>
@@ -98,7 +98,7 @@ export function AddMembersModal({
           )}
         </div>
 
-        <button onClick={handleAdd} disabled={selectedFriends.length === 0 || adding} style={{ width: '100%', padding: '12px', background: (selectedFriends.length === 0 || adding) ? 'var(--bg-surface-sunken)' : 'var(--cyan)', color: (selectedFriends.length === 0 || adding) ? 'var(--text-muted)' : '#000', border: '1px solid var(--border)', borderRadius: '8px', fontWeight: 600, cursor: (selectedFriends.length === 0 || adding) ? 'not-allowed' : 'pointer', opacity: adding ? 0.7 : 1 }}>
+        <button onClick={handleAdd} disabled={selectedFriends.length === 0 || adding} style={{ width: '100%', padding: '12px', background: (selectedFriends.length === 0 || adding) ? 'var(--bg-surface-sunken)' : 'var(--cyan)', color: (selectedFriends.length === 0 || adding) ? '#9A958C' : '#000', border: '1px solid var(--border)', borderRadius: '8px', fontWeight: 600, cursor: (selectedFriends.length === 0 || adding) ? 'not-allowed' : 'pointer', opacity: adding ? 0.7 : 1 }}>
           {adding ? 'Adding...' : `Add ${selectedFriends.length} Members`}
         </button>
       </motion.div>
@@ -106,3 +106,4 @@ export function AddMembersModal({
     document.body
   )
 }
+

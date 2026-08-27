@@ -301,17 +301,17 @@ export function evaluateDynamicMilestones(progression: Progression, skills: Skil
 export function generateTimelineEvents(projects: import('../types').Project[], skills: import('../types').Skill[], _achievements: import('../types').Achievement[]): import('../types').TimelineEvent[] {
   const events: import('../types').TimelineEvent[] = []
 
-  const jsSkill = skills.find(s => s.name.toLowerCase().includes('javascript'))
+  const jsSkill = skills.find(s => String(s.canonicalName || s.name || '').toLowerCase().includes('javascript'))
   if (jsSkill && jsSkill.started) {
     events.push({ id: 't-js', date: jsSkill.started.slice(0, 4), title: 'Started JavaScript', description: 'Began practicing core logic and problem solving.', category: 'Learning', relatedSkill: jsSkill.name, relatedProject: undefined })
   }
 
-  const reactSkill = skills.find(s => s.name.toLowerCase().includes('react'))
+  const reactSkill = skills.find(s => String(s.canonicalName || s.name || '').toLowerCase().includes('react'))
   if (reactSkill && reactSkill.started) {
     events.push({ id: 't-react', date: reactSkill.started.slice(0, 4), title: 'Started React', description: 'Moved into component-based thinking and UI systems.', category: 'Learning', relatedSkill: reactSkill.name, relatedProject: undefined })
   }
   
-  const backendSkill = skills.find(s => s.name.toLowerCase().includes('backend') || s.name.toLowerCase().includes('node'))
+  const backendSkill = skills.find(s => String(s.canonicalName || s.name || '').toLowerCase().includes('backend') || String(s.canonicalName || s.name || '').toLowerCase().includes('node'))
   if (backendSkill && backendSkill.started) {
     events.push({ id: 't-backend', date: backendSkill.started.slice(0, 4), title: 'Exploring Backend', description: 'Started connecting interfaces to durable systems.', category: 'Learning', relatedSkill: backendSkill.name, relatedProject: undefined })
   }
@@ -330,9 +330,9 @@ export function generateTimelineEvents(projects: import('../types').Project[], s
 export function generateFutureMilestones(_progression: import('../types').Progression, projects: import('../types').Project[], skills: import('../types').Skill[], _goals: import('../types').Goal[]): import('../types').FutureMilestone[] {
   const milestones: import('../types').FutureMilestone[] = []
   
-  const hasJS = skills.some(s => s.name.toLowerCase().includes('javascript') && s.status !== 'LOCKED')
-  const hasReact = skills.some(s => s.name.toLowerCase().includes('react') && s.status !== 'LOCKED')
-  const hasBackend = skills.some(s => (s.name.toLowerCase().includes('backend') || s.name.toLowerCase().includes('node')) && s.status !== 'LOCKED')
+  const hasJS = skills.some(s => String(s.canonicalName || s.name || '').toLowerCase().includes('javascript') && s.status !== 'LOCKED')
+  const hasReact = skills.some(s => String(s.canonicalName || s.name || '').toLowerCase().includes('react') && s.status !== 'LOCKED')
+  const hasBackend = skills.some(s => (String(s.canonicalName || s.name || '').toLowerCase().includes('backend') || String(s.canonicalName || s.name || '').toLowerCase().includes('node')) && s.status !== 'LOCKED')
   const completedProjectsCount = projects.filter(p => p.completed || p.status === 'COMPLETED').length
   const currentYear = new Date().getFullYear().toString()
 
