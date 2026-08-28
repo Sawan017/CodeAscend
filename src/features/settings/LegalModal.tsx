@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Shield, Info, ChevronDown, ChevronUp, ArrowUp } from 'lucide-react';
+import { X, Shield, Info, ArrowUp } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 interface LegalModalProps {
@@ -38,14 +38,16 @@ function parseLegalText(markdown: string) {
       if (line.startsWith('>')) {
         notice += line.replace(/^> /, '') + '\n';
       } else if (line.trim() === '') {
-        // preserve newlines in blockquote if any
-      } else if (!line.startsWith('## ')) {
-        inNotice = false; 
+        // empty line still inside notice block if we want, but let's assume notice block ends when a header starts
+      }
+      if (line.startsWith('## ')) {
+        inNotice = false;
+      } else {
+        continue;
       }
     }
     
     if (line.startsWith('## ')) {
-      inNotice = false; 
       if (currentSection) {
         sections.push({ title: currentSection.title, content: currentSection.content.trim() });
       }
@@ -66,76 +68,16 @@ function parseLegalText(markdown: string) {
 }
 
 const MarkdownComponents = {
-  h3: ({node, ...props}: any) => <h3 style={{ fontSize: '1rem', color: '#00c8ff', marginTop: '1.5rem', marginBottom: '0.75rem', letterSpacing: '0.02em', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }} {...props} />,
-  p: ({node, ...props}: any) => <p style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: '1rem' }} {...props} />,
-  ul: ({node, ...props}: any) => <ul style={{ margin: '0 0 1rem 0', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }} {...props} />,
-  li: ({node, ...props}: any) => <li style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }} {...props} />,
-  strong: ({node, ...props}: any) => <strong style={{ color: '#fff', fontWeight: 600 }} {...props} />,
-  a: ({node, ...props}: any) => <a style={{ color: '#00c8ff', textDecoration: 'none' }} {...props} />
+  h1: ({node, ...props}: any) => <h1 style={{ fontSize: '1.75rem', color: '#0f172a', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
+  h2: ({node, ...props}: any) => <h2 style={{ fontSize: '1.35rem', color: '#0f172a', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
+  h3: ({node, ...props}: any) => <h3 style={{ fontSize: '1.15rem', color: '#1e293b', marginTop: '1.5rem', marginBottom: '0.75rem', fontWeight: 600 }} {...props} />,
+  p: ({node, ...props}: any) => <p style={{ fontSize: '0.95rem', color: '#172033', lineHeight: 1.7, margin: '0 0 12px 0' }} {...props} />,
+  ul: ({node, ...props}: any) => <ul style={{ margin: '0 0 12px 0', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }} {...props} />,
+  ol: ({node, ...props}: any) => <ol style={{ margin: '0 0 12px 0', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }} {...props} />,
+  li: ({node, ...props}: any) => <li style={{ fontSize: '0.95rem', color: '#172033', lineHeight: 1.7 }} {...props} />,
+  strong: ({node, ...props}: any) => <strong style={{ color: '#0f172a', fontWeight: 700 }} {...props} />,
+  a: ({node, ...props}: any) => <a style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 500 }} {...props} />
 };
-
-function SectionCard({ section, index }: { section: { title: string, content: string }, index: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const isLong = section.content.length > 500;
-  
-  return (
-    <div style={{
-      background: 'rgba(255, 255, 255, 0.02)',
-      border: '1px solid rgba(255, 255, 255, 0.05)',
-      borderRadius: '12px',
-      padding: '1.5rem',
-      overflow: 'hidden',
-      transition: 'all 0.3s ease'
-    }}>
-      <div 
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: isLong ? 'pointer' : 'default', userSelect: 'none' }}
-        onClick={() => isLong && setExpanded(!expanded)}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{
-            width: '28px', height: '28px', borderRadius: '6px', background: 'rgba(0, 200, 255, 0.1)', color: '#00c8ff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 600, flexShrink: 0
-          }}>
-            {index + 1}
-          </div>
-          <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#fff', fontWeight: 600, letterSpacing: '0.02em' }}>
-            {section.title.replace(/^\d+\.\s*/, '')}
-          </h2>
-        </div>
-        {isLong && (
-          <button style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
-            {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </button>
-        )}
-      </div>
-      
-      <motion.div
-        initial={false}
-        animate={{ height: expanded || !isLong ? 'auto' : '100px' }}
-        style={{ position: 'relative', marginTop: '1.25rem', overflow: 'hidden' }}
-      >
-        <ReactMarkdown components={MarkdownComponents}>
-          {section.content}
-        </ReactMarkdown>
-        
-        {!expanded && isLong && (
-          <div style={{
-            position: 'absolute',
-            bottom: 0, left: 0, right: 0,
-            height: '80px',
-            background: 'linear-gradient(to bottom, rgba(10,12,16,0) 0%, #0c0e14 100%)',
-            display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-            paddingBottom: '0.5rem', pointerEvents: 'none'
-          }}>
-            <span style={{ color: '#00c8ff', fontSize: '0.8rem', fontWeight: 600, letterSpacing: '0.05em', pointerEvents: 'auto', cursor: 'pointer', background: 'rgba(0,0,0,0.5)', padding: '4px 12px', borderRadius: '12px' }} onClick={() => setExpanded(true)}>
-              READ MORE
-            </span>
-          </div>
-        )}
-      </motion.div>
-    </div>
-  );
-}
 
 export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps) {
   const parsed = parseLegalText(content);
@@ -165,89 +107,96 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             exit={{ opacity: 0 }} 
-            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)', zIndex: 1050 }}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)', zIndex: 1050 }}
             onClick={onClose}
           />
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
-            animate={{ opacity: 1, scale: 1, y: 0 }} 
-            exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+            initial={{ opacity: 0, y: 20, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 20, x: '-50%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
             style={{ 
-              position: 'fixed', top: '5vh', left: '50%', transform: 'translateX(-50%)', 
-              width: '100%', maxWidth: '800px', height: '90vh',
-              backgroundColor: '#0c0e14', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', 
+              position: 'fixed', top: '3rem', bottom: '3rem', left: '50%', width: '90%', maxWidth: '850px', overflow: 'hidden',
+              background: '#ffffff', borderRadius: '16px', 
               zIndex: 1051, display: 'flex', flexDirection: 'column',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)'
+              boxShadow: 'var(--shadow-lg)'
             }}
           >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.02)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Shield size={24} color="#00c8ff" />
-                <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#fff', fontWeight: 600, letterSpacing: '0.05em' }}>{title}</h2>
+                <Shield size={24} color="#2563eb" />
+                <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, letterSpacing: '0.02em' }}>{title}</h2>
               </div>
-              <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <button onClick={onClose} style={{ background: '#e2e8f0', border: 'none', color: '#475569', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
                 <X size={20} />
               </button>
             </div>
             
-            <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', position: 'relative' }}>
+            <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '2rem', position: 'relative', background: '#ffffff' }}>
               
-              {/* Metadata Pills */}
-              {parsed.metadata.length > 0 && (
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
-                  {parsed.metadata.map((meta, i) => (
-                    <div key={i} style={{ 
-                      padding: '6px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '20px', 
-                      fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.02em', border: '1px solid rgba(255,255,255,0.05)'
-                    }}>
-                      {meta.replace(/^(Last Updated|Operated by):\s*/i, (match) => match)}
+              <div style={{ maxWidth: '750px', margin: '0 auto' }}>
+                {/* Metadata Pills */}
+                {parsed.metadata.length > 0 && (
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
+                    {parsed.metadata.map((meta, i) => (
+                      <div key={i} style={{ 
+                        padding: '6px 14px', background: '#f1f5f9', borderRadius: '20px', 
+                        fontSize: '0.8rem', color: '#64748b', fontWeight: 500, border: '1px solid #e2e8f0'
+                      }}>
+                        {meta.replace(/^(Last Updated|Operated by):\s*/i, (match) => match)}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Development Notice */}
+                {parsed.notice && (
+                  <div style={{ 
+                    padding: '1.25rem', background: '#eff6ff', border: '1px solid #bfdbfe', 
+                    borderRadius: '12px', marginBottom: '2.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start'
+                  }}>
+                    <Info size={24} color="#3b82f6" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ color: '#1e3a8a', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                      <ReactMarkdown components={{...MarkdownComponents, p: ({node, ...props}: any) => <p style={{ margin: 0 }} {...props} />}}>{parsed.notice}</ReactMarkdown>
+                    </div>
+                  </div>
+                )}
+
+                {/* Sections */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                  {parsed.sections.map((section, idx) => (
+                    <div key={idx} style={{ display: 'flex', flexDirection: 'column' }}>
+                      <h2 style={{ fontSize: '1.25rem', color: '#0f172a', margin: '0 0 16px 0', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <span style={{ color: '#94a3b8', fontSize: '1.1rem', fontWeight: 500 }}>{idx + 1}.</span> 
+                        {section.title.replace(/^\d+\.\s*/, '')}
+                      </h2>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <ReactMarkdown components={MarkdownComponents}>
+                          {section.content}
+                        </ReactMarkdown>
+                      </div>
                     </div>
                   ))}
                 </div>
-              )}
-
-              {/* Development Notice */}
-              {parsed.notice && (
-                <div style={{ 
-                  padding: '1.25rem', background: 'rgba(0, 200, 255, 0.05)', border: '1px solid rgba(0, 200, 255, 0.2)', 
-                  borderRadius: '12px', marginBottom: '2rem', display: 'flex', gap: '1rem', alignItems: 'flex-start'
-                }}>
-                  <Info size={24} color="#00c8ff" style={{ flexShrink: 0, marginTop: '2px' }} />
-                  <div>
-                    <ReactMarkdown components={MarkdownComponents}>
-                      {parsed.notice}
-                    </ReactMarkdown>
-                  </div>
-                </div>
-              )}
-
-              {/* Sections */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {parsed.sections.map((section, idx) => (
-                  <SectionCard key={idx} section={section} index={idx} />
-                ))}
+                
+                {/* Fallback for unparsed plain text */}
+                {parsed.sections.length === 0 && !parsed.notice && (
+                   <ReactMarkdown components={MarkdownComponents}>{content}</ReactMarkdown>
+                )}
               </div>
-              
-              {/* Fallback for unparsed plain text */}
-              {parsed.sections.length === 0 && !parsed.notice && (
-                 <ReactMarkdown components={MarkdownComponents}>{content}</ReactMarkdown>
-              )}
             </div>
 
             {/* Back to top FAB */}
             <AnimatePresence>
               {showScrollTop && (
                 <motion.button
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
                   onClick={scrollToTop}
                   style={{
                     position: 'absolute', bottom: '2rem', right: '2rem',
-                    background: '#00c8ff', color: '#000', border: 'none', borderRadius: '50%',
+                    background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '50%',
                     width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', boxShadow: '0 8px 16px rgba(0,0,0,0.4)', zIndex: 10
+                    cursor: 'pointer', boxShadow: '0 8px 16px rgba(37, 99, 235, 0.3)', zIndex: 10
                   }}
                 >
                   <ArrowUp size={24} />

@@ -39,7 +39,7 @@ const customStorage = {
 export const supabase: SupabaseClient | null = isConfigured
   ? createClient(supabaseUrl!, supabaseAnonKey!, {
       auth: {
-        storage: customStorage,
+        // storage: customStorage, // Using default Supabase storage
         persistSession: true
       }
     })

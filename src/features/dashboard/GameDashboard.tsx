@@ -35,18 +35,18 @@ export function GameDashboard({ profile, progression, skills }: any) {
                   <motion.div className="xp-fill" initial={{ width: 0 }} animate={{ width: `${xpPercent}%` }} transition={{ duration: 1.5, ease: 'easeOut' }} />
                </div>
                <div className="xp-milestone" />
-               <span className="xp-label" style={{color: 'var(--text-muted)'}}>LV {safeProgression.level + 1}</span>
+               <span className="xp-label" style={{color: 'var(--text-muted)' }}>LV {safeProgression.level + 1}</span>
             </div>
          </div>
          
          <div className="hud-stats">
             <div className="hud-stat">
                <div className="hud-stat-val">{safeProgression.streak}</div>
-               <div className="hud-stat-label"><Play size={14} fill="var(--color-accent)" color="var(--color-accent)"/> Day Streak</div>
+               <div className="hud-stat-label"><Play size={14} fill="'var(--color-accent)'" color="'var(--color-accent)'"/> Day Streak</div>
             </div>
             <div className="hud-stat">
                <div className="hud-stat-val">{safeProgression.achievements}</div>
-               <div className="hud-stat-label"><Sparkles size={14} fill="var(--color-primary)" color="var(--color-primary)"/> Relics</div>
+               <div className="hud-stat-label"><Sparkles size={14} fill="'var(--color-primary)'" color="'var(--color-primary)'"/> Relics</div>
             </div>
          </div>
       </div>
@@ -112,7 +112,7 @@ export function GameDashboard({ profile, progression, skills }: any) {
                   </div>
                   <div className="quest-item">
                      <div className="quest-info">
-                        <span className="quest-title"><div className="quest-dot" style={{backgroundColor: 'var(--text-muted)'}}/> Algorithm Visualizer</span>
+                        <span className="quest-title"><div className="quest-dot" style={{backgroundColor: 'var(--text-muted)' }}/> Algorithm Visualizer</span>
                         <span className="quest-meta"><Code size={14} /> C++</span>
                      </div>
                      <span className="quest-status">Planning</span>

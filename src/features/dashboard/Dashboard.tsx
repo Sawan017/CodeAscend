@@ -1,4 +1,20 @@
-import React from "react";
+
+import React, { Component } from 'react';
+class DashErrorBoundary extends Component {
+  state = { error: null };
+  static getDerivedStateFromError(error) { return { error }; }
+  render() {
+    if (this.state.error) {
+      return <div style={{padding: '50px', background: 'red', color: 'white', zIndex: 9999, position: 'relative'}}>
+        <h1>DASHBOARD CRASHED</h1>
+        <pre>{this.state.error.message}</pre>
+        <pre>{this.state.error.stack}</pre>
+      </div>;
+    }
+    return this.props.children;
+  }
+}
+
 import { Star, Map, Zap, ArrowRight, Award, BookOpen, Flame, Lock, Compass, Folder, Target, Mountain, Sun, Cloud, TreePine, MessageSquare, Check, Plus, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "../../lib/animations";
@@ -13,6 +29,7 @@ type DashboardProps = {
   projects?: any;
   skills?: any;
   badges?: any;
+  achievements?: any;
   friendState?: any;
   chatState?: any;
   incomingRequestsCount?: any;
@@ -46,18 +63,25 @@ const sectionTitle = {
   gap: '8px',
 };
 
-export function Dashboard({
+function DashboardInner({
   profile, progression, goals, onNavigate,
-  projects = [], skills = [], badges = []
+  projects = [], skills = [], badges = [], achievements = []
 }: DashboardProps) {
-  const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression.xp);
+  const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression?.xp || 0);
 
-  const activeSkill = skills.find((s: any) => s.status === 'IN_PROGRESS' || s.status === 'NOT_STARTED');
-  const topSkills = skills.filter((s: any) => s.status !== 'NOT_STARTED').slice(0, 4);
-  const activeProjects = projects.filter((p: any) => p.status === 'IN_PROGRESS');
-  const earnedBadges = badges.filter((b: any) => b.earned);
-  const completedProjectsCount = projects.filter((p: any) => p.status === 'COMPLETED').length;
-  const completedGoalsCount = goals.filter((g: any) => g.status === 'COMPLETED').length;
+  const activeSkill = (skills || []).find((s: any) => s.status === 'IN_PROGRESS' || s.status === 'NOT_STARTED');
+  const topSkills = (skills || []).filter((s: any) => s.status !== 'NOT_STARTED').slice(0, 4);
+  const activeProjects = (projects || []).filter((p: any) => p.status === 'IN_PROGRESS');
+  const earnedBadges = (badges || []).filter((b: any) => b.earned);
+  const earnedBadgesCount = earnedBadges.length;
+  const earnedAchievementsCount = achievements ? achievements.filter((a: any) => a.unlocked).length : 0;
+  const totalBadgesAndAchievements = earnedBadgesCount + earnedAchievementsCount;
+  
+  // As requested: Projects should reflect the actual synced count (which is all of them)
+  const totalProjectsCount = (projects || []).length;
+  
+  // As requested: Goals should reflect actual Goals (active + completed = all tracking)
+  const totalGoalsCount = (goals || []).length;
 
   return (
     <motion.div
@@ -103,7 +127,7 @@ export function Dashboard({
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '500px' }}>
           <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#6366F1', letterSpacing: '0.05em', marginBottom: '12px', textTransform: 'uppercase' }}>
-            {getGreeting()}, {profile.displayName} 👋
+            {getGreeting()}, {profile?.displayName || "Developer"} 👋
           </div>
           <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#1E1D1B', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
             Ready to ascend?
@@ -143,12 +167,12 @@ export function Dashboard({
 
       {/* ─── PLAYER STATS ─── */}
       <motion.div variants={fadeInUp} style={{ ...card }} className="compact-stats">
-        {[
+                {[
           { label: 'Experience', value: currentXp, icon: <Zap size={22} />, color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
-          { label: 'Streak', value: progression.streak || 0, icon: <Flame size={22} />, color: '#F97316', bg: 'rgba(249,115,22,0.1)' },
-          { label: 'Badges', value: earnedBadges.length, icon: <Award size={22} />, color: '#EAB308', bg: 'rgba(234,179,8,0.1)' },
-          { label: 'Projects', value: completedProjectsCount, icon: <Folder size={22} />, color: '#06B6D4', bg: 'rgba(6,182,212,0.1)' },
-          { label: 'Goals', value: completedGoalsCount, icon: <Target size={22} />, color: '#A855F7', bg: 'rgba(168,85,247,0.1)' },
+          { label: 'Streak', value: (progression?.streak || 0) || 0, icon: <Flame size={22} />, color: '#F97316', bg: 'rgba(249,115,22,0.1)' },
+          { label: 'Badges', value: totalBadgesAndAchievements, icon: <Award size={22} />, color: '#EAB308', bg: 'rgba(234,179,8,0.1)' },
+          { label: 'Projects', value: totalProjectsCount, icon: <Folder size={22} />, color: '#06B6D4', bg: 'rgba(6,182,212,0.1)' },
+          { label: 'Goals', value: totalGoalsCount, icon: <Target size={22} />, color: '#A855F7', bg: 'rgba(168,85,247,0.1)' },
         ].map((stat, i, arr) => (
           <React.Fragment key={stat.label}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -384,4 +408,8 @@ export function Dashboard({
 
     </motion.div>
   );
+}
+
+export function Dashboard(props: DashboardProps) {
+  return <DashErrorBoundary><DashboardInner {...props} /></DashErrorBoundary>;
 }

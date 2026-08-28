@@ -11,7 +11,7 @@ import type { ChatMessage, FriendRelationship, ChatState } from '../../types'
 export function ChatPanel(props: any) {
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
   const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'direct' | 'friends' | 'groups'>('direct')
+  const [activeTab, setActiveTab] = useState<'direct' | 'friends' | 'groups'>(props.activeFriendId ? 'direct' : 'friends')
 
   const {
     groups, groupMembers, groupMessages, createGroup, sendGroupMessage,
@@ -49,25 +49,54 @@ export function ChatPanel(props: any) {
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, height: 'calc(100vh - 120px)', background: '#fff', borderRadius: '20px', border: '1px solid rgba(140, 135, 125, 0.12)', boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
       
       {/* Header Tabs */}
-      <div style={{ display: 'flex', padding: '16px 24px', borderBottom: '1px solid rgba(140, 135, 125, 0.12)', gap: '16px', background: '#FAFAFA' }}>
-        <button 
-          onClick={() => handleTabSwitch('direct')}
-          style={{ background: activeTab === 'direct' ? '#8B5CF6' : 'transparent', color: activeTab === 'direct' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'direct' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'direct' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
-        >
-          Direct Messages
-        </button>
-        <button 
-          onClick={() => handleTabSwitch('friends')}
-          style={{ background: activeTab === 'friends' ? '#8B5CF6' : 'transparent', color: activeTab === 'friends' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'friends' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'friends' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
-        >
-          Friends
-        </button>
-        <button 
-          onClick={() => handleTabSwitch('groups')}
-          style={{ background: activeTab === 'groups' ? '#8B5CF6' : 'transparent', color: activeTab === 'groups' ? '#fff' : '#5A5750', border: '1px solid ' + (activeTab === 'groups' ? '#8B5CF6' : 'rgba(140, 135, 125, 0.2)'), padding: '8px 20px', borderRadius: '100px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', boxShadow: activeTab === 'groups' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' }}
-        >
-          Groups
-        </button>
+      <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(140, 135, 125, 0.12)', background: '#FAFAFA', display: 'flex', justifyContent: 'flex-start' }}>
+        <div style={{ display: 'inline-flex', background: '#F1F5F9', borderRadius: '100px', padding: '4px', gap: '4px', border: '1px solid rgba(140, 135, 125, 0.08)' }}>
+          <button 
+            onClick={() => handleTabSwitch('friends')}
+            style={{ 
+              background: activeTab === 'friends' ? '#8B5CF6' : 'transparent', 
+              color: activeTab === 'friends' ? '#fff' : '#64748B', 
+              border: 'none', 
+              padding: '8px 24px', 
+              borderRadius: '100px', 
+              fontWeight: 700, 
+              fontSize: '0.9rem',
+              cursor: 'pointer', 
+              transition: 'all 0.2s', 
+              boxShadow: activeTab === 'friends' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' 
+            }}
+          >Connections</button>
+          <button 
+            onClick={() => handleTabSwitch('direct')}
+            style={{ 
+              background: activeTab === 'direct' ? '#8B5CF6' : 'transparent', 
+              color: activeTab === 'direct' ? '#fff' : '#64748B', 
+              border: 'none', 
+              padding: '8px 24px', 
+              borderRadius: '100px', 
+              fontWeight: 700, 
+              fontSize: '0.9rem',
+              cursor: 'pointer', 
+              transition: 'all 0.2s', 
+              boxShadow: activeTab === 'direct' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' 
+            }}
+          >Messages</button>
+          <button 
+            onClick={() => handleTabSwitch('groups')}
+            style={{ 
+              background: activeTab === 'groups' ? '#8B5CF6' : 'transparent', 
+              color: activeTab === 'groups' ? '#fff' : '#64748B', 
+              border: 'none', 
+              padding: '8px 24px', 
+              borderRadius: '100px', 
+              fontWeight: 700, 
+              fontSize: '0.9rem',
+              cursor: 'pointer', 
+              transition: 'all 0.2s', 
+              boxShadow: activeTab === 'groups' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' 
+            }}
+          >Groups</button>
+        </div>
       </div>
 
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
@@ -75,7 +104,7 @@ export function ChatPanel(props: any) {
            <DirectChatPanel {...props} onSetActiveFriendId={handleSetFriendId} />
         )}
         {activeTab === 'friends' && (
-           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '24px' }}>
+           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', padding: '24px' }}>
              {props.friendsPanel}
            </div>
         )}

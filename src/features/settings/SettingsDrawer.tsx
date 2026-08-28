@@ -32,7 +32,7 @@ function LiveSettingsClock() {
       opacity: 0.8,
       pointerEvents: 'none',
       userSelect: 'none',
-      background: 'var(--bg-surface-sunken)',
+      background: 'var(--bg-surface)',
       padding: '0.4rem 0.8rem',
       borderRadius: '20px',
       border: '1px solid var(--border)',
@@ -146,7 +146,7 @@ function NomineeManager({ userId }: { userId: string }) {
     setShowForm(true)
   }
 
-  const inputStyle = { width: '100%', padding: '0.6rem 0.75rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '6px', color: 'var(--text-main)', fontSize: '0.85rem', outline: 'none' }
+  const inputStyle = { width: '100%', padding: '0.6rem 0.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '6px', color: 'var(--text-main)', fontSize: '0.85rem', outline: 'none' }
 
   if (loading) return <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Loading nominees...</p>
 
@@ -155,7 +155,7 @@ function NomineeManager({ userId }: { userId: string }) {
       {error && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.82rem' }}>{error}</div>}
       {nominees.length === 0 && !showForm && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: 0 }}>No nominees added yet.</p>}
       {nominees.map(n => (
-        <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+        <div key={n.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--bg-surface)', borderRadius: '8px', border: '1px solid var(--border)' }}>
           <div style={{ flex: 1 }}>
             <div style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 600 }}>{n.nominee_name}</div>
             {n.nominee_relationship && <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{n.nominee_relationship}</div>}
@@ -168,7 +168,7 @@ function NomineeManager({ userId }: { userId: string }) {
         </div>
       ))}
       {showForm ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', background: 'var(--bg-surface)', borderRadius: '8px', border: '1px solid var(--border)' }}>
           <input placeholder="Full Name *" value={form.nominee_name} onChange={e => setForm({ ...form, nominee_name: e.target.value })} style={inputStyle} />
           <input placeholder="Email" value={form.nominee_email} onChange={e => setForm({ ...form, nominee_email: e.target.value })} style={inputStyle} />
           <input placeholder="Phone" value={form.nominee_phone} onChange={e => setForm({ ...form, nominee_phone: e.target.value })} style={inputStyle} />
@@ -207,7 +207,7 @@ function DataRightsRequestForm({ userId }: { userId: string }) {
     setTimeout(() => setSuccess(false), 4000)
   }
 
-  const selectStyle = { width: '100%', padding: '0.6rem 0.75rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '6px', color: 'var(--text-main)', fontSize: '0.85rem', outline: 'none' }
+  const selectStyle = { width: '100%', padding: '0.6rem 0.75rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '6px', color: 'var(--text-main)', fontSize: '0.85rem', outline: 'none' }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -788,13 +788,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
               <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Permanent User ID</span>
-                <div style={{ padding: '0.75rem 1rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', color: 'var(--text-main)', border: '1px solid var(--border)', fontSize: '1rem', fontWeight: 500 }}>
+                <div style={{ padding: '0.75rem 1rem', background: 'var(--bg-surface)', borderRadius: '8px', color: 'var(--text-main)', border: '1px solid var(--border)', fontSize: '1rem', fontWeight: 500 }}>
                   {profile.login_id || profile.arinova_id || profile.username}
                 </div>
               </div>
 
               {authUserEmail ? (
-                <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-strong)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', padding: '1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <CheckCircle size={18} color="#10b981" />
                   <div style={{ flex: 1 }}>
                     <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Linked Email</p>
@@ -826,7 +826,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Display Name</h4>
-              <input type="text" disabled value={profile.username} style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }} />
+              <input type="text" disabled value={profile.username} style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '0.9rem', outline: 'none' }} />
               <p style={{ margin: '0.5rem 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>* Display name changes are managed in your Profile Panel.</p>
             </div>
 
@@ -847,7 +847,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Connected External Accounts</h4>
               
-              <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.25rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <div style={{ background: 'var(--bg-surface)', padding: '1.25rem', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <div>
                   <h5 style={{ margin: '0 0 0.25rem 0', color: 'var(--text-main)', fontSize: '1rem' }}>GitHub</h5>
                   <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
@@ -924,42 +924,58 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Visibility</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Profile visibility</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Profile Visibility</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control who can view your profile.</span>
+                  </div>
                   <select 
                     value={settings.profileVisibility || 'public'}
                     onChange={(e) => onSettingsChange({ ...settings, profileVisibility: e.target.value as 'public' | 'private' | 'friends' })}
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
                   >
                     <option value="public">Public</option>
                     <option value="private">Private</option>
                   </select>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Show online status</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Show Online Status</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Let others see when you are active.</span>
+                  </div>
                   <button 
                     className={`toggle-switch ${settings.showOnlineStatus !== false ? 'on' : ''}`}
                     onClick={() => onSettingsChange({ ...settings, showOnlineStatus: settings.showOnlineStatus === false })}
                     aria-label="Toggle online status" 
                   />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Allow friend requests</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Friend Requests</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Allow other users to send you friend requests.</span>
+                  </div>
                   <button 
                     className={`toggle-switch ${settings.allowFriendRequests !== false ? 'on' : ''}`}
                     onClick={() => onSettingsChange({ ...settings, allowFriendRequests: settings.allowFriendRequests === false })}
                     aria-label="Toggle friend requests" 
                   />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Allow messages</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Messages</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Allow users to send you messages.</span>
+                  </div>
                   <button 
                     className={`toggle-switch ${settings.allowMessages !== false ? 'on' : ''}`}
                     onClick={() => onSettingsChange({ ...settings, allowMessages: settings.allowMessages === false })}
                     aria-label="Toggle messages" 
                   />
                 </div>
-              </div>
+              
+                
+                
+                </div>
             </div>
           </div>
         )
@@ -973,33 +989,49 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             </div>
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
-              <h4 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Theme</h4>
-              <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+      <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Theme</span>
+      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Select the visual theme for the application.</span>
+    </div>
+    <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
                 {themeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
+  </div>
             </div>
             
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Motion & Feedback</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Animations</label>
-                  <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+      <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Animations</span>
+      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control the intensity of UI animations.</span>
+    </div>
+    <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
                     <option value="off">Off</option>
                   </select>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Reduced motion</span>
+  </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Reduced Motion</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Minimize UI animations and transitions.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.reducedMotion ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, reducedMotion: !settings.reducedMotion })} aria-label="Toggle reduced motion" />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Sound effects</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Sound Effects</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Play audio cues for notifications and actions.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.soundEffects ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, soundEffects: !settings.soundEffects })} aria-label="Toggle sound effects" />
                 </div>
-              </div>
+              
+                
+                </div>
             </div>
           </div>
         )
@@ -1014,52 +1046,82 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h4 style={{ margin: 0, color: 'var(--text-main)' }}>Enable All Notifications</h4>
-                <button 
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+      <h4 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.05rem' }}>Master Notifications</h4>
+      <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Turn on/off all notification features.</span>
+    </div>
+    <button 
                   className={`toggle-switch ${settings.enableAllNotifications !== false ? 'on' : ''}`} 
                   onClick={() => onSettingsChange({ ...settings, enableAllNotifications: settings.enableAllNotifications === false ? true : false })} 
                   aria-label="Toggle all notifications" 
                 />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', opacity: settings.enableAllNotifications === false ? 0.5 : 1, pointerEvents: settings.enableAllNotifications === false ? 'none' : 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Messages</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1rem', opacity: settings.enableAllNotifications === false ? 0.5 : 1, pointerEvents: settings.enableAllNotifications === false ? 'none' : 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Direct Messages</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Get notified when you receive a new chat message.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyMessages !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyMessages: settings.notifyMessages === false ? true : false })} aria-label="Toggle messages" />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Friend requests</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Friend Requests</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Get notified when someone wants to connect.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyFriendRequests !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyFriendRequests: settings.notifyFriendRequests === false ? true : false })} aria-label="Toggle friend requests" />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Group activity</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Group Activity</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Updates from your groups and communities.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyGroupActivity !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyGroupActivity: settings.notifyGroupActivity === false ? true : false })} aria-label="Toggle group activity" />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Mentions</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Mentions</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Get notified when someone tags you.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyMentions !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyMentions: settings.notifyMentions === false ? true : false })} aria-label="Toggle mentions" />
                 </div>
-              </div>
+              
+                
+                
+                
+                </div>
             </div>
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Updates & Activity</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', opacity: settings.enableAllNotifications === false ? 0.5 : 1, pointerEvents: settings.enableAllNotifications === false ? 'none' : 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Achievements & Badges</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Achievements</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Alerts when you unlock new XP and badges.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyAchievements !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyAchievements: settings.notifyAchievements === false ? true : false })} aria-label="Toggle achievements" />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Learning Reminders</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Learning Reminders</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Periodic nudges to keep up your learning streak.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyLearningReminders !== false ? 'on' : ''}`} onClick={() => onSettingsChange({ ...settings, notifyLearningReminders: settings.notifyLearningReminders === false ? true : false })} aria-label="Toggle learning reminders" />
                 </div>
-              </div>
+              
+                
+                </div>
             </div>
 
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Delivery Methods</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Browser Notifications</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Browser Notifications</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Receive push notifications when ARINOVA is in the background.</span>
+                  </div>
                   <button className={`toggle-switch ${settings.notifyBrowser ? 'on' : ''}`} onClick={async () => {
                     if (settings.notifyBrowser) {
                       onSettingsChange({ ...settings, notifyBrowser: false });
@@ -1089,10 +1151,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   </div>
                 )}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Notification Sound</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Notification Sound</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Choose the alert sound for new notifications.</span>
+                  </div>
                   <select 
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                     value={settings.notificationSound || 'default'}
                     onChange={(e) => onSettingsChange({ ...settings, notificationSound: e.target.value })}
                   >
@@ -1100,6 +1165,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                     <option value="pop">Pop</option>
                     <option value="none">None</option>
                   </select>
+                
+                
                 </div>
               </div>
             </div>
@@ -1117,13 +1184,21 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Security</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Password</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Change Password</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Update the password used to sign in to your account.</span>
+                  </div>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setIsPasswordModalOpen(true)}>Change</button>
+  
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Active Sessions</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Active Sessions</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Manage devices currently logged into your account.</span>
+                  </div>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setIsSessionsModalOpen(true)}>View Session(s)</button>
+                
                 </div>
               </div>
             </div>
@@ -1131,11 +1206,15 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Privacy</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Blocked Users</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Blocked Users</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Manage users you have blocked from contacting you.</span>
+                  </div>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setIsBlockedModalOpen(true)}>
                     Manage {Array.isArray(chatState?.blockedUsers) ? `(${chatState?.blockedUsers?.length || 0})` : '(0)'}
                   </button>
+                
                 </div>
               </div>
             </div>
@@ -1169,12 +1248,15 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Social & Permissions</h4>
               {socialError && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem' }}>{socialError}</div>}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Who can send me friend requests</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Friend Requests</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control who is allowed to send you connection requests.</span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {socialUpdating === 'whoCanFriendRequest' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
                     <select 
-                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                       value={settings.whoCanFriendRequest || (settings.allowFriendRequests === false ? 'none' : 'everyone')}
                       onChange={(e) => handleSocialSettingChange('whoCanFriendRequest', e.target.value, 'allowFriendRequests', e.target.value !== 'none')}
                       disabled={socialUpdating === 'whoCanFriendRequest'}
@@ -1183,14 +1265,18 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                       <option value="friends_of_friends">Friends of Friends</option>
                       <option value="none">No One</option>
                     </select>
-                  </div>
+                  
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Who can message me</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Direct Messages</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control who is allowed to start a chat with you.</span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {socialUpdating === 'whoCanMessage' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
                     <select 
-                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                       value={settings.whoCanMessage || (settings.allowMessages === false ? 'friends' : 'everyone')}
                       onChange={(e) => handleSocialSettingChange('whoCanMessage', e.target.value, 'allowMessages', true)}
                       disabled={socialUpdating === 'whoCanMessage'}
@@ -1198,14 +1284,18 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                       <option value="everyone">Everyone</option>
                       <option value="friends">Friends Only</option>
                     </select>
-                  </div>
+                  
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Who can add me to groups</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Group Invites</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control who can add you to group chats.</span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {socialUpdating === 'whoCanGroup' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
                     <select 
-                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                       value={settings.whoCanGroup || 'everyone'}
                       onChange={(e) => handleSocialSettingChange('whoCanGroup', e.target.value)}
                       disabled={socialUpdating === 'whoCanGroup'}
@@ -1213,7 +1303,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                       <option value="everyone">Everyone</option>
                       <option value="friends">Friends Only</option>
                     </select>
-                  </div>
+                  
+                </div>
                 </div>
               </div>
             </div>
@@ -1234,7 +1325,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Language</label>
                   <select 
-                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
+                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
                     value={settings.language || 'en-US'}
                     onChange={(e) => onSettingsChange({ ...settings, language: e.target.value })}
                   >
@@ -1247,7 +1338,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Region</label>
                   <select 
-                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
+                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
                     value={settings.region || 'US'}
                     onChange={(e) => onSettingsChange({ ...settings, region: e.target.value })}
                   >
@@ -1261,7 +1352,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Time Zone</label>
                   <select 
-                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
+                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
                     value={settings.timezone || 'auto'}
                     onChange={(e) => onSettingsChange({ ...settings, timezone: e.target.value })}
                   >
@@ -1284,10 +1375,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Formats</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Date Format</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Date Format</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Choose how dates are displayed across the app.</span>
+                  </div>
                   <select 
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                     value={settings.dateFormat || 'MM/DD/YYYY'}
                     onChange={(e) => onSettingsChange({ ...settings, dateFormat: e.target.value })}
                   >
@@ -1295,17 +1389,22 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                     <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                   </select>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Time Format</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Time Format</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Choose between 12-hour and 24-hour time display.</span>
+                  </div>
                   <select 
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
+                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
                     value={settings.timeFormat || '12h'}
                     onChange={(e) => onSettingsChange({ ...settings, timeFormat: e.target.value })}
                   >
                     <option value="12h">12-hour (AM/PM)</option>
                     <option value="24h">24-hour</option>
                   </select>
+                
                 </div>
               </div>
             </div>
@@ -1339,8 +1438,11 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               )}
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Export Account Data</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Export Account Data</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Download a copy of your personal data.</span>
+                  </div>
                   <button 
                     className="secondary-btn" 
                     style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} 
@@ -1349,9 +1451,13 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   >
                     {isExporting ? 'Exporting...' : 'Request Export'}
                   </button>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Clear Local Cache</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Clear Local Cache</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Free up space by removing cached data and images.</span>
+                  </div>
                   <button 
                     className="secondary-btn" 
                     style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} 
@@ -1359,6 +1465,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   >
                     Clear ({cacheSize})
                   </button>
+                
                 </div>
               </div>
             </div>
@@ -1394,17 +1501,29 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Support</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Help Center</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Help Center</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Browse FAQs, guides, and contact support.</span>
+                  </div>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowHelpCenter(true)}>Open</button>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>My Support Tickets</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Support Tickets</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>View the status of your ongoing support requests.</span>
+                  </div>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowUserTickets(true)}>View</button>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Feedback</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Submit Feedback</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Share your thoughts and suggestions with us.</span>
+                  </div>
                   <button className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }} onClick={() => setShowFeedbackModal(true)}>Submit</button>
+                
                 </div>
               </div>
             </div>
@@ -1412,24 +1531,36 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             <div className="drawer-card" style={{ background: 'var(--bg-surface)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <h4 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)' }}>Legal & Info</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Terms of Service</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Terms of Service</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Read our terms and conditions.</span>
+                  </div>
                   <button className="secondary-btn" onClick={() => setShowLegalModal({ isOpen: true, type: 'tos' })} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}>Read</button>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Privacy Policy</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Privacy Policy</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Read how we handle and protect your data.</span>
+                  </div>
                   <button className="secondary-btn" onClick={() => setShowLegalModal({ isOpen: true, type: 'privacy' })} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem' }}>Read</button>
+                
                 </div>
                 {GRIEVANCE_OFFICER.name.includes('[') && (
                   <div style={{ background: 'rgba(234, 179, 8, 0.1)', color: '#eab308', padding: '0.5rem', borderRadius: '6px', fontSize: '0.8rem', marginTop: '0.5rem' }}>
                     <strong>Development / Student Project:</strong> ARINOVA is currently a student/development project. The privacy/data-rights functionality shown here describes the current technical implementation and does not constitute legal certification or a claim of current DPDP compliance.
                   </div>
                 )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-main)' }}>Data Grievances (DPDP)</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
+                    <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Data Grievances (DPDP)</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Contact our Grievance Officer regarding data concerns.</span>
+                  </div>
                   <a href={`mailto:${GRIEVANCE_OFFICER.email}?subject=ARINOVA Data Grievance`} className="secondary-btn" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}>Email Officer</a>
+                
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Version</span>
                   <span style={{ color: 'var(--text-muted)', fontFamily: 'monospace' }}>1.0.0-beta</span>
                 </div>
@@ -1455,24 +1586,21 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             onClick={onClose}
           />
           <motion.aside 
-            initial={{ x: '100%' }} 
-            animate={{ x: 0 }} 
-            exit={{ x: '100%' }} 
+            initial={{ opacity: 0, y: 20, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 20, x: '-50%' }} 
             transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
             className="settings-drawer" 
             style={{ 
-              position: 'fixed', top: 0, right: 0, bottom: 0, 
-              width: '100%', maxWidth: '1100px', 
-              backgroundColor: 'rgba(15, 23, 42, 0.95)', 
+              position: 'fixed', top: '3rem', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '1100px', borderRadius: '16px', overflow: 'hidden', 
+              background: 'var(--bg-base)', 
               backdropFilter: 'blur(16px)', 
-              borderLeft: '1px solid rgba(255, 255, 255, 0.1)', 
+              border: '1px solid var(--border)', 
               zIndex: 999, 
               display: 'flex', flexDirection: 'column', 
-              boxShadow: '-25px 0 50px -12px rgba(0, 0, 0, 0.5)' 
+              boxShadow: 'var(--shadow-lg)' 
             }}
           >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid var(--border)' }}>
               <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-main)' }}>Settings</h2>
               <button 
                 className="icon-button" 
@@ -1495,7 +1623,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                 style={{ 
                   width: '260px', 
                   minWidth: '260px',
-                  borderRight: '1px solid rgba(255,255,255,0.05)', 
+                  borderRight: '1px solid var(--border)', 
                   padding: '1.5rem 1rem',
                   overflowY: 'auto',
                   display: 'flex',
@@ -1513,8 +1641,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                       gap: '0.75rem',
                       width: '100%',
                       padding: '0.85rem 1rem',
-                      background: activeTab === tab.id ? 'rgba(255,255,255,0.08)' : 'transparent',
-                      color: activeTab === tab.id ? '#fff' : 'var(--text-muted)',
+                      background: activeTab === tab.id ? 'var(--bg-surface-sunken)' : 'transparent',
+                      color: activeTab === tab.id ? 'var(--text-main)' : 'var(--text-muted)',
                       border: 'none',
                       borderRadius: '8px',
                       cursor: 'pointer',
@@ -1523,7 +1651,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                       fontWeight: activeTab === tab.id ? 500 : 400,
                       transition: 'all 0.15s ease'
                     }}
-                    onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.background = 'var(--bg-surface)' }}
                     onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.background = 'transparent' }}
                   >
                     <tab.icon size={18} color={activeTab === tab.id ? '#10b981' : 'currentColor'} />
@@ -1665,7 +1793,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               </button>
               <button 
                 className="primary-btn" 
-                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', background: '#10b981', color: '#fff', border: 'none' }} 
+                style={{ flex: 1, padding: '0.875rem', fontSize: '1.05rem', justifyContent: 'center', background: '#10b981', color: 'var(--text-main)', border: 'none' }} 
                 onClick={handleClearCacheConfirm}
               >
                 Clear Cache

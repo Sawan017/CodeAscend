@@ -482,14 +482,14 @@ export function DirectChatPanel({
                       <div style={{ 
                         position: 'absolute', 
                         zIndex: 9998, 
-                        background: '#1e1e2e', 
-                        border: '1px solid rgba(255,255,255,0.12)', 
-                        borderRadius: '0.5rem', 
-                        padding: '0.3rem',
-                        width: '180px',
+                        background: 'var(--ca-surface, #ffffff)', 
+                        border: '1px solid var(--border)', 
+                        borderRadius: '12px', 
+                        padding: '0.35rem',
+                        minWidth: '160px',
                         right: 0,
                         top: 'calc(100% + 4px)',
-                        boxShadow: '0 10px 40px rgba(255,255,255,0.8), 0 0 0 1px rgba(255,255,255,0.05)'
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
                       }} onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
                         <MenuItem
                           icon={<BellOff size={16} />}
@@ -532,12 +532,12 @@ export function DirectChatPanel({
 
               {/* Messages Area — prevent browser default context menu */}
               <div
-                style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                style={{ flex: 1, padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', position: 'relative' }}
                 onContextMenu={(e) => {
-                  // Only prevent default if we didn't already handle a message-level context menu
                   e.preventDefault()
                 }}
               >
+                <div style={{ position: 'absolute', inset: 0, opacity: 0.03, pointerEvents: 'none', background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
                 {activeConversationMsgs.length === 0 ? (
                   <div style={{ margin: 'auto', textAlign: 'center', color: '#9A958C' }}>
                     <MessageSquare size={48} style={{ opacity: 0.2, margin: '0 auto 1rem auto' }} />
@@ -548,23 +548,38 @@ export function DirectChatPanel({
                   activeConversationMsgs.map((msg, i) => {
                     const isMe = msg.senderId === activeUserId
                     const isSelected = selectedMessageIds.has(msg.id)
-                    const showTimestamp = (() => {
-                      if (i === activeConversationMsgs.length - 1) return true
-                      const nextMsg = activeConversationMsgs[i + 1]
-                      if (nextMsg.senderId !== msg.senderId) return true
+                    const showTimestamp = true;
+                    const nextMsg = activeConversationMsgs[i + 1];
+                    const prevMsg = activeConversationMsgs[i - 1];
+                    const isSameSenderAsNext = nextMsg && nextMsg.senderId === msg.senderId;
+                    const isSameSenderAsPrev = prevMsg && prevMsg.senderId === msg.senderId;
+                    
+                    const currentMsgDate = new Date(msg.timestamp);
+                    const prevMsgDate = prevMsg ? new Date(prevMsg.timestamp) : null;
+                    const nextMsgDate = nextMsg ? new Date(nextMsg.timestamp) : null;
+                    
+                    const isSameMinuteAsPrev = prevMsgDate ? (
+                      currentMsgDate.getHours() === prevMsgDate.getHours() && 
+                      currentMsgDate.getMinutes() === prevMsgDate.getMinutes() &&
+                      currentMsgDate.toDateString() === prevMsgDate.toDateString()
+                    ) : false;
+                    
+                    const isSameMinuteAsNext = nextMsgDate ? (
+                      currentMsgDate.getHours() === nextMsgDate.getHours() && 
+                      currentMsgDate.getMinutes() === nextMsgDate.getMinutes() &&
+                      currentMsgDate.toDateString() === nextMsgDate.toDateString()
+                    ) : false;
 
-                      const currTime = new Date(msg.timestamp)
-                      const nextTime = new Date(nextMsg.timestamp)
-
-                      const isSameMinute = 
-                        currTime.getFullYear() === nextTime.getFullYear() &&
-                        currTime.getMonth() === nextTime.getMonth() &&
-                        currTime.getDate() === nextTime.getDate() &&
-                        currTime.getHours() === nextTime.getHours() &&
-                        currTime.getMinutes() === nextTime.getMinutes()
-
-                      return !isSameMinute
-                    })()
+                    const isGroupedWithPrev = isSameSenderAsPrev && isSameMinuteAsPrev;
+                    const isGroupedWithNext = isSameSenderAsNext && isSameMinuteAsNext;
+                    
+                    let marginTop = '16px';
+                    if (i === 0) {
+                      marginTop = '0px';
+                    } else
+                    if (isSameSenderAsPrev) {
+                      marginTop = isSameMinuteAsPrev ? '2px' : '16px';
+                    }
 
                     return (
                       <motion.div 
@@ -577,7 +592,7 @@ export function DirectChatPanel({
                           alignSelf: isMe ? 'flex-end' : 'flex-start',
                           maxWidth: '75%',
                           alignItems: 'flex-end',
-                          marginBottom: showTimestamp ? '0' : '-0.5rem' // tighter spacing for grouped messages
+                          marginTop, marginBottom: '0' // tighter spacing for grouped messages
                         }}
                         onContextMenu={(e) => {
                           if (!selectionMode) {
@@ -619,13 +634,17 @@ export function DirectChatPanel({
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start' }}>
                           <div 
                             style={{ 
-                              background: msg.deletedForEveryone ? 'transparent' : msg.isFailed ? 'rgba(239, 68, 68, 0.1)' : isMe ? 'var(--primary)' : 'rgba(255, 255, 255, 0.08)', 
-                              color: msg.deletedForEveryone ? '#9A958C' : msg.isFailed ? '#ef4444' : isMe ? '#000' : 'var(--text)',
+                              background: msg.deletedForEveryone ? 'transparent' : msg.isFailed ? 'rgba(239, 68, 68, 0.1)' : isMe ? 'var(--primary)' : 'var(--bg-surface)', 
+                              color: msg.deletedForEveryone ? 'var(--text-muted)' : msg.isFailed ? 'var(--danger)' : isMe ? '#ffffff' : 'var(--text-main)',
                               padding: '0.75rem 1rem', 
                               borderRadius: '1rem',
-                              borderBottomRightRadius: isMe && !showTimestamp ? '1rem' : isMe ? '0.25rem' : '1rem',
-                              borderBottomLeftRadius: !isMe && !showTimestamp ? '1rem' : !isMe ? '0.25rem' : '1rem',
-                              border: msg.deletedForEveryone ? '1px dashed var(--border)' : msg.isFailed ? '1px solid rgba(239, 68, 68, 0.5)' : 'none',
+                              borderBottomRightRadius: isMe && isGroupedWithNext ? '0.25rem' : '1rem',
+                              borderBottomLeftRadius: !isMe && isGroupedWithNext ? '0.25rem' : '1rem',
+                              borderTopRightRadius: isMe && isGroupedWithPrev ? '0.25rem' : '1rem',
+                              borderTopLeftRadius: !isMe && isGroupedWithPrev ? '0.25rem' : '1rem',
+                              position: 'relative',
+                              minWidth: '75px',
+                              border: msg.deletedForEveryone ? '1px dashed var(--border)' : msg.isFailed ? '1px solid rgba(239, 68, 68, 0.5)' : !isMe ? '1px solid var(--border)' : 'none',
                               fontStyle: msg.deletedForEveryone ? 'italic' : 'normal',
                               cursor: selectionMode ? 'pointer' : 'default',
                               opacity: selectionMode && !isSelected ? 0.6 : 1,
@@ -636,17 +655,33 @@ export function DirectChatPanel({
                               if (selectionMode) toggleSelection(msg.id)
                             }}
                           >
-                            <p style={{ margin: 0, wordBreak: 'break-word', lineHeight: 1.4 }}>
-                              {msg.deletedForEveryone ? 'Message unsent' : msg.content}
-                            </p>
+                            <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
+                              {msg.deletedForEveryone ? (
+                                <span style={{ fontStyle: 'italic', opacity: 0.7 }}>Message unsent</span>
+                              ) : (
+                                msg.content
+                              )}
+                              {showTimestamp && (
+                                <span style={{ display: 'inline-block', width: (msg.editedAt && !msg.deletedForEveryone) ? '85px' : '55px', height: '1px' }} />
+                              )}
+                            </div>
+                            {showTimestamp && (
+                              <span style={{ 
+                                position: 'absolute', 
+                                bottom: '4px', 
+                                right: '8px', 
+                                fontSize: '0.65rem', 
+                                color: isMe ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)',
+                                display: 'flex',
+                                gap: '4px',
+                                alignItems: 'center',
+                                lineHeight: 1
+                              }}>
+                                {msg.isFailed ? 'Failed' : formatAppTime(msg.timestamp)}
+                                {msg.editedAt && !msg.deletedForEveryone && !msg.isFailed && <span style={{ fontStyle: 'italic' }}>(edited)</span>}
+                              </span>
+                            )}
                           </div>
-                          
-                          {(showTimestamp || (msg.editedAt && !msg.deletedForEveryone) || msg.isFailed) && (
-                            <span className="muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem', color: msg.isFailed ? '#ef4444' : '#9A958C' }}>
-                              {msg.isFailed ? 'Failed to send' : (showTimestamp && formatAppTime(msg.timestamp))}
-                              {msg.editedAt && !msg.deletedForEveryone && !msg.isFailed && <span>(edited)</span>}
-                            </span>
-                          )}
                         </div>
                       </motion.div>
                     )
@@ -678,7 +713,7 @@ export function DirectChatPanel({
                     onChange={(e) => editingMessageId ? setEditDraft(e.target.value) : setDraft(e.target.value)}
                     placeholder={isBlocked ? "Unblock to send messages..." : "Type a message..."}
                     disabled={!!isBlocked}
-                    style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', padding: '0.75rem 1rem', borderRadius: '2rem', color: 'var(--text)', opacity: isBlocked ? 0.5 : 1 }}
+                    style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', padding: '0.75rem 1rem', borderRadius: '2rem', color: 'var(--ca-text, #111827)', opacity: isBlocked ? 0.5 : 1 }}
                   />
                   <button 
                     type="submit" 
@@ -710,12 +745,12 @@ export function DirectChatPanel({
             left: contextMenu.x,
             top: contextMenu.y,
             zIndex: 99999,
-            background: '#1e1e2e',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: '0.5rem',
-            padding: '0.3rem',
-            width: '200px',
-            boxShadow: '0 10px 40px rgba(255,255,255,0.8), 0 0 0 1px rgba(255,255,255,0.05)',
+            background: 'var(--ca-surface, #ffffff)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            padding: '0.35rem',
+            minWidth: '180px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
           }}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}

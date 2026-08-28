@@ -79,6 +79,8 @@ const buildHash = (r: Route) => {
 }
 
 import { UpdatePasswordUI } from './features/auth/UpdatePasswordUI'
+import { AgeVerificationModal } from './features/auth/AgeVerificationModal'
+import { checkAgeVerified } from './lib/api'
 
 // Centralized Configuration
 export const CONFIG = {
@@ -90,6 +92,8 @@ function App() {
   const hydratedFromRemote = useRef(false)
   const { toasts, push, dismiss } = useToasts()
   const [entered, setEntered] = useState(false)
+  const [needsAgeVerification, setNeedsAgeVerification] = useState(false)
+  const [checkingAge, setCheckingAge] = useState(true)
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
@@ -97,38 +101,27 @@ function App() {
   
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const { syncGitHubProjects, syncingGithub, githubMessage } = useGitHubSync(
-    user?.id,
-    projectState,
-    (newProjs) => setProjectState(prev => [...newProjs, ...prev]),
-    (updatedProjs) => setProjectState(prev => prev.map(p => updatedProjs.find(u => u.id === p.id) || p)),
-    (langs) => {
-      langs.forEach(lang => {
-        const resolved = resolveSkill(lang);
-        if (!skillState.some(s => s.id === resolved.id || s.name.toLowerCase() === lang.toLowerCase())) {
-          addSkill({
-            id: resolved.id,
-            name: resolved.name,
-            canonicalName: resolved.canonicalName,
-            status: 'unlocked',
-            progress: 0,
-            xp: 0,
-            isIndependent: true
-          });
-        }
-      });
-    }
-  )
-
-  const addProject = (newProject: import('./types').Project) => {
-    setProjectState((prev) => [newProject, ...prev])
-    push(`Project added: ${newProject.name}`, 'info')
-  }
 
   const markNotificationRead = async (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
     if (supabase) await supabase.from('notifications').update({ read: true }).eq('id', id);
   }
+
+  
+  useEffect(() => {
+    if (user && isConfigured) {
+      setCheckingAge(true);
+      checkAgeVerified().then(isVerified => {
+         if (!isVerified) setNeedsAgeVerification(true);
+         setCheckingAge(false);
+      }).catch(err => {
+         console.error('Failed to check age verification:', err);
+         setCheckingAge(false);
+      });
+    } else if (!user) {
+      setCheckingAge(false);
+    }
+  }, [user, isConfigured]);
 
   const markAllNotificationsRead = async () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
@@ -417,7 +410,71 @@ function App() {
     }
   }, [user, settings.showOnlineStatus])
 
-  const completeActiveSession = async () => {
+  
+  const handleAcceptFriend = async (senderId: string) => {
+    try {
+      await acceptFriendRequest(senderId)
+      const network = await fetchSocialNetwork(user?.id || '')
+      setFriendState({ relationships: network.relationships })
+      setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id))
+      push('Friend request accepted', 'success')
+    } catch (err: any) {
+      console.error(err)
+      push(err.message || 'Failed to accept friend request', 'error')
+    }
+  }
+
+  const handleRejectFriend = async (senderId: string) => {
+    try {
+      await rejectFriendRequest(senderId)
+      const network = await fetchSocialNetwork(user?.id || '')
+      setFriendState({ relationships: network.relationships })
+      setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id))
+      push('Friend request rejected', 'info')
+    } catch (err: any) {
+      push(err.message || 'Failed to reject friend request', 'error')
+    }
+  }
+
+  const handleRemoveFriend = async (targetId: string) => {
+    try {
+      await removeFriend(targetId)
+      const network = await fetchSocialNetwork(user?.id || '')
+      setFriendState({ relationships: network.relationships })
+      push('Friend removed', 'info')
+    } catch (err: any) {
+      push(err.message || 'Failed to remove friend', 'error')
+    }
+  }
+
+  const { syncGitHubProjects, syncingGithub, githubMessage } = useGitHubSync(
+    user?.id,
+    projectState,
+    (newProjs) => setProjectState(prev => [...newProjs, ...prev]),
+    (updatedProjs) => setProjectState(prev => prev.map(p => updatedProjs.find(u => u.id === p.id) || p)),
+    (langs) => {
+      langs.forEach(lang => {
+        const resolved = resolveSkill(lang);
+        if (!skillState.some(s => s.id === resolved.id || s.name.toLowerCase() === lang.toLowerCase())) {
+          addSkill({
+            id: resolved.id,
+            name: resolved.name,
+            canonicalName: resolved.canonicalName,
+            status: 'unlocked',
+            progress: 0,
+            xp: 0,
+            isIndependent: true
+          });
+        }
+      });
+    }
+  )
+
+  const addProject = (newProject: import('./types').Project) => {
+    setProjectState((prev) => [newProject, ...prev])
+    push(`Project added: ${newProject.name}`, 'info')
+  }
+const completeActiveSession = async () => {
     if (!activeSession) return
     const { skillId, subtopic, teachingMinutes = 60, solvingBaselineMinutes = 25 } = activeSession
     const minutesSpent = Math.max(1, Math.ceil(activeSessionElapsed / 60))
@@ -559,7 +616,17 @@ function App() {
               if ('Notification' in window && Notification.permission === 'granted') {
                 new Notification('Goal Reminder', { body: `You planned to work on '${g.title}' today.` })
               }
-              setGoalReminder(current => current ? current : g)
+              if (supabase && user) {
+                supabase.from('notifications').insert({
+                  user_id: user.id,
+                  type: 'learning',
+                  title: 'To Do Reminder',
+                  body: `You planned to work on '${g.title}' today.`,
+                  read: false,
+                  link_type: 'goals',
+                  link_id: null
+                }).then();
+              }
             }
             updated = true
             return { ...g, notificationSent: true }
@@ -581,6 +648,7 @@ function App() {
 
   // Load remote data when a user logs in
   useEffect(() => {
+    let isActive = true;
     if (!user) {
       if (isConfigured) {
         hydratedFromRemote.current = false
@@ -632,8 +700,7 @@ function App() {
           if (existingToken) {
             const namespacedKey = `${baseKey}-${resolvedLoginId}`
             window.localStorage.setItem(namespacedKey, existingToken)
-            window.localStorage.removeItem(baseKey)
-            window.sessionStorage.removeItem(baseKey)
+            // window.localStorage.removeItem(baseKey) // Kept for normal supabase auth
           }
 
           // Force the Supabase client to re-read the session from the new key location
@@ -660,6 +727,7 @@ function App() {
       }
       
       let remote = await fetchAllUserData(user.id)
+      if (!isActive) return;
       if (!remote) {
         setLoadError('Failed to retrieve user data. Please check your connection and try again.')
         return
@@ -687,8 +755,7 @@ function App() {
           if (existingToken) {
             const namespacedKey = `${baseKey}-${activeLoginId}`
             window.localStorage.setItem(namespacedKey, existingToken)
-            window.localStorage.removeItem(baseKey)
-            window.sessionStorage.removeItem(baseKey)
+            // window.localStorage.removeItem(baseKey) // Kept for normal supabase auth
             
             // Force the Supabase client to re-read the session from the new key location
             if (supabase) {
@@ -856,12 +923,14 @@ function App() {
       fetchIncomingMessages(user.id).then(msgs => setIncomingMessages(msgs))
 
       setTimeout(() => {
+        if (!isActive) return;
         hydratedFromRemote.current = true
         setDataLoaded(true)
       }, 0)
     }
 
     resolveAndLoad()
+    return () => { isActive = false; }
   }, [user, isConfigured])
 
   // Safe persistence: only saves when state mutates AFTER hydration
@@ -930,6 +999,17 @@ function App() {
       newEarnedBadges.forEach((b) => {
         totalBadgeXp += XP_REWARDS.badge
         push(`Badge earned: ${b.title} +${XP_REWARDS.badge} XP`, 'badge')
+        if (supabase && user) {
+          supabase.from('notifications').insert({
+            user_id: user.id,
+            type: 'achievement',
+            title: 'Badge Earned',
+            body: `You earned the badge: ${b.title}`,
+            read: false,
+            link_type: 'badge_detail',
+            link_id: b.id
+          }).then();
+        }
       })
       if (totalBadgeXp > 0) {
         setProgression(p => ({ ...p, xp: p.xp + totalBadgeXp, badges: p.badges + newEarnedBadges.length }))
@@ -943,6 +1023,17 @@ function App() {
         const reward = a.xpReward || XP_REWARDS.achievement
         totalAchXp += reward
         push(`Achievement unlocked: ${a.title} +${reward} XP`, 'unlock')
+        if (supabase && user) {
+          supabase.from('notifications').insert({
+            user_id: user.id,
+            type: 'achievement',
+            title: 'Achievement Unlocked',
+            body: `You unlocked: ${a.title}`,
+            read: false,
+            link_type: 'achievement_detail',
+            link_id: a.id
+          }).then();
+        }
       })
       if (totalAchXp > 0) {
         setProgression(p => ({ ...p, xp: p.xp + totalAchXp, achievements: p.achievements + newUnlockedAchievements.length }))
@@ -1389,6 +1480,16 @@ function App() {
                         activeUserId={user?.id || ''} 
                         chatState={chatState} 
                         friendState={friendState}
+                        friendsPanel={<FriendsPanel
+                          friendState={friendState}
+                          incomingRequests={incomingRequests}
+                          onAccept={handleAcceptFriend}
+                          onReject={handleRejectFriend}
+                          onRemove={handleRemoveFriend}
+                          onOpenProfile={(id) => setViewingUserId(id)}
+                          onMessage={(id) => setActiveFriendIdForChat(id)}
+                          onlineUsers={onlineUsers}
+                        />}
                         incomingMessages={incomingMessages}
                         onSendMessage={async (receiverId, content) => {
                           const msgId = Math.random().toString(36).substring(7)
@@ -1785,7 +1886,7 @@ function App() {
           if (id === user?.id) return
           try {
             await sendFriendRequest(id)
-            setFriendState((prev: FriendState) => ({ relationships: [...prev.relationships, { userId: id, status: 'pending_outgoing', createdAt: new Date().toISOString() }] }))
+            const network = await fetchSocialNetwork(user?.id || ''); setFriendState({ relationships: network.relationships }); setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id));
             push('Friend request sent!', 'info')
           } catch (err: any) {
             push(err.message || 'Failed to send request.', 'info')
@@ -1814,6 +1915,9 @@ function App() {
             return newState
           })
         }}
+        incomingRequests={incomingRequests}
+        onAcceptRequest={handleAcceptFriend}
+        onRejectRequest={handleRejectFriend}
         onSendRequest={async (id) => {
           if (id === user?.id) return
           try {
@@ -1830,7 +1934,7 @@ function App() {
         onRemoveFriend={async (id) => {
           try {
             await removeFriend(id)
-            setFriendState((prev: FriendState) => ({ relationships: prev.relationships.filter((r) => r.userId !== id) }))
+            const network = await fetchSocialNetwork(user?.id || ''); setFriendState({ relationships: network.relationships }); setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id));
             push('Friend removed.', 'info')
           } catch (err: any) {
             push('Failed to remove friend.', 'info')
@@ -1843,6 +1947,7 @@ function App() {
         onClose={() => setViewingUserId(null)}
       />
       <Toasts toasts={toasts} onDismiss={dismiss} hasActiveSession={!!activeSession} />
+      <AgeVerificationModal isOpen={needsAgeVerification} onSuccess={() => setNeedsAgeVerification(false)} />
       {dataLoaded && <Celebration xp={progression.xp} />}
       </div>
     </MotionConfig>

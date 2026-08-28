@@ -168,8 +168,8 @@ export function PrivacyModals({
     </button>
   )
 
-  const inputStyle = { width: '100%', padding: '0.75rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: '#fff', marginBottom: '1rem', outline: 'none', boxSizing: 'border-box' as const }
-  const btnStyle = { width: '100%', padding: '0.75rem', background: 'var(--primary)', border: 'none', borderRadius: '8px', color: '#fff', fontWeight: 600, cursor: 'pointer' }
+  const inputStyle = { width: '100%', padding: '0.75rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', marginBottom: '1rem', outline: 'none', boxSizing: 'border-box' as const }
+  const btnStyle = { width: '100%', padding: '0.75rem', background: 'var(--primary)', border: 'none', borderRadius: '8px', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }
 
   return (
     <AnimatePresence>
@@ -179,7 +179,7 @@ export function PrivacyModals({
             {closeBtn(() => setIsPasswordOpen(false))}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <Lock size={24} color="var(--primary)" />
-              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#fff' }}>Change Password</h3>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)' }}>Change Password</h3>
             </div>
             
             <form onSubmit={handlePasswordSubmit}>
@@ -219,7 +219,7 @@ export function PrivacyModals({
             {closeBtn(() => setIsSessionsOpen(false))}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <Shield size={24} color="var(--primary)" />
-              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#fff' }}>Active Sessions</h3>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)' }}>Active Sessions</h3>
             </div>
             <div style={{ flex: 1, overflowY: 'auto' }}>
               {sessionsLoading ? (
@@ -234,7 +234,7 @@ export function PrivacyModals({
                     return (
                       <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
                         <div>
-                          <p style={{ margin: '0 0 0.25rem', color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
+                          <p style={{ margin: '0 0 0.25rem', color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 500 }}>
                             {s.user_agent ? s.user_agent.substring(0, 40) + '...' : 'Unknown Device'}
                           </p>
                           <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '0.8rem' }}>
@@ -263,7 +263,7 @@ export function PrivacyModals({
             {closeBtn(() => setIsBlockedOpen(false))}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
               <UserX size={24} color="var(--primary)" />
-              <h3 style={{ margin: 0, fontSize: '1.25rem', color: '#fff' }}>Blocked Users</h3>
+              <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)' }}>Blocked Users</h3>
             </div>
             <div style={{ flex: 1, overflowY: 'auto' }}>
               {blockedLoading ? (
@@ -278,9 +278,9 @@ export function PrivacyModals({
                         {u.avatarUrl ? (
                           <img src={u.avatarUrl} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
                         ) : (
-                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>{u.displayName.charAt(0)}</div>
+                          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)' }}>{u.displayName.charAt(0)}</div>
                         )}
-                        <span style={{ color: '#fff', fontSize: '0.95rem' }}>{u.displayName}</span>
+                        <span style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{u.displayName}</span>
                       </div>
                       <button 
                         onClick={() => handleUnblock(u.id)}

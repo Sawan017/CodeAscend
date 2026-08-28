@@ -105,29 +105,49 @@ export function CreateGroupModal({
 
   return createPortal(
     <div 
-      style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(5px)' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: '#fff', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '500px', maxHeight: 'calc(100vh - 2rem)', overflowY: 'auto', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px rgba(255,255,255,0.8)', margin: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#fff' }}>Create Group</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}><X size={20} /></button>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .cg-input {
+          width: 100%;
+          background: var(--ca-bg, #F7F7F2);
+          border: 1px solid var(--ca-border, rgba(0,0,0,0.12));
+          padding: 10px 14px;
+          border-radius: 8px;
+          color: var(--ca-text, #1E1D1B);
+          box-sizing: border-box;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .cg-input:focus {
+          border-color: var(--primary, #3b82f6);
+          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+        }
+        .cg-input::placeholder {
+          color: var(--ca-text-muted, #9A958C);
+        }
+      `}} />
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'var(--ca-surface, #ffffff)', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '440px', maxHeight: 'calc(100vh - 2rem)', overflowY: 'auto', border: '1px solid var(--ca-border, rgba(0,0,0,0.1))', boxShadow: '0 4px 24px rgba(0,0,0,0.15)', margin: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--ca-text, #000)', fontWeight: 600 }}>Create Group</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--ca-text-muted, #9A958C)', cursor: 'pointer', padding: '4px' }}><X size={20} /></button>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* Group Avatar Picker */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div 
               style={{ position: 'relative', cursor: 'pointer' }}
               onClick={() => fileInputRef.current?.click()}
             >
               <div style={{
-                width: '88px',
-                height: '88px',
+                width: '80px',
+                height: '80px',
                 borderRadius: '50%',
                 overflow: 'hidden',
-                border: '2px solid rgba(255,255,255,0.15)',
-                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid var(--ca-border, rgba(0,0,0,0.15))',
+                background: 'var(--ca-bg, #f5f5f5)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -140,7 +160,7 @@ export function CreateGroupModal({
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                   />
                 ) : (
-                  <Users size={36} color="rgba(255,255,255,0.25)" />
+                  <Users size={32} color="var(--ca-text-muted, #9A958C)" />
                 )}
               </div>
               {/* Pencil overlay */}
@@ -148,17 +168,17 @@ export function CreateGroupModal({
                 position: 'absolute',
                 bottom: '0px',
                 right: '0px',
-                width: '28px',
-                height: '28px',
+                width: '26px',
+                height: '26px',
                 borderRadius: '50%',
-                background: 'var(--cyan, #22d3ee)',
-                border: '2px solid #fff',
+                background: 'var(--primary, #3b82f6)',
+                border: '2px solid var(--ca-surface, #ffffff)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'transform 0.15s'
               }}>
-                <Edit2 size={13} color="#000" />
+                <Edit2 size={12} color="#ffffff" />
               </div>
               <input 
                 ref={fileInputRef}
@@ -171,36 +191,37 @@ export function CreateGroupModal({
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: '#9A958C' }}>Group Name</label>
-            <input value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '8px', color: '#fff', boxSizing: 'border-box' }} placeholder="Enter group name..." />
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--ca-text-secondary, #5A5750)', fontWeight: 500 }}>Group Name</label>
+            <input className="cg-input" value={name} onChange={e => setName(e.target.value)} placeholder="Enter group name..." />
           </div>
+          
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: '#9A958C' }}>Description (optional)</label>
-            <input value={description} onChange={e => setDescription(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '10px 14px', borderRadius: '8px', color: '#fff', boxSizing: 'border-box' }} placeholder="Group description..." />
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--ca-text-secondary, #5A5750)', fontWeight: 500 }}>Description (optional)</label>
+            <input className="cg-input" value={description} onChange={e => setDescription(e.target.value)} placeholder="Group description..." />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', color: '#9A958C' }}>Add Members ({selectedFriends.length})</label>
-            <div style={{ maxHeight: '200px', overflowY: 'auto', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border)', borderRadius: '8px', padding: '8px' }}>
-              {loading ? <div style={{ padding: '10px', textAlign: 'center', color: '#9A958C' }}>Loading friends...</div> : friends.length === 0 ? <div style={{ padding: '10px', textAlign: 'center', color: '#9A958C' }}>No friends found.</div> : friends.map(f => (
-                <div key={f.userId} onClick={() => toggleFriend(f.userId)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', borderRadius: '6px', background: selectedFriends.includes(f.userId) ? 'rgba(6, 182, 212, 0.1)' : 'transparent', cursor: 'pointer', transition: 'all 0.2s' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--ca-text-secondary, #5A5750)', fontWeight: 500 }}>Add Members ({selectedFriends.length})</label>
+            <div style={{ maxHeight: '180px', overflowY: 'auto', background: 'var(--ca-bg, #f5f5f5)', border: '1px solid var(--ca-border, rgba(0,0,0,0.12))', borderRadius: '8px', padding: '6px' }}>
+              {loading ? <div style={{ padding: '12px', textAlign: 'center', color: 'var(--ca-text-muted, #9A958C)', fontSize: '0.9rem' }}>Loading friends...</div> : friends.length === 0 ? <div style={{ padding: '12px', textAlign: 'center', color: 'var(--ca-text-muted, #9A958C)', fontSize: '0.9rem' }}>No friends found.</div> : friends.map(f => (
+                <div key={f.userId} onClick={() => toggleFriend(f.userId)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: '6px', background: selectedFriends.includes(f.userId) ? 'var(--ca-green-light, rgba(62,163,84,0.08))' : 'transparent', cursor: 'pointer', transition: 'all 0.15s' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Avatar src={f.avatar} size={32} />
-                    <span style={{ color: '#fff', fontSize: '0.9rem' }}>{f.displayName}</span>
+                    <span style={{ color: 'var(--ca-text, #000)', fontSize: '0.9rem', fontWeight: 500 }}>{f.displayName}</span>
                   </div>
-                  {selectedFriends.includes(f.userId) && <Check size={18} color="var(--cyan)" />}
+                  {selectedFriends.includes(f.userId) && <Check size={18} color="var(--ca-green, #3EA354)" />}
                 </div>
               ))}
             </div>
           </div>
 
           {error && (
-            <div style={{ padding: '10px 14px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', color: '#ef4444', fontSize: '0.85rem' }}>
+            <div style={{ padding: '10px 14px', background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: '8px', color: '#ef4444', fontSize: '0.85rem' }}>
               {error}
             </div>
           )}
 
-          <button onClick={handleSubmit} disabled={!name.trim() || creating} style={{ width: '100%', padding: '12px', background: (!name.trim() || creating) ? '#fff' : 'var(--cyan)', color: (!name.trim() || creating) ? '#9A958C' : '#000', border: 'none', borderRadius: '8px', fontWeight: 600, marginTop: '10px', cursor: (!name.trim() || creating) ? 'not-allowed' : 'pointer', opacity: creating ? 0.7 : 1 }}>
+          <button onClick={handleSubmit} disabled={!name.trim() || creating} style={{ width: '100%', padding: '12px', background: (!name.trim() || creating) ? 'var(--ca-surface-alt, #e5e7eb)' : 'var(--primary, #3b82f6)', color: (!name.trim() || creating) ? 'var(--ca-text-muted, #9A958C)' : '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 600, marginTop: '8px', cursor: (!name.trim() || creating) ? 'not-allowed' : 'pointer', opacity: creating ? 0.7 : 1, transition: 'background-color 0.2s', boxShadow: (!name.trim() || creating) ? 'none' : '0 2px 8px rgba(0,0,0,0.1)' }}>
             {creating ? 'Creating...' : 'Create Group'}
           </button>
         </div>

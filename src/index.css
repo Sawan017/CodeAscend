@@ -131,7 +131,7 @@ button { border: 1px solid transparent; }
   border-radius: 28px;
   background: var(--glass-strong);
   box-shadow: 0 0 0 1px rgba(93, 226, 255, 0.1), 0 30px 90px rgba(0,0,0,0.45);
-  backdrop-filter: blur(20px);
+  
 }
 
 .eyebrow {
@@ -207,7 +207,7 @@ h4 { font-size: 1rem; }
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--glass);
-  backdrop-filter: blur(18px);
+  
 }
 .brand-block { display: flex; align-items: center; gap: 12px; }
 .brand-mark {
@@ -272,7 +272,7 @@ h4 { font-size: 1rem; }
   border: 1px solid var(--border);
   background: var(--glass);
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.05);
-  backdrop-filter: blur(18px);
+  
 }
 
 /* ============ PROGRESSION MAP ============ */
@@ -419,7 +419,7 @@ h4 { font-size: 1rem; }
   border-radius: var(--radius-lg);
   padding: 24px;
   box-shadow: var(--shadow-md);
-  backdrop-filter: blur(12px);
+  
   position: relative;
   overflow: clip;
 }
@@ -573,8 +573,8 @@ h4 { font-size: 1rem; }
 /* ============ Profile drawer ============ */
 .drawer-backdrop {
   position: fixed; inset: 0;
-  background: rgba(2, 6, 23, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+  
   z-index: 40;
 }
 .drawer-panel {
@@ -685,7 +685,7 @@ h4 { font-size: 1rem; }
   background: var(--glass-strong);
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
   color: var(--text); font-weight: 600; font-size: 0.9rem;
-  cursor: pointer; backdrop-filter: blur(12px);
+  cursor: pointer; 
 }
 .toast-xp { border-color: rgba(245, 158, 11, 0.5); color: #fbbf24; }
 .toast-level { border-color: rgba(245, 158, 11, 0.6); color: #fde68a; }
@@ -738,24 +738,24 @@ h4 { font-size: 1rem; }
 /* ============ Name color tiers ============ */
 .name-novice { color: var(--text); }
 .name-adept { color: var(--cyan); }
-.name-expert { color: var(--blue); text-shadow: 0 0 12px rgba(59,130,246,0.3); }
-.name-veteran { color: var(--violet); text-shadow: 0 0 16px rgba(139,92,246,0.35); }
+.name-expert { color: var(--blue); text-shadow: none; }
+.name-veteran { color: var(--violet); text-shadow: none; }
 .name-master {
   background: linear-gradient(90deg, var(--violet), var(--gold));
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  text-shadow: 0 0 16px rgba(139,92,246,0.3);
+  text-shadow: none;
 }
 .name-legend {
   background: linear-gradient(90deg, var(--violet), var(--gold), var(--cyan));
   -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: shimmer 20s linear infinite;
-  text-shadow: 0 0 20px rgba(139,92,246,0.4);
+  text-shadow: none;
 }
 .name-mythic {
   background: linear-gradient(90deg, var(--cyan), var(--violet), var(--gold), var(--blue));
   -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: shimmer 15s linear infinite;
-  text-shadow: 0 0 24px rgba(139,92,246,0.5), 0 0 32px rgba(34,211,238,0.3);
+  text-shadow: none;
 }
 
 @keyframes shimmer {
@@ -770,7 +770,7 @@ h4 { font-size: 1rem; }
 .rarity-epic .achievement-icon { color: var(--violet); }
 .rarity-legendary .achievement-icon {
   color: var(--gold);
-  text-shadow: 0 0 16px rgba(245,158,11,0.5);
+  text-shadow: none;
   animation: pulse-gold 15s ease-in-out infinite;
 }
 
@@ -887,7 +887,7 @@ h4 { font-size: 1rem; }
   padding: 2.5rem;
   display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem;
   box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  backdrop-filter: blur(12px);
+  
   position: relative;
   overflow: hidden;
 }
@@ -914,7 +914,7 @@ h4 { font-size: 1rem; }
   border: 1px solid var(--border);
   min-width: 280px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  backdrop-filter: blur(20px);
+  
 }
 .dashboard-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;
@@ -1248,6 +1248,21 @@ h4 { font-size: 1rem; }
   --ca-blue: #3A82C4;
   --ca-blue-light: rgba(58, 130, 196, 0.08);
   --ca-gold: #E6B022;
+  /* Legacy mapping to opaque UI */
+  --surface: var(--ca-surface);
+  --surface-raised: var(--ca-surface);
+  --surface-sunken: var(--ca-surface-alt);
+  --glass: var(--ca-surface);
+  --glass-strong: var(--ca-surface);
+  --glass-toast: var(--ca-surface);
+  --glass-border: var(--ca-border);
+  --border: var(--ca-border);
+  --border-strong: var(--ca-border-strong);
+  --text: var(--ca-text);
+  --text-muted: var(--ca-text-muted);
+  --bg-surface: var(--ca-surface);
+  --bg-base: var(--ca-bg);
+
   --ca-gold-light: rgba(230, 176, 34, 0.1);
   --ca-orange: #EB7C31;
   --ca-orange-light: rgba(235, 124, 49, 0.08);
@@ -1293,7 +1308,7 @@ body {
 header[style*="rgba(9, 10, 12"] {
   background: var(--ca-surface) !important;
   border-bottom: 1px solid var(--ca-border) !important;
-  backdrop-filter: blur(12px) !important;
+  
   box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important;
 }
 
@@ -1321,7 +1336,7 @@ header[style*="rgba(9, 10, 12"] {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  backdrop-filter: none !important;
+  
   padding: 0 !important;
   border-radius: 0 !important;
 }
@@ -1329,7 +1344,7 @@ header[style*="rgba(9, 10, 12"] {
   background: var(--ca-surface) !important;
   border: 1px solid var(--ca-border) !important;
   box-shadow: var(--ca-shadow-sm) !important;
-  backdrop-filter: none !important;
+  
   color: var(--ca-text);
 }
 
