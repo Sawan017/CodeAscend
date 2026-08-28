@@ -179,23 +179,26 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
 
   const inputStyle = {
     width: '100%',
-    padding: '0.6rem 1rem',
-    background: 'var(--surface)',
+    padding: '0.75rem 1rem',
+    background: 'var(--ca-surface, #ffffff)',
     border: '1px solid var(--border)',
-    borderRadius: '8px',
-    color: '#fff',
+    borderRadius: '12px',
+    color: 'var(--ca-text, #1E1D1B)',
     fontSize: '0.95rem',
     outline: 'none',
     transition: 'border-color 0.2s',
-    marginTop: '0.25rem'
+    marginTop: '0.5rem',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
   }
 
   const labelStyle = {
-    fontSize: '0.85rem',
-    color: 'var(--text-muted)',
-    fontWeight: 500,
+    fontSize: '0.8rem',
+    color: 'var(--ca-text-muted, #9A958C)',
+    fontWeight: 700,
     textTransform: 'uppercase' as const,
-    letterSpacing: '0.05em'
+    letterSpacing: '0.05em',
+    marginBottom: '0.25rem',
+    display: 'block'
   }
 
   const validDisplayedAchievements = (draftProfile.displayedAchievements || []).filter(id => 
@@ -203,7 +206,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
   )
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} style={{ display: 'flex', flexDirection: 'column', gap: '2rem', background: 'var(--ca-bg, #f5f5f5)', borderRadius: '24px', paddingBottom: '3rem', maxWidth: '1000px', margin: '0 auto', width: '100%', border: '1px solid var(--border)' }}>
       
       {/* Hidden file inputs */}
       <input type="file" ref={avatarInputRef} onChange={handleAvatarChange} style={{ display: 'none' }} accept="image/*" />
@@ -242,7 +245,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
         <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-80px', position: 'relative', zIndex: 10 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             
-            <div style={{ position: 'relative', borderRadius: '50%', padding: '6px', background: 'var(--bg-base)', display: 'inline-block' }}>
+            <div style={{ position: 'relative', borderRadius: '50%', padding: '6px', background: 'var(--ca-surface, #ffffff)', display: 'inline-block' }}>
               <Avatar src={avatarPreview} alt={draftProfile.displayName} size={120} showStatus={true} isOnline={true} />
               
               {/* Avatar Edit Controls */}
@@ -279,12 +282,12 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
               <label style={labelStyle}>Display Name</label>
               <input style={inputStyle} value={draftProfile.displayName || ''} onChange={e => updateDraft({ displayName: e.target.value })} placeholder="Your display name" />
             </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
                 <label style={labelStyle}>User ID (Login)</label>
                 <input style={{ ...inputStyle, opacity: 0.6, cursor: 'not-allowed' }} value={draftProfile.login_id || draftProfile.username} readOnly disabled title="User ID cannot be changed" />
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
                 <label style={labelStyle}>Primary Role / Title</label>
                 <input style={inputStyle} value={draftProfile.title || ''} onChange={e => updateDraft({ title: e.target.value })} placeholder="e.g. Senior Engineer" />
               </div>
@@ -296,10 +299,10 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
           
           {/* Bio */}
           <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Bio</h4>
-            <div style={{ background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--ca-text, #1E1D1B)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Bio</h4>
+            <div style={{ background: 'var(--ca-surface, #ffffff)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <textarea 
-                style={{ ...inputStyle, background: 'var(--bg-base)', minHeight: '120px', resize: 'vertical', marginTop: 0 }} 
+                style={{ ...inputStyle, background: 'var(--ca-surface, #ffffff)', minHeight: '120px', resize: 'vertical', marginTop: 0 }} 
                 value={draftProfile.bio || ''} 
                 onChange={e => updateDraft({ bio: e.target.value })} 
                 placeholder="Tell the community about yourself..." 
@@ -309,8 +312,8 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
 
           {/* Links */}
           <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Contact & Links</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--ca-text, #1E1D1B)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Contact & Links</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', background: 'var(--ca-surface, #ffffff)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <label style={labelStyle}>Email Address</label>
@@ -318,14 +321,14 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                 {emailUpdateMsg && <span style={{ fontSize: '0.8rem', marginTop: '0.25rem', color: emailUpdateMsg.includes('failed') ? '#ef4444' : '#10b981' }}>{emailUpdateMsg}</span>}
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', cursor: 'pointer' }}>
                   <input type="checkbox" checked={draftProfile.contactPublic} onChange={e => updateDraft({ contactPublic: e.target.checked, contact: draftEmail })} />
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-main)' }}>Show email publicly on profile</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--ca-text, #1E1D1B)' }}>Show email publicly on profile</span>
                 </label>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <label style={labelStyle}>GitHub URL</label>
                 <div style={{ position: 'relative' }}>
-                  <Code size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Code size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)' }} />
                   <input style={{ ...inputStyle, paddingLeft: '2.5rem' }} value={draftProfile.github || ''} onChange={e => updateDraft({ github: e.target.value })} placeholder="https://github.com/..." />
                 </div>
               </div>
@@ -333,7 +336,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <label style={labelStyle}>LinkedIn URL</label>
                 <div style={{ position: 'relative' }}>
-                  <Globe size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Globe size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)' }} />
                   <input style={{ ...inputStyle, paddingLeft: '2.5rem' }} value={draftProfile.linkedin || ''} onChange={e => updateDraft({ linkedin: e.target.value })} placeholder="https://linkedin.com/in/..." />
                 </div>
               </div>
@@ -341,7 +344,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <label style={labelStyle}>Portfolio / Website</label>
                 <div style={{ position: 'relative' }}>
-                  <Link size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Link size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)' }} />
                   <input style={{ ...inputStyle, paddingLeft: '2.5rem' }} value={draftProfile.portfolio || ''} onChange={e => updateDraft({ portfolio: e.target.value })} placeholder="https://..." />
                 </div>
               </div>
@@ -351,13 +354,13 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
 
           {/* Skills */}
           <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Displayed Skills</h4>
-            <div style={{ background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--ca-text, #1E1D1B)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Displayed Skills</h4>
+            <div style={{ background: 'var(--ca-surface, #ffffff)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Select the skills to highlight on your profile.</p>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--ca-text-muted, #9A958C)' }}>Select the skills to highlight on your profile.</p>
                 <div style={{ position: 'relative', width: '250px' }} ref={skillDropdownRef}>
-                  <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)' }} />
                   <input
                     placeholder="Search skills..."
                     value={skillSearch}
@@ -369,12 +372,12 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                     style={{ ...inputStyle, marginTop: 0, padding: '0.4rem 1rem 0.4rem 2rem', fontSize: '0.85rem' }}
                   />
                   {skillDropdownOpen && (
-                    <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--bg-base)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, maxHeight: '200px', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+                    <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--ca-surface-alt, #f5f5f5)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, maxHeight: '200px', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
                       {(() => {
                         const available = skills.filter(s => s.progress >= 50 && !draftProfile.displayedSkills?.includes(s.id))
                         const filtered = skillSearch ? available.filter(s => s.name.toLowerCase().includes(skillSearch.toLowerCase())) : available
                         if (filtered.length === 0) {
-                          return <div style={{ padding: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>No matching skills available.</div>
+                          return <div style={{ padding: '0.75rem', fontSize: '0.85rem', color: 'var(--ca-text-muted, #9A958C)' }}>No matching skills available.</div>
                         }
                         return filtered.map(skill => (
                           <div 
@@ -387,7 +390,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                             }}
                             style={{ padding: '0.6rem 1rem', fontSize: '0.85rem', cursor: 'pointer', borderBottom: '1px solid var(--border)' }}
                           >
-                            <span>{skill.name} <span style={{ color: 'var(--text-muted)' }}>— {Math.floor(skill.progress)}%</span></span>
+                            <span>{skill.name} <span style={{ color: 'var(--ca-text-muted, #9A958C)' }}>— {Math.floor(skill.progress)}%</span></span>
                           </div>
                         ))
                       })()}
@@ -415,13 +418,13 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                           padding: '0.4rem 0.75rem',
                           borderRadius: '20px',
                           border: `1px solid var(--primary)`,
-                          background: 'rgba(99, 102, 241, 0.1)',
+                          background: 'rgba(59, 130, 246, 0.1)',
                           cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '0.5rem',
                           transition: 'all 0.2s',
-                          color: '#fff',
+                          color: 'var(--ca-text, #1E1D1B)',
                           fontSize: '0.85rem',
                           fontWeight: 500
                         }}
@@ -442,24 +445,24 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
 
           {/* Achievements */}
           <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Displayed Achievements</h4>
-            <div style={{ background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <h4 style={{ margin: '0 0 0.75rem 0', color: 'var(--ca-text, #1E1D1B)', fontSize: '0.85rem', textTransform: 'uppercase', fontWeight: 700 }}>Displayed Achievements</h4>
+            <div style={{ background: 'var(--ca-surface, #ffffff)', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Select up to 12 achievements to highlight on your profile.</p>
+                <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--ca-text-muted, #9A958C)' }}>Select up to 12 achievements to highlight on your profile.</p>
                 <div style={{ position: 'relative' }} ref={achDropdownRef}>
                   <button 
                     onClick={() => setAchDropdownOpen(!achDropdownOpen)}
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'var(--text)', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                    style={{ background: 'var(--ca-surface-alt, #f5f5f5)', border: '1px solid var(--border)', color: 'var(--ca-text, #1E1D1B)', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                   >
                     Add Achievement ({validDisplayedAchievements.length}/12)
                   </button>
                   
                   {achDropdownOpen && (
-                    <div style={{ position: achDropdownStyle.position || 'absolute' as any, top: achDropdownStyle.top, bottom: achDropdownStyle.bottom, right: achDropdownStyle.right, left: achDropdownStyle.left, marginTop: achDropdownStyle.marginTop, marginBottom: achDropdownStyle.marginBottom, background: 'var(--bg-base)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, width: achDropdownStyle.width || 'min(420px, 100%)', maxWidth: 'min(420px, calc(100vw - 32px))', boxSizing: 'border-box', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ position: achDropdownStyle.position || 'absolute' as any, top: achDropdownStyle.top, bottom: achDropdownStyle.bottom, right: achDropdownStyle.right, left: achDropdownStyle.left, marginTop: achDropdownStyle.marginTop, marginBottom: achDropdownStyle.marginBottom, background: 'var(--ca-surface-alt, #f5f5f5)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, width: achDropdownStyle.width || 'min(420px, 100%)', maxWidth: 'min(420px, calc(100vw - 32px))', boxSizing: 'border-box', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
                       <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <div style={{ position: 'relative' }}>
-                          <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                          <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)' }} />
                           <input
                             placeholder="Search achievements..."
                             value={achSearch}
@@ -468,7 +471,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                           />
                         </div>
                         <div style={{ position: 'relative' }}>
-                          <ArrowUpDown size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none' }} />
+                          <ArrowUpDown size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)', pointerEvents: 'none' }} />
                           <select
                             value={achSort}
                             onChange={(e) => setAchSort(e.target.value as 'default'|'asc'|'desc')}
@@ -499,7 +502,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                           }
 
                           if (allEarned.length === 0) {
-                            return <p style={{ padding: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0 }}>No matching achievements.</p>
+                            return <p style={{ padding: '0.75rem', fontSize: '0.85rem', color: 'var(--ca-text-muted, #9A958C)', margin: 0 }}>No matching achievements.</p>
                           }
 
                           return allEarned.map(a => (
@@ -523,7 +526,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                                 opacity: validDisplayedAchievements.length >= 12 ? 0.5 : 1
                               }}
                             >
-                              <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginRight: '8px' }}>{a.name || a.title || a.id}</span>
+                              <span style={{ fontSize: '0.85rem', color: 'var(--ca-text, #1E1D1B)', flex: 1, minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginRight: '8px' }}>{a.name || a.title || a.id}</span>
                               <span style={{ fontSize: '0.75rem', color: 'var(--cyan)', whiteSpace: 'nowrap', flexShrink: 0 }}>+{a.xpReward || 0} XP</span>
                             </div>
                           ))
@@ -551,7 +554,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                           padding: '0.4rem 0.75rem',
                           borderRadius: '8px',
                           border: `1px solid var(--primary)`,
-                          background: 'rgba(99, 102, 241, 0.1)',
+                          background: 'rgba(59, 130, 246, 0.1)',
                           cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -560,8 +563,9 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                         }}
                         title="Click to remove"
                       >
-                        <span style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 500 }}>{a.name || a.title || a.id}</span>
-                        <X size={14} style={{ opacity: 0.7, color: '#fff' }} />
+                        <span style={{ fontSize: '0.85rem', color: 'var(--ca-text, #1E1D1B)',
+                          fontWeight: 600 }}>{a.name || a.title || a.id}</span>
+                        <X size={14} style={{ opacity: 0.7, color: 'var(--ca-text, #1E1D1B)' }} />
                       </div>
                     )
                   })

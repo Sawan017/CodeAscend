@@ -64,7 +64,7 @@ export function NotificationsPanel({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          style={{ position: 'fixed', inset: 0, background: 'var(--glass-strong)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', justifyContent: 'flex-end' }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', justifyContent: 'flex-end' }}
           onClick={onClose}
         >
           <motion.div 
@@ -117,7 +117,7 @@ export function NotificationsPanel({
                       }}
                       style={{ 
                         padding: '1rem', 
-                        background: n.read ? 'transparent' : 'rgba(255,255,255,0.03)', 
+                        background: n.read ? 'transparent' : 'var(--bg-surface-sunken)', 
                         border: '1px solid',
                         borderColor: n.read ? 'transparent' : 'var(--border)',
                         borderRadius: '8px', 
@@ -126,8 +126,8 @@ export function NotificationsPanel({
                         gap: '1rem',
                         transition: 'all 0.2s'
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                      onMouseLeave={e => e.currentTarget.style.background = n.read ? 'transparent' : 'rgba(255,255,255,0.03)'}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--glass-border)'}
+                      onMouseLeave={e => e.currentTarget.style.background = n.read ? 'transparent' : 'var(--bg-surface-sunken)'}
                     >
                       <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: `${getColor(n.type)}20`, color: getColor(n.type), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         {getIcon(n.type)}

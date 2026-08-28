@@ -221,15 +221,15 @@ export function GroupChatWindow({
           {headerMenuOpen && (
             <div style={{ 
               position: 'absolute', 
-              top: '100%', 
+              top: 'calc(100% + 4px)', 
               right: 0, 
-              background: '#fff', 
+              background: 'var(--ca-surface, #ffffff)', 
               border: '1px solid var(--border)', 
-              borderRadius: '8px', 
-              padding: '0.5rem', 
-              minWidth: '150px',
+              borderRadius: '12px', 
+              padding: '0.35rem', 
+              minWidth: '160px',
               zIndex: 9999,
-              boxShadow: '0 4px 12px rgba(255,255,255,0.8)'
+              boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
             }} onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
               <MenuItem
                 icon={isMuted ? <Volume2 size={16} /> : <VolumeX size={16} />}
@@ -262,7 +262,8 @@ export function GroupChatWindow({
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.03, pointerEvents: 'none', background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
         {messages.length === 0 ? (
           <div style={{ margin: 'auto', textAlign: 'center', color: '#9A958C' }}>
             <p>No messages yet.</p>
@@ -275,42 +276,43 @@ export function GroupChatWindow({
             const senderName = isMe ? 'You' : (senderProfile?.displayName || 'Unknown')
 
             const prevMsg = idx > 0 ? messages[idx - 1] : null
-            let isSameMinuteAsPrev = false
-            let isSameSenderAsPrev = false
-
-            if (prevMsg) {
-              isSameSenderAsPrev = msg.sender_id === prevMsg.sender_id
-              if (isSameSenderAsPrev) {
-                const currTime = new Date(msg.created_at)
-                const prevTime = new Date(prevMsg.created_at)
-                if (
-                  currTime.getMinutes() === prevTime.getMinutes() &&
-                  currTime.getHours() === prevTime.getHours() &&
-                  currTime.toDateString() === prevTime.toDateString()
-                ) {
-                  isSameMinuteAsPrev = true
-                }
-              }
-            }
-
-            let marginTop = '10px'
-            if (idx === 0) marginTop = '0px'
-            else if (isSameMinuteAsPrev) marginTop = '2px'
-            else if (isSameSenderAsPrev) marginTop = '6px'
-
-            const nextMsg = messages[idx + 1]
-            const isSameMinuteAsNext = nextMsg &&
-              msg.sender_id === nextMsg.sender_id &&
-              new Date(msg.created_at).getMinutes() === new Date(nextMsg.created_at).getMinutes() &&
-              new Date(msg.created_at).getHours() === new Date(nextMsg.created_at).getHours() &&
-              new Date(msg.created_at).toDateString() === new Date(nextMsg.created_at).toDateString()
+            const nextMsg = messages[idx + 1];
+            const showTimestamp = true;
+            const currentMsgDate = new Date(msg.created_at);
+            const prevMsgDate = prevMsg ? new Date(prevMsg.created_at) : null;
+            const nextMsgDate = nextMsg ? new Date(nextMsg.created_at) : null;
             
-            const showTimestamp = !isSameMinuteAsNext;
+            const isSameSenderAsPrev = prevMsg && msg.sender_id === prevMsg.sender_id;
+            const isSameSenderAsNext = nextMsg && msg.sender_id === nextMsg.sender_id;
+
+            const isSameMinuteAsPrev = prevMsgDate ? (
+              currentMsgDate.getHours() === prevMsgDate.getHours() && 
+              currentMsgDate.getMinutes() === prevMsgDate.getMinutes() &&
+              currentMsgDate.toDateString() === prevMsgDate.toDateString()
+            ) : false;
+            
+            const isSameMinuteAsNext = nextMsgDate ? (
+              currentMsgDate.getHours() === nextMsgDate.getHours() && 
+              currentMsgDate.getMinutes() === nextMsgDate.getMinutes() &&
+              currentMsgDate.toDateString() === nextMsgDate.toDateString()
+            ) : false;
+
+            const isGroupedWithPrev = isSameSenderAsPrev && isSameMinuteAsPrev;
+            const isGroupedWithNext = isSameSenderAsNext && isSameMinuteAsNext;
+
+            let marginTop = '16px';
+            if (idx === 0) {
+              marginTop = '0px';
+            } else if (isSameSenderAsPrev) {
+              marginTop = isSameMinuteAsPrev ? '2px' : '16px';
+            }
 
             return (
               <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.75rem', marginTop }}>
                 {!isMe && (
-                  <Avatar src={senderProfile?.avatar}  size={32} />
+                  <div style={{ width: '32px' }}>
+                    {(!nextMsg || msg.sender_id !== nextMsg.sender_id) && <Avatar src={senderProfile?.avatar} size={32} />}
+                  </div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start', maxWidth: '75%' }}
                   onContextMenu={e => {
@@ -324,21 +326,22 @@ export function GroupChatWindow({
                       deletedForEveryone: msg.deleted_for_everyone
                     })
                   }}>
-                  {!isMe && (
-                    <span style={{ fontSize: '0.75rem', color: '#9A958C', marginBottom: '4px', marginLeft: '4px' }}>
+                  {!isMe && !isSameSenderAsPrev && (
+                    <span style={{ fontSize: '0.75rem', color: 'var(--ca-text-secondary, #9A958C)', marginBottom: '4px', marginLeft: '4px', fontWeight: 600 }}>
                       {senderName}
                     </span>
                   )}
                   <div style={{ 
                     padding: '0.4rem 0.65rem', 
-                    background: isMe ? 'var(--cyan)' : 'var(--surface-sunken)', 
-                    color: isMe ? '#000' : '#fff', 
-                    borderTopLeftRadius: !isMe && isSameMinuteAsPrev ? '4px' : '16px',
-                    borderTopRightRadius: isMe && isSameMinuteAsPrev ? '4px' : '16px',
-                    borderBottomRightRadius: isMe ? '4px' : (!isSameMinuteAsNext ? '16px' : '4px'),
-                    borderBottomLeftRadius: !isMe ? '4px' : (!isSameMinuteAsNext ? '16px' : '4px'),
+                    background: isMe ? 'var(--primary)' : 'var(--bg-surface)', 
+                    color: isMe ? '#ffffff' : 'var(--text-main)', 
+                    borderTopLeftRadius: !isMe && isGroupedWithPrev ? '4px' : '16px',
+                    borderTopRightRadius: isMe && isGroupedWithPrev ? '4px' : '16px',
+                    borderBottomRightRadius: isMe && isGroupedWithNext ? '4px' : '16px',
+                    borderBottomLeftRadius: !isMe && isGroupedWithNext ? '4px' : '16px',
                     position: 'relative',
-                    minWidth: showTimestamp ? '75px' : 'auto'
+                    minWidth: showTimestamp ? '75px' : 'auto',
+                    border: msg.deleted_for_everyone ? '1px dashed var(--border)' : !isMe ? '1px solid var(--border)' : 'none'
                   }}>
                     <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>
                       {msg.deleted_for_everyone ? (
@@ -356,7 +359,7 @@ export function GroupChatWindow({
                         bottom: '4px', 
                         right: '8px', 
                         fontSize: '0.65rem', 
-                        color: isMe ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.4)',
+                        color: isMe ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)',
                         display: 'flex',
                         gap: '4px',
                         alignItems: 'center',
@@ -389,7 +392,7 @@ export function GroupChatWindow({
       )}
       <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <input 
-          style={{ flex: 1, padding: '0.75rem 1rem', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '100px', color: '#fff' }}
+          style={{ flex: 1, padding: '0.75rem 1rem', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '100px', color: 'var(--ca-text, #111827)' }}
           placeholder="Type a message..."
           value={editingMessageId ? editDraft : draft}
           onChange={e => editingMessageId ? setEditDraft(e.target.value) : setDraft(e.target.value)}

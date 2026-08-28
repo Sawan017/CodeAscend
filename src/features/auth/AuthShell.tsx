@@ -76,7 +76,16 @@ export function AuthShell({ onEnter }: AuthShellProps) {
   const finalArinovaY = useTransform(scrollYProgress, [0.82, 0.92, 1], [40, 0, 0])
 
   return (
-    <div style={{ position: 'relative', width: '100%', background: '#030407', color: '#F5F5F0', overflowX: 'hidden' }}>
+    <div className="auth-shell-container" style={{ position: 'relative', width: '100%', background: '#030407', color: '#F5F5F0', overflowX: 'hidden' }}>
+      <style>{`
+        .auth-shell-container h1, 
+        .auth-shell-container h2, 
+        .auth-shell-container h3, 
+        .auth-shell-container h4,
+        .auth-shell-container p { 
+          color: inherit !important; 
+        }
+      `}</style>
       
       {/* ── Procedural Canvas Background ── */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 1, pointerEvents: 'none' }}>

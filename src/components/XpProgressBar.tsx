@@ -39,7 +39,7 @@ export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
         <div>
           <p className="eyebrow">CURRENT LEVEL</p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-            <h2 style={{ fontSize: '2.5rem', margin: 0, color: 'var(--cyan)', textShadow: 'var(--glow-cyan)' }}>{level}</h2>
+            <h2 style={{ fontSize: '2.5rem', margin: 0, color: 'var(--cyan)', textShadow: 'none' }}>{level}</h2>
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
@@ -51,7 +51,7 @@ export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
         </div>
       </div>
 
-      <div className="progress-bar" style={{ height: '12px', background: 'rgba(255,255,255,0.05)', marginBottom: '0.75rem', overflow: 'visible', position: 'relative' }}>
+      <div className="progress-bar" style={{ height: '12px', background: '#E5E7EB', marginBottom: '0.75rem', overflow: 'visible', position: 'relative' }}>
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
@@ -73,7 +73,7 @@ export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
             height: '20px', 
             background: '#fff', 
             borderRadius: '50%', 
-            boxShadow: '0 0 10px #fff' 
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
           }} />
         </motion.div>
       </div>

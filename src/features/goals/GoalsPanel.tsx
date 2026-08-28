@@ -3,29 +3,44 @@ import { Target, CheckSquare, BookOpen, Plus, Calendar, AlertCircle, XCircle, Ch
 import { motion, AnimatePresence } from 'framer-motion';
 import { calculateMinimumVerificationTime } from '../../lib/progression';
 import { KnowledgeCheckModal } from '../../components/KnowledgeCheckModal';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
 
-export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessionElapsed = 0, onCancelSession, onCompleteSession, onAddGoal, onCompleteGoal, onNavigate }: any) => {
+export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessionElapsed = 0, onCancelSession, onCompleteSession, onAddGoal, onUpdateGoal, onRemoveGoal, onCompleteGoal, onNavigate }: any) => {
   const [isCreating, setIsCreating] = useState(false);
   const [newTask, setNewTask] = useState({ title: '', description: '', priority: 'Medium', targetDate: new Date().toISOString().split('T')[0] });
   const [isVerifying, setIsVerifying] = useState(false);
   const [showEndTaskConfirm, setShowEndTaskConfirm] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editTaskData, setEditTaskData] = useState({ title: '', description: '', priority: 'Medium', targetDate: '' });
+  const [errorMsg, setErrorMsg] = useState('');
+  const [confirmTaskDeleteId, setConfirmTaskDeleteId] = useState<string | null>(null);
 
-  const handleCreate = () => {
-    if (!newTask.title.trim()) return;
+  const handleCreate = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!newTask.title.trim()) {
+      setErrorMsg("Please enter a task name.");
+      document.getElementById('todo-title-input')?.focus();
+      return;
+    }
+    setErrorMsg('');
     onAddGoal?.({
-      id: crypto.randomUUID(),
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2),
       ...newTask,
+      targetDate: newTask.targetDate || new Date().toISOString().split('T')[0],
       status: 'IN_PROGRESS',
       category: 'Task',
       milestones: []
     });
-    setIsCreating(false);
     setNewTask({ title: '', description: '', priority: 'Medium', targetDate: new Date().toISOString().split('T')[0] });
+    setIsCreating(false);
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
   };
 
   const todayStr = new Date().toISOString().split('T')[0];
   
-  const todos = goals.filter((g: any) => g.status !== 'COMPLETED');
+  const todos = goals.filter((g: any) => g.status !== 'COMPLETED' && g.status !== 'CANCELLED');
   
   const runningSkill = activeSession ? skills.find((s: any) => s.id === activeSession.skillId) : null;
   const runningSubtopic = activeSession?.subtopic;
@@ -137,7 +152,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
           
           <div style={{ position: 'relative', zIndex: 1 }}>
              <button 
-                onClick={() => setIsCreating(true)} 
+                onClick={() => { setNewTask(prev => ({...prev, targetDate: new Date().toISOString().split('T')[0]})); setIsCreating(true); }} 
                 style={{ 
                   background: '#6366F1', color: '#fff', border: 'none', padding: '16px 28px', 
                   borderRadius: '20px', fontWeight: 800, fontSize: '1.05rem', cursor: 'pointer', 
@@ -154,25 +169,33 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
 
         {/* --- CREATE TASK FORM --- */}
         {isCreating && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ ...cardStyle, border: '2px solid #8B5CF6', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <motion.form onSubmit={handleCreate} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ ...cardStyle, border: '2px solid #8B5CF6', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <input 
+                id="todo-title-input"
+                value={newTask.title} onChange={e => { setNewTask(prev => ({...prev, title: e.target.value})); if (errorMsg) setErrorMsg(''); }}
+                placeholder="What needs to be done?" autoFocus
+                style={{ width: '100%', fontSize: '1.4rem', fontWeight: 800, border: 'none', borderBottom: errorMsg ? '2px solid #EF4444' : '2px solid #E2E8F0', paddingBottom: '12px', outline: 'none', color: '#111827', background: 'transparent', transition: 'border-color 0.2s' }}
+              />
+              {errorMsg && <div style={{ color: '#EF4444', fontSize: '0.85rem', fontWeight: 700, marginTop: '8px' }}>{errorMsg}</div>}
+            </div>
             <input 
-              value={newTask.title} onChange={e => setNewTask({...newTask, title: e.target.value})}
-              placeholder="What needs to be done?" autoFocus
-              style={{ fontSize: '1.4rem', fontWeight: 800, border: 'none', borderBottom: '2px solid #E2E8F0', paddingBottom: '12px', outline: 'none', color: '#111827', background: 'transparent' }}
-            />
-            <input 
-              value={newTask.description} onChange={e => setNewTask({...newTask, description: e.target.value})}
+              value={newTask.description} onChange={e => setNewTask(prev => ({...prev, description: e.target.value}))}
               placeholder="Add details (optional)..."
               style={{ fontSize: '1.05rem', border: 'none', outline: 'none', color: '#64748B', background: 'transparent' }}
             />
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '12px 20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+              <div 
+                onClick={() => document.getElementById('todo-date-input')?.showPicker()}
+                style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '12px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
                 <Calendar size={18} color="#64748B" />
-                <input type="date" value={newTask.targetDate} onChange={e => setNewTask({...newTask, targetDate: e.target.value})} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.95rem' }} />
+                <input id="todo-date-input" type="date" value={newTask.targetDate} onChange={e => setNewTask(prev => ({...prev, targetDate: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }} />
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '12px 20px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+              <div 
+                onClick={() => document.getElementById('todo-priority-input')?.showPicker() || document.getElementById('todo-priority-input')?.focus()}
+                style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '12px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
                 <AlertCircle size={18} color="#64748B" />
-                <select value={newTask.priority} onChange={e => setNewTask({...newTask, priority: e.target.value})} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.95rem' }}>
+                <select id="todo-priority-input" value={newTask.priority} onChange={e => setNewTask(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }}>
                   <option value="Low">Low Priority</option>
                   <option value="Medium">Medium Priority</option>
                   <option value="High">High Priority</option>
@@ -180,10 +203,10 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
-              <button onClick={() => setIsCreating(false)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', fontWeight: 800, cursor: 'pointer', padding: '12px 24px', borderRadius: '12px', transition: 'all 0.2s' }}>Cancel</button>
-              <button onClick={handleCreate} style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 16px -4px rgba(139,92,246,0.3)' }}>Save To Do</button>
+              <button type="button" onClick={() => setIsCreating(false)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', fontWeight: 800, cursor: 'pointer', padding: '12px 24px', borderRadius: '12px', transition: 'all 0.2s' }}>Cancel</button>
+              <button type="submit" style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 16px -4px rgba(139,92,246,0.3)' }}>Save To Do</button>
             </div>
-          </motion.div>
+          </motion.form>
         )}
 
         {/* --- ACTIVE LEARNING SECTION --- */}
@@ -385,19 +408,71 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                 </button>
                 
                 <div style={{ flex: 1 }}>
-                  <h3 style={{ margin: '0 0 6px 0', fontSize: '1.15rem', color: '#111827', fontWeight: 800 }}>{task.title}</h3>
-                  {task.description && <p style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#64748B', lineHeight: 1.5 }}>{task.description}</p>}
-                  
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    {task.targetDate && (
-                      <span style={{ fontSize: '0.85rem', fontWeight: 800, color: task.targetDate < todayStr ? '#EF4444' : '#64748B', display: 'flex', alignItems: 'center', gap: '6px', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                        <Calendar size={14} /> {task.targetDate}
-                      </span>
-                    )}
-                    <span style={{ fontSize: '0.85rem', fontWeight: 800, padding: '6px 12px', borderRadius: '8px', background: task.priority === 'High' ? 'rgba(239,68,68,0.1)' : '#F8FAFC', color: task.priority === 'High' ? '#EF4444' : '#64748B', border: task.priority === 'High' ? 'none' : '1px solid #E2E8F0' }}>
-                      {task.priority} Priority
-                    </span>
-                  </div>
+                  {editingTaskId === task.id ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+                      <input 
+                        value={editTaskData.title} onChange={e => setEditTaskData(prev => ({...prev, title: e.target.value}))}
+                        autoFocus style={{ fontSize: '1.15rem', fontWeight: 800, border: 'none', borderBottom: '2px solid #E2E8F0', paddingBottom: '4px', outline: 'none', color: '#111827', background: 'transparent', width: '100%' }}
+                      />
+                      <input 
+                        value={editTaskData.description} onChange={e => setEditTaskData(prev => ({...prev, description: e.target.value}))}
+                        placeholder="Add details..." style={{ fontSize: '1rem', border: 'none', outline: 'none', color: '#64748B', background: 'transparent', width: '100%' }}
+                      />
+                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <div 
+                          onClick={() => document.getElementById(`edit-date-${task.id}`)?.showPicker()}
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F8FAFC', padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
+                          <Calendar size={14} color="#64748B" />
+                          <input id={`edit-date-${task.id}`} type="date" value={editTaskData.targetDate} onChange={e => setEditTaskData(prev => ({...prev, targetDate: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }} />
+                        </div>
+                        <div
+                          onClick={() => document.getElementById(`edit-priority-${task.id}`)?.focus()}
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F8FAFC', padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
+                          <AlertCircle size={14} color="#64748B" />
+                          <select id={`edit-priority-${task.id}`} value={editTaskData.priority} onChange={e => setEditTaskData(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                            <option value="Low">Low Priority</option>
+                            <option value="Medium">Medium Priority</option>
+                            <option value="High">High Priority</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                        <button onClick={() => {
+                          if (editTaskData.title.trim()) {
+                            onUpdateGoal?.({ ...task, ...editTaskData });
+                          }
+                          setEditingTaskId(null);
+                        }} style={{ background: '#10B981', color: '#fff', border: 'none', padding: '6px 16px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>Save</button>
+                        <button onClick={() => setEditingTaskId(null)} style={{ background: '#F1F5F9', color: '#64748B', border: 'none', padding: '6px 16px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <h3 style={{ margin: '0 0 6px 0', fontSize: '1.15rem', color: '#111827', fontWeight: 800 }}>{task.title}</h3>
+                        <div style={{ display: 'flex', gap: '4px' }}>
+                          <button onClick={() => { setEditingTaskId(task.id); setEditTaskData({ title: task.title, description: task.description || '', priority: task.priority, targetDate: task.targetDate || '' }); }} style={{ background: 'transparent', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '4px', borderRadius: '4px' }} title="Edit">
+                            ✎
+                          </button>
+                          <button onClick={() => setConfirmTaskDeleteId((task.id))} style={{ background: 'transparent', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px', borderRadius: '4px' }} title="Remove">
+                            <XCircle size={16} />
+                          </button>
+                        </div>
+                      </div>
+                      {task.description && <p style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#64748B', lineHeight: 1.5 }}>{task.description}</p>}
+                      
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        {task.targetDate && (
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: task.targetDate < todayStr ? '#EF4444' : '#64748B', display: 'flex', alignItems: 'center', gap: '6px', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                            <Calendar size={14} /> {task.targetDate}
+                          </span>
+                        )}
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, padding: '6px 12px', borderRadius: '8px', background: task.priority === 'High' ? 'rgba(239,68,68,0.1)' : '#F8FAFC', color: task.priority === 'High' ? '#EF4444' : '#64748B', border: task.priority === 'High' ? 'none' : '1px solid #E2E8F0' }}>
+                          {task.priority} Priority
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -412,6 +487,20 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
         </div>
 
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmTaskDeleteId !== null}
+        title="Delete Task"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+        confirmLabel="Delete"
+        onConfirm={() => {
+          if (confirmTaskDeleteId) {
+            onRemoveGoal?.(confirmTaskDeleteId);
+          }
+        }}
+        onCancel={() => setConfirmTaskDeleteId(null)}
+      />
+
       <style>{`
         .check-icon-hover { opacity: 0; transition: opacity 0.2s; }
         button:hover .check-icon-hover { opacity: 1 !important; }

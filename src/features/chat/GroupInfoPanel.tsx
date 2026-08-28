@@ -2,7 +2,7 @@
 import { Trash2 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Shield, ShieldAlert, UserMinus, LogOut, Edit2, UserPlus } from 'lucide-react'
+import { X, Shield, ShieldAlert, UserMinus, LogOut, Edit2, UserPlus, ChevronLeft } from 'lucide-react'
 import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember } from '../../hooks/useGroupChat'
 import { supabase } from '../../lib/supabase'
@@ -110,12 +110,12 @@ export function GroupInfoPanel({
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, background: '#fff', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <button className="icon-button" onClick={onClose} style={{ marginLeft: '-0.5rem' }}>
-          <X size={20} />
+    <div style={{ position: 'absolute', inset: 0, background: 'var(--ca-surface, #ffffff)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--surface-sunken)' }}>
+        <button className="icon-button" onClick={onClose} style={{ marginLeft: '-0.5rem', color: 'var(--ca-text-secondary, #5A5750)' }}>
+          <ChevronLeft size={24} />
         </button>
-        <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#fff', flex: 1 }}>About Group</h3>
+        <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--ca-text, #1E1D1B)', flex: 1, fontWeight: 600 }}>Group Info</h3>
       </div>
 
       <div style={{ padding: '20px', flex: 1, overflowY: 'auto' }}>
@@ -178,20 +178,20 @@ export function GroupInfoPanel({
           )}
 
           {isEditing ? (
-            <div style={{ width: '100%', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <input value={editName} onChange={e => setEditName(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '8px', borderRadius: '6px', color: '#fff' }} />
-              <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} style={{ width: '100%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '8px', borderRadius: '6px', color: '#fff', minHeight: '60px' }} />
+            <div style={{ width: '100%', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <input value={editName} onChange={e => setEditName(e.target.value)} style={{ width: '100%', background: 'var(--ca-bg, rgba(0,0,0,0.03))', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', color: 'var(--ca-text, #1E1D1B)', outline: 'none' }} />
+              <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} style={{ width: '100%', background: 'var(--ca-bg, rgba(0,0,0,0.03))', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', color: 'var(--ca-text, #1E1D1B)', minHeight: '80px', outline: 'none' }} />
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={handleSave} style={{ flex: 1, padding: '6px', background: 'var(--cyan)', color: '#000', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Save</button>
-                <button onClick={() => setIsEditing(false)} style={{ flex: 1, padding: '6px', background: 'transparent', color: 'var(--text)', border: '1px solid var(--border)', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
+                <button onClick={handleSave} style={{ flex: 1, padding: '10px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Save</button>
+                <button onClick={() => setIsEditing(false)} style={{ flex: 1, padding: '10px', background: 'transparent', color: 'var(--ca-text-secondary, #5A5750)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
               </div>
             </div>
           ) : (
             <>
-              <h2 style={{ margin: '12px 0 4px', fontSize: '1.2rem', color: '#fff', textAlign: 'center' }}>{group.name}</h2>
-              {group.description && <p style={{ margin: 0, fontSize: '0.85rem', color: '#9A958C', textAlign: 'center' }}>{group.description}</p>}
+              <h2 style={{ margin: '12px 0 4px', fontSize: '1.4rem', color: 'var(--ca-text, #1E1D1B)', textAlign: 'center' }}>{group.name}</h2>
+              {group.description && <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--ca-text-secondary, #5A5750)', textAlign: 'center', maxWidth: '300px' }}>{group.description}</p>}
               {isAdmin && (
-                <button onClick={() => setIsEditing(true)} style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', padding: '6px 12px', borderRadius: '100px', color: 'var(--text)', fontSize: '0.8rem', cursor: 'pointer' }}>
+                <button onClick={() => setIsEditing(true)} style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--ca-bg, rgba(0,0,0,0.03))', border: '1px solid var(--border)', padding: '8px 16px', borderRadius: '100px', color: 'var(--ca-text, #1E1D1B)', fontSize: '0.85rem', cursor: 'pointer', fontWeight: 500 }}>
                   <Edit2 size={14} /> Edit Group Info
                 </button>
               )}
@@ -200,11 +200,11 @@ export function GroupInfoPanel({
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-            <h4 style={{ margin: 0, fontSize: '0.85rem', color: '#9A958C', textTransform: 'uppercase' }}>Members ({members.length})</h4>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h4 style={{ margin: 0, fontSize: '0.85rem', color: 'var(--ca-text-muted, #9A958C)', textTransform: 'uppercase', fontWeight: 600 }}>Members ({members.length})</h4>
             {isAdmin && (
-              <button onClick={() => setAddMembersOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--cyan)', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 500 }}>
-                <UserPlus size={14} /> Add
+              <button onClick={() => setAddMembersOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--primary)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600 }}>
+                <UserPlus size={16} /> Add
               </button>
             )}
           </div>
@@ -213,12 +213,12 @@ export function GroupInfoPanel({
               const p = profiles[m.user_id]
               const isMe = m.user_id === activeUserId
               return (
-                <div key={m.user_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Avatar src={p?.avatar}  size={32} />
+                <div key={m.user_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: 'var(--ca-surface-alt, rgba(0,0,0,0.02))', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Avatar src={p?.avatar}  size={36} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ color: '#fff', fontSize: '0.9rem' }}>{isMe ? 'You' : (p?.displayName || 'Unknown')}</span>
-                      {m.role !== 'member' && <span style={{ fontSize: '0.7rem', color: m.role === 'owner' ? '#fbbf24' : 'var(--cyan)' }}>{m.role.toUpperCase()}</span>}
+                      <span style={{ color: 'var(--ca-text, #1E1D1B)', fontSize: '0.95rem', fontWeight: 500 }}>{isMe ? 'You' : (p?.displayName || 'Unknown')}</span>
+                      {m.role !== 'member' && <span style={{ fontSize: '0.75rem', color: m.role === 'owner' ? '#eab308' : 'var(--primary)', fontWeight: 600, marginTop: '2px' }}>{m.role.toUpperCase()}</span>}
                     </div>
                   </div>
                   

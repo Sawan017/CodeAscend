@@ -172,11 +172,15 @@ export function useGroupChat(userId: string | undefined) {
 
   const sendGroupMessage = async (groupId: string, content: string) => {
     if (!supabase) return
-    await supabase.from('chat_group_messages').insert({
+    const { error } = await supabase.from('chat_group_messages').insert({
       group_id: groupId,
       sender_id: userId,
       content
     })
+    if (error) {
+      console.error("sendGroupMessage error:", error)
+      throw new Error(error.message)
+    }
   }
 
   const updateGroup = async (groupId: string, updates: Partial<ChatGroup>) => {

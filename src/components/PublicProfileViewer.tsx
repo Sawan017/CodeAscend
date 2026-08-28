@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, User, Trophy, Code, Target, BookOpen, Layers3, MessageSquare, UserPlus, UserMinus, ShieldAlert, BellOff, BellRing, MoreVertical, Mail, Globe, Link } from 'lucide-react'
+import { X, User, Trophy, Code, Target, BookOpen, Layers3, MessageSquare, UserPlus, UserMinus, ShieldAlert, BellOff, BellRing, MoreVertical, Mail, Globe, Link, Copy, Check } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { fetchAllUserData } from '../lib/api'
 import { evaluateDynamicMilestones, calculateLevel } from '../lib/progression'
@@ -9,6 +9,9 @@ import { sanitizeUrl } from '../utils/url'
 import type { UserProfile, Progression, Project, Skill, Goal, Achievement, Badge, FriendRelationship, ChatState } from '../types'
 
 type PublicProfileViewerProps = {
+  incomingRequests?: string[]
+  onAcceptRequest?: (userId: string) => void
+  onRejectRequest?: (userId: string) => void
   userId: string | null
   activeUserId?: string
   friendState: { relationships: FriendRelationship[] }
@@ -22,7 +25,10 @@ type PublicProfileViewerProps = {
   onToggleMute?: (userId: string) => void
 }
 
-export function PublicProfileViewer({ 
+export function PublicProfileViewer({
+  incomingRequests = [],
+  onAcceptRequest,
+  onRejectRequest, 
   userId, 
   activeUserId, 
   friendState, 
@@ -139,6 +145,7 @@ export function PublicProfileViewer({
   const relationship = friendState.relationships.find(r => r.userId === userId)
   const isFriend = relationship?.status === 'accepted'
   const isPendingOutgoing = relationship?.status === 'pending_outgoing'
+  const isPendingIncoming = incomingRequests.includes(userId)
   
   const isBlocked = chatState?.blockedUsers?.includes(userId) || false
   const isMuted = chatState?.mutedUsers?.includes(userId) || false
@@ -152,7 +159,7 @@ export function PublicProfileViewer({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        style={{ zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
+        style={{ zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
       >
         <motion.div
           style={{ 
@@ -162,7 +169,7 @@ export function PublicProfileViewer({
             borderRadius: '16px', 
             overflow: 'hidden',
             position: 'relative',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+            boxShadow: '0 24px 48px rgba(0,0,0,0.1)',
             display: 'flex',
             flexDirection: 'column',
             maxHeight: '90vh'
@@ -179,7 +186,7 @@ export function PublicProfileViewer({
             </div>
           ) : !data || !data.profile ? (
             <div style={{ padding: '4rem', textAlign: 'center' }}>
-              <User size={48} color="var(--text-muted)" style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+              <User size={48} color="'var(--text-muted)'" style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
               <h3 style={{ margin: '0 0 0.5rem 0' }}>Profile Not Found</h3>
               <p className="muted" style={{ margin: '0 0 2rem 0' }}>This user does not exist or has not set up their profile.</p>
               <button className="primary-btn" onClick={onClose}>Close</button>
@@ -232,7 +239,7 @@ export function PublicProfileViewer({
             <>
               {/* Banner */}
               <div style={{ 
-                height: '180px', 
+                height: '240px', 
                 width: '100%', 
                 background: data.profile.banner 
                   ? `url(${data.profile.banner}) center/cover no-repeat` 
@@ -255,7 +262,7 @@ export function PublicProfileViewer({
                     justifyContent: 'center',
                     color: 'white',
                     cursor: 'pointer',
-                    backdropFilter: 'blur(4px)'
+                    backdropFilter: 'none'
                   }}
                   aria-label="Close"
                 >
@@ -315,13 +322,23 @@ export function PublicProfileViewer({
                                   borderRadius: '8px',
                                   padding: '0.5rem',
                                   minWidth: '180px',
-                                  boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
                                   zIndex: 10,
                                   display: 'flex',
                                   flexDirection: 'column',
                                   gap: '0.25rem'
                                 }}
                               >
+                                                               <button 
+                                    className="menu-item" 
+                                    onClick={() => {
+                                      const idToCopy = data?.profile?.login_id || data?.profile?.username;
+                                      if (idToCopy) navigator.clipboard.writeText(idToCopy);
+                                      setMenuOpen(false);
+                                    }}
+                                  >
+                                    <Copy size={16} /> Copy ARINOVA ID
+                                  </button>
                                 {isFriend && (
                                   <button 
                                     className="menu-item" 
@@ -382,7 +399,7 @@ export function PublicProfileViewer({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '0.25rem' }}>
-                      Lvl {data.progression ? calculateLevel(data.progression.xp) : 1}
+                      Lvl {data.progression ? calculateLevel(data.progression.xp) : (data.profile?.level || 1)}
                     </div>
                     <div className="muted" style={{ fontSize: '0.85rem' }}>LEVEL</div>
                   </div>
@@ -394,7 +411,7 @@ export function PublicProfileViewer({
                   </div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>
-                      {data.progression?.projectsCompleted || 0}
+                      {data.projects?.length || 0}
                     </div>
                     <div className="muted" style={{ fontSize: '0.85rem' }}>PROJECTS</div>
                   </div>
@@ -484,9 +501,13 @@ export function PublicProfileViewer({
                       <Code size={16} /> DISPLAYED SKILLS
                     </h4>
                     {(() => {
-                      const displayableSkills = (data.profile.displayedSkills || [])
+                      let displayableSkills = (data.profile.displayedSkills || [])
                         .map(id => (data.skills || []).find(s => s.id === id))
                         .filter(s => s && s.progress >= 50) as typeof data.skills;
+                      
+                      if (displayableSkills.length === 0 && data.skills?.length > 0) {
+                        displayableSkills = [...data.skills].sort((a, b) => b.progress - a.progress).filter(s => s.progress >= 20).slice(0, 3);
+                      }
 
                       if (displayableSkills.length === 0) {
                         return <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No skills to display.</p>
@@ -513,17 +534,26 @@ export function PublicProfileViewer({
                     <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 0 0.75rem 0', color: 'var(--text-muted)' }}>
                       <Layers3 size={16} /> TOP PROJECTS
                     </h4>
-                    {data.projects.filter(p => p.status === 'COMPLETED').length === 0 ? (
-                      <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No completed projects.</p>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        {data.projects.filter(p => p.status === 'COMPLETED').slice(0, 3).map(p => (
-                          <div key={p.id} style={{ display: 'flex', alignItems: 'center', padding: '0.75rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                            <span style={{ fontWeight: 500, fontSize: '0.95rem' }}>{p.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {(() => {
+                      let displayableProjects = data.projects.filter(p => p.status === 'COMPLETED');
+                      if (displayableProjects.length === 0 && data.projects.length > 0) {
+                        displayableProjects = data.projects;
+                      }
+                      
+                      if (displayableProjects.length === 0) {
+                        return <p className="muted" style={{ margin: 0, fontSize: '0.9rem' }}>No projects yet.</p>;
+                      }
+                      
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {displayableProjects.slice(0, 3).map(p => (
+                            <div key={p.id} style={{ display: 'flex', alignItems: 'center', padding: '0.75rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                              <span style={{ fontWeight: 500, fontSize: '0.95rem' }}>{p.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    })()}
                   </div>
                   
                 </div>

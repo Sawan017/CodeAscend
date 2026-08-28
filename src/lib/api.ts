@@ -65,10 +65,7 @@ export async function fetchAllUserData(userId: string) {
   if (!profile && !isOwner) return null
 
   // Double check in case of RLS bypass/edge cases
-  const isPublic = profile?.isPublic === true
-  if (!isPublic && !isOwner) {
-    return null
-  }
+  // Removed strict isPublic check so friends can view data if RPC allowed it
 
   const [progression, goals, projects, skills, achievements, badges, settings, friends, chat] = await Promise.all([
     fetchRow<Progression>(TABLES.progression, userId, 'progression'),
@@ -329,21 +326,49 @@ export async function sendFriendRequest(targetUserId: string) {
   if (error) throw new Error(error.message);
 }
 
-export async function acceptFriendRequest(requestId: string) {
+export async function acceptFriendRequest(senderId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase!.rpc('accept_friend_request', { request_id: requestId });
-  if (error) throw new Error(error.message);
+  
+  const { data: { session }, error: authError } = await supabase.auth.getSession();
+  if (authError || !session?.user) throw new Error('Not authenticated');
+  const currentUserId = session.user.id;
+  
+  const { data: reqs, error: rErr } = await supabase
+    .from('friend_requests')
+    .select('id')
+    .eq('sender_id', senderId)
+    .eq('receiver_id', currentUserId)
+    .eq('status', 'pending');
+    
+  if (rErr || !reqs || reqs.length === 0) throw new Error('Pending friend request not found.');
+  
+  const { error: rpcError } = await supabase.rpc('accept_friend_request', { request_id: reqs[0].id });
+  if (rpcError) throw new Error('Failed to accept request: ' + rpcError.message);
 }
 
-export async function rejectFriendRequest(requestId: string) {
+export async function rejectFriendRequest(senderId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase!.rpc('reject_friend_request', { request_id: requestId });
+  
+  const { data: { session }, error: authError } = await supabase.auth.getSession();
+  if (authError || !session?.user) throw new Error('Not authenticated');
+  
+  const currentUserId = session.user.id;
+  
+  const { error } = await supabase
+    .from('friend_requests')
+    .delete()
+    .match({ sender_id: senderId, receiver_id: currentUserId, status: 'pending' });
+    
   if (error) throw new Error(error.message);
 }
 
 export async function removeFriend(targetUserId: string) {
   if (!isSupabaseConfigured() || !supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase!.rpc('remove_friend', { target_user_id: targetUserId });
+  
+  const { data: { session }, error: authError } = await supabase.auth.getSession();
+  if (authError || !session?.user) throw new Error('Not authenticated');
+  
+  const { error } = await supabase.rpc('remove_friend', { target_user_id: targetUserId });
   if (error) throw new Error(error.message);
 }
 
@@ -358,13 +383,14 @@ export async function fetchSocialNetwork(userId: string): Promise<{ relationship
   const relationships: import('../types').FriendRelationship[] = [];
   const incomingRequests: any[] = [];
   
-  // Fetch Friendships
+  // Fetch Friendships using proper user_id1 and user_id2 columns
   const { data: friendships, error: fError } = await supabase
     .from('friendships')
     .select('*')
     .or(`user_id1.eq.${userId},user_id2.eq.${userId}`);
     
-  if (!fError && friendships) {
+  if (fError) { console.error('fetchSocialNetwork fError:', fError); throw fError; }
+  if (friendships) {
     friendships.forEach(f => {
       relationships.push({
         userId: f.user_id1 === userId ? f.user_id2 : f.user_id1,
@@ -473,9 +499,13 @@ export async function upsertExternalProject(record: Partial<import('../types').E
 }
 
 export async function checkAgeVerified(): Promise<boolean> {
-  const { data, error } = await supabase!.from('user_dob').select('dob').single()
-  if (error && error.code === 'PGRST116') return false // No rows
-  return !!data
+  if (!isSupabaseConfigured() || !supabase) return false;
+  const { data, error } = await supabase.rpc('is_age_verified');
+  if (error) {
+    console.error('Failed to check age verified status:', error);
+    return false;
+  }
+  return !!data;
 }
 
 export async function verifyAge(dob: string): Promise<boolean> {
