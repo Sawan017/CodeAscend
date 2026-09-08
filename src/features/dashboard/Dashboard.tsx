@@ -19,6 +19,7 @@ class DashErrorBoundary extends Component<any, any> {
 import { Star, Map, Zap, ArrowRight, Award, BookOpen, Flame, Lock, Compass, Folder, Target, Mountain, Sun, Cloud, TreePine, MessageSquare, Check, Plus, Trophy, X, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "../../lib/animations";
+import { BadgeArtwork } from "../achievements/BadgeArtwork";
 import type { Progression, Goal, UserProfile, Route } from "../../types";
 import { calculateProgressToNextLevel } from "../../lib/progression";
 
@@ -143,13 +144,13 @@ function DashboardInner({
   const activeProjects = (projects || []).filter((p: any) => p.status !== 'COMPLETED');
   
   const unlockedAchievements = (achievements || []).filter((a: any) => a.unlocked).map((a: any) => ({
-    id: a.id, title: a.title, description: a.description || a.unlockCondition, icon: a.icon || '??', date: a.unlockedAt || a.dateUnlocked || new window.Date().toISOString(), type: 'achievement'
+    id: a.id, title: a.title, description: a.description || a.unlockCondition, icon: a.icon || '??', image: a.image, tier: a.tier, date: a.unlockedAt || a.dateUnlocked || new window.Date().toISOString(), type: 'achievement'
   }));
   const unlockedBadges = (badges || []).filter((b: any) => b.earned).map((b: any) => ({
-    id: b.id, title: b.title, description: b.requirement || b.description, icon: b.icon || '??', date: b.unlockedAt || b.dateEarned || new window.Date().toISOString(), type: 'badge'
+    id: b.id, title: b.title, description: b.requirement || b.description, icon: b.icon || '??', image: b.image, tier: b.tier, date: b.unlockedAt || b.dateEarned || new window.Date().toISOString(), type: 'badge'
   }));
   const unlockedMilestones = (dynamicMilestones || []).filter((m: any) => m.isUnlocked).map((m: any) => ({
-    id: m.id, title: m.title, description: m.description || m.unlockCondition, icon: m.icon || '⭐', date: m.dateUnlocked || new window.Date().toISOString(), type: 'milestone'
+    id: m.id, title: m.title, description: m.description || m.unlockCondition, icon: m.icon || '?', image: m.image, tier: m.tier, date: m.dateUnlocked || new window.Date().toISOString(), type: 'milestone'
   }));
   
   // Deduplicate by ID just in case
@@ -488,8 +489,8 @@ function DashboardInner({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%' }}>
                 {recentUnlocks.slice(0, 5).map((unlock: any, idx: number) => (
                   <div key={unlock.id + idx} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: '14px', background: 'rgba(59,130,246,0.1)', color: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>
-                      {unlock.icon || '🏆'}
+                    <div style={{ flexShrink: 0 }}>
+                      <BadgeArtwork title={unlock.title} image={unlock.image} size={48} tier={unlock.tier || 'bronze'} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
                       <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{unlock.title}</div>
@@ -580,6 +581,7 @@ function DashboardInner({
 export function Dashboard(props: DashboardProps) {
   return <DashErrorBoundary><DashboardInner {...props} /></DashErrorBoundary>;
 }
+
 
 
 
