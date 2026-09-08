@@ -178,14 +178,14 @@ export function evaluateAchievementsAndBadges(
   badges: Badge[]
 ) {
   const currentLevel = calculateLevel(progression.xp)
-  const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status === "COMPLETED").length)
-  const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status === "COMPLETED").length)
+  const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status?.toUpperCase() === "COMPLETED").length)
+  const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status?.toUpperCase() === "COMPLETED").length)
   
   // Real stored data checks for sync
-  const masteredSkills = skills.filter((s) => s.status === "MASTERED").length;
+  const masteredSkills = skills.filter((s) => s.status?.toUpperCase() === "MASTERED").length;
   const topicsCompleted = skills.reduce((total, skill) => {
     if (!skill.subtopics) return total
-    const mastered = skill.subtopics.filter(s => s.status === "Completed").length
+    const mastered = skill.subtopics.filter(s => s.status?.toLowerCase() === "completed").length
     return total + mastered
   }, 0)
   
@@ -292,10 +292,10 @@ export function calculateMinimumVerificationTime(primeLimitSeconds: number): num
 }
 
 export function evaluateDynamicMilestones(progression: Progression, skills: Skill[]): DynamicMilestone[] {
-  const masteredSkills = skills.filter((s) => s.status === 'MASTERED').length
+  const masteredSkills = skills.filter((s) => s.status?.toUpperCase() === 'MASTERED').length
   const topicsMastered = skills.reduce((total, skill) => {
     if (!skill.subtopics) return total
-    const mastered = skill.subtopics.filter(s => s.status === 'Completed').length === skill.subtopics.length && skill.subtopics.length > 0
+    const mastered = skill.subtopics.filter(s => s.status?.toLowerCase() === 'completed').length === skill.subtopics.length && skill.subtopics.length > 0
     return total + (mastered ? 1 : 0)
   }, 0)
   
@@ -454,6 +454,11 @@ export function calculateExternalProjectXP(status: 'in_progress' | 'completed', 
   
   return 0;
 }
+
+
+
+
+
 
 
 

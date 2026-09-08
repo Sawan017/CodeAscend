@@ -890,7 +890,16 @@ const completeActiveSession = async () => {
           setProjectState(filteredProjects)
         }
         if (remote.skills) setSkillState(remote.skills.map(expandSkillSubtopicsIfNeeded))
-        if (remote.badges) setBadgeState(remote.badges)
+        const savedBadges = remote.badges || [];
+        let loadedBadges = badges.map(baseBadge => {
+          const existing = savedBadges.find((b: any) => b.id === baseBadge.id);
+          return existing ? { ...baseBadge, ...existing } : baseBadge;
+        });
+        // Append any extra badges from remote that might be dynamically generated
+        savedBadges.forEach((b: any) => {
+          if (!loadedBadges.some(lb => lb.id === b.id)) loadedBadges.push(b);
+        });
+        setBadgeState(loadedBadges);
         
         // CRITICAL FIX: Fetch actual social network state instead of relying on legacy profile.data.friends JSON
         try {
@@ -1944,6 +1953,7 @@ const completeActiveSession = async () => {
 }
 
 export default App
+
 
 
 
