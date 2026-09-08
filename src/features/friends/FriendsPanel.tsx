@@ -107,28 +107,28 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'relative', width: '100%', maxWidth: '900px', margin: '0 auto' }}>
       
       {/* Network Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid rgba(140, 135, 125, 0.15)', paddingBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--border)', paddingBottom: '16px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#1E1D1B', margin: '0 0 8px 0' }}>Your Network</h2>
-          <p style={{ margin: 0, color: '#5A5750', fontSize: '0.95rem' }}>Connect, collaborate, and build together.</p>
+          <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 8px 0' }}>Your Network</h2>
+          <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '0.95rem' }}>Connect, collaborate, and build together.</p>
         </div>
         
-        <div style={{ display: 'flex', gap: '8px', background: '#F8FAFC', padding: '6px', borderRadius: '12px', border: '1px solid rgba(140, 135, 125, 0.1)' }}>
+        <div style={{ display: 'flex', gap: '8px', background: 'var(--bg-surface)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)' }}>
           <button 
             onClick={() => setActiveTab('connections')}
-            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'connections' ? '#fff' : 'transparent', color: activeTab === 'connections' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'connections' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'connections' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'connections' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'connections' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
           >
             Connections ({friends.length})
           </button>
           <button 
             onClick={() => setActiveTab('find')}
-            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'find' ? '#fff' : 'transparent', color: activeTab === 'find' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'find' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'find' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'find' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'find' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
           >
             Find People
           </button>
           <button 
             onClick={() => setActiveTab('requests')}
-            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'requests' ? '#fff' : 'transparent', color: activeTab === 'requests' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'requests' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'requests' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'requests' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'requests' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             Requests 
             {incoming.length > 0 && (
@@ -145,12 +145,12 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
       ) : activeTab === 'connections' ? (
         <div>
           {friends.length === 0 ? (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#fff', borderRadius: '20px', border: '1px dashed rgba(140, 135, 125, 0.3)', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px dashed rgba(140, 135, 125, 0.3)', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
                 <Users size={32} />
               </div>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.4rem', color: '#1E1D1B', fontWeight: 900 }}>No connections yet</h3>
-              <p style={{ margin: '0 0 24px 0', color: '#5A5750', maxWidth: '400px', lineHeight: 1.5 }}>Your network is empty. Search for other developers by their username or ARINOVA ID to start collaborating.</p>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '1.4rem', color: 'var(--text-main)', fontWeight: 900 }}>No connections yet</h3>
+              <p style={{ margin: '0 0 24px 0', color: 'var(--text-main)', maxWidth: '400px', lineHeight: 1.5 }}>Your network is empty. Search for other developers by their username or ARINOVA ID to start collaborating.</p>
               <button 
                 onClick={() => setActiveTab('find')}
                 style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem' }}
@@ -161,18 +161,18 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
           ) : (
             <motion.div variants={container} initial="hidden" animate="show" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
               {friends.map(friend => (
-                <motion.div key={friend.userId} variants={item} style={{ background: '#fff', border: '1px solid rgba(140, 135, 125, 0.15)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
+                <motion.div key={friend.userId} variants={item} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
                   <div style={{ cursor: 'pointer' }} onClick={() => onOpenProfile(friend.userId)}>
                     <Avatar src={friend.avatar} alt={friend.displayName} size={52} isOnline={onlineUsers.includes(friend.userId)} showStatus={true} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <h4 style={{ margin: '0 0 2px 0', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#1E1D1B', fontSize: '1.05rem', fontWeight: 800 }} onClick={() => onOpenProfile(friend.userId)}>
+                    <h4 style={{ margin: '0 0 2px 0', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)', fontSize: '1.05rem', fontWeight: 800 }} onClick={() => onOpenProfile(friend.userId)}>
                       {friend.displayName}
                     </h4>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#5A5750', fontWeight: 600 }}>@{friend.login_id || friend.username} ? Lvl {friend.level}</p>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600 }}>@{friend.login_id || friend.username} ? Lvl {friend.level}</p>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <button onClick={() => onMessage(friend.userId)} style={{ background: '#F8FAFC', border: '1px solid rgba(140, 135, 125, 0.1)', color: '#8B5CF6', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Message">
+                    <button onClick={() => onMessage(friend.userId)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: '#8B5CF6', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Message">
                       <MessageSquare size={16} />
                     </button>
                     <button onClick={() => onRemove(friend.userId)} style={{ background: '#FEF2F2', border: '1px solid rgba(239, 68, 68, 0.1)', color: '#EF4444', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Remove Connection">
@@ -185,8 +185,8 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
           )}
         </div>
       ) : activeTab === 'find' ? (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: '#fff', borderRadius: '20px', border: '1px solid rgba(140, 135, 125, 0.15)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#1E1D1B', fontWeight: 800 }}>Search Directory</h3>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+          <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-main)', fontWeight: 800 }}>Search Directory</h3>
           <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
             <div style={{ flex: 1, position: 'relative' }}>
               <div style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9A958C' }}>
@@ -198,7 +198,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: '12px', border: '1px solid rgba(140, 135, 125, 0.2)', fontSize: '0.95rem', background: '#F8FAFC', outline: 'none', color: '#1E1D1B', fontWeight: 600 }}
+                style={{ width: '100%', padding: '12px 12px 12px 38px', borderRadius: '12px', border: '1px solid var(--border-strong)', fontSize: '0.95rem', background: 'var(--bg-surface)', outline: 'none', color: 'var(--text-main)', fontWeight: 600 }}
               />
             </div>
             <button 
@@ -223,15 +223,15 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                 const isPending = pendingOutgoingIds.includes(profile.userId) || sentRequests.has(profile.userId);
                 
                 return (
-                  <div key={profile.userId} style={{ background: '#FAFAFA', border: '1px solid rgba(140, 135, 125, 0.15)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div key={profile.userId} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ cursor: 'pointer' }} onClick={() => onOpenProfile(profile.userId)}>
                       <Avatar src={profile.avatar} alt={profile.displayName} size={48} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={{ margin: '0 0 2px 0', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#1E1D1B', fontSize: '1.05rem', fontWeight: 800 }} onClick={() => onOpenProfile(profile.userId)}>
+                      <h4 style={{ margin: '0 0 2px 0', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)', fontSize: '1.05rem', fontWeight: 800 }} onClick={() => onOpenProfile(profile.userId)}>
                         {profile.displayName}
                       </h4>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#5A5750', fontWeight: 600 }}>@{profile.login_id || profile.username}</p>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600 }}>@{profile.login_id || profile.username}</p>
                     </div>
                     <div>
                       {isFriend ? (
@@ -258,28 +258,28 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '24px' }}>
           
           {/* Incoming Requests */}
-          <div style={{ background: '#fff', borderRadius: '20px', border: '1px solid rgba(140, 135, 125, 0.15)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <h3 style={{ margin: '0 0 16px 0', color: '#1E1D1B', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-main)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
               Incoming Requests
-              <span style={{ fontSize: '0.85rem', color: '#5A5750', background: '#F8FAFC', padding: '2px 8px', borderRadius: '100px', border: '1px solid rgba(140,135,125,0.1)' }}>{incoming.length}</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: '100px', border: '1px solid var(--border)' }}>{incoming.length}</span>
             </h3>
             
             {incoming.length === 0 ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: '#9A958C', background: '#FAFAFA', borderRadius: '12px', border: '1px dashed rgba(140,135,125,0.2)', fontWeight: 600 }}>
+              <div style={{ padding: '32px', textAlign: 'center', color: '#9A958C', background: 'var(--bg-surface)', borderRadius: '12px', border: '1px dashed var(--border-strong)', fontWeight: 600 }}>
                 No pending incoming requests.
               </div>
             ) : (
               <motion.div variants={container} initial="hidden" animate="show" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
                 {incoming.map(req => (
-                  <motion.div key={req.userId} variants={item} style={{ background: '#FAFAFA', border: '1px solid rgba(140, 135, 125, 0.15)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <motion.div key={req.userId} variants={item} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ cursor: 'pointer' }} onClick={() => onOpenProfile(req.userId)}>
                       <Avatar src={req.avatar} alt={req.displayName} size={48} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={{ margin: '0 0 2px 0', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#1E1D1B', fontSize: '1.05rem', fontWeight: 800 }} onClick={() => onOpenProfile(req.userId)}>
+                      <h4 style={{ margin: '0 0 2px 0', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)', fontSize: '1.05rem', fontWeight: 800 }} onClick={() => onOpenProfile(req.userId)}>
                         {req.displayName}
                       </h4>
-                      <p style={{ margin: 0, fontSize: '0.85rem', color: '#5A5750', fontWeight: 600 }}>@{req.login_id || req.username} ? Lvl {req.level}</p>
+                      <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600 }}>@{req.login_id || req.username} ? Lvl {req.level}</p>
                     </div>
                     <div style={{ display: 'flex', gap: '6px' }}>
                       <button onClick={() => onAccept(req.userId)} style={{ background: 'rgba(16, 185, 129, 0.1)', border: 'none', color: '#10B981', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Accept">
@@ -296,26 +296,26 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
           </div>
 
           {/* Outgoing Requests */}
-          <div style={{ background: '#fff', borderRadius: '20px', border: '1px solid rgba(140, 135, 125, 0.15)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-            <h3 style={{ margin: '0 0 16px 0', color: '#1E1D1B', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <h3 style={{ margin: '0 0 16px 0', color: 'var(--text-main)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
               Sent Requests
-              <span style={{ fontSize: '0.85rem', color: '#5A5750', background: '#F8FAFC', padding: '2px 8px', borderRadius: '100px', border: '1px solid rgba(140,135,125,0.1)' }}>{outgoing.length}</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-main)', background: 'var(--bg-surface)', padding: '2px 8px', borderRadius: '100px', border: '1px solid var(--border)' }}>{outgoing.length}</span>
             </h3>
             
             {outgoing.length === 0 ? (
-              <div style={{ padding: '32px', textAlign: 'center', color: '#9A958C', background: '#FAFAFA', borderRadius: '12px', border: '1px dashed rgba(140,135,125,0.2)', fontWeight: 600 }}>
+              <div style={{ padding: '32px', textAlign: 'center', color: '#9A958C', background: 'var(--bg-surface)', borderRadius: '12px', border: '1px dashed var(--border-strong)', fontWeight: 600 }}>
                 No pending sent requests.
               </div>
             ) : (
               <motion.div variants={container} initial="hidden" animate="show" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
                 {outgoing.map(req => (
-                  <motion.div key={req.userId} variants={item} style={{ background: '#FAFAFA', border: '1px dashed rgba(140, 135, 125, 0.2)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', opacity: 0.8 }}>
+                  <motion.div key={req.userId} variants={item} style={{ background: 'var(--bg-surface)', border: '1px dashed var(--border-strong)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '12px', opacity: 0.8 }}>
                     <div><Avatar src={req.avatar} alt={req.displayName} size={40} /></div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={{ margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#1E1D1B', fontSize: '1rem', fontWeight: 800 }}>{req.displayName}</h4>
+                      <h4 style={{ margin: '0 0 2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)', fontSize: '1rem', fontWeight: 800 }}>{req.displayName}</h4>
                       <p style={{ margin: 0, fontSize: '0.85rem', color: '#F59E0B', fontWeight: 700 }}>Pending Approval</p>
                     </div>
-                    <button onClick={() => onRemove(req.userId)} style={{ background: '#fff', border: '1px solid rgba(140, 135, 125, 0.2)', color: '#5A5750', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}>
+                    <button onClick={() => onRemove(req.userId)} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-strong)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}>
                       Withdraw
                     </button>
                   </motion.div>
@@ -328,3 +328,4 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
     </div>
   )
 }
+

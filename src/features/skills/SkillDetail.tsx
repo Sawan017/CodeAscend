@@ -56,7 +56,7 @@ export function SkillDetail({
 
   const statusLabel = skill.progress >= 100 ? 'COMPLETED' : ((skill.progress || 0) > 0 ? 'IN PROGRESS' : 'ADDED');
   const statusColor = skill.progress >= 100 ? '#3EA354' : ((skill.progress || 0) > 0 ? '#8B5CF6' : '#5A5750');
-  const statusBg = skill.progress >= 100 ? 'rgba(62,163,84,0.1)' : ((skill.progress || 0) > 0 ? 'rgba(139,92,246,0.1)' : 'rgba(140,135,125,0.1)');
+  const statusBg = skill.progress >= 100 ? 'rgba(62,163,84,0.1)' : ((skill.progress || 0) > 0 ? 'rgba(139,92,246,0.1)' : 'var(--border)');
 
   // Get primary domain for context
   const primaryDomain = PATHWAY_REGISTRY.find(p => p.id === canonicalSkill?.primaryDomainId);
@@ -70,7 +70,7 @@ export function SkillDetail({
       case 'Easy': return { bg: '#DCFCE7', color: '#166534' };
       case 'Medium': return { bg: '#FEF3C7', color: '#92400E' };
       case 'Hard': return { bg: '#FEE2E2', color: '#991B1B' };
-      default: return { bg: '#F1F5F9', color: '#475569' };
+      default: return { bg: '#F1F5F9', color: 'var(--text-main)' };
     }
   };
 
@@ -79,8 +79,8 @@ export function SkillDetail({
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       style={{ 
         padding: '0', height: '100%', overflowY: 'auto', 
-        background: 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%)', 
-        color: '#0F172A', position: 'relative' 
+        background: 'var(--bg-main)', 
+        color: 'var(--text-main)', position: 'relative' 
       }}
     >
       {/* --- LAYER 1: AMBIENT PAGE BACKGROUND --- */}
@@ -94,15 +94,15 @@ export function SkillDetail({
         <button 
           onClick={onBack} 
           style={{ 
-            background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(59,130,246,0.3)', color: '#3B82F6', 
+            background: 'var(--bg-surface)', backdropFilter: 'blur(12px)',
+            border: '1px solid var(--border)', color: '#3B82F6', 
             cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', 
             fontSize: '0.95rem', fontWeight: 800, padding: '10px 20px', borderRadius: '999px', 
             marginBottom: '3rem', transition: 'all 0.2s',
             boxShadow: '0 4px 12px rgba(59,130,246,0.08)'
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(59,130,246,0.15)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.7)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(59,130,246,0.08)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface-hover)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(59,130,246,0.15)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(59,130,246,0.08)'; }}
         >
           <ArrowLeft size={18} /> Return to Skills
         </button>
@@ -110,9 +110,9 @@ export function SkillDetail({
         {/* --- LAYER 2: SKILL HERO CARD --- */}
         <div style={{ 
           display: 'flex', flexWrap: 'wrap', gap: '40px', justifyContent: 'space-between', alignItems: 'center', 
-          marginBottom: '4rem', background: 'linear-gradient(135deg, #ffffff 0%, #f8faff 100%)', 
+          marginBottom: '4rem', background: 'var(--bg-surface)', 
           padding: '48px', borderRadius: '32px', border: '1px solid rgba(139,92,246,0.15)', 
-          boxShadow: '0 24px 64px -16px rgba(59,130,246,0.12), inset 0 0 0 1px rgba(255,255,255,0.7)', 
+          boxShadow: '0 24px 64px -16px rgba(59,130,246,0.12), inset 0 0 0 1px var(--border)', 
           position: 'relative', overflow: 'hidden' 
         }}>
           {/* Subtle hero decorative shape */}
@@ -132,7 +132,7 @@ export function SkillDetail({
             )}
             
             <h1 style={{ 
-              fontSize: '4.5rem', margin: '0 0 24px 0', fontWeight: 900, color: '#0F172A', 
+              fontSize: '4.5rem', margin: '0 0 24px 0', fontWeight: 900, color: 'var(--text-main)', 
               lineHeight: 1.05, letterSpacing: '-0.03em', textShadow: '0 4px 12px rgba(0,0,0,0.02)' 
             }}>
               {skill.canonicalName || skill.name}
@@ -147,12 +147,12 @@ export function SkillDetail({
                 <Award size={16} /> {statusLabel}
               </span>
               {(skill.progress || 0) > 0 && (
-                <span style={{ fontSize: '1rem', color: '#64748B', fontWeight: 600 }}>
+                <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                   Started {dateString}
                 </span>
               )}
               {skill.completed && (
-                <span style={{ fontSize: '1rem', color: '#64748B', fontWeight: 600 }}>
+                <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>
                   • Completed {new Date(skill.completed).toLocaleDateString()}
                 </span>
               )}
@@ -160,11 +160,11 @@ export function SkillDetail({
           </div>
           
           {/* MASTERY AREA */}
-          <div style={{ position: 'relative', zIndex: 1, flex: '0 0 auto', minWidth: '250px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', padding: '24px', background: 'rgba(255,255,255,0.6)', borderRadius: '24px', border: '1px solid rgba(59,130,246,0.1)' }}>
+          <div style={{ position: 'relative', zIndex: 1, flex: '0 0 auto', minWidth: '250px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', padding: '24px', background: 'var(--bg-surface-sunken)', borderRadius: '24px', border: '1px solid var(--border)' }}>
             <div style={{ fontSize: '5rem', fontWeight: 900, color: '#3B82F6', lineHeight: 1, letterSpacing: '-0.04em', textShadow: '0 8px 24px rgba(59,130,246,0.15)' }}>
               {skill.progress || 0}%
             </div>
-            <div style={{ fontSize: '1.1rem', color: '#475569', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '8px' }}>
+            <div style={{ fontSize: '1.1rem', color: 'var(--text-main)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '8px' }}>
               Mastery
             </div>
             <div style={{ width: '100%', minWidth: '200px', height: '12px', background: 'rgba(147,197,253,0.2)', borderRadius: '999px', marginTop: '24px', overflow: 'hidden', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)' }}>
@@ -181,19 +181,17 @@ export function SkillDetail({
         {/* --- LAYER 3: SKILL CURRICULUM DASHBOARD CARD --- */}
         {canonicalSkill?.curriculum && canonicalSkill.curriculum.length > 0 && (
           <div style={{ 
-            marginBottom: '4rem', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(24px)', 
-            borderRadius: '32px', border: '1px solid rgba(255,255,255,1)', padding: '48px', 
-            boxShadow: '0 16px 48px -12px rgba(15,23,42,0.08)' 
+            marginBottom: '4rem' 
           }}>
             <h2 style={{ 
-              fontSize: '2rem', fontWeight: 900, color: '#0F172A', margin: '0 0 40px 0', 
+              fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 40px 0', 
               display: 'flex', alignItems: 'center', gap: '16px' 
             }}>
               <div style={{ width: '48px', height: '48px', background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15))', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <BookOpen size={24} color="#3B82F6" />
               </div>
               Skill Curriculum
-              <span style={{ fontSize: '1.1rem', color: '#64748B', fontWeight: 600, marginLeft: 'auto', background: '#F1F5F9', padding: '6px 16px', borderRadius: '999px' }}>
+              <span style={{ fontSize: '1.1rem', color: 'var(--text-muted)', fontWeight: 600, marginLeft: 'auto', background: 'var(--bg-surface-sunken)', padding: '6px 16px', borderRadius: '999px' }}>
                 {canonicalSkill.curriculum.reduce((acc: number, c: any) => acc + c.topics.length, 0)} items
               </span>
             </h2>
@@ -201,13 +199,13 @@ export function SkillDetail({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
               {canonicalSkill.curriculum.map((c: any, i) => (
                 <div key={i} style={{ 
-                  background: 'rgba(248, 250, 252, 0.7)', borderRadius: '24px', 
-                  borderLeft: '6px solid #3B82F6', borderTop: '1px solid rgba(226,232,240,0.8)',
-                  borderRight: '1px solid rgba(226,232,240,0.8)', borderBottom: '1px solid rgba(226,232,240,0.8)',
+                  background: 'transparent', borderRadius: '24px', 
+                  borderLeft: '6px solid #3B82F6', borderTop: '1px solid var(--border)',
+                  borderRight: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
                   padding: '32px' 
                 }}>
                   <h3 style={{ 
-                    fontSize: '1.25rem', fontWeight: 900, color: '#334155', margin: '0 0 24px 0', 
+                    fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 24px 0', 
                     textTransform: 'uppercase', letterSpacing: '0.05em' 
                   }}>
                     {c.section || c.group}
@@ -227,28 +225,24 @@ export function SkillDetail({
                       return (
                         <div 
                           key={j}
-                          style={{ 
-                            background: '#ffffff', borderRadius: '20px', padding: '24px', 
-                            border: '1px solid rgba(226,232,240,1)', boxShadow: '0 4px 12px rgba(15,23,42,0.03)',
-                            cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', 
-                            display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', overflow: 'hidden'
-                          }}
+                          className="card-animated-border"
+                          style={{ '--card-accent': '#8B5CF6', background: 'var(--bg-surface)', borderRadius: '20px', padding: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(15,23,42,0.03)', cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', overflow: 'hidden' } as React.CSSProperties}
                           onMouseEnter={e => {
                             e.currentTarget.style.transform = 'translateY(-4px)';
                             e.currentTarget.style.boxShadow = '0 16px 32px -8px rgba(139,92,246,0.15)';
                             e.currentTarget.style.borderColor = '#8B5CF6';
-                            e.currentTarget.style.background = 'linear-gradient(180deg, #fff 0%, #fafaff 100%)';
+                            e.currentTarget.style.background = 'var(--bg-surface-hover)';
                           }}
                           onMouseLeave={e => {
                             e.currentTarget.style.transform = 'none';
                             e.currentTarget.style.boxShadow = '0 4px 12px rgba(15,23,42,0.03)';
-                            e.currentTarget.style.borderColor = 'rgba(226,232,240,1)';
-                            e.currentTarget.style.background = '#ffffff';
+                            e.currentTarget.style.borderColor = 'var(--border)';
+                            e.currentTarget.style.background = 'var(--bg-surface)';
                           }}
                           onClick={() => handleSubtopicClick(topic.title)}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <span style={{ fontWeight: 800, fontSize: '1.1rem', color: isCompleted ? '#16A34A' : '#0F172A', lineHeight: 1.4 }}>
+                            <span style={{ fontWeight: 800, fontSize: '1.1rem', color: isCompleted ? '#16A34A' : 'var(--text-main)', lineHeight: 1.4 }}>
                               {topic.title}
                             </span>
                             {isCompleted && <CheckCircle size={22} color="#16A34A" style={{ flexShrink: 0, marginLeft: '12px' }} />}
@@ -279,10 +273,10 @@ export function SkillDetail({
           
           {/* Notes Widget */}
           <div style={{ 
-            background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px)', borderRadius: '32px', 
-            border: '1px solid rgba(255,255,255,1)', padding: '40px', boxShadow: '0 12px 32px -8px rgba(15,23,42,0.06)' 
+            background: 'var(--bg-surface)', backdropFilter: 'blur(12px)', borderRadius: '32px', 
+            border: '1px solid var(--border)', padding: '40px', boxShadow: '0 12px 32px -8px rgba(15,23,42,0.06)' 
           }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '40px', height: '40px', background: 'rgba(139,92,246,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <FileText size={20} color="#8B5CF6" />
@@ -294,11 +288,11 @@ export function SkillDetail({
                   onClick={() => setIsEditingNotes(true)}
                   style={{ 
                     fontSize: '0.9rem', fontWeight: 800, padding: '8px 20px', borderRadius: '999px', 
-                    background: '#F1F5F9', color: '#64748B', border: '1px solid rgba(226,232,240,1)', 
+                    background: 'var(--bg-surface-sunken)', color: 'var(--text-muted)', border: '1px solid var(--border)', 
                     cursor: 'pointer', transition: 'all 0.2s' 
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#8B5CF6'; e.currentTarget.style.color = '#8B5CF6'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#F1F5F9'; e.currentTarget.style.borderColor = 'rgba(226,232,240,1)'; e.currentTarget.style.color = '#64748B'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.borderColor = '#8B5CF6'; e.currentTarget.style.color = '#8B5CF6'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >
                   Edit Notes
                 </button>
@@ -311,33 +305,33 @@ export function SkillDetail({
                   value={editNotes} 
                   onChange={e => setEditNotes(e.target.value)}
                   style={{ 
-                    background: '#F8FAFC', color: '#0F172A', padding: '20px', borderRadius: '16px', 
-                    border: '1px solid rgba(203,213,225,1)', minHeight: '160px', fontSize: '1rem', 
+                    background: 'var(--bg-surface)', color: 'var(--text-main)', padding: '20px', borderRadius: '16px', 
+                    border: '1px solid var(--border)', minHeight: '160px', fontSize: '1rem', 
                     width: '100%', fontFamily: 'inherit', resize: 'vertical', outline: 'none',
                     boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
                   }}
                 />
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                  <button onClick={() => setIsEditingNotes(false)} style={{ padding: '12px 24px', background: '#fff', color: '#64748B', border: '1px solid rgba(203,213,225,1)', borderRadius: '12px', cursor: 'pointer', fontWeight: 800 }}>Cancel</button>
+                  <button onClick={() => setIsEditingNotes(false)} style={{ padding: '12px 24px', background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', fontWeight: 800 }}>Cancel</button>
                   <button onClick={handleSaveNotes} style={{ padding: '12px 24px', background: '#3B82F6', color: '#fff', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 800, boxShadow: '0 8px 16px -4px rgba(59,130,246,0.3)' }}>Save Notes</button>
                 </div>
               </div>
             ) : (
               <div style={{ 
-                color: '#475569', lineHeight: 1.7, fontSize: '1.05rem', background: '#F8FAFC', 
-                padding: '24px', borderRadius: '20px', border: '1px solid rgba(226,232,240,1)' 
+                color: 'var(--text-main)', lineHeight: 1.7, fontSize: '1.05rem', background: 'var(--bg-surface)', 
+                padding: '24px', borderRadius: '20px', border: '1px solid var(--border)' 
               }}>
-                {skill.notes ? skill.notes.split('\n').map((line, i) => <p key={i} style={{ margin: '0 0 12px 0' }}>{line}</p>) : <span style={{ fontStyle: 'italic', color: '#94A3B8' }}>No notes recorded for this skill yet.</span>}
+                {skill.notes ? skill.notes.split('\n').map((line, i) => <p key={i} style={{ margin: '0 0 12px 0' }}>{line}</p>) : <span style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>No notes recorded for this skill yet.</span>}
               </div>
             )}
           </div>
 
           {/* Applied Projects Widget */}
           <div style={{ 
-            background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px)', borderRadius: '32px', 
-            border: '1px solid rgba(255,255,255,1)', padding: '40px', boxShadow: '0 12px 32px -8px rgba(15,23,42,0.06)' 
+            background: 'var(--bg-surface)', backdropFilter: 'blur(12px)', borderRadius: '32px', 
+            border: '1px solid var(--border)', padding: '40px', boxShadow: '0 12px 32px -8px rgba(15,23,42,0.06)' 
           }}>
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#0F172A', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '40px', height: '40px', background: 'rgba(245,158,11,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Award size={20} color="#F59E0B" />
               </div>
@@ -347,7 +341,7 @@ export function SkillDetail({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {skill.relatedProjects.map((proj, idx) => (
                   <div key={idx} style={{ 
-                    padding: '20px', background: 'linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%)', 
+                    padding: '20px', background: 'var(--bg-surface)', 
                     color: '#92400E', borderRadius: '20px', fontWeight: 800, fontSize: '1.1rem', 
                     display: 'flex', alignItems: 'center', gap: '12px', border: '1px solid rgba(245,158,11,0.2)',
                     boxShadow: '0 4px 12px rgba(245,158,11,0.05)'
@@ -357,7 +351,7 @@ export function SkillDetail({
                 ))}
               </div>
             ) : (
-              <div style={{ color: '#94A3B8', fontStyle: 'italic', fontSize: '1.05rem', background: '#F8FAFC', padding: '24px', borderRadius: '20px', border: '1px solid rgba(226,232,240,1)' }}>
+              <div style={{ color: 'var(--text-muted)', fontStyle: 'italic', fontSize: '1.05rem', background: 'var(--bg-surface)', padding: '24px', borderRadius: '20px', border: '1px solid var(--border)' }}>
                 Not applied to any specific projects yet.
               </div>
             )}
@@ -403,9 +397,9 @@ export function SkillDetail({
         
         {showBlockDialog && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: '#fff', padding: '48px', borderRadius: '32px', maxWidth: '440px', border: '1px solid rgba(226,232,240,1)', boxShadow: '0 32px 64px -16px rgba(0,0,0,0.2)' }}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ background: 'var(--bg-surface)', padding: '48px', borderRadius: '32px', maxWidth: '440px', border: '1px solid var(--border)', boxShadow: '0 32px 64px -16px rgba(0,0,0,0.2)' }}>
               <h3 style={{ fontSize: '1.8rem', marginBottom: '16px', color: '#EF4444', fontWeight: 900, marginTop: 0 }}>Session Active</h3>
-              <p style={{ color: '#475569', marginBottom: '40px', lineHeight: 1.6, fontSize: '1.1rem' }}>
+              <p style={{ color: 'var(--text-main)', marginBottom: '40px', lineHeight: 1.6, fontSize: '1.1rem' }}>
                 You already have an active learning session. Complete or cancel the current task before starting another.
               </p>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -421,3 +415,4 @@ export function SkillDetail({
     </motion.div>
   )
 }
+

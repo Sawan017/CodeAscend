@@ -9,7 +9,7 @@ const GithubIcon = ({ size = 24, color = "currentColor", ...props }: any) => (
 );
 
 const card = {
-  background: '#fff',
+  background: 'var(--bg-card)',
   borderRadius: '20px',
   border: '1px solid rgba(140, 135, 125, 0.12)',
   boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
@@ -19,7 +19,7 @@ const card = {
 const sectionTitle = {
   fontSize: '0.85rem',
   fontWeight: 800 as const,
-  color: '#5A5750',
+  color: 'var(--text-main)',
   letterSpacing: '0.08em',
   textTransform: 'uppercase' as const,
   margin: 0,
@@ -42,7 +42,7 @@ export const ProjectsPanel = ({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px', position: 'relative' }}>
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{
         ...card, padding: '48px', position: 'relative',
-        background: 'linear-gradient(135deg, #ffffff 0%, #FFFBEB 100%)',
+        background: 'var(--bg-card)',
       }}>
         <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)', borderRadius: '50%' }} />
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
@@ -50,10 +50,10 @@ export const ProjectsPanel = ({
             <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#F59E0B', letterSpacing: '0.05em', marginBottom: '12px', textTransform: 'uppercase' }}>
               Workshop & Inventions
             </div>
-            <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: '#1E1D1B', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               Your Projects
             </h1>
-            <p style={{ fontSize: '1.05rem', color: '#5A5750', lineHeight: 1.6, margin: '0 0 32px' }}>
+            <p style={{ fontSize: '1.05rem', color: 'var(--text-main)', lineHeight: 1.6, margin: '0 0 32px' }}>
               Build, track, and deploy your creations. Turn your ideas into experience points.
             </p>
           </div>
@@ -97,7 +97,7 @@ export const ProjectsPanel = ({
             )}
             
             {githubMessage && (
-              <div style={{ fontSize: '0.8rem', color: '#64748B', maxWidth: '200px', textAlign: 'right' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '200px', textAlign: 'right' }}>
                 {githubMessage}
               </div>
             )}
@@ -118,8 +118,8 @@ export const ProjectsPanel = ({
             
             {!githubConnected ? (
               <>
-                <div style={{ fontWeight: 800, color: '#1E1D1B', fontSize: '1.2rem' }}>Connect GitHub to import your projects</div>
-                <p style={{ margin: 0, fontSize: '1rem', color: '#5A5750', textAlign: 'center', maxWidth: '400px' }}>
+                <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '1.2rem' }}>Connect GitHub to import your projects</div>
+                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', textAlign: 'center', maxWidth: '400px' }}>
                   Link your GitHub account to automatically track your repositories, languages, and coding progress.
                 </p>
                 <button
@@ -131,8 +131,8 @@ export const ProjectsPanel = ({
               </>
             ) : (
               <>
-                <div style={{ fontWeight: 800, color: '#1E1D1B', fontSize: '1.2rem' }}>No repositories found</div>
-                <p style={{ margin: 0, fontSize: '1rem', color: '#5A5750', textAlign: 'center', maxWidth: '400px' }}>
+                <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '1.2rem' }}>No repositories found</div>
+                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-main)', textAlign: 'center', maxWidth: '400px' }}>
                   We couldn't find any repositories to sync. Create one on GitHub or click Sync to check again.
                 </p>
               </>
@@ -142,15 +142,14 @@ export const ProjectsPanel = ({
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
           {projects.map((project: any, i: number) => (
-            <motion.div key={project.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+            <motion.div key={project.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "0px 0px -40px 0px" }} whileHover={{ y: -4, boxShadow: '0 12px 30px -10px rgba(245,158,11,0.2)', borderColor: 'rgba(245,158,11,0.4)' }} transition={{ delay: i * 0.05, duration: 0.3 }}
               onClick={() => onSelectProject?.(project)}
               style={{ ...card, padding: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px', transition: 'all 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px -6px rgba(245,158,11,0.15)'; e.currentTarget.style.borderColor = 'rgba(245,158,11,0.3)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = card.boxShadow; e.currentTarget.style.borderColor = card.border.split(' ')[2]; }}
+              
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 6px 0', fontSize: '1.2rem', color: '#1E1D1B', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <h3 style={{ margin: '0 0 6px 0', fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
                     {project.provider === 'github' && <GithubIcon size={16} color="#64748B" />}
                     {project.name}
                   </h3>
@@ -162,18 +161,18 @@ export const ProjectsPanel = ({
                   <Folder size={20} />
                 </div>
               </div>
-              <p style={{ margin: 0, fontSize: '0.95rem', color: '#5A5750', flex: 1, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-main)', flex: 1, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 {project.description}
               </p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {(project.technologies || []).slice(0, 3).map((tech: string) => (
-                  <span key={tech} style={{ background: 'rgba(140,135,125,0.08)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', color: '#5A5750', fontWeight: 700 }}>
+                  <span key={tech} style={{ background: 'var(--border)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', color: 'var(--text-main)', fontWeight: 700 }}>
                     {tech}
                   </span>
                 ))}
                 {(project.technologies?.length || 0) > 3 && <span style={{ padding: '4px 8px', fontSize: '0.75rem', color: '#9A958C', fontWeight: 700 }}>+{project.technologies.length - 3}</span>}
               </div>
-              <div style={{ width: '100%', height: '8px', background: 'rgba(140,135,125,0.1)', borderRadius: '4px', overflow: 'hidden', marginTop: '8px' }}>
+              <div style={{ width: '100%', height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden', marginTop: '8px' }}>
                 <div style={{ width: `${project.progress || 0}%`, height: '100%', background: project.status === 'COMPLETED' ? '#3EA354' : '#F59E0B', borderRadius: '4px' }} />
               </div>
             </motion.div>
@@ -191,3 +190,4 @@ export const ProjectsPanel = ({
     </div>
   );
 };
+

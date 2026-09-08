@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { BadgeArtwork } from './BadgeArtwork'
 import { ArrowLeft, Award, Sparkles } from 'lucide-react'
 import type { Badge } from '../../types'
 
@@ -60,29 +61,13 @@ export function BadgeDetail({
       </header>
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <motion.div 
+        <motion.div
           initial={{ rotateY: 180 }}
           animate={{ rotateY: 0 }}
           transition={{ duration: 0.8, type: 'spring' }}
-          style={{
-            width: '160px', height: '160px', borderRadius: '50%', marginBottom: '2rem',
-            background: isUnlocked ? 'var(--surface-sunken)' : 'var(--border-strong)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: isUnlocked ? 'var(--glow-cyan)' : 'none',
-            border: '4px solid', borderColor: isUnlocked ? 'var(--cyan)' : 'var(--text-muted)',
-            position: 'relative'
-          }}
+          style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}
         >
-          <span style={{ fontSize: '4rem', filter: isUnlocked ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))' : 'grayscale(100%) opacity(50%)' }}>
-            {badge.icon}
-          </span>
-          {isUnlocked && (
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              style={{ position: 'absolute', top: -10, left: -10, right: -10, bottom: -10, border: '1px dashed var(--cyan)', borderRadius: '50%' }}
-            />
-          )}
+          <BadgeArtwork title={badge.title} image={(badge as any).image} isLocked={!isUnlocked} size={160} tier={(badge as any).tier || 'bronze'} />
         </motion.div>
 
         <h1 style={{ 

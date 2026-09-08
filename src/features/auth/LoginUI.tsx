@@ -962,6 +962,9 @@ export function LoginUI() {
         title={showLegalModal.type === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
         content={showLegalModal.type === 'privacy' ? privacyPolicyText : termsOfServiceText}
       />
+      <div style={{ position: 'fixed', bottom: '24px', width: '100%', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+        &copy; 2026 ARINOVA. All rights reserved.
+      </div>
     </motion.div>
   )
 }

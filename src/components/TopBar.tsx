@@ -60,7 +60,7 @@ export function TopBar({
       display: 'flex', alignItems: 'center',
       padding: '0 24px', height: '64px',
       margin: '16px 24px', borderRadius: '16px',
-      background: 'rgba(252, 253, 255, 0.85)',
+      background: 'var(--bg-card)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
       border: '1px solid rgba(140, 135, 125, 0.15)',
@@ -79,7 +79,7 @@ export function TopBar({
           boxShadow: '0 2px 8px rgba(62, 163, 84, 0.25)'
         }}>AR</div>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1E1D1B', letterSpacing: '-0.3px', lineHeight: 1.1 }}>
+          <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)', letterSpacing: '-0.3px', lineHeight: 1.1 }}>
             ARINOVA
           </span>
           <span style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em', color: '#9A958C', textTransform: 'uppercase' }}>
@@ -114,13 +114,13 @@ export function TopBar({
               onMouseEnter={e => {
                 if (!active) {
                   e.currentTarget.style.background = `rgba(${theme.rgb}, 0.06)`
-                  e.currentTarget.style.color = '#1E1D1B'
+                  e.currentTarget.style.color = 'var(--text-main)'
                 }
               }}
               onMouseLeave={e => {
                 if (!active) {
                   e.currentTarget.style.background = 'transparent'
-                  e.currentTarget.style.color = '#5A5750'
+                  e.currentTarget.style.color = 'var(--text-muted)'
                 }
               }}
             >
@@ -157,7 +157,7 @@ export function TopBar({
             onMouseEnter={e => {
               if (activeView !== 'admin_support') {
                 e.currentTarget.style.background = 'rgba(140, 135, 125, 0.08)'
-                e.currentTarget.style.color = '#1E1D1B'
+                e.currentTarget.style.color = 'var(--text-main)'
               }
             }}
             onMouseLeave={e => {
@@ -192,16 +192,16 @@ export function TopBar({
           <button
             style={{
               position: 'relative',
-              background: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(140, 135, 125, 0.15)',
+              background: 'transparent', border: '1px solid rgba(140, 135, 125, 0.15)',
               borderRadius: '50%', width: '38px', height: '38px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#5A5750', cursor: 'pointer', transition: 'all 0.15s',
+              color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.15s',
               boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
             }}
             onClick={onOpenNotifications}
             aria-label="Notifications"
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.color = '#1E1D1B'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.25)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.color = '#5A5750'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.15)'; e.currentTarget.style.transform = 'none'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-surface-sunken)'; e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none'; }}
           >
             <Bell size={17} />
             {unreadCount > 0 && (
@@ -223,16 +223,16 @@ export function TopBar({
         {onOpenSettings && (
           <button
             style={{
-              background: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(140, 135, 125, 0.15)',
+              background: 'transparent', border: '1px solid rgba(140, 135, 125, 0.15)',
               borderRadius: '50%', width: '38px', height: '38px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#5A5750', cursor: 'pointer', transition: 'all 0.15s',
+              color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.15s',
               boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
             }}
             onClick={onOpenSettings}
             aria-label="Settings"
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.color = '#1E1D1B'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.25)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.color = '#5A5750'; e.currentTarget.style.borderColor = 'rgba(140, 135, 125, 0.15)'; e.currentTarget.style.transform = 'none'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-surface-sunken)'; e.currentTarget.style.color = 'var(--text-main)'; e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'none'; }}
           >
             <SettingsIcon size={17} />
           </button>

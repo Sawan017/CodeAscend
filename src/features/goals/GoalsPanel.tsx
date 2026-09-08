@@ -93,9 +93,9 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
   };
 
   const cardStyle = {
-    background: '#FFFFFF',
+    background: 'var(--bg-card)',
     borderRadius: '24px',
-    border: '1px solid #E2E8F0',
+    border: '1px solid var(--border)',
     boxShadow: '0 8px 24px -8px rgba(17,24,39,0.05)',
     padding: '32px'
   };
@@ -103,7 +103,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
   return (
     <div style={{ 
       display: 'flex', flexDirection: 'column', padding: '0', 
-      background: '#F5F7FC', color: '#111827', 
+      background: 'var(--bg-main)', color: 'var(--text-main)', 
       minHeight: '100%', position: 'relative', overflowX: 'hidden'
     }}>
       {/* Verification Modal */}
@@ -142,16 +142,16 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
               <div style={{ width: '8px', height: '8px', background: '#6366F1', borderRadius: '50%' }} />
               DASHBOARD
             </div>
-            <h1 style={{ fontSize: '3rem', fontWeight: 900, color: '#111827', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               Goals & To Do
             </h1>
-            <p style={{ fontSize: '1.15rem', color: '#64748B', margin: 0, maxWidth: '600px', lineHeight: 1.6, fontWeight: 500 }}>
+            <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', margin: 0, maxWidth: '600px', lineHeight: 1.6, fontWeight: 500 }}>
               Manage your actionable tasks and quickly resume your currently running learning sessions.
             </p>
           </div>
           
           <div style={{ position: 'relative', zIndex: 1 }}>
-             <button 
+             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                 onClick={() => { setNewTask(prev => ({...prev, targetDate: new Date().toISOString().split('T')[0]})); setIsCreating(true); }} 
                 style={{ 
                   background: '#6366F1', color: '#fff', border: 'none', padding: '16px 28px', 
@@ -163,7 +163,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                 onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = '#6366F1'; }}
               >
               <Plus size={22} /> Add To Do
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -175,27 +175,27 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                 id="todo-title-input"
                 value={newTask.title} onChange={e => { setNewTask(prev => ({...prev, title: e.target.value})); if (errorMsg) setErrorMsg(''); }}
                 placeholder="What needs to be done?" autoFocus
-                style={{ width: '100%', fontSize: '1.4rem', fontWeight: 800, border: 'none', borderBottom: errorMsg ? '2px solid #EF4444' : '2px solid #E2E8F0', paddingBottom: '12px', outline: 'none', color: '#111827', background: 'transparent', transition: 'border-color 0.2s' }}
+                style={{ width: '100%', fontSize: '1.4rem', fontWeight: 800, border: 'none', borderBottom: errorMsg ? '2px solid #EF4444' : '2px solid var(--border)', paddingBottom: '12px', outline: 'none', color: 'var(--text-main)', background: 'transparent', transition: 'border-color 0.2s' }}
               />
               {errorMsg && <div style={{ color: '#EF4444', fontSize: '0.85rem', fontWeight: 700, marginTop: '8px' }}>{errorMsg}</div>}
             </div>
             <input 
               value={newTask.description} onChange={e => setNewTask(prev => ({...prev, description: e.target.value}))}
               placeholder="Add details (optional)..."
-              style={{ fontSize: '1.05rem', border: 'none', outline: 'none', color: '#64748B', background: 'transparent' }}
+              style={{ fontSize: '1.05rem', border: 'none', outline: 'none', color: 'var(--text-muted)', background: 'transparent' }}
             />
             <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
               <div 
-                onClick={() => document.getElementById('todo-date-input')?.showPicker()}
-                style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '12px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
-                <Calendar size={18} color="#64748B" />
-                <input id="todo-date-input" type="date" value={newTask.targetDate} onChange={e => setNewTask(prev => ({...prev, targetDate: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }} />
+                onClick={() => (document.getElementById('todo-date-input') as any)?.showPicker()}
+                style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)', padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                <Calendar size={18} color="var(--text-muted)" />
+                <input id="todo-date-input" type="date" value={newTask.targetDate} onChange={e => setNewTask(prev => ({...prev, targetDate: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: 'var(--text-main)', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }} />
               </div>
               <div 
-                onClick={() => document.getElementById('todo-priority-input')?.showPicker() || document.getElementById('todo-priority-input')?.focus()}
-                style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#F8FAFC', padding: '12px 20px', borderRadius: '12px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
-                <AlertCircle size={18} color="#64748B" />
-                <select id="todo-priority-input" value={newTask.priority} onChange={e => setNewTask(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }}>
+                onClick={() => { try { (document.getElementById('todo-priority-input') as any)?.showPicker(); } catch(e) { document.getElementById('todo-priority-input')?.focus(); } }}
+                style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)', padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                <AlertCircle size={18} color="var(--text-muted)" />
+                <select id="todo-priority-input" value={newTask.priority} onChange={e => setNewTask(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: 'var(--text-main)', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }}>
                   <option value="Low">Low Priority</option>
                   <option value="Medium">Medium Priority</option>
                   <option value="High">High Priority</option>
@@ -203,8 +203,8 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
-              <button type="button" onClick={() => setIsCreating(false)} style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', fontWeight: 800, cursor: 'pointer', padding: '12px 24px', borderRadius: '12px', transition: 'all 0.2s' }}>Cancel</button>
-              <button type="submit" style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 16px -4px rgba(139,92,246,0.3)' }}>Save To Do</button>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} type="button" onClick={() => setIsCreating(false)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 800, cursor: 'pointer', padding: '12px 24px', borderRadius: '12px', transition: 'all 0.2s' }}>Cancel</motion.button>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} type="submit" style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 16px -4px rgba(139,92,246,0.3)' }}>Save To Do</motion.button>
             </div>
           </motion.form>
         )}
@@ -213,8 +213,8 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           {runningSkill && runningSubtopic ? (
-            <div style={{ ...cardStyle, position: 'relative', overflow: 'hidden', padding: 0, border: `2px solid ${currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : '#64748B'}`, boxShadow: `0 24px 48px -12px ${currentMode === 'PRIME' ? 'rgba(139,92,246,0.2)' : 'rgba(6,182,212,0.1)'}` }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '8px', height: '100%', background: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : '#64748B' }} />
+            <div style={{ ...cardStyle, position: 'relative', overflow: 'hidden', padding: 0, border: `2px solid ${currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)'}`, boxShadow: `0 24px 48px -12px ${currentMode === 'PRIME' ? 'rgba(139,92,246,0.2)' : 'rgba(6,182,212,0.1)'}` }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '8px', height: '100%', background: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)' }} />
               
               <div style={{ padding: '40px 48px', display: 'flex', flexWrap: 'wrap', gap: '48px' }}>
                 
@@ -223,10 +223,10 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                   
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '32px' }}>
                     <div>
-                      <div style={{ fontSize: '0.95rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                      <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
                          {runningSkill.canonicalName || runningSkill.name}
                       </div>
-                      <h3 style={{ margin: 0, fontSize: '2rem', fontWeight: 900, color: '#111827', lineHeight: 1.2 }}>
+                      <h3 style={{ margin: 0, fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', lineHeight: 1.2 }}>
                          {runningSubtopic.title}
                       </h3>
                     </div>
@@ -238,29 +238,29 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <span style={{ fontSize: '0.95rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Task Progress</span>
+                    <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Task Progress</span>
                     <span style={{ fontSize: '1.2rem', color: currentMode === 'PRIME' ? '#8B5CF6' : '#06B6D4', fontWeight: 900 }}>{runningSkill.progress || 0}%</span>
                   </div>
-                  <div style={{ width: '100%', height: '16px', background: '#F1F5F9', borderRadius: '8px', overflow: 'hidden', marginBottom: '48px', border: '1px solid #E2E8F0' }}>
+                  <div style={{ width: '100%', height: '16px', background: 'var(--bg-surface-sunken)', borderRadius: '8px', overflow: 'hidden', marginBottom: '48px', border: '1px solid var(--border)' }}>
                     <div style={{ width: `${Math.min(100, runningSkill.progress || 0)}%`, height: '100%', background: currentMode === 'PRIME' ? 'linear-gradient(90deg, #8B5CF6, #6366F1)' : 'linear-gradient(90deg, #06B6D4, #3B82F6)', borderRadius: '8px' }} />
                   </div>
 
                   <div style={{ display: 'flex', gap: '48px', alignItems: 'center', marginTop: 'auto' }}>
                      <div>
-                       <div style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                       <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
                          TIMER
                        </div>
-                       <div style={{ fontSize: '2rem', fontWeight: 900, color: '#111827', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums' }}>
+                       <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums' }}>
                          <Clock size={28} color={currentMode === 'PRIME' ? '#8B5CF6' : '#06B6D4'} />
                          {formatTime(activeSessionElapsed)}
                        </div>
                      </div>
                      
                      <div>
-                       <div style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
+                       <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
                          CURRENT REWARD
                        </div>
-                       <div style={{ fontSize: '2rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : '#64748B', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(139,92,246,0.3)' : 'none' }}>
+                       <div style={{ fontSize: '2rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(139,92,246,0.3)' : 'none' }}>
                          <Zap size={28} />
                          +{currentXP} XP
                        </div>
@@ -269,9 +269,9 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                 </div>
 
                 {/* RIGHT COLUMN: XP Rewards, Completion */}
-                <div style={{ flex: '1 1 350px', background: '#F8FAFC', borderRadius: '24px', padding: '32px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flex: '1 1 350px', background: 'var(--bg-surface)', borderRadius: '24px', padding: '32px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column' }}>
                    
-                   <div style={{ fontSize: '0.95rem', color: '#64748B', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Zap size={18} color="#EAB308" />
                       XP TIERS
                    </div>
@@ -280,10 +280,10 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                       {/* PRIME */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'PRIME' ? '2px solid #8B5CF6' : '1px solid transparent', background: currentMode === 'PRIME' ? 'linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(99,102,241,0.05) 100%)' : 'transparent' }}>
                          <div>
-                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : '#64748B', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               {currentMode === 'PRIME' && <Target size={16} />} PRIME
                             </div>
-                            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600, marginTop: '4px' }}>Within {Math.floor(primeLimit / 60)} mins</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Within {Math.floor(primeLimit / 60)} mins</div>
                          </div>
                          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : '#94A3B8', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(139,92,246,0.4)' : 'none' }}>
                             +{primeXP} XP
@@ -293,10 +293,10 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                       {/* FOCUSED */}
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'FOCUSED' ? '2px solid #06B6D4' : '1px solid transparent', background: currentMode === 'FOCUSED' ? 'linear-gradient(135deg, rgba(6,182,212,0.1) 0%, rgba(59,130,246,0.05) 100%)' : 'transparent', opacity: activeSessionElapsed > primeLimit || currentMode === 'FOCUSED' ? 1 : 0.5 }}>
                          <div>
-                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? '#06B6D4' : '#64748B', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               {currentMode === 'FOCUSED' && <Target size={16} />} FOCUSED
                             </div>
-                            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600, marginTop: '4px' }}>Within {Math.floor(focusedLimit / 60)} mins</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Within {Math.floor(focusedLimit / 60)} mins</div>
                          </div>
                          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? '#06B6D4' : '#94A3B8', textShadow: currentMode === 'FOCUSED' ? '0 0 16px rgba(6,182,212,0.4)' : 'none' }}>
                             +{focusedXP} XP
@@ -304,12 +304,12 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                       </div>
 
                       {/* EXTENDED */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'EXTENDED' ? '2px solid #64748B' : '1px solid transparent', background: currentMode === 'EXTENDED' ? 'rgba(100,116,139,0.05)' : 'transparent', opacity: activeSessionElapsed > focusedLimit || currentMode === 'EXTENDED' ? 1 : 0.5 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'EXTENDED' ? '2px solid var(--text-muted)' : '1px solid transparent', background: currentMode === 'EXTENDED' ? 'rgba(100,116,139,0.05)' : 'transparent', opacity: activeSessionElapsed > focusedLimit || currentMode === 'EXTENDED' ? 1 : 0.5 }}>
                          <div>
-                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'EXTENDED' ? '#475569' : '#64748B', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'EXTENDED' ? '#475569' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               {currentMode === 'EXTENDED' && <Target size={16} />} EXTENDED
                             </div>
-                            <div style={{ fontSize: '0.85rem', color: '#94A3B8', fontWeight: 600, marginTop: '4px' }}>At your own pace</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>At your own pace</div>
                          </div>
                          <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'EXTENDED' ? '#475569' : '#94A3B8' }}>
                             +{extendedXP} XP
@@ -320,49 +320,49 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                    {/* COMPLETION & ACTIONS AREA */}
                    <div style={{ marginTop: 'auto', display: 'flex', gap: '12px' }}>
                      {isLocked ? (
-                       <button 
+                       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                          disabled
-                         style={{ flex: 2, background: '#E2E8F0', color: '#94A3B8', border: 'none', padding: '18px 24px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'not-allowed' }}
+                         style={{ flex: 2, background: 'var(--border)', color: 'var(--text-muted)', border: 'none', padding: '18px 24px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'not-allowed' }}
                        >
                          <Lock size={20} /> AVAILABLE IN {formatTime(minVerificationSeconds - activeSessionElapsed)}
-                       </button>
+                       </motion.button>
                      ) : (
-                       <button 
+                       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                          onClick={() => setIsVerifying(true)}
                          style={{ flex: 2, background: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : '#10B981', color: '#fff', border: 'none', padding: '18px 24px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', transition: 'all 0.2s', boxShadow: `0 12px 24px -8px ${currentMode === 'PRIME' ? 'rgba(139,92,246,0.4)' : currentMode === 'FOCUSED' ? 'rgba(6,182,212,0.4)' : 'rgba(16,185,129,0.4)'}` }}
                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.filter = 'brightness(1.1)'; }}
                          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.filter = 'brightness(1)'; }}
                        >
                          <CheckCircle size={20} /> COMPLETE TASK
-                       </button>
+                       </motion.button>
                      )}
                      
                      {showEndTaskConfirm ? (
                        <div style={{ flex: 1, display: 'flex', gap: '6px' }}>
-                         <button 
+                         <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                            onClick={() => onCancelSession?.()}
                            style={{ flex: 1, background: '#EF4444', color: '#fff', border: 'none', borderRadius: '16px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                            title="Confirm End Task"
                          >
                            END
-                         </button>
-                         <button 
+                         </motion.button>
+                         <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                            onClick={() => setShowEndTaskConfirm(false)}
-                           style={{ flex: 1, background: '#F1F5F9', color: '#64748B', border: 'none', borderRadius: '16px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                           style={{ flex: 1, background: 'var(--bg-surface-sunken)', color: 'var(--text-muted)', border: 'none', borderRadius: '16px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                            title="Cancel"
                          >
                            X
-                         </button>
+                         </motion.button>
                        </div>
                      ) : (
-                       <button 
+                       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                          onClick={() => setShowEndTaskConfirm(true)}
-                         style={{ flex: 1, background: '#F1F5F9', color: '#64748B', border: 'none', padding: '18px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
-                         onMouseEnter={e => { e.currentTarget.style.background = '#E2E8F0'; e.currentTarget.style.color = '#334155'; }}
-                         onMouseLeave={e => { e.currentTarget.style.background = '#F1F5F9'; e.currentTarget.style.color = '#64748B'; }}
+                         style={{ flex: 1, background: 'var(--bg-surface-sunken)', color: 'var(--text-muted)', border: 'none', padding: '18px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
+                         onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.color = 'var(--text-main)'; }}
+                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                        >
                          <Square size={18} fill="currentColor" /> END
-                       </button>
+                       </motion.button>
                      )}
                    </div>
 
@@ -370,12 +370,12 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
               </div>
             </div>
           ) : (
-            <div style={{ padding: '64px', textAlign: 'center', background: '#FFFFFF', borderRadius: '32px', border: '2px dashed #CBD5E1', boxShadow: '0 8px 24px -8px rgba(17,24,39,0.02)' }}>
-              <div style={{ width: '80px', height: '80px', background: '#F8FAFC', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', border: '1px solid #E2E8F0' }}>
+            <div style={{ padding: '64px', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '32px', border: '2px dashed var(--border-strong)', boxShadow: '0 8px 24px -8px rgba(17,24,39,0.02)' }}>
+              <div style={{ width: '80px', height: '80px', background: 'var(--bg-surface)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', border: '1px solid var(--border)' }}>
                 <Target size={40} color="#94A3B8" />
               </div>
-              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#111827', margin: '0 0 12px' }}>No task currently running</h2>
-              <p style={{ fontSize: '1.1rem', color: '#64748B', margin: '0 0 24px', maxWidth: '400px', marginInline: 'auto', lineHeight: 1.5 }}>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px' }}>No task currently running</h2>
+              <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', margin: '0 0 24px', maxWidth: '400px', marginInline: 'auto', lineHeight: 1.5 }}>
                 Start a task from your learning curriculum to begin the timer and earn XP.
               </p>
             </div>
@@ -388,15 +388,15 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
             <div style={{ width: '32px', height: '32px', background: 'rgba(234,179,8,0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CheckSquare size={18} color="#EAB308" />
             </div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: '#111827', margin: 0 }}>To Do</h2>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>To Do</h2>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {todos.map((task: any) => (
               <div key={task.id} style={{ ...cardStyle, padding: '24px', display: 'flex', alignItems: 'flex-start', gap: '20px', transition: 'all 0.2s' }}
                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(234,179,8,0.15)'; e.currentTarget.style.borderColor = 'rgba(234,179,8,0.3)'; }}
-                   onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = cardStyle.boxShadow; e.currentTarget.style.borderColor = '#E2E8F0'; }}>
-                <button 
+                   onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = cardStyle.boxShadow; e.currentTarget.style.borderColor = 'var(--border)'; }}>
+                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                   onClick={() => onCompleteGoal?.(task.id)}
                   style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, marginTop: '2px', color: '#CBD5E1', transition: 'color 0.2s' }}
                   onMouseEnter={e => e.currentTarget.style.color = '#16A34A'}
@@ -405,31 +405,31 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                   <div style={{ width: 26, height: 26, borderRadius: '8px', border: '2px solid currentColor', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CheckCircle size={18} style={{ opacity: 0 }} className="check-icon-hover" />
                   </div>
-                </button>
+                </motion.button>
                 
                 <div style={{ flex: 1 }}>
                   {editingTaskId === task.id ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
                       <input 
                         value={editTaskData.title} onChange={e => setEditTaskData(prev => ({...prev, title: e.target.value}))}
-                        autoFocus style={{ fontSize: '1.15rem', fontWeight: 800, border: 'none', borderBottom: '2px solid #E2E8F0', paddingBottom: '4px', outline: 'none', color: '#111827', background: 'transparent', width: '100%' }}
+                        autoFocus style={{ fontSize: '1.15rem', fontWeight: 800, border: 'none', borderBottom: '2px solid var(--border)', paddingBottom: '4px', outline: 'none', color: 'var(--text-main)', background: 'transparent', width: '100%' }}
                       />
                       <input 
                         value={editTaskData.description} onChange={e => setEditTaskData(prev => ({...prev, description: e.target.value}))}
-                        placeholder="Add details..." style={{ fontSize: '1rem', border: 'none', outline: 'none', color: '#64748B', background: 'transparent', width: '100%' }}
+                        placeholder="Add details..." style={{ fontSize: '1rem', border: 'none', outline: 'none', color: 'var(--text-muted)', background: 'transparent', width: '100%' }}
                       />
                       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                         <div 
-                          onClick={() => document.getElementById(`edit-date-${task.id}`)?.showPicker()}
-                          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F8FAFC', padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
-                          <Calendar size={14} color="#64748B" />
-                          <input id={`edit-date-${task.id}`} type="date" value={editTaskData.targetDate} onChange={e => setEditTaskData(prev => ({...prev, targetDate: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }} />
+                          onClick={() => (document.getElementById(`edit-date-${task.id}`) as any)?.showPicker()}
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-surface)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                          <Calendar size={14} color="var(--text-muted)" />
+                          <input id={`edit-date-${task.id}`} type="date" value={editTaskData.targetDate} onChange={e => setEditTaskData(prev => ({...prev, targetDate: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: 'var(--text-main)', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }} />
                         </div>
                         <div
                           onClick={() => document.getElementById(`edit-priority-${task.id}`)?.focus()}
-                          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#F8FAFC', padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', cursor: 'pointer' }}>
-                          <AlertCircle size={14} color="#64748B" />
-                          <select id={`edit-priority-${task.id}`} value={editTaskData.priority} onChange={e => setEditTaskData(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: '#111827', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-surface)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                          <AlertCircle size={14} color="var(--text-muted)" />
+                          <select id={`edit-priority-${task.id}`} value={editTaskData.priority} onChange={e => setEditTaskData(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: 'var(--text-main)', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
                             <option value="Low">Low Priority</option>
                             <option value="Medium">Medium Priority</option>
                             <option value="High">High Priority</option>
@@ -437,37 +437,37 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                        <button onClick={() => {
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} onClick={() => {
                           if (editTaskData.title.trim()) {
                             onUpdateGoal?.({ ...task, ...editTaskData });
                           }
                           setEditingTaskId(null);
-                        }} style={{ background: '#10B981', color: '#fff', border: 'none', padding: '6px 16px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>Save</button>
-                        <button onClick={() => setEditingTaskId(null)} style={{ background: '#F1F5F9', color: '#64748B', border: 'none', padding: '6px 16px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>Cancel</button>
+                        }} style={{ background: '#10B981', color: '#fff', border: 'none', padding: '6px 16px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>Save</motion.button>
+                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} onClick={() => setEditingTaskId(null)} style={{ background: 'var(--bg-surface-sunken)', color: 'var(--text-muted)', border: 'none', padding: '6px 16px', borderRadius: '6px', fontWeight: 800, cursor: 'pointer' }}>Cancel</motion.button>
                       </div>
                     </div>
                   ) : (
                     <div style={{ width: '100%' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <h3 style={{ margin: '0 0 6px 0', fontSize: '1.15rem', color: '#111827', fontWeight: 800 }}>{task.title}</h3>
+                        <h3 style={{ margin: '0 0 6px 0', fontSize: '1.15rem', color: 'var(--text-main)', fontWeight: 800 }}>{task.title}</h3>
                         <div style={{ display: 'flex', gap: '4px' }}>
-                          <button onClick={() => { setEditingTaskId(task.id); setEditTaskData({ title: task.title, description: task.description || '', priority: task.priority, targetDate: task.targetDate || '' }); }} style={{ background: 'transparent', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '4px', borderRadius: '4px' }} title="Edit">
+                          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} onClick={() => { setEditingTaskId(task.id); setEditTaskData({ title: task.title, description: task.description || '', priority: task.priority, targetDate: task.targetDate || '' }); }} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', borderRadius: '4px' }} title="Edit">
                             ✎
-                          </button>
-                          <button onClick={() => setConfirmTaskDeleteId((task.id))} style={{ background: 'transparent', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px', borderRadius: '4px' }} title="Remove">
+                          </motion.button>
+                          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} onClick={() => setConfirmTaskDeleteId((task.id))} style={{ background: 'transparent', border: 'none', color: '#EF4444', cursor: 'pointer', padding: '4px', borderRadius: '4px' }} title="Remove">
                             <XCircle size={16} />
-                          </button>
+                          </motion.button>
                         </div>
                       </div>
-                      {task.description && <p style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#64748B', lineHeight: 1.5 }}>{task.description}</p>}
+                      {task.description && <p style={{ margin: '0 0 16px 0', fontSize: '1rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>{task.description}</p>}
                       
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         {task.targetDate && (
-                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: task.targetDate < todayStr ? '#EF4444' : '#64748B', display: 'flex', alignItems: 'center', gap: '6px', background: '#F8FAFC', padding: '6px 12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 800, color: task.targetDate < todayStr ? '#EF4444' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-surface)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border)' }}>
                             <Calendar size={14} /> {task.targetDate}
                           </span>
                         )}
-                        <span style={{ fontSize: '0.85rem', fontWeight: 800, padding: '6px 12px', borderRadius: '8px', background: task.priority === 'High' ? 'rgba(239,68,68,0.1)' : '#F8FAFC', color: task.priority === 'High' ? '#EF4444' : '#64748B', border: task.priority === 'High' ? 'none' : '1px solid #E2E8F0' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800, padding: '6px 12px', borderRadius: '8px', background: task.priority === 'High' ? 'rgba(239,68,68,0.1)' : 'var(--bg-surface)', color: task.priority === 'High' ? '#EF4444' : 'var(--text-muted)', border: task.priority === 'High' ? 'none' : '1px solid var(--border)' }}>
                           {task.priority} Priority
                         </span>
                       </div>
@@ -477,10 +477,10 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
               </div>
             ))}
             {todos.length === 0 && (
-              <div style={{ padding: '40px', textAlign: 'center', background: '#FFFFFF', borderRadius: '24px', border: '1px dashed #CBD5E1' }}>
+              <div style={{ padding: '40px', textAlign: 'center', background: 'var(--bg-card)', borderRadius: '24px', border: '1px dashed var(--border-strong)' }}>
                 <CheckSquare size={32} color="#94A3B8" style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>Nothing to do</div>
-                <div style={{ fontSize: '1rem', color: '#64748B', fontWeight: 500 }}>Add a task to keep yourself on track.</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '8px' }}>Nothing to do</div>
+                <div style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>Add a task to keep yourself on track.</div>
               </div>
             )}
           </div>

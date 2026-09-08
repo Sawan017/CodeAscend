@@ -165,7 +165,7 @@ export const goals: Goal[] = [
 export const badges: Badge[] = [
   {
     id: 'first-step',
-    icon: '🟢',
+    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
     title: 'FIRST STEP',
     description: 'Completed your first goal.',
     rarity: 'Common',
@@ -175,7 +175,7 @@ export const badges: Badge[] = [
   },
   {
     id: 'level-5',
-    icon: '🔷',
+    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
     title: 'LEVEL 5',
     description: 'Reached level 5.',
     rarity: 'Uncommon',
@@ -185,7 +185,7 @@ export const badges: Badge[] = [
   },
   {
     id: 'level-10',
-    icon: '💎',
+    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
     title: 'LEVEL 10',
     description: 'Reached level 10.',
     rarity: 'Rare',
@@ -194,7 +194,7 @@ export const badges: Badge[] = [
   },
   {
     id: 'project-master',
-    icon: '🛠️',
+    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
     title: 'PROJECT MASTER',
     description: 'Completed 3 projects.',
     rarity: 'Epic',
@@ -203,7 +203,7 @@ export const badges: Badge[] = [
   },
   {
     id: 'streak-7',
-    icon: '🔥',
+    image: '/assets/badges/badge_chroma_gold_streak.jpg',
     title: '7-DAY STREAK',
     description: 'Maintained a 7-day activity streak.',
     rarity: 'Uncommon',
@@ -215,7 +215,7 @@ export const badges: Badge[] = [
 export const achievements: Achievement[] = [
   {
     id: 'first-website',
-    icon: '◉',
+    image: '/assets/badges/badge_chroma_gold_streak.jpg',
     title: 'FIRST WEBSITE',
     description: 'Built a first polished digital experience that felt real.',
     unlockCondition: 'Complete your first shipped web experience',
@@ -223,7 +223,7 @@ export const achievements: Achievement[] = [
   },
   {
     id: 'first-fullstack',
-    icon: '⬢',
+    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
     title: 'FIRST FULL-STACK PROJECT',
     description: 'Connected a frontend and backend into a real product flow.',
     unlockCondition: 'Finish a full-stack build',
@@ -231,7 +231,7 @@ export const achievements: Achievement[] = [
   },
   {
     id: 'portfolio-deployed',
-    icon: '⬡',
+    image: '/assets/badges/badge_first_step.jpg',
     title: 'PORTFOLIO DEPLOYED',
     description: 'Took the work from local files to a live public experience.',
     unlockCondition: 'Deploy a public version',

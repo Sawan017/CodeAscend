@@ -372,7 +372,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                     style={{ ...inputStyle, marginTop: 0, padding: '0.4rem 1rem 0.4rem 2rem', fontSize: '0.85rem' }}
                   />
                   {skillDropdownOpen && (
-                    <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--ca-surface-alt, #f5f5f5)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, maxHeight: '200px', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
+                    <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px', background: 'var(--ca-surface-alt, #f5f5f5)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, maxHeight: '200px', overflowY: 'auto', boxShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>
                       {(() => {
                         const available = skills.filter(s => s.progress >= 50 && !draftProfile.displayedSkills?.includes(s.id))
                         const filtered = skillSearch ? available.filter(s => s.name.toLowerCase().includes(skillSearch.toLowerCase())) : available
@@ -459,7 +459,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                   </button>
                   
                   {achDropdownOpen && (
-                    <div style={{ position: achDropdownStyle.position || 'absolute' as any, top: achDropdownStyle.top, bottom: achDropdownStyle.bottom, right: achDropdownStyle.right, left: achDropdownStyle.left, marginTop: achDropdownStyle.marginTop, marginBottom: achDropdownStyle.marginBottom, background: 'var(--ca-surface-alt, #f5f5f5)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, width: achDropdownStyle.width || 'min(420px, 100%)', maxWidth: 'min(420px, calc(100vw - 32px))', boxSizing: 'border-box', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ position: achDropdownStyle.position || 'absolute' as any, top: achDropdownStyle.top, bottom: achDropdownStyle.bottom, right: achDropdownStyle.right, left: achDropdownStyle.left, marginTop: achDropdownStyle.marginTop, marginBottom: achDropdownStyle.marginBottom, background: 'var(--ca-surface-alt, #f5f5f5)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid var(--border)', borderRadius: '8px', zIndex: 50, width: achDropdownStyle.width || 'min(420px, 100%)', maxWidth: 'min(420px, calc(100vw - 32px))', boxSizing: 'border-box', boxShadow: '0 4px 12px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column' }}>
                       <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <div style={{ position: 'relative' }}>
                           <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)' }} />

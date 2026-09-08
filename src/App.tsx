@@ -153,7 +153,7 @@ function App() {
     console.log('[Auth Trace] search:', window.location.search, 'hash:', window.location.hash)
 
     const params = new URLSearchParams(window.location.hash.replace('#', '?'))
-    const error = params.get('error') || new URLSearchParams(window.location.search).get('error')
+    const error = params.get('info') || new URLSearchParams(window.location.search).get('info')
     const errorDescription = params.get('error_description') || new URLSearchParams(window.location.search).get('error_description')
     
     // Capture settings param
@@ -417,10 +417,10 @@ function App() {
       const network = await fetchSocialNetwork(user?.id || '')
       setFriendState({ relationships: network.relationships })
       setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id))
-      push('Friend request accepted', 'success')
+      push('Friend request accepted', 'info')
     } catch (err: any) {
       console.error(err)
-      push(err.message || 'Failed to accept friend request', 'error')
+      push(err.message || 'Failed to accept friend request', 'info')
     }
   }
 
@@ -432,7 +432,7 @@ function App() {
       setIncomingRequests(network.incomingRequests.map((r: any) => r.sender_id))
       push('Friend request rejected', 'info')
     } catch (err: any) {
-      push(err.message || 'Failed to reject friend request', 'error')
+      push(err.message || 'Failed to reject friend request', 'info')
     }
   }
 
@@ -443,7 +443,7 @@ function App() {
       setFriendState({ relationships: network.relationships })
       push('Friend removed', 'info')
     } catch (err: any) {
-      push(err.message || 'Failed to remove friend', 'error')
+      push(err.message || 'Failed to remove friend', 'info')
     }
   }
 
@@ -456,15 +456,7 @@ function App() {
       langs.forEach(lang => {
         const resolved = resolveSkill(lang);
         if (!skillState.some(s => s.id === resolved.id || s.name.toLowerCase() === lang.toLowerCase())) {
-          addSkill({
-            id: resolved.id,
-            name: resolved.name,
-            canonicalName: resolved.canonicalName,
-            status: 'unlocked',
-            progress: 0,
-            xp: 0,
-            isIndependent: true
-          });
+          addSkill({ id: resolved.id, name: resolved.canonicalName, canonicalName: resolved.canonicalName, status: 'LEARNING', progress: 0, started: new Date().toISOString(), completed: '', relatedProjects: [], notes: '', isIndependent: true } as any);
         }
       });
     }
@@ -977,36 +969,34 @@ const completeActiveSession = async () => {
   useEffect(() => {
     if (evaluatingRewardsRef.current) return
     
-    // Quick check if there is anything to unlock BEFORE attempting to mutate state
-    const { newEarnedBadges, newUnlockedAchievements } = evaluateAchievementsAndBadges(
+    const { newEarnedBadges, newUnlockedAchievements, hasRetroactiveChanges } = evaluateAchievementsAndBadges(
       progression, goalState, projectState, skillState, achievementState, badgeState
     )
 
-    if (newEarnedBadges.length === 0 && newUnlockedAchievements.length === 0) {
+    if (newEarnedBadges.length === 0 && newUnlockedAchievements.length === 0 && !hasRetroactiveChanges) {
       return // Nothing to do
     }
 
     evaluatingRewardsRef.current = true
 
-    // We have rewards! Let's update all state atomically 
     const { updatedBadges, updatedAchievements } = evaluateAchievementsAndBadges(
       progression, goalState, projectState, skillState, achievementState, badgeState
     )
 
-    if (newEarnedBadges.length > 0) {
+    if (newEarnedBadges.length > 0 || hasRetroactiveChanges) {
       setBadgeState(updatedBadges)
       let totalBadgeXp = 0
       newEarnedBadges.forEach((b) => {
         totalBadgeXp += XP_REWARDS.badge
-        push(`Badge earned: ${b.title} +${XP_REWARDS.badge} XP`, 'badge')
+        push(`Badge earned: ${b.title} +${XP_REWARDS.badge} XP`, "badge")
         if (supabase && user) {
-          supabase.from('notifications').insert({
+          supabase.from("notifications").insert({
             user_id: user.id,
-            type: 'achievement',
-            title: 'Badge Earned',
+            type: "achievement",
+            title: "Badge Earned",
             body: `You earned the badge: ${b.title}`,
             read: false,
-            link_type: 'badge_detail',
+            link_type: "badge_detail",
             link_id: b.id
           }).then();
         }
@@ -1016,21 +1006,21 @@ const completeActiveSession = async () => {
       }
     }
 
-    if (newUnlockedAchievements.length > 0) {
+    if (newUnlockedAchievements.length > 0 || hasRetroactiveChanges) {
       setAchievementState(updatedAchievements)
       let totalAchXp = 0
       newUnlockedAchievements.forEach((a) => {
         const reward = a.xpReward || XP_REWARDS.achievement
         totalAchXp += reward
-        push(`Achievement unlocked: ${a.title} +${reward} XP`, 'unlock')
+        push(`Achievement unlocked: ${a.title} +${reward} XP`, "unlock")
         if (supabase && user) {
-          supabase.from('notifications').insert({
+          supabase.from("notifications").insert({
             user_id: user.id,
-            type: 'achievement',
-            title: 'Achievement Unlocked',
+            type: "achievement",
+            title: "Achievement Unlocked",
             body: `You unlocked: ${a.title}`,
             read: false,
-            link_type: 'achievement_detail',
+            link_type: "achievement_detail",
             link_id: a.id
           }).then();
         }
@@ -1041,10 +1031,9 @@ const completeActiveSession = async () => {
     }
     
     if (newEarnedBadges.length > 0 || newUnlockedAchievements.length > 0) {
-      playSoundEffect('unlock', settings.soundEffects)
+      playSoundEffect("unlock", settings.soundEffects)
     }
 
-    // Release the lock after a short delay to allow React to commit the state
     setTimeout(() => {
       evaluatingRewardsRef.current = false
     }, 150)
@@ -1413,7 +1402,7 @@ const completeActiveSession = async () => {
                   <ErrorBoundary>
                   <AnimatePresence mode="wait">
                     {route.view === 'admin_support' && isGlobalAdmin && <AdminSupportDashboard onBack={() => navigate({ view: 'dashboard' })} />}
-                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} />}
+                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} onUpdateProfile={(updates) => setProfileState(prev => ({ ...prev, ...updates }))} />}
                     {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} isCurrentUser={true} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
                     {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
@@ -1432,7 +1421,7 @@ const completeActiveSession = async () => {
                     }} />}
                     {route.view === 'projects' && <ProjectsPanel projects={projectState} activeProject={activeProject} onSelectProject={(p) => navigate({ view: 'project_detail', id: p.id })} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onAddProject={addProject} onSyncGithub={syncGitHubProjects} isSyncingGithub={syncingGithub} githubMessage={githubMessage} />}
                     {route.view === 'project_detail' && (projectState.find(p => p.id === route.id) ? <ProjectDetail project={projectState.find(p => p.id === route.id)!} onBack={goBack} onMarkComplete={markProjectCompleted} onDeleteProject={deleteProject} onUpdateProject={updateProject} /> : <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}><h2>Project Not Found</h2><button onClick={() => navigate({ view: 'projects' })} className="primary-btn">Back to Projects</button></div>)}
-                    {route.view === 'learning' && <SkillsPanel skills={skillState} activePathways={settings.activePathways || []} onSelectSkill={(id: any) => setRoute({ view: 'skill_detail', id } as any)} onAddSkill={addSkill} onStartPathway={startPathway} onRemovePathway={removePathway} onAssociateSkill={associateSkillWithDomain} onDisassociateSkill={disassociateSkillFromDomain} onRemoveSkill={removeSkill} />}
+                    {route.view === 'learning' && <SkillsPanel skills={skillState} activePathways={settings.activePathways || []} onSelectSkill={(id: any) => navigate({ view: 'skill_detail', id })} onAddSkill={addSkill} onStartPathway={startPathway} onRemovePathway={removePathway} onAssociateSkill={associateSkillWithDomain} onDisassociateSkill={disassociateSkillFromDomain} onRemoveSkill={removeSkill} />}
                     {route.view === 'skill_detail' && (skillState.find(s => s.id === route.id) ? <SkillDetail 
                       skill={skillState.find(s => s.id === route.id)!} 
                       onBack={() => navigate({ view: 'learning' })} 
@@ -1575,15 +1564,15 @@ const completeActiveSession = async () => {
                     )}
                     {route.view === 'career_world' && (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1.5rem', textAlign: 'center', padding: '2rem' }}>
-                        <div style={{ background: '#fff', padding: '48px', borderRadius: '24px', border: '1px solid rgba(140, 135, 125, 0.12)', boxShadow: '0 4px 24px -8px rgba(0,0,0,0.08)', maxWidth: '500px' }}>
+                        <div style={{ background: 'var(--bg-card)', padding: '48px', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 24px -8px rgba(0,0,0,0.08)', maxWidth: '500px' }}>
                           <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(244,63,94,0.1)', color: '#F43F5E', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
                             <Compass size={40} />
                           </div>
-                          <h2 style={{ fontSize: '2rem', color: '#1E1D1B', marginBottom: '16px', fontWeight: 900 }}>Career path incoming</h2>
-                          <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: '#5A5750', marginBottom: '32px' }}>
+                          <h2 style={{ fontSize: '2rem', color: 'var(--text-main)', marginBottom: '16px', fontWeight: 900 }}>Career path incoming</h2>
+                          <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: 'var(--text-secondary)', marginBottom: '32px' }}>
                             We're rebuilding this part of your journey to match the new Arinova experience. Something better is coming soon.
                           </p>
-                          <button onClick={() => setRoute({ view: 'dashboard' })} style={{ background: '#F43F5E', color: '#fff', border: 'none', padding: '12px 32px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(244,63,94,0.3)' }}>
+                          <button onClick={() => navigate({ view: 'dashboard' })} style={{ background: '#F43F5E', color: '#fff', border: 'none', padding: '12px 32px', fontSize: '1rem', fontWeight: 700, borderRadius: '12px', cursor: 'pointer', boxShadow: '0 4px 14px rgba(244,63,94,0.3)' }}>
                             Back to Home
                           </button>
                         </div>
@@ -1955,6 +1944,13 @@ const completeActiveSession = async () => {
 }
 
 export default App
+
+
+
+
+
+
+
 
 
 

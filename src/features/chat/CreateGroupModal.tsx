@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
-import { X, Check, Edit2, Users } from 'lucide-react'
+import { X, Check, Pen, Users } from 'lucide-react'
 import { Avatar } from '../../components/Avatar'
 import { supabase } from '../../lib/supabase'
 import { uploadProfileImage } from '../../lib/storage_upload'
@@ -178,7 +178,7 @@ export function CreateGroupModal({
                 justifyContent: 'center',
                 transition: 'transform 0.15s'
               }}>
-                <Edit2 size={12} color="#ffffff" />
+                <Pen size={12} color="#ffffff" />
               </div>
               <input 
                 ref={fileInputRef}

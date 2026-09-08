@@ -1,3 +1,4 @@
+import React from 'react';
 import { formatAppTime } from '../../lib/dateFormatting'
 import { motion } from 'framer-motion'
 import { Send, ChevronLeft, MessageSquare, MoreVertical, Edit2, X, Copy, CheckSquare, Trash2, Ban, BellOff, Eraser } from 'lucide-react'
@@ -69,7 +70,7 @@ const menuItemDangerStyle: React.CSSProperties = {
 
 const menuItemDisabledStyle: React.CSSProperties = {
   ...menuItemStyle,
-  color: '#9A958C',
+  color: 'var(--text-muted)',
   cursor: 'not-allowed',
   opacity: 0.5,
 }
@@ -120,7 +121,7 @@ export function DirectChatPanel({
     const load = async () => {
       setLoading(true)
       const neededIds = friendState.relationships.map(r => r.userId)
-      const profiles = await fetchPublicProfiles(neededIds.length > 0 ? neededIds : undefined)
+      const profiles = neededIds.length > 0 ? await fetchPublicProfiles(neededIds) : []
       if (!mounted) return
       setPublicProfiles(profiles)
       setLoading(false)
@@ -234,17 +235,29 @@ export function DirectChatPanel({
 
   // Mark as read when opening a chat
   useEffect(() => {
-    if (activeFriendId) {
-      const friendMsgs = incomingMessages.filter(m => m.senderId === activeFriendId)
-      if (friendMsgs.length > 0) {
-        const latest = friendMsgs[friendMsgs.length - 1].timestamp
-        const currentLastRead = chatState.lastRead?.[activeFriendId] || '1970-01-01T00:00:00.000Z'
-        if (new Date(latest) > new Date(currentLastRead)) {
-          onMarkRead(activeFriendId, latest)
+    if (!activeFriendId) return;
+    
+    let latestTime = 0;
+    let latestStr = '';
+    
+    for (const m of incomingMessages) {
+      if (m.senderId === activeFriendId) {
+        const time = new Date(m.timestamp).getTime();
+        if (time > latestTime) {
+          latestTime = time;
+          latestStr = m.timestamp;
         }
       }
     }
-  }, [activeFriendId, incomingMessages, chatState.lastRead, onMarkRead])
+    
+    if (latestTime > 0) {
+      const currentLastReadTime = new Date(chatState.lastRead?.[activeFriendId] || 0).getTime();
+      if (latestTime > currentLastReadTime) {
+        onMarkRead(activeFriendId, latestStr);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeFriendId, incomingMessages, chatState.lastRead]);
 
   // Context menu handlers — position at cursor, then useEffect adjusts if off-screen
   const openContextMenu = useCallback((x: number, y: number, msg: ChatMessage, isMe: boolean) => {
@@ -393,7 +406,7 @@ export function DirectChatPanel({
                         const isConvMuted = chatState.mutedUsers?.includes(conv.friend.userId);
                         if (isConvMuted) {
                           return (
-                            <span style={{ display: 'flex', alignItems: 'center', color: '#9A958C' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', color: 'var(--text-muted)' }}>
                               <BellOff size={16} />
                             </span>
                           );
@@ -482,7 +495,7 @@ export function DirectChatPanel({
                       <div style={{ 
                         position: 'absolute', 
                         zIndex: 9998, 
-                        background: 'var(--ca-surface, #ffffff)', 
+                        background: 'var(--bg-surface)', 
                         border: '1px solid var(--border)', 
                         borderRadius: '12px', 
                         padding: '0.35rem',
@@ -539,7 +552,7 @@ export function DirectChatPanel({
               >
                 <div style={{ position: 'absolute', inset: 0, opacity: 0.03, pointerEvents: 'none', background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
                 {activeConversationMsgs.length === 0 ? (
-                  <div style={{ margin: 'auto', textAlign: 'center', color: '#9A958C' }}>
+                  <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
                     <MessageSquare size={48} style={{ opacity: 0.2, margin: '0 auto 1rem auto' }} />
                     <p>No messages yet.</p>
                     <p style={{ fontSize: '0.85rem' }}>Start the conversation with {activeFriend.displayName}!</p>
@@ -713,7 +726,7 @@ export function DirectChatPanel({
                     onChange={(e) => editingMessageId ? setEditDraft(e.target.value) : setDraft(e.target.value)}
                     placeholder={isBlocked ? "Unblock to send messages..." : "Type a message..."}
                     disabled={!!isBlocked}
-                    style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', padding: '0.75rem 1rem', borderRadius: '2rem', color: 'var(--ca-text, #111827)', opacity: isBlocked ? 0.5 : 1 }}
+                    style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', padding: '0.75rem 1rem', borderRadius: '2rem', color: 'var(--text-main)', opacity: isBlocked ? 0.5 : 1 }}
                   />
                   <button 
                     type="submit" 
@@ -727,7 +740,7 @@ export function DirectChatPanel({
               </div>
             </>
           ) : (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#9A958C' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
               <MessageSquare size={64} style={{ opacity: 0.1, marginBottom: '1rem' }} />
               <p>Select a conversation to start chatting.</p>
             </div>
@@ -745,7 +758,7 @@ export function DirectChatPanel({
             left: contextMenu.x,
             top: contextMenu.y,
             zIndex: 99999,
-            background: 'var(--ca-surface, #ffffff)',
+            background: 'var(--bg-surface)',
             border: '1px solid var(--border)',
             borderRadius: '12px',
             padding: '0.35rem',
@@ -841,4 +854,5 @@ export function DirectChatPanel({
     </div>
   )
 }
+
 

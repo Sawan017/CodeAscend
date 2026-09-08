@@ -88,7 +88,7 @@ export function PrototypeHub({ profile, progression, projects, goals, skills, ba
                    <div>
                      <h3 style={{ fontSize: '1.15rem', fontWeight: 400, color: '#fff', margin: '0 0 1rem 0' }}>{activeProject.name}</h3>
                      <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', width: '100%', marginBottom: '1rem', position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 0, left: 0, height: '2px', background: '#fff', width: `${activeProject.progress}%`, marginTop: '-0.5px' }} />
+                        <div style={{ position: 'absolute', top: 0, left: 0, height: '2px', background: 'var(--bg-card)', width: `${activeProject.progress}%`, marginTop: '-0.5px' }} />
                      </div>
                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#666', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                        <span>Progress</span>

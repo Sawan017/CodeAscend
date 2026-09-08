@@ -173,58 +173,110 @@ export function evaluateAchievementsAndBadges(
   progression: Progression,
   goals: Goal[],
   projects: Project[],
-  _skills: Skill[],
+  skills: Skill[],
   achievements: Achievement[],
   badges: Badge[]
 ) {
   const currentLevel = calculateLevel(progression.xp)
-  const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status === 'COMPLETED').length)
-  const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status === 'COMPLETED').length)
-  const todayStr = new Date().toISOString().slice(0, 10)
+  const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status === "COMPLETED").length)
+  const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status === "COMPLETED").length)
+  
+  // Real stored data checks for sync
+  const masteredSkills = skills.filter((s) => s.status === "MASTERED").length;
+  const topicsCompleted = skills.reduce((total, skill) => {
+    if (!skill.subtopics) return total
+    const mastered = skill.subtopics.filter(s => s.status === "Completed").length
+    return total + mastered
+  }, 0)
+  
+  const todayStr = new Date().toISOString()
 
   const newUnlockedAchievements: Achievement[] = []
   const newEarnedBadges: Badge[] = []
 
-  const updatedBadges = badges.map((badge) => {
-    if (badge.earned) return badge
-    let earnedNow = false
-
-    if (badge.id === 'first-step' && completedGoalsCount >= 1) earnedNow = true
-    if (badge.id === 'level-5' && currentLevel >= 5) earnedNow = true
-    if (badge.id === 'level-10' && currentLevel >= 10) earnedNow = true
-    if (badge.id === 'project-master' && completedProjectsCount >= 3) earnedNow = true
-    if (badge.id === 'streak-7' && progression.streak >= 7) earnedNow = true
-
-    if (earnedNow) {
-      const updated = { ...badge, earned: true, dateEarned: todayStr }
-      newEarnedBadges.push(updated)
-      return updated
-    }
-    return badge
-  })
-
   const updatedAchievements = achievements.map((ach) => {
-    if (ach.unlocked) return ach
-    let unlockedNow = false
+    let unlockedNow = ach.unlocked || false
 
+    if (!unlockedNow) {
+      if (ach.id === "first-website" && completedProjectsCount >= 1) unlockedNow = true
+      if (ach.id === "first-fullstack" && completedProjectsCount >= 2) unlockedNow = true
+      if (ach.id === "portfolio-deployed" && completedProjectsCount >= 1) unlockedNow = true
+      // You can add more fallback checks here based on their ID if needed
+    }
 
-    if (ach.id === 'first-website' && completedProjectsCount >= 1) unlockedNow = true
-    if (ach.id === 'first-fullstack' && completedProjectsCount >= 2) unlockedNow = true
-    if (ach.id === 'portfolio-deployed' && completedProjectsCount >= 1) unlockedNow = true
-
-    if (unlockedNow) {
-      const updated = { ...ach, unlocked: true, dateUnlocked: todayStr }
+    if (unlockedNow && !ach.unlocked) {
+      const updated = { ...ach, unlocked: true, dateUnlocked: todayStr, unlockedAt: todayStr }
       newUnlockedAchievements.push(updated)
       return updated
     }
     return ach
   })
 
+  // Deep clone badges so we can mutate safely
+  const updatedBadges = badges.map(b => ({ ...b }))
+
+  // Evaluate existing distinct badges
+  updatedBadges.forEach((badge) => {
+    let earnedNow = badge.earned || false
+
+    if (!earnedNow) {
+      if (badge.id === "first-step" && completedGoalsCount >= 1) earnedNow = true
+      if (badge.id === "level-5" && currentLevel >= 5) earnedNow = true
+      if (badge.id === "level-10" && currentLevel >= 10) earnedNow = true
+      if (badge.id === "project-master" && completedProjectsCount >= 3) earnedNow = true
+      if (badge.id === "streak-7" && progression.streak >= 7) earnedNow = true
+    }
+
+    if (earnedNow && !badge.earned) {
+      badge.earned = true
+      badge.dateEarned = todayStr
+      // badge.unlockedAt = todayStr
+      newEarnedBadges.push(badge)
+    }
+  })
+
+  // 4. BADGE REWARD: Every unlocked achievement automatically awards its corresponding badge
+  updatedAchievements.forEach(ach => {
+    if (ach.unlocked) {
+      const badgeId = `badge-ach-${ach.id}`;
+      let existingBadge = updatedBadges.find(b => b.id === badgeId);
+      
+      if (!existingBadge) {
+        existingBadge = {
+          id: badgeId,
+          image: ach.image,
+          icon: ach.icon,
+          title: ach.title,
+          description: ach.description,
+          rarity: "Epic",
+          earned: true,
+          dateEarned: ach.dateUnlocked || todayStr,
+          requirement: ach.unlockCondition,
+          
+        } as any;
+        updatedBadges.push(existingBadge);
+        
+        // Only trigger popup notification if the achievement ITSELF was just unlocked this session
+        if (newUnlockedAchievements.some(na => na.id === ach.id)) {
+          newEarnedBadges.push(existingBadge);
+        }
+      } else if (!existingBadge.earned) {
+        existingBadge.earned = true;
+        existingBadge.dateEarned = ach.dateUnlocked || todayStr;
+        if (newUnlockedAchievements.some(na => na.id === ach.id)) {
+          newEarnedBadges.push(existingBadge);
+        }
+      }
+    }
+  })
+
+  const hasRetroactiveChanges = JSON.stringify(badges) !== JSON.stringify(updatedBadges) || JSON.stringify(achievements) !== JSON.stringify(updatedAchievements);
   return {
     updatedBadges,
     updatedAchievements,
     newEarnedBadges,
     newUnlockedAchievements,
+    hasRetroactiveChanges
   }
 }
 
@@ -253,7 +305,7 @@ export function evaluateDynamicMilestones(progression: Progression, skills: Skil
     return total + (started ? 1 : 0)
   }, 0)
 
-  const todayStr = new Date().toISOString().slice(0, 10)
+  const todayStr = new Date().toISOString()
 
   return milestoneDefinitions.map(def => {
     let progressValue = 0
@@ -402,3 +454,10 @@ export function calculateExternalProjectXP(status: 'in_progress' | 'completed', 
   
   return 0;
 }
+
+
+
+
+
+
+

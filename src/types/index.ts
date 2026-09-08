@@ -6,7 +6,7 @@ export type GoalPriority = 'High' | 'Medium' | 'Low'
 export type GoalDifficulty = 'Easy' | 'Normal' | 'Hard' | 'Expert' | 'Extreme'
 export type ProjectStatus = 'PLANNING' | 'BUILDING' | 'COMPLETED'
 export type BadgeRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary'
-export type ThemeMode = 'dark' | 'light' | 'system' | 'midnight' | 'aurora'
+export type ThemeMode = 'dark' | 'light'
 export type NameTier = 'Novice' | 'Adept' | 'Expert' | 'Veteran' | 'Master' | 'Legend' | 'Mythic'
 
 export type TopicSize = 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Very Large'
@@ -69,12 +69,14 @@ export interface UserProfile {
   createdAt?: string
   displayedAchievements?: string[]
   displayedSkills?: string[]
+  pinnedSkills?: string[]
 }
 
 export interface Language {
   id: string
   name: string
-  icon: string
+  icon?: string
+  image?: string
   xp: number
   level: number
   color: string
@@ -176,7 +178,8 @@ export interface Milestone {
 
 export interface Achievement {
   id: string
-  icon: string
+  icon?: string
+  image?: string
   title: string
   description: string
   unlockCondition: string
@@ -187,7 +190,8 @@ export interface Achievement {
 
 export interface Badge {
   id: string
-  icon: string
+  icon?: string
+  image?: string
   title: string
   description: string
   rarity: BadgeRarity
@@ -252,7 +256,8 @@ export interface DynamicMilestone {
   title: string
   description: string
   category: MilestoneCategory
-  icon: string
+  icon?: string
+  image?: string
   targetValue: number
   progressValue: number
   isUnlocked: boolean

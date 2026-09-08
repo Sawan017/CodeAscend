@@ -63,11 +63,8 @@ type SettingsDrawerProps = {
 }
 
 const themeOptions: Array<{ value: ThemeMode; label: string }> = [
-  { value: 'dark', label: 'Dark' },
   { value: 'light', label: 'Light' },
-  { value: 'system', label: 'System' },
-  { value: 'midnight', label: 'Midnight' },
-  { value: 'aurora', label: 'Aurora' },
+  { value: 'dark', label: 'Dark' }
 ]
 
 type TabId = 'account' | 'profile' | 'appearance' | 'notifications' | 'privacy' | 'language' | 'data' | 'help'
@@ -1591,8 +1588,8 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
             className="settings-drawer" 
             style={{ 
               position: 'fixed', top: '3rem', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '1100px', borderRadius: '16px', overflow: 'hidden', 
-              background: 'var(--bg-base)', 
-              backdropFilter: 'blur(16px)', 
+              background: 'var(--settings-main)',
+              /* No backdrop-filter to ensure complete opacity */ 
               border: '1px solid var(--border)', 
               zIndex: 999, 
               display: 'flex', flexDirection: 'column', 
@@ -1662,7 +1659,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
 
               <LiveSettingsClock />
               {/* Main Content */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: '2rem 3rem' }}>
+              <div className="settings-content-area" style={{ flex: 1, overflowY: 'auto', padding: '2rem 3rem' }}>
                 <div style={{ maxWidth: '640px' }}>
                   {renderTabContent()}
                 </div>
@@ -1704,10 +1701,10 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               display: 'flex', 
               flexDirection: 'column', 
               gap: '1.25rem',
-              background: 'rgba(15, 23, 42, 0.9)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--border-strong)',
               backdropFilter: 'blur(24px)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
               padding: '2rem'
             }}
           >
@@ -1833,10 +1830,10 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               display: 'flex', 
               flexDirection: 'column', 
               gap: '1.25rem',
-              background: 'rgba(15, 23, 42, 0.95)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
+              background: 'var(--bg-panel)',
+              border: '1px solid rgba(239, 68, 68, 0.5)',
               backdropFilter: 'blur(24px)',
-              boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.15)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
               padding: '2rem'
             }}
           >

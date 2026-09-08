@@ -68,14 +68,14 @@ function parseLegalText(markdown: string) {
 }
 
 const MarkdownComponents = {
-  h1: ({node, ...props}: any) => <h1 style={{ fontSize: '1.75rem', color: '#0f172a', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
-  h2: ({node, ...props}: any) => <h2 style={{ fontSize: '1.35rem', color: '#0f172a', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
+  h1: ({node, ...props}: any) => <h1 style={{ fontSize: '1.75rem', color: 'var(--text-main)', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
+  h2: ({node, ...props}: any) => <h2 style={{ fontSize: '1.35rem', color: 'var(--text-main)', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
   h3: ({node, ...props}: any) => <h3 style={{ fontSize: '1.15rem', color: '#1e293b', marginTop: '1.5rem', marginBottom: '0.75rem', fontWeight: 600 }} {...props} />,
   p: ({node, ...props}: any) => <p style={{ fontSize: '0.95rem', color: '#172033', lineHeight: 1.7, margin: '0 0 12px 0' }} {...props} />,
   ul: ({node, ...props}: any) => <ul style={{ margin: '0 0 12px 0', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }} {...props} />,
   ol: ({node, ...props}: any) => <ol style={{ margin: '0 0 12px 0', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }} {...props} />,
   li: ({node, ...props}: any) => <li style={{ fontSize: '0.95rem', color: '#172033', lineHeight: 1.7 }} {...props} />,
-  strong: ({node, ...props}: any) => <strong style={{ color: '#0f172a', fontWeight: 700 }} {...props} />,
+  strong: ({node, ...props}: any) => <strong style={{ color: 'var(--text-main)', fontWeight: 700 }} {...props} />,
   a: ({node, ...props}: any) => <a style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: 500 }} {...props} />
 };
 
@@ -114,23 +114,23 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
             initial={{ opacity: 0, y: 20, x: '-50%' }} animate={{ opacity: 1, y: 0, x: '-50%' }} exit={{ opacity: 0, y: 20, x: '-50%' }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} 
             style={{ 
               position: 'fixed', top: '3rem', bottom: '3rem', left: '50%', width: '90%', maxWidth: '850px', overflow: 'hidden',
-              background: '#ffffff', borderRadius: '16px', 
+              background: 'var(--bg-card)', borderRadius: '16px', 
               zIndex: 1051, display: 'flex', flexDirection: 'column',
               boxShadow: 'var(--shadow-lg)'
             }}
           >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Shield size={24} color="#2563eb" />
-                <h2 style={{ margin: 0, fontSize: '1.25rem', color: '#0f172a', fontWeight: 700, letterSpacing: '0.02em' }}>{title}</h2>
+                <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)', fontWeight: 700, letterSpacing: '0.02em' }}>{title}</h2>
               </div>
-              <button onClick={onClose} style={{ background: '#e2e8f0', border: 'none', color: '#475569', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+              <button onClick={onClose} style={{ background: '#e2e8f0', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '8px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
                 <X size={20} />
               </button>
             </div>
             
-            <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '2rem', position: 'relative', background: '#ffffff' }}>
+            <div ref={scrollRef} style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '2rem', position: 'relative', background: 'var(--bg-card)' }}>
               
               <div style={{ maxWidth: '750px', margin: '0 auto' }}>
                 {/* Metadata Pills */}
@@ -138,8 +138,8 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '2rem' }}>
                     {parsed.metadata.map((meta, i) => (
                       <div key={i} style={{ 
-                        padding: '6px 14px', background: '#f1f5f9', borderRadius: '20px', 
-                        fontSize: '0.8rem', color: '#64748b', fontWeight: 500, border: '1px solid #e2e8f0'
+                        padding: '6px 14px', background: 'var(--bg-surface-sunken)', borderRadius: '20px', 
+                        fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500, border: '1px solid var(--border)'
                       }}>
                         {meta.replace(/^(Last Updated|Operated by):\s*/i, (match) => match)}
                       </div>
@@ -164,8 +164,8 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                   {parsed.sections.map((section, idx) => (
                     <div key={idx} style={{ display: 'flex', flexDirection: 'column' }}>
-                      <h2 style={{ fontSize: '1.25rem', color: '#0f172a', margin: '0 0 16px 0', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <span style={{ color: '#94a3b8', fontSize: '1.1rem', fontWeight: 500 }}>{idx + 1}.</span> 
+                      <h2 style={{ fontSize: '1.25rem', color: 'var(--text-main)', margin: '0 0 16px 0', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <span style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 500 }}>{idx + 1}.</span> 
                         {section.title.replace(/^\d+\.\s*/, '')}
                       </h2>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>

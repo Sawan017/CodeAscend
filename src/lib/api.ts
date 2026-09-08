@@ -500,12 +500,32 @@ export async function upsertExternalProject(record: Partial<import('../types').E
 
 export async function checkAgeVerified(): Promise<boolean> {
   if (!isSupabaseConfigured() || !supabase) return false;
-  const { data, error } = await supabase.rpc('is_age_verified');
-  if (error) {
-    console.error('Failed to check age verified status:', error);
-    return false;
+  
+  try {
+    // 1. Check the official RPC which queries the user_dob table
+    const { data, error } = await supabase.rpc('is_age_verified');
+    if (!error && data) {
+      return true;
+    }
+
+    // 2. If RPC failed or returned false, try direct table access (fallback if RPC is missing)
+    if (error) {
+       const { data: tableData, error: tableError } = await supabase.from('user_dob').select('dob').limit(1).maybeSingle();
+       if (!tableError && tableData) {
+         return true;
+       }
+    }
+
+    // 3. Fallback for older accounts: check user metadata directly (backward compatibility)
+    const { data: userData } = await supabase.auth.getUser();
+    if (userData?.user?.user_metadata?.dob) {
+      return true;
+    }
+  } catch (err) {
+    console.error('Age verification check error:', err);
   }
-  return !!data;
+
+  return false;
 }
 
 export async function verifyAge(dob: string): Promise<boolean> {
@@ -516,3 +536,5 @@ export async function verifyAge(dob: string): Promise<boolean> {
   }
   return true
 }
+
+

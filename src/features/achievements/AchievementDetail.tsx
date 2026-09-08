@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { BadgeArtwork } from './BadgeArtwork'
 import { ArrowLeft, Trophy, Calendar, Sparkles } from 'lucide-react'
 import type { Achievement } from '../../types'
 
@@ -56,29 +57,13 @@ export function AchievementDetail({
       </header>
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <motion.div 
+        <motion.div
           initial={{ rotateY: 180 }}
           animate={{ rotateY: 0 }}
           transition={{ duration: 0.8, type: 'spring' }}
-          style={{
-            width: '160px', height: '160px', borderRadius: '50%', marginBottom: '2rem',
-            background: isUnlocked ? 'linear-gradient(135deg, #FFD700 0%, #FDB931 100%)' : 'var(--border-strong)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: isUnlocked ? '0 20px 40px rgba(255, 215, 0, 0.3)' : 'none',
-            border: '4px solid', borderColor: isUnlocked ? '#FFF9C4' : 'var(--text-muted)',
-            position: 'relative'
-          }}
+          style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}
         >
-          <span style={{ fontSize: '4rem', filter: isUnlocked ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))' : 'grayscale(100%) opacity(50%)' }}>
-            {achievement.icon}
-          </span>
-          {isUnlocked && (
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              style={{ position: 'absolute', top: -10, left: -10, right: -10, bottom: -10, border: '1px dashed rgba(255,215,0,0.5)', borderRadius: '50%' }}
-            />
-          )}
+          <BadgeArtwork title={achievement.title} image={(achievement as any).image} isLocked={!isUnlocked} size={160} tier={(achievement as any).tier || 'bronze'} />
         </motion.div>
 
         <h1 style={{ 

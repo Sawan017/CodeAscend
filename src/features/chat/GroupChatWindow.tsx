@@ -1,3 +1,4 @@
+import React from 'react';
 // @ts-nocheck
 import { formatAppTime } from '../../lib/dateFormatting'
 import { useState, useRef, useEffect } from 'react'
@@ -35,7 +36,7 @@ const menuItemStyle: React.CSSProperties = {
   gap: '0.625rem',
 }
 const menuItemDangerStyle: React.CSSProperties = { ...menuItemStyle, color: '#ef4444' }
-const menuItemDisabledStyle: React.CSSProperties = { ...menuItemStyle, color: '#9A958C', cursor: 'not-allowed', opacity: 0.5 }
+const menuItemDisabledStyle: React.CSSProperties = { ...menuItemStyle, color: 'var(--text-muted)', cursor: 'not-allowed', opacity: 0.5 }
 
 function MenuItem({ label, icon, onClick, danger, disabled }: { label: string, icon: React.ReactNode, onClick?: () => void, danger?: boolean, disabled?: boolean }) {
   const style = disabled ? menuItemDisabledStyle : danger ? menuItemDangerStyle : menuItemStyle
@@ -43,7 +44,7 @@ function MenuItem({ label, icon, onClick, danger, disabled }: { label: string, i
     <button
       style={style}
       onClick={disabled ? undefined : onClick}
-      onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = 'var(--surface-sunken)' }}
+      onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = 'var(--bg-surface-sunken)' }}
       onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
     >
       {icon}
@@ -156,11 +157,14 @@ export function GroupChatWindow({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  const senderIdsStr = React.useMemo(() => {
+    return Array.from(new Set(messages.map(m => m.sender_id))).sort().join(',')
+  }, [messages])
+
   useEffect(() => {
     const fetchProfiles = async () => {
-      if (!supabase) return
-      const uids = Array.from(new Set(messages.map(m => m.sender_id)))
-      if (uids.length === 0) return
+      if (!supabase || !senderIdsStr) return
+      const uids = senderIdsStr.split(',')
       const { data } = await supabase.from('profiles').select('user_id, data').eq('key', 'profile').in('user_id', uids)
       if (data) {
         const map: Record<string, any> = {}
@@ -169,7 +173,7 @@ export function GroupChatWindow({
       }
     }
     fetchProfiles()
-  }, [messages])
+  }, [senderIdsStr])
 
   const handleSend = () => {
     if (editingMessageId) {
@@ -203,7 +207,7 @@ export function GroupChatWindow({
         />
       ) : <>
       {/* Header */}
-      <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--surface-sunken)' }}>
+      <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-surface-sunken)' }}>
         <button className="icon-button mobile-only" onClick={onClose} style={{ marginRight: '-0.5rem' }}>
           <ChevronLeft size={24} />
         </button>
@@ -223,7 +227,7 @@ export function GroupChatWindow({
               position: 'absolute', 
               top: 'calc(100% + 4px)', 
               right: 0, 
-              background: 'var(--ca-surface, #ffffff)', 
+              background: 'var(--bg-surface)', 
               border: '1px solid var(--border)', 
               borderRadius: '12px', 
               padding: '0.35rem', 
@@ -265,7 +269,7 @@ export function GroupChatWindow({
       <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
         <div style={{ position: 'absolute', inset: 0, opacity: 0.03, pointerEvents: 'none', background: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
         {messages.length === 0 ? (
-          <div style={{ margin: 'auto', textAlign: 'center', color: '#9A958C' }}>
+          <div style={{ margin: 'auto', textAlign: 'center', color: 'var(--text-muted)' }}>
             <p>No messages yet.</p>
             <p style={{ fontSize: '0.85rem' }}>Start the conversation!</p>
           </div>
@@ -308,7 +312,7 @@ export function GroupChatWindow({
             }
 
             return (
-              <div key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.75rem', marginTop }}>
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={msg.id} style={{ display: 'flex', flexDirection: isMe ? 'row-reverse' : 'row', alignItems: 'flex-end', gap: '0.75rem', marginTop }}>
                 {!isMe && (
                   <div style={{ width: '32px' }}>
                     {(!nextMsg || msg.sender_id !== nextMsg.sender_id) && <Avatar src={senderProfile?.avatar} size={32} />}
@@ -327,7 +331,7 @@ export function GroupChatWindow({
                     })
                   }}>
                   {!isMe && !isSameSenderAsPrev && (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--ca-text-secondary, #9A958C)', marginBottom: '4px', marginLeft: '4px', fontWeight: 600 }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px', marginLeft: '4px', fontWeight: 600 }}>
                       {senderName}
                     </span>
                   )}
@@ -371,7 +375,7 @@ export function GroupChatWindow({
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )
           })
         )}
@@ -380,19 +384,19 @@ export function GroupChatWindow({
 
       {/* Composer */}
       {editingMessageId && (
-        <div style={{ padding: '0.5rem 1.5rem', background: 'var(--surface)', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+        <div style={{ padding: '0.5rem 1.5rem', background: 'var(--bg-surface)', borderTop: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
           <div style={{ color: 'var(--text)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Edit2 size={14} color="var(--cyan)" />
             Editing message
           </div>
-          <button onClick={() => { setEditingMessageId(null); setEditDraft('') }} style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}>
+          <button onClick={() => { setEditingMessageId(null); setEditDraft('') }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
             <X size={16} />
           </button>
         </div>
       )}
-      <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', background: 'var(--surface-sunken)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', background: 'var(--bg-surface-sunken)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <input 
-          style={{ flex: 1, padding: '0.75rem 1rem', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '100px', color: 'var(--ca-text, #111827)' }}
+          style={{ flex: 1, padding: '0.75rem 1rem', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border)', borderRadius: '100px', color: 'var(--text-main)' }}
           placeholder="Type a message..."
           value={editingMessageId ? editDraft : draft}
           onChange={e => editingMessageId ? setEditDraft(e.target.value) : setDraft(e.target.value)}
@@ -401,7 +405,7 @@ export function GroupChatWindow({
         <button 
           onClick={handleSend}
           disabled={editingMessageId ? !editDraft.trim() : !draft.trim()}
-          style={{ width: '40px', height: '40px', borderRadius: '50%', background: (editingMessageId ? editDraft.trim() : draft.trim()) ? 'var(--cyan)' : '#fff', color: (editingMessageId ? editDraft.trim() : draft.trim()) ? '#000' : '#9A958C', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (editingMessageId ? editDraft.trim() : draft.trim()) ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}
+          style={{ width: '40px', height: '40px', borderRadius: '50%', background: (editingMessageId ? editDraft.trim() : draft.trim()) ? 'var(--cyan)' : 'var(--bg-surface)', color: (editingMessageId ? editDraft.trim() : draft.trim()) ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: (editingMessageId ? editDraft.trim() : draft.trim()) ? 'pointer' : 'not-allowed', transition: 'all 0.2s' }}
         >
           <Send size={18} style={{ transform: 'translateX(-1px)' }} />
         </button>
@@ -416,7 +420,7 @@ export function GroupChatWindow({
             position: 'fixed', 
             left: contextMenu.x, 
             top: contextMenu.y, 
-            background: '#fff', 
+            background: 'var(--bg-card)', 
             border: '1px solid var(--border)', 
             borderRadius: '8px', 
             padding: '0.5rem', 
@@ -485,4 +489,5 @@ export function GroupChatWindow({
     </div>
   )
 }
+
 

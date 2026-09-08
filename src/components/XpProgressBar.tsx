@@ -71,7 +71,7 @@ export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
             transform: 'translate(50%, -50%)', 
             width: '20px', 
             height: '20px', 
-            background: '#fff', 
+            background: 'var(--bg-card)', 
             borderRadius: '50%', 
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
           }} />

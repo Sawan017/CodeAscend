@@ -6,7 +6,7 @@ import { resolveSkill, PATHWAY_REGISTRY, getSkillsForPathway, SKILL_REGISTRY } f
 import { ConfirmDialog } from '../../components/ConfirmDialog';
 
 const card = {
-  background: '#fff',
+  background: 'var(--bg-card)',
   borderRadius: '20px',
   border: '1px solid rgba(140, 135, 125, 0.12)',
   boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
@@ -184,7 +184,7 @@ export function SkillsPanel({
   return (
     <div style={{ 
       display: 'flex', flexDirection: 'column', padding: '0', 
-      background: '#F5F7FC', color: '#111827', 
+      background: 'var(--bg-main)', color: 'var(--text-main)', 
       minHeight: '100%', position: 'relative', overflowX: 'hidden'
     }}>
       {/* Background Ambience */}
@@ -209,10 +209,10 @@ export function SkillsPanel({
               <div style={{ width: '8px', height: '8px', background: '#6366F1', borderRadius: '50%' }} />
               BUILD YOUR SKILL TREE
             </div>
-            <h1 style={{ fontSize: '3rem', fontWeight: 900, color: '#111827', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               Learn New Skills
             </h1>
-            <p style={{ fontSize: '1.15rem', color: '#64748B', margin: 0, maxWidth: '600px', lineHeight: 1.6, fontWeight: 500 }}>
+            <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', margin: 0, maxWidth: '600px', lineHeight: 1.6, fontWeight: 500 }}>
               Explore skills, choose domains, and build your specialized learning path.
             </p>
           </div>
@@ -223,8 +223,8 @@ export function SkillsPanel({
           <div style={{ position: 'relative', width: '100%', maxWidth: '800px' }}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div style={{ 
-                display: 'flex', flex: 1, minWidth: '320px', alignItems: 'center', background: '#FFFFFF', 
-                borderRadius: '24px', border: '1px solid #E2E8F0', padding: '8px 8px 8px 24px',
+                display: 'flex', flex: 1, minWidth: '320px', alignItems: 'center', background: 'var(--bg-card)', 
+                borderRadius: '24px', border: '1px solid var(--border)', padding: '8px 8px 8px 24px',
                 boxShadow: '0 12px 32px -8px rgba(17,24,39,0.08)', flexWrap: 'wrap', gap: '12px',
                 transition: 'all 0.2s'
               }}>
@@ -232,11 +232,11 @@ export function SkillsPanel({
                 <input 
                   value={globalSearch} onChange={e => setGlobalSearch(e.target.value)}
                   placeholder="Search skills, technologies, or topics..." 
-                  style={{ flex: 1, minWidth: '150px', padding: '12px 8px', border: 'none', fontSize: '1.1rem', outline: 'none', color: '#111827', background: 'transparent', fontWeight: 500 }}
+                  style={{ flex: 1, minWidth: '150px', padding: '12px 8px', border: 'none', fontSize: '1.1rem', outline: 'none', color: 'var(--text-main)', background: 'transparent', fontWeight: 500 }}
                 />
                 
                 {/* Tabs inside search */}
-                <div style={{ display: 'flex', gap: '4px', background: '#F5F7FC', padding: '6px', borderRadius: '16px', flexWrap: 'nowrap' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-main)', padding: '6px', borderRadius: '16px', flexWrap: 'nowrap' }}>
                   <button 
                     onClick={() => setGlobalSearchFilter('all')} 
                     style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'all' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'all' ? '#6366F1' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'all' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
@@ -270,9 +270,10 @@ export function SkillsPanel({
                 <motion.div 
                   initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} 
                   style={{ 
-                    position: 'absolute', top: '100%', left: 0, right: 0, background: '#FFFFFF', 
-                    borderRadius: '24px', padding: '32px', boxShadow: '0 32px 64px -16px rgba(17,24,39,0.15)', 
-                    border: '1px solid #E2E8F0', marginTop: '16px', maxHeight: '70vh', overflowY: 'auto' 
+                    position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--settings-card, var(--bg-card))', 
+                    borderRadius: '24px', padding: '32px', boxShadow: '0 32px 64px -16px rgba(0,0,0,0.5)', 
+                    border: '1px solid var(--border)', marginTop: '16px', maxHeight: '70vh', overflowY: 'auto',
+                    zIndex: 100
                   }}
                 >
                   <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#6366F1', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
@@ -284,11 +285,11 @@ export function SkillsPanel({
                     {searchResultsDomains.map(p => {
                       const isActive = activePathways.includes(p.id);
                       return (
-                        <div key={p.id} style={{ padding: '24px', background: 'linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%)', borderRadius: '20px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(17,24,39,0.03)' }}>
+                        <div key={p.id} style={{ padding: '24px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(17,24,39,0.03)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <div>
                               <span style={{ fontSize: '0.75rem', color: '#06B6D4', background: 'rgba(6,182,212,0.1)', padding: '6px 12px', borderRadius: '999px', fontWeight: 800 }}>DOMAIN</span>
-                              <h3 style={{ margin: '8px 0 0', fontSize: '1.25rem', color: '#111827', fontWeight: 900 }}>{p.name}</h3>
+                              <h3 style={{ margin: '8px 0 0', fontSize: '1.25rem', color: 'var(--text-main)', fontWeight: 900 }}>{p.name}</h3>
                             </div>
                           </div>
                           {isActive ? (
@@ -314,12 +315,12 @@ export function SkillsPanel({
                       const domain = PATHWAY_REGISTRY.find(p => p.id === s.primaryDomainId);
 
                       return (
-                        <div key={s.id} style={{ padding: '24px', background: '#FFFFFF', borderRadius: '20px', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(17,24,39,0.03)' }}>
+                        <div key={s.id} style={{ padding: '24px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(17,24,39,0.03)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
                             <div>
                               <span style={{ fontSize: '0.75rem', color: '#8B5CF6', background: 'rgba(139,92,246,0.1)', padding: '6px 12px', borderRadius: '999px', fontWeight: 800 }}>SKILL</span>
-                              <h3 style={{ margin: '8px 0 0', fontSize: '1.25rem', color: '#111827', fontWeight: 900 }}>{s.canonicalName || s.name}</h3>
-                              <div style={{ fontSize: '0.9rem', color: '#64748B', marginTop: '6px', fontWeight: 600 }}>{domain?.name}</div>
+                              <h3 style={{ margin: '8px 0 0', fontSize: '1.25rem', color: 'var(--text-main)', fontWeight: 900 }}>{s.canonicalName || s.name}</h3>
+                              <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '6px', fontWeight: 600 }}>{domain?.name}</div>
                             </div>
                           </div>
                           {isStarted ? (
@@ -335,9 +336,9 @@ export function SkillsPanel({
                                     status: 'LEARNING', 
                                     started: new Date().toISOString().slice(0, 10) 
                                   }); setGlobalSearch(''); }}
-                              style={{ background: '#F8FAFC', color: '#6366F1', border: '1px solid rgba(99,102,241,0.2)', padding: '12px 20px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', width: '100%', transition: 'all 0.2s' }}
+                              style={{ background: 'var(--bg-surface)', color: '#6366F1', border: '1px solid rgba(99,102,241,0.2)', padding: '12px 20px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', width: '100%', transition: 'all 0.2s' }}
                               onMouseEnter={e => { e.currentTarget.style.background = '#6366F1'; e.currentTarget.style.color = '#fff'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#6366F1'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.color = '#6366F1'; }}
                             >+ Add to Learning Path</button>
                           )}
                         </div>
@@ -345,7 +346,7 @@ export function SkillsPanel({
                     })}
                   </div>
                   {(searchResultsDomains.length === 0 && searchResultsSkills.length === 0) && (
-                     <div style={{ padding: '40px', textAlign: 'center', color: '#64748B', fontWeight: 600 }}>No matching results found in the catalog.</div>
+                     <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontWeight: 600 }}>No matching results found in the catalog.</div>
                   )}
                 </motion.div>
               )}
@@ -361,10 +362,10 @@ export function SkillsPanel({
                  <div style={{ width: '8px', height: '8px', background: '#06B6D4', borderRadius: '50%' }} />
                  YOUR DOMAINS
               </div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#111827', margin: 0 }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>
                 Domain Containers
               </h2>
-              <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0, fontWeight: 500 }}>
+              <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', margin: 0, fontWeight: 500 }}>
                 Domains you are actively learning and their related skills.
               </p>
             </div>
@@ -377,7 +378,7 @@ export function SkillsPanel({
                 
                 return (
                   <div key={pid} style={{ 
-                    background: '#FFFFFF', borderRadius: '32px', border: '1px solid #E2E8F0', 
+                    background: 'var(--bg-card)', borderRadius: '32px', border: '1px solid var(--border)', 
                     boxShadow: '0 12px 32px -8px rgba(17,24,39,0.05)', position: 'relative', overflow: 'hidden', padding: '40px'
                   }}>
                     {/* Accent Left Border */}
@@ -389,13 +390,13 @@ export function SkillsPanel({
                           <Target size={16} color="#06B6D4" />
                           DOMAIN CONTAINER
                         </div>
-                        <h3 style={{ margin: '0', fontSize: '2rem', color: '#111827', fontWeight: 900, letterSpacing: '-0.02em' }}>{def.name}</h3>
+                        <h3 style={{ margin: '0', fontSize: '2rem', color: 'var(--text-main)', fontWeight: 900, letterSpacing: '-0.02em' }}>{def.name}</h3>
                       </div>
                       <button 
                         onClick={() => setDomainToRemove({ id: pid, name: def.name })}
-                        style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', color: '#64748B', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', fontWeight: 800, fontSize: '0.9rem', transition: 'all 0.2s' }}
+                        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', padding: '10px 20px', borderRadius: '12px', cursor: 'pointer', fontWeight: 800, fontSize: '0.9rem', transition: 'all 0.2s' }}
                         onMouseEnter={e => { e.currentTarget.style.color = '#EF4444'; e.currentTarget.style.borderColor = 'rgba(239,68,68,0.2)'; e.currentTarget.style.background = 'rgba(239,68,68,0.05)'; }}
-                        onMouseLeave={e => { e.currentTarget.style.color = '#64748B'; e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.background = '#F8FAFC'; }}
+                        onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-surface)'; }}
                       >
                         Remove Domain
                       </button>
@@ -407,19 +408,19 @@ export function SkillsPanel({
                         <div key={skill.id} 
                           onClick={() => onSelectSkill?.(skill.id)}
                           style={{ 
-                            background: '#FFFFFF', padding: '24px', borderRadius: '20px', 
-                            border: '1px solid #E2E8F0', cursor: 'pointer', transition: 'all 0.2s', 
+                            background: 'var(--bg-card)', padding: '24px', borderRadius: '20px', 
+                            border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s', 
                             boxShadow: '0 4px 12px rgba(17,24,39,0.02)', display: 'flex', flexDirection: 'column', gap: '16px' 
                           }}
                           onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(6,182,212,0.15)'; e.currentTarget.style.borderColor = '#06B6D4'; }}
-                          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(17,24,39,0.02)'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
+                          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(17,24,39,0.02)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#111827' }}>{skill.canonicalName || skill.name}</h4>
+                            <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-main)' }}>{skill.canonicalName || skill.name}</h4>
                             {(() => {
                               let statusLabel = 'ADDED';
-                              let statusColor = '#64748B';
-                              let statusBg = '#F1F5F9';
+                              let statusColor = 'var(--text-muted)';
+let statusBg = 'var(--bg-surface-sunken)';
                               if (skill.progress >= 100) {
                                 statusLabel = 'COMPLETED';
                                 statusColor = '#16A34A';
@@ -434,23 +435,23 @@ export function SkillsPanel({
                                   <span style={{ fontSize: '0.75rem', color: statusColor, fontWeight: 900, padding: '4px 10px', background: statusBg, borderRadius: '999px', letterSpacing: '0.05em' }}>
                                     {statusLabel}
                                   </span>
-                                  <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 800 }}>
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 800 }}>
                                     {skill.progress || 0}%
                                   </span>
                                 </div>
                               );
                             })()}
                           </div>
-                          <div style={{ width: '100%', height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+                          <div style={{ width: '100%', height: '8px', background: 'var(--bg-surface-sunken)', borderRadius: '4px', overflow: 'hidden' }}>
                             <div style={{ width: `${Math.min(100, skill.progress || 0)}%`, height: '100%', background: 'linear-gradient(90deg, #06B6D4, #3B82F6)', borderRadius: '4px' }} />
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                            <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 600 }}>{skill.subtopics?.length || 0} Subtopics</span>
+                            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>{skill.subtopics?.length || 0} Subtopics</span>
                             <button onClick={(e) => {
                               e.stopPropagation();
                               if (onDisassociateSkill) onDisassociateSkill(skill.id, pid);
                               else setSkillToRemove(skill.id);
-                            }} style={{ background: 'transparent', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '6px', transition: 'color 0.2s' }}
+                            }} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px', transition: 'color 0.2s' }}
                                onMouseEnter={e => e.currentTarget.style.color = '#EF4444'}
                                onMouseLeave={e => e.currentTarget.style.color = '#94A3B8'}
                             >
@@ -460,18 +461,18 @@ export function SkillsPanel({
                         </div>
                       ))}
                       {domainSkills.length === 0 && (
-                        <div style={{ padding: '32px', gridColumn: '1 / -1', color: '#64748B', textAlign: 'center', border: '1px dashed #CBD5E1', borderRadius: '20px', fontWeight: 600 }}>
+                        <div style={{ padding: '32px', gridColumn: '1 / -1', color: 'var(--text-muted)', textAlign: 'center', border: '1px dashed var(--border-strong)', borderRadius: '20px', fontWeight: 600 }}>
                           No skills started in this domain yet.
                         </div>
                       )}
                     </div>
 
                     {/* Domain Scoped Search */}
-                    <div style={{ background: '#F8FAFC', padding: '24px', borderRadius: '24px', border: '1px solid #E2E8F0' }}>
-                      <div style={{ fontSize: '1rem', fontWeight: 900, color: '#334155', marginBottom: '16px' }}>Add Skills to {def.name}</div>
+                    <div style={{ background: 'var(--bg-surface)', padding: '24px', borderRadius: '24px', border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: '1rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '16px' }}>Add Skills to {def.name}</div>
                       <div style={{ 
-                        display: 'flex', alignItems: 'center', background: '#FFFFFF', 
-                        border: '1px solid #E2E8F0', borderRadius: '16px',
+                        display: 'flex', alignItems: 'center', background: 'var(--bg-card)', 
+                        border: '1px solid var(--border)', borderRadius: '16px',
                         padding: '8px 12px', flex: 1, boxShadow: '0 4px 12px rgba(17,24,39,0.03)',
                         transition: 'all 0.2s'
                       }}>
@@ -482,7 +483,7 @@ export function SkillsPanel({
                           onChange={(e) => setDomainSearch(pid, e.target.value)}
                           style={{ 
                             flex: 1, border: 'none', background: 'transparent', outline: 'none', 
-                            fontSize: '1.05rem', color: '#111827', fontWeight: 500, padding: '10px 0',
+                            fontSize: '1.05rem', color: 'var(--text-main)', fontWeight: 500, padding: '10px 0',
                             width: '100%'
                           }}
                         />
@@ -495,12 +496,12 @@ export function SkillsPanel({
                             const isAssociated = existingSkill?.activeDomains?.includes(pid);
                             const isStarted = !!existingSkill;
                             return (
-                              <div key={s.id} style={{ padding: '16px 20px', background: '#FFFFFF', borderRadius: '16px', border: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 8px rgba(17,24,39,0.02)' }}>
-                                <div style={{ fontWeight: 800, color: '#111827', fontSize: '1.05rem' }}>{s.canonicalName}</div>
+                              <div key={s.id} style={{ padding: '16px 20px', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 2px 8px rgba(17,24,39,0.02)' }}>
+                                <div style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '1.05rem' }}>{s.canonicalName}</div>
                                 {isAssociated ? (
-                                  <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 800 }}>Already in domain</span>
+                                  <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 800 }}>Already in domain</span>
                                 ) : isStarted ? (
-                                  <button style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', padding: '8px 16px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer', color: '#64748B' }} onClick={() => handleStartSkillInDomain(s, pid)}>Add to Domain</button>
+                                  <button style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '8px 16px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer', color: 'var(--text-muted)' }} onClick={() => handleStartSkillInDomain(s, pid)}>Add to Domain</button>
                                 ) : (
                                   <button style={{ background: '#06B6D4', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }} onClick={() => handleStartSkillInDomain(s, pid)}>Start Learning</button>
                                 )}
@@ -525,29 +526,29 @@ export function SkillsPanel({
                <div style={{ width: '8px', height: '8px', background: '#8B5CF6', borderRadius: '50%' }} />
                YOUR LEARNING QUEUE
             </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#111827', margin: 0 }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>
               Independent Skills
             </h2>
-            <p style={{ fontSize: '1.05rem', color: '#64748B', margin: 0, fontWeight: 500 }}>
+            <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', margin: 0, fontWeight: 500 }}>
               Skills you're learning independently of any specific domain.
             </p>
           </div>
           
           <div style={{ 
-            background: '#FFFFFF', borderRadius: '32px', border: '1px solid #E2E8F0', 
+            background: 'var(--bg-card)', borderRadius: '32px', border: '1px solid var(--border)', 
             boxShadow: '0 12px 32px -8px rgba(17,24,39,0.05)', position: 'relative', overflow: 'hidden', padding: '40px'
           }}>
             {/* Accent Left Border */}
             <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '8px', background: '#8B5CF6' }} />
 
             {standaloneSkills.length === 0 ? (
-              <div style={{ padding: '60px 32px', textAlign: 'center', background: '#F8FAFC', borderRadius: '24px', border: '1px dashed #CBD5E1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+              <div style={{ padding: '60px 32px', textAlign: 'center', background: 'var(--bg-surface)', borderRadius: '24px', border: '1px dashed var(--border-strong)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
                 <div style={{ width: '64px', height: '64px', background: 'rgba(139,92,246,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Target size={32} color="#8B5CF6" />
                 </div>
                 <div>
-                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#111827', marginBottom: '8px' }}>No independent skills yet</div>
-                  <div style={{ fontSize: '1.05rem', color: '#64748B', fontWeight: 500 }}>Search for a skill above and add it to your learning queue.</div>
+                  <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '8px' }}>No independent skills yet</div>
+                  <div style={{ fontSize: '1.05rem', color: 'var(--text-muted)', fontWeight: 500 }}>Search for a skill above and add it to your learning queue.</div>
                 </div>
               </div>
             ) : (
@@ -556,19 +557,19 @@ export function SkillsPanel({
                   <motion.div key={skill.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                     onClick={() => onSelectSkill(skill.id)}
                     style={{ 
-                      background: '#FFFFFF', padding: '24px', borderRadius: '20px', 
-                      border: '1px solid #E2E8F0', cursor: 'pointer', transition: 'all 0.2s', 
+                      background: 'var(--bg-card)', padding: '24px', borderRadius: '20px', 
+                      border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s', 
                       boxShadow: '0 4px 12px rgba(17,24,39,0.02)', display: 'flex', flexDirection: 'column', gap: '16px' 
                     }}
                     onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(139,92,246,0.15)'; e.currentTarget.style.borderColor = '#8B5CF6'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(17,24,39,0.02)'; e.currentTarget.style.borderColor = '#E2E8F0'; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(17,24,39,0.02)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: '#111827' }}>{skill.canonicalName || skill.name}</h4>
+                      <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-main)' }}>{skill.canonicalName || skill.name}</h4>
                       {(() => {
                         let statusLabel = 'ADDED';
-                        let statusColor = '#64748B';
-                        let statusBg = '#F1F5F9';
+                        let statusColor = 'var(--text-muted)';
+let statusBg = 'var(--bg-surface-sunken)';
                         if (skill.progress >= 100) {
                           statusLabel = 'COMPLETED';
                           statusColor = '#16A34A';
@@ -583,22 +584,22 @@ export function SkillsPanel({
                             <span style={{ fontSize: '0.75rem', color: statusColor, fontWeight: 900, padding: '4px 10px', background: statusBg, borderRadius: '999px', letterSpacing: '0.05em' }}>
                               {statusLabel}
                             </span>
-                            <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 800 }}>
+                            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 800 }}>
                               {skill.progress || 0}%
                             </span>
                           </div>
                         );
                       })()}
                     </div>
-                    <div style={{ width: '100%', height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', height: '8px', background: 'var(--bg-surface-sunken)', borderRadius: '4px', overflow: 'hidden' }}>
                       <div style={{ width: `${Math.min(100, skill.progress || 0)}%`, height: '100%', background: 'linear-gradient(90deg, #8B5CF6, #3B82F6)', borderRadius: '4px' }} />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                      <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 600 }}>{skill.subtopics?.length || 0} Subtopics</span>
+                      <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>{skill.subtopics?.length || 0} Subtopics</span>
                       <button onClick={(e) => {
                         e.stopPropagation();
                         setSkillToRemove(skill.id);
-                      }} style={{ background: 'transparent', border: 'none', color: '#94A3B8', cursor: 'pointer', padding: '6px', transition: 'color 0.2s' }}
+                      }} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '6px', transition: 'color 0.2s' }}
                          onMouseEnter={e => e.currentTarget.style.color = '#EF4444'}
                          onMouseLeave={e => e.currentTarget.style.color = '#94A3B8'}
                       >

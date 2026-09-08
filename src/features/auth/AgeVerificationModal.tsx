@@ -48,9 +48,9 @@ export function AgeVerificationModal({
 
   const calculateAge = (dob: Date) => {
     const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const m = today.getMonth() - dob.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    let age = today.getUTCFullYear() - dob.getUTCFullYear();
+    const m = today.getUTCMonth() - dob.getUTCMonth();
+    if (m < 0 || (m === 0 && today.getUTCDate() < dob.getUTCDate())) {
       age--;
     }
     return age;
@@ -64,7 +64,7 @@ export function AgeVerificationModal({
     }
 
     const dobString = `${year}-${month}-${day}`
-    const dobDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    const dobDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)))
     
     if (dobDate > new Date()) {
        setError('Future dates are not allowed.')
@@ -210,3 +210,4 @@ export function AgeVerificationModal({
     </AnimatePresence>
   )
 }
+

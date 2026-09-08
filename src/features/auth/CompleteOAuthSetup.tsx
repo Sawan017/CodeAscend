@@ -115,7 +115,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'var(--bg-main)',
+      background: 'var(--bg-base)',
       color: 'var(--text-main)',
       position: 'relative',
       overflow: 'hidden'
@@ -181,7 +181,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
                 background: 'var(--bg-surface-sunken)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '8px',
-                color: 'white',
+                color: 'var(--text-main)',
                 fontSize: '1rem',
                 outline: 'none'
               }}
@@ -215,7 +215,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
                 background: 'rgba(0,0,0,0.2)',
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '8px',
-                color: 'white',
+                color: 'var(--text-main)',
                 outline: 'none',
                 fontFamily: 'monospace'
               }}
@@ -238,7 +238,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
                   background: 'var(--bg-surface-sunken)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '8px',
-                  color: 'white',
+                  color: 'var(--text-main)',
                   fontSize: '1rem',
                   outline: 'none'
                 }}
@@ -284,7 +284,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
                   background: 'var(--bg-surface-sunken)',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '8px',
-                  color: 'white',
+                  color: 'var(--text-main)',
                   fontSize: '1rem',
                   outline: 'none'
                 }}
@@ -300,7 +300,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
               width: '100%',
               padding: '0.875rem',
               background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-              color: 'white',
+              color: 'var(--text-main)',
               border: 'none',
               borderRadius: '8px',
               fontSize: '1rem',

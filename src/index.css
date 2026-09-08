@@ -90,24 +90,9 @@ button { border: 1px solid transparent; }
 }
 
 /* Theme variants */
-.app-shell.dark,
-.app-shell.midnight,
-.app-shell.system,
-.app-shell.aurora {
-  background: var(--bg-0);
-  background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 255, 255, 0.03), transparent),
-    radial-gradient(circle at 10% 0%, rgba(6, 182, 212, 0.04), transparent 30%),
-    radial-gradient(circle at 90% 100%, rgba(168, 85, 247, 0.03), transparent 30%);
-  color: var(--text);
-}
+.app-shell.dark, .app-shell.midnight, .app-shell.system, .app-shell.aurora { background: var(--bg-main) !important; }
 
-.app-shell.light {
-  background:
-    radial-gradient(circle at 15% 0%, rgba(59, 130, 246, 0.05), transparent 40%),
-    #f8fafc;
-  color: #0f172a;
-}
+.app-shell.light { background: var(--bg-main) !important; }
 
 .world-shell {
   min-height: 100vh;
@@ -803,7 +788,7 @@ h4 { font-size: 1rem; }
 .user-search-panel {
   position: fixed; top: 0; right: 0; bottom: 0;
   width: min(480px, 95vw);
-  background: var(--glass-strong);
+  background: var(--settings-main, var(--bg-card));
   border-left: 1px solid var(--border-strong);
   box-shadow: -20px 0 60px rgba(0,0,0,0.5);
   z-index: 50;
@@ -1121,33 +1106,7 @@ h4 { font-size: 1rem; }
 }
 
 /* Light Theme Defs */
-.app-shell.light {
-  --bg-base: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-sunken: #f1f5f9;
-  
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-dim: #94a3b8;
-  
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.15);
-  
-  --glass: rgba(255, 255, 255, 0.7);
-  --glass-strong: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(0, 0, 0, 0.05);
-  --glass-toast: rgba(255, 255, 255, 0.95);
-  
-  --panel-bg: rgba(255, 255, 255, 0.7);
-  --panel-border: rgba(0, 0, 0, 0.06);
-
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-  --shadow-lg: 0 16px 40px rgba(0,0,0,0.12);
-
-  background: var(--bg-base);
-  color: var(--text-main);
-}
+.app-shell.light { background: var(--bg-main) !important; }
 /* System Theme Override */
 @media (prefers-color-scheme: light) {
   .app-shell.system {
@@ -1254,6 +1213,12 @@ h4 { font-size: 1rem; }
   --surface-sunken: var(--ca-surface-alt);
   --glass: var(--ca-surface);
   --glass-strong: var(--ca-surface);
+}
+
+
+
+
+:root {
   --glass-toast: var(--ca-surface);
   --glass-border: var(--ca-border);
   --border: var(--ca-border);
@@ -1283,11 +1248,7 @@ h4 { font-size: 1rem; }
   background-image: none !important;
   color: var(--ca-text);
 }
-.app-shell.dark, .app-shell.midnight, .app-shell.system, .app-shell.aurora, .app-shell.light {
-  background: var(--ca-bg) !important;
-  background-image: none !important;
-  color: var(--ca-text);
-}
+.app-shell.dark, .app-shell.midnight, .app-shell.system, .app-shell.aurora, .app-shell.light { background: var(--bg-main) !important; }
 body {
   background: var(--ca-bg) !important;
   color: var(--ca-text);
@@ -1297,11 +1258,7 @@ body {
 .noise, .aurora, .aura-a, .aura-b { display: none !important; }
 
 /* --- World shell --- */
-.world-shell {
-  min-height: 100vh;
-  padding: 0 !important;
-  background: var(--ca-bg);
-}
+.world-shell { min-height: 100vh; padding: 0 !important; background: transparent; display: flex; flex-direction: column; }
 
 /* --- Top bar / header override --- */
 .world-shell > header,
@@ -1412,3 +1369,747 @@ h1, h2, h3, h4 { color: var(--ca-text); }
     padding: 16px 12px !important;
   }
 }
+
+
+
+
+
+
+/* ==========================================================================
+   PRINCIPAL UX/UI REFACTOR: CONTINUOUS ANIMATED ATMOSPHERE
+   ========================================================================== */
+
+/* 1. Theme Variables & Base Definitions */
+:root, [data-theme="light"], .app-shell.light {
+  --bg-main: #EAF5FF; /* Very light sky blue base */
+  --bg-card: #FFFFFF; /* Clean white */
+  --border-color: #BAE6FD; /* Clear cyan/blue border */
+  --text-primary: #0F172A; /* Slate 900 for high readability */
+  --text-secondary: #334155; /* Slate 700 */
+  
+  /* Day Mode Muted Pastel Palette */
+  
+  
+  
+  
+  
+  
+  /* Visibly colored opacity */
+  --mesh-op: 0.28;
+  
+  --shadow-card: 0 4px 12px rgba(44, 44, 42, 0.04), 0 1px 3px rgba(44, 44, 42, 0.02);
+  --shadow-hover: 0 8px 24px rgba(44, 44, 42, 0.08), 0 3px 8px rgba(44, 44, 42, 0.05);
+}
+
+[data-theme="dark"], .app-shell.dark {
+  /* --bg-main: gradient above */ /* Deep charcoal with blue/green undertone */
+  /* --bg-card: gradient above */ /* Dark mode card */
+  --border-color: #2A3138;
+  --text-primary: #EAECEF;
+  --text-secondary: #8B949E;
+  
+  /* Night Mode Subdued Palette */
+  
+  
+  
+  
+  
+  
+  /* Subdued opacity for dark mode */
+  --mesh-op: 0.28;
+  
+  --shadow-card: 0 12px 30px rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Base alias fallbacks for settings drawer */
+:root, [data-theme="light"], .app-shell.light, [data-theme="dark"], .app-shell.dark {
+  --bg-base: var(--bg-main);
+  --bg-surface: var(--bg-card);
+  --bg-panel: var(--bg-card);
+  --bg-surface-sunken: var(--bg-main);
+  --border: var(--border-color);
+  --border-strong: var(--border-color);
+  --text-main: var(--text-primary);
+  --text-muted: var(--text-secondary);
+}
+
+
+/* ==========================================================================
+   2. CRITICAL BACKGROUND FIX
+   Make all layout wrappers completely transparent so the canvas shows through!
+   ========================================================================== */
+html {
+  background: var(--bg-main) !important;
+}
+
+body {
+  background-color: transparent !important;
+  background-image: none !important;
+  position: relative;
+  min-height: 100vh;
+}
+
+#root, .app-shell, .world-shell, .rpg-page-container {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+/* ==========================================================================
+   3. ANIMATED CONTINUOUS ATMOSPHERE (Behind Everything)
+   ========================================================================== */
+
+
+@keyframes driftLayer2 {
+  0%   { transform: translate3d(8%, 6%, 0) scale(1.05); }
+  50%  { transform: translate3d(-5%, -5%, 0) scale(1); }
+  100% { transform: translate3d(5%, -4%, 0) scale(1.02); }
+}
+@keyframes driftLayer3 {
+  0%   { transform: translate3d(0%, 10%, 0) scale(0.9); }
+  50%  { transform: translate3d(10%, -10%, 0) scale(1.1); }
+  100% { transform: translate3d(-10%, 0%, 0) scale(1); }
+}
+
+/* Night Mode: Animation is much slower */
+[data-theme="dark"] body::before { animation-duration: 45s; }
+[data-theme="dark"] body::after { animation-duration: 55s; }
+[data-theme="dark"] #root::before { animation-duration: 40s; }
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  body::before, body::after, #root::before { animation: none !important; }
+}
+
+/* Remove old decorative noise/aurora */
+.noise, .aurora { display: none !important; }
+
+/* ==========================================================================
+   4. SOLID READABLE CARDS (Above Background)
+   ========================================================================== */
+.dashboard-grid > div > div, 
+.dashboard-panel, 
+.status-card,
+.dashboard-hero,
+.dashboard-item,
+[style*="background: '#fff'"], [style*='background: "#fff"'],
+[style*="background: '#ffffff'"],
+[style*="background: '#FAFAFA'"] {
+  background: var(--bg-card) !important;
+  background-color: var(--bg-card) !important;
+  background-image: none !important; /* Strip inline gradients */
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-card) !important;
+  color: var(--text-primary) !important;
+  border-radius: 12px !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+  position: relative;
+  z-index: 10; /* Bring above animated layers safely */
+}
+
+/* Card hover micro-interaction */
+.dashboard-grid > div > div:hover,
+.dashboard-panel:hover,
+.status-card:hover,
+[style*="background: '#fff'"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* ==========================================================================
+   5. BUTTONS, TEXT, & COMPONENT MICRO-INTERACTIONS
+   ========================================================================== */
+.world-shell h1, .world-shell h2, .world-shell h3, .world-shell h4,
+.world-shell [style*="color: '#1E1D1B'"], .world-shell [style*='color: "#1E1D1B"'], .world-shell [style*="color: '#1E293B'"],
+.world-shell [style*="color: '#0F172A'"] { 
+  color: var(--text-primary) !important; 
+}
+.world-shell p, .world-shell span, .world-shell [style*="color: '#5A5750'"], .world-shell [style*="color: '#475569'"] {
+  color: var(--text-secondary) !important;
+}
+
+/* Primary Buttons */
+.world-shell .primary-btn, 
+.world-shell button[style*="background: '#3B82F6'"], 
+.world-shell button[style*="background: '#10B981'"] {
+  background: var(--drift-sage) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(0,0,0,0.05) !important;
+  border-radius: 8px !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+.world-shell .primary-btn:hover, 
+.world-shell button[style*="background: '#3B82F6'"]:hover, 
+.world-shell button[style*="background: '#10B981'"]:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(1.05) !important;
+}
+
+/* Colorful Stat Icons */
+[style*="width: 48"][style*="color: '#3B82F6'"] { background: transparent !important; color: var(--drift-blue) !important; border: 1px solid var(--border-color) !important; }
+[style*="width: 48"][style*="color: '#F97316'"] { background: transparent !important; color: var(--drift-peach) !important; border: 1px solid var(--border-color) !important; }
+[style*="width: 48"][style*="color: '#EAB308'"] { background: transparent !important; color: var(--drift-amber) !important; border: 1px solid var(--border-color) !important; }
+[style*="width: 48"][style*="color: '#06B6D4'"] { background: transparent !important; color: var(--drift-sage) !important; border: 1px solid var(--border-color) !important; }
+[style*="width: 48"] { transition: transform 0.2s ease !important; }
+[style*="width: 48"]:hover { transform: scale(1.05) !important; }
+
+/* Progress Bars */
+[style*="height: '12px'"][style*="background: 'rgba(140,135,125,0.1)'"],
+[style*="height: 12px"][style*="background: rgba(140,135,125,0.1)"] {
+  background: var(--border-color) !important; 
+  border: none !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+[style*="background: 'linear-gradient(90deg, #3B82F6, #8B5CF6)'"],
+[style*="background: linear-gradient(90deg, #3B82F6, #8B5CF6)"],
+[style*="background: '#3B82F6'"][style*="height: '100%'"] {
+  background: linear-gradient(90deg, var(--drift-blue), var(--drift-sage)) !important;
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+/* Flowing highlight */
+[style*="background: 'linear-gradient(90deg, #3B82F6, #8B5CF6)'"]::after,
+[style*="background: linear-gradient(90deg, #3B82F6, #8B5CF6)"]::after,
+[style*="background: '#3B82F6'"][style*="height: '100%'"]::after {
+  content: '';
+  position: absolute !important;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transform: skewX(-20deg) translateX(-150%) !important;
+  animation: shimmerFlow 3s infinite ease-in-out !important;
+}
+@keyframes shimmerFlow {
+  100% { transform: skewX(-20deg) translateX(200%); }
+}
+
+/* Navbar */
+header[style*="background: '#fff'"], header[style*='background: "#fff"'], header[style*="background: 'rgba(255, 255, 255, 0.95)'"] {
+  background: var(--bg-card) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* 6. Decorative Illustration Floating */
+.hero-landscape {
+  animation: floatLandscape 8s ease-in-out infinite alternate !important;
+}
+@keyframes floatLandscape {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-8px); }
+}
+
+/* ==========================================================================
+   CRITICAL BACKGROUND FIX: Make ALL structural containers completely transparent 
+   so the animated canvas can be seen between the cards.
+   ========================================================================== */
+.workspace, 
+.main-stage, 
+.content-card,
+.world-shell,
+.app-shell,
+#root,
+.rpg-page-container {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* Also ensure that TopBar doesn't have a giant opaque background that breaks the theme */
+header, .world-shell > header {
+  background: var(--bg-card) !important; 
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* ==========================================================================
+   PREMIUM ATMOSPHERE & PARTICLES
+   ========================================================================== */
+
+:root, [data-theme="light"], .app-shell.light {
+  /* Day Atmosphere Palette - Cohesive Sky Blue System */
+  --mesh-1: #3B82F6; /* Strong Blue */
+  --mesh-2: #10B981; /* Fresh Green */
+  --mesh-3: #EAB308; /* Clear Yellow */
+  --mesh-4: #F97316; /* Warm Orange */
+  --mesh-5: #8B5CF6; /* Clean Violet */
+  --mesh-6: #06B6D4; /* Cyan */
+  
+  --part-1: rgba(22, 119, 232, 0.2); /* Primary blue */
+  --part-2: rgba(255, 255, 255, 0.8); /* White soft clouds/particles */
+  --part-3: rgba(46, 139, 87, 0.15); /* Hint of green */
+  --part-4: rgba(255, 255, 255, 0.6); /* White particles */
+  
+  --mesh-op: 0.28; /* Fully visible atmosphere */
+}
+
+[data-theme="dark"], .app-shell.dark {
+  /* Night Atmosphere Palette */
+  --mesh-1: #2563EB; /* Strong Royal Blue */
+  --mesh-2: #0D9488; /* Deep Teal */
+  --mesh-3: #E11D48; /* Crimson */
+  --mesh-4: #D97706; /* Amber */
+  --mesh-5: #7C3AED; /* Rich Violet */
+  --mesh-6: #4F46E5; /* Indigo */
+  
+  --part-1: rgba(42, 75, 124, 0.5); /* Blue */
+  --part-2: rgba(74, 59, 105, 0.5); /* Violet */
+  --part-3: rgba(40, 89, 107, 0.5); /* Teal */
+  --part-4: rgba(61, 74, 115, 0.5); /* Indigo */
+  
+  --mesh-op: 0.28;
+}
+
+.atmosphere-layer {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: -5; overflow: hidden;
+}
+
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: var(--mesh-op);
+  mix-blend-mode: normal;
+  will-change: transform;
+}
+
+.mesh-particle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(1.5px);
+  will-change: transform, opacity;
+}
+
+/* Keyframes for 6 unique organic drifts */
+@keyframes drift1 {
+  0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate3d(8%, 12%, 0) scale(1.1) rotate(5deg); }
+}
+@keyframes drift2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg); }
+  100% { transform: translate3d(-10%, -5%, 0) scale(1) rotate(-5deg); }
+}
+@keyframes drift3 {
+  0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate3d(-12%, 15%, 0) scale(1.15) rotate(10deg); }
+}
+@keyframes drift4 {
+  0%   { transform: translate3d(0, 0, 0) scale(1.1) rotate(0deg); }
+  100% { transform: translate3d(15%, -15%, 0) scale(0.95) rotate(-10deg); }
+}
+@keyframes drift5 {
+  0%   { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate3d(10%, 10%, 0) scale(1.1) rotate(8deg); }
+}
+@keyframes drift6 {
+  0%   { transform: translate3d(0, 0, 0) scale(0.95) rotate(0deg); }
+  100% { transform: translate3d(-8%, -12%, 0) scale(1.05) rotate(-8deg); }
+}
+
+/* Keyframes for subtle drifting particles */
+@keyframes floatUpRight {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  30% { opacity: 0.8; }
+  70% { opacity: 0.8; }
+  100% { transform: translate3d(40px, -150px, 0); opacity: 0; }
+}
+@keyframes floatUpLeft {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  30% { opacity: 0.8; }
+  70% { opacity: 0.8; }
+  100% { transform: translate3d(-40px, -150px, 0); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mesh-blob, .mesh-particle { animation: none !important; }
+}
+
+@property --draw-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes drawCardBorder {
+  0% { --draw-angle: 0deg; }
+  100% { --draw-angle: 360deg; }
+}
+
+.card-animated-border {
+  border-color: transparent !important;
+  position: relative;
+}
+
+.card-animated-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from 0deg,
+    var(--card-accent, #1677E8) 0deg,
+    var(--card-accent, #1677E8) var(--draw-angle),
+    var(--border) var(--draw-angle),
+    var(--border) 360deg
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: drawCardBorder 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 10;
+}
+
+
+
+/* FINAL THEME OVERRIDES (High Specificity) */
+/* SAAS / APPLE-LIKE PREMIUM AESTHETIC */
+
+/* LIGHT MODE */
+html[data-theme="light"], body[data-theme="light"], [data-theme="light"], .app-shell.light {
+  --ca-bg: transparent;
+  --bg-main: 
+    radial-gradient(circle at 0% 0%, #DBEAFE 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, #EDE9FE 0%, transparent 60%),
+    linear-gradient(135deg, #EFF6FF 0%, #E0E7FF 100%);
+  --bg-base: transparent;
+  
+  --ca-surface: rgba(255, 255, 255, 0.75);
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-panel: rgba(255, 255, 255, 0.75);
+  --bg-surface: rgba(255, 255, 255, 0.75);
+  
+  --ca-surface-alt: rgba(255, 255, 255, 0.5);
+  --bg-surface-sunken: rgba(224, 231, 255, 0.5);
+  
+  --ca-border: rgba(99, 102, 241, 0.15);
+  --border-color: rgba(99, 102, 241, 0.15);
+  --border: rgba(99, 102, 241, 0.15);
+  --ca-border-strong: rgba(99, 102, 241, 0.25);
+  --border-strong: rgba(99, 102, 241, 0.25);
+  
+  --ca-text: #1E293B; 
+  --text-main: #1E293B;
+  --text-primary: #1E293B;
+  --ca-text-secondary: #475569;
+  --text-secondary: #475569;
+  --ca-text-muted: #64748B;
+  --text-muted: #64748B;
+  
+  --primary-accent: #059669; 
+  --primary-accent-light: rgba(16, 185, 129, 0.08);
+  --secondary-accent: #3B82F6; 
+  
+  --card-shadow: 0 2px 4px rgba(30, 58, 138, 0.03), 0 8px 16px rgba(30, 58, 138, 0.05);
+  --card-shadow-hover: 0 4px 8px rgba(30, 58, 138, 0.04), 0 16px 32px rgba(30, 58, 138, 0.08);
+  --hero-shadow: 0 10px 30px -10px rgba(30, 58, 138, 0.15);
+}
+
+/* DARK MODE */
+html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shell.dark {
+  --ca-bg: #0B1120;
+  --bg-main: 
+    radial-gradient(ellipse at 50% 0%, rgba(30, 41, 59, 0.25) 0%, transparent 60%),
+    linear-gradient(180deg, #0B1120 0%, #070B14 100%);
+  --bg-base: #0B1120;
+  
+  --ca-surface: rgba(15, 23, 42, 0.7);
+  --bg-card: rgba(20, 28, 45, 0.85);
+  --bg-panel: rgba(15, 23, 42, 0.75);
+  --bg-surface: rgba(15, 23, 42, 0.7);
+  
+  --ca-surface-alt: rgba(30, 41, 59, 0.6);
+  --bg-surface-sunken: #090E17;
+  
+  --ca-border: rgba(255, 255, 255, 0.06);
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.06);
+  --ca-border-strong: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  
+  --ca-text: #F8FAFC;
+  --text-main: #F8FAFC;
+  --text-primary: #F8FAFC;
+  --ca-text-secondary: #94A3B8;
+  --text-secondary: #94A3B8;
+  --ca-text-muted: #64748B;
+  --text-muted: #64748B;
+  
+  --primary-accent: #3B82F6; 
+  --primary-accent-light: rgba(59, 130, 246, 0.12);
+  --secondary-accent: #8B5CF6;
+  
+  --card-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.5);
+  --hero-shadow: 0 10px 40px -10px rgba(0,0,0,0.6);
+}
+
+/* BASE TRANSPARENCIES & REMOVALS */
+html[data-theme="dark"], html[data-theme="light"],
+body[data-theme="dark"], body[data-theme="light"] {
+  min-height: 100vh;
+}
+body, .world-shell, .app-shell, #root, .rpg-page-container {
+  background: transparent !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+/* Completely disable the flashy background blobs and particles */
+.atmosphere-layer, .noise, .aurora, .aura-a, .aura-b, .mesh-blob, .mesh-particle {
+  display: none !important;
+}
+/* Disable the animated borders */
+.card-animated-border::before {
+  animation: none !important;
+  background: none !important;
+}
+
+/* PREMIUM CARDS (SaaS / Apple-like) */
+.card-animated-border, [style*="var(--bg-surface)"], .dashboard-panel, .quest-card, .ach-card, .botanical-card, .card-premium {
+  background: var(--bg-surface) !important;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--card-shadow) !important;
+  border-radius: 16px !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+.card-animated-border:hover, .dashboard-panel:hover, .quest-card:hover, .ach-card:hover, .botanical-card:hover, .card-premium:hover {
+  box-shadow: var(--card-shadow-hover) !important;
+  transform: translateY(-2px);
+}
+/* Subtle tactile corner highlight (Inner lip) */
+.card-animated-border::after, .dashboard-panel::after, .quest-card::after, .ach-card::after, .botanical-card::after, .card-premium::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  z-index: 10;
+}
+[data-theme="dark"] .card-animated-border::after,
+[data-theme="dark"] .dashboard-panel::after,
+[data-theme="dark"] .quest-card::after,
+[data-theme="dark"] .ach-card::after,
+[data-theme="dark"] .botanical-card::after,
+[data-theme="dark"] .card-premium::after {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* DASHBOARD HERO - Visual Centerpiece */
+/* PREMIUM HERO SECTION (First child in RPG Page Container) */
+.rpg-page-container > div:first-child { background: var(--bg-surface) !important; border: 1px solid var(--border-strong) !important; box-shadow: var(--hero-shadow) !important; border-radius: 24px !important; padding: 48px !important; }
+/* Abstract CSS Geometry in Hero */
+.rpg-page-container > div:first-child::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 50%; height: 100%;
+  background: 
+    repeating-linear-gradient(45deg, var(--border) 0, var(--border) 1px, transparent 1px, transparent 12px);
+  opacity: 0.15;
+  pointer-events: none;
+  mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0));
+  -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0));
+  border-radius: inherit;
+  z-index: 0;
+}
+
+/* PREMIUM STATS SECTION */
+.compact-stats {
+  display: flex !important;
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  padding: 16px 24px !important;
+  border-radius: 16px !important;
+}
+.compact-stats > div {
+  padding: 8px !important;
+}
+.stat-divider {
+  background: var(--border) !important;
+  opacity: 0.5;
+}
+.compact-stats strong {
+  color: var(--text-main) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  font-size: 1.3rem !important;
+}
+.compact-stats span {
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  font-size: 0.7rem !important;
+}
+/* Clean icon containers */
+.compact-stats [style*="border-radius: 12px"] {
+  border-radius: 10px !important;
+  background: var(--ca-surface-alt) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+/* XP PROGRESS SECTION */
+/* Sophisticated progress bar with inner shadow and refined level badge */
+.rpg-page-container > div:nth-child(3) {
+  background: var(--bg-surface) !important;
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.01) 0%, transparent 100%) !important;
+}
+/* Target the XP text header */
+.rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:first-child {
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+/* The inline progress bar track */
+.rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) {
+  background: var(--ca-surface-alt) !important;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1) !important;
+  border-radius: 8px !important;
+  height: 14px !important;
+}
+/* The inline progress bar fill */
+.rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div {
+  background: linear-gradient(90deg, var(--secondary-accent), var(--primary-accent)) !important;
+  box-shadow: inset 0 2px 2px rgba(255,255,255,0.2), inset 0 -2px 2px rgba(0,0,0,0.1) !important;
+  border-radius: 8px !important;
+}
+/* Level circle */
+.rpg-page-container > div:nth-child(3) > div:first-child > div:first-child {
+  background: var(--ca-surface-alt) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+}
+
+/* BUTTONS */
+.primary-btn, button[style*="background: '#10B981'"], button[style*="background: '#1677E8'"], button[style*="background: '#3B82F6'"] {
+  background: linear-gradient(180deg, var(--primary-accent), var(--primary-accent)) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease !important;
+}
+.primary-btn:hover, button[style*="background: '#10B981'"]:hover, button[style*="background: '#1677E8'"]:hover, button[style*="background: '#3B82F6'"]:hover {
+  filter: brightness(1.08) !important;
+  box-shadow: 0 4px 12px var(--primary-accent-light), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  transform: translateY(-1px) !important;
+}
+.primary-btn:active {
+  filter: brightness(0.95) !important;
+  transform: translateY(0) !important;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.15) !important;
+}
+
+/* SECONDARY BUTTONS / OUTLINE */
+.secondary-btn, .outline-btn, .toggle-switch, button[style*="background: 'rgba(22,119,232,0.1)'"], button[style*="background: 'rgba(46,139,87,0.1)'"] {
+  background: var(--ca-surface-alt) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+.secondary-btn:hover, .outline-btn:hover, button[style*="background: 'rgba(22,119,232,0.1)'"]:hover, button[style*="background: 'rgba(46,139,87,0.1)'"]:hover {
+  background: var(--bg-surface) !important;
+  border-color: var(--border-strong) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05) !important;
+}
+
+/* NAVBAR UPGRADES */
+header, .world-shell > header, .topbar {
+  background: var(--ca-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+  padding: 12px 24px !important;
+}
+.nav-item {
+  color: var(--text-secondary) !important;
+  transition: color 0.15s ease, background 0.15s ease !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-weight: 500 !important;
+}
+.nav-item:hover, .nav-item.active {
+  color: var(--text-main) !important;
+  background: var(--ca-surface-alt) !important;
+}
+[data-theme="dark"] header, 
+[data-theme="dark"] .world-shell > header,
+[data-theme="dark"] .topbar {
+  background: var(--ca-surface) !important;
+  border-bottom: 1px solid var(--border) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+}
+
+/* TYPOGRAPHY CLEANUP */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main) !important;
+  letter-spacing: -0.01em !important;
+}
+p {
+  color: var(--text-secondary) !important;
+}
+
+
+
+
+/* Add backdrop blur ONLY to Dark Mode cards for premium glass layering */
+[data-theme="dark"] .card-animated-border, 
+[data-theme="dark"] [style*="var(--bg-surface)"], 
+[data-theme="dark"] .dashboard-panel, 
+[data-theme="dark"] .quest-card, 
+[data-theme="dark"] .ach-card, 
+[data-theme="dark"] .botanical-card, 
+[data-theme="dark"] .card-premium {
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+
+/* --- FULLY OPAQUE SETTINGS INTERFACE --- */
+html[data-theme="light"], body[data-theme="light"], [data-theme="light"], .app-shell.light {
+  --settings-main: #F8FAFC;
+  --settings-sidebar: #F1F5F9;
+  --settings-content: #F8FAFC;
+  --settings-card: #FFFFFF;
+}
+
+html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shell.dark {
+  /* Using the opaque premium dark background from the main theme */
+  --settings-main: var(--bg-main); 
+  --settings-sidebar: #10141D; /* Opaque layered dark surface */
+  --settings-content: var(--bg-main);
+  --settings-card: #171D2B; /* Opaque card surface */
+}
+
+/* Override drawer cards when inside settings */
+.settings-drawer .drawer-card {
+  background: var(--settings-card) !important;
+}
+.settings-drawer .settings-sidebar {
+  background: var(--settings-sidebar) !important;
+}
+.settings-drawer .settings-content-area {
+  background: var(--settings-content) !important;
+}
+
+
+
+
+
+

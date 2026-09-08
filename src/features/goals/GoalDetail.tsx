@@ -153,7 +153,7 @@ export function GoalDetail({
             </div>
           ) : (
             <>
-              <h1 style={{ fontSize: '3.5rem', fontWeight: 800, marginBottom: '1.5rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #fff 0%, #aaa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <h1 style={{ fontSize: '3.5rem', fontWeight: 800, marginBottom: '1.5rem', letterSpacing: '-0.02em', background: 'var(--bg-card)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 {goal.title}
               </h1>
               <p style={{ fontSize: '1.25rem', color: 'var(--text-muted)', lineHeight: '1.6' }}>

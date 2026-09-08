@@ -22,7 +22,7 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
           <div style={{ fontSize: '3rem', marginBottom: '1rem', color: 'var(--accent-red)' }}>⚠️</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', fontWeight: 600 }}>System Error Encountered</h2>
           <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', maxWidth: '400px' }}>
-            We've encountered an unexpected issue while processing your request. Our team has been notified.
+            We've encountered an unexpected issue while processing your request. Our team has been notified. ERROR DETAILS: {this.state.error?.toString()} STACK: {this.state.error?.stack}
           </p>
           <button 
             onClick={() => window.location.reload()} 
@@ -37,3 +37,4 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
     return this.props.children;
   }
 }
+

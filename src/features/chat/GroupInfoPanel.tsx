@@ -182,7 +182,7 @@ export function GroupInfoPanel({
               <input value={editName} onChange={e => setEditName(e.target.value)} style={{ width: '100%', background: 'var(--ca-bg, rgba(0,0,0,0.03))', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', color: 'var(--ca-text, #1E1D1B)', outline: 'none' }} />
               <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} style={{ width: '100%', background: 'var(--ca-bg, rgba(0,0,0,0.03))', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', color: 'var(--ca-text, #1E1D1B)', minHeight: '80px', outline: 'none' }} />
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={handleSave} style={{ flex: 1, padding: '10px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Save</button>
+                <button onClick={handleSave} style={{ flex: 1, padding: '10px', background: 'var(--primary)', color: 'var(--bg-surface)', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Save</button>
                 <button onClick={() => setIsEditing(false)} style={{ flex: 1, padding: '10px', background: 'transparent', color: 'var(--ca-text-secondary, #5A5750)', border: '1px solid var(--border)', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
               </div>
             </div>
@@ -225,10 +225,10 @@ export function GroupInfoPanel({
                   {isAdmin && !isMe && (
                     <div style={{ display: 'flex', gap: '6px' }}>
                       {isOwner && m.role === 'member' && (
-                        <button onClick={() => onUpdateRole(m.user_id, 'admin')} title="Promote to Admin" style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}><Shield size={16} /></button>
+                        <button onClick={() => onUpdateRole(m.user_id, 'admin')} title="Promote to Admin" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Shield size={16} /></button>
                       )}
                       {isOwner && m.role === 'admin' && (
-                        <button onClick={() => onUpdateRole(m.user_id, 'member')} title="Demote to Member" style={{ background: 'none', border: 'none', color: '#9A958C', cursor: 'pointer' }}><ShieldAlert size={16} /></button>
+                        <button onClick={() => onUpdateRole(m.user_id, 'member')} title="Demote to Member" style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><ShieldAlert size={16} /></button>
                       )}
                       {(isOwner || (isAdmin && m.role === 'member')) && (
                         <button onClick={() => onRemoveMember(m.user_id)} title="Remove Member" style={{ background: 'none', border: 'none', color: '#ff453a', cursor: 'pointer' }}><UserMinus size={16} /></button>
@@ -287,4 +287,5 @@ export function GroupInfoPanel({
     </div>
   )
 }
+
 

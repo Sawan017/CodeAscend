@@ -74,7 +74,13 @@ export function MilestonesSection({ dynamicMilestones, displayedIds, maxVisible 
                   }}
                   title={milestone.description}
                 >
-                  <IconComponent size={14} style={{ color: 'var(--cyan)' }} />
+                  
+                  {milestone.image ? (
+                    <img src={milestone.image} alt={milestone.title} style={{ width: 16, height: 16, objectFit: 'contain' }} />
+                  ) : (
+                    <IconComponent size={14} style={{ color: 'var(--cyan)' }} />
+                  )}
+
                   <span style={{ fontWeight: 500, fontSize: '0.85rem' }}>{milestone.title}</span>
                 </motion.div>
               )
