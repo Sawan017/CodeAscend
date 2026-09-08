@@ -63,7 +63,7 @@ export function TopBar({
       background: 'var(--bg-card)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(140, 135, 125, 0.15)',
+      border: '1px solid var(--border-strong)',
       position: 'sticky', top: '16px', zIndex: 100,
       boxShadow: '0 4px 24px -6px rgba(0,0,0,0.05)',
       gap: '0',
@@ -156,7 +156,7 @@ export function TopBar({
             }}
             onMouseEnter={e => {
               if (activeView !== 'admin_support') {
-                e.currentTarget.style.background = 'rgba(140, 135, 125, 0.08)'
+                e.currentTarget.style.background = 'var(--bg-surface-sunken)'
                 e.currentTarget.style.color = 'var(--text-main)'
               }
             }}
@@ -192,7 +192,7 @@ export function TopBar({
           <button
             style={{
               position: 'relative',
-              background: 'transparent', border: '1px solid rgba(140, 135, 125, 0.15)',
+              background: 'transparent', border: '1px solid var(--border-strong)',
               borderRadius: '50%', width: '38px', height: '38px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.15s',
@@ -223,7 +223,7 @@ export function TopBar({
         {onOpenSettings && (
           <button
             style={{
-              background: 'transparent', border: '1px solid rgba(140, 135, 125, 0.15)',
+              background: 'transparent', border: '1px solid var(--border-strong)',
               borderRadius: '50%', width: '38px', height: '38px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.15s',
@@ -298,3 +298,4 @@ export function TopBar({
     </header>
   )
 }
+

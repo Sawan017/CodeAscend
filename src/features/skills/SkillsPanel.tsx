@@ -8,7 +8,7 @@ import { ConfirmDialog } from '../../components/ConfirmDialog';
 const card = {
   background: 'var(--bg-card)',
   borderRadius: '20px',
-  border: '1px solid rgba(140, 135, 125, 0.12)',
+  border: '1px solid var(--border)',
   boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
   overflow: 'hidden'
 } as const;
@@ -638,3 +638,4 @@ let statusBg = 'var(--bg-surface-sunken)';
     </div>
   );
 }
+

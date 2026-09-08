@@ -52,7 +52,7 @@ export const AchievementsPanel = ({
         .ach-card {
           background: var(--bg-card);
           border-radius: 16px;
-          border: 1px solid rgba(140, 135, 125, 0.12);
+          border: 1px solid var(--border);
           box-shadow: 0 4px 12px rgba(0,0,0,0.05);
           overflow: hidden;
           position: relative;
@@ -72,7 +72,7 @@ export const AchievementsPanel = ({
         .ach-card:hover {
           transform: translateY(-3px);
           box-shadow: 0 8px 24px -6px rgba(0,0,0,0.2);
-          border-color: rgba(255,255,255,0.15);
+          border-color: var(--border-strong);
           z-index: 10;
         }
 
@@ -86,7 +86,7 @@ export const AchievementsPanel = ({
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{
-          background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid rgba(140, 135, 125, 0.12)', boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
+          background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
           padding: '40px', position: 'relative', overflow: 'hidden'
         }}>
           <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(234,179,8,0.08) 0%, transparent 70%)', borderRadius: '50%' }} />
@@ -272,4 +272,6 @@ export const AchievementsPanel = ({
     </>
   );
 };
+
+
 

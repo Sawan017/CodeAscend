@@ -36,8 +36,8 @@
   --text-muted: #827E77;
   
   /* Warm Borders */
-  --border-light: rgba(140, 135, 125, 0.12);
-  --border-medium: rgba(140, 135, 125, 0.22);
+  --border-light: var(--border);
+  --border-medium: var(--border-strong);
   
   /* Sophisticated Acrylic Depth */
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
@@ -310,3 +310,4 @@ body, html, #root {
 
 /* RESET OLD OVERRIDES */
 .game-world-viewport, .rpg-global-shell, .app-shell, .game-shell, .game-world-map { display: none !important; }
+

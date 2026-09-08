@@ -11,7 +11,7 @@ const GithubIcon = ({ size = 24, color = "currentColor", ...props }: any) => (
 const card = {
   background: 'var(--bg-card)',
   borderRadius: '20px',
-  border: '1px solid rgba(140, 135, 125, 0.12)',
+  border: '1px solid var(--border)',
   boxShadow: '0 4px 20px -8px rgba(0,0,0,0.05)',
   overflow: 'hidden'
 } as const;
@@ -190,4 +190,5 @@ export const ProjectsPanel = ({
     </div>
   );
 };
+
 

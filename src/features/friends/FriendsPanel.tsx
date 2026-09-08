@@ -145,7 +145,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
       ) : activeTab === 'connections' ? (
         <div>
           {friends.length === 0 ? (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px dashed rgba(140, 135, 125, 0.3)', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px dashed var(--border-strong)', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
                 <Users size={32} />
               </div>
@@ -328,4 +328,5 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
     </div>
   )
 }
+
 

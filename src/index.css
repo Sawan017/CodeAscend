@@ -1829,11 +1829,11 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
   --ca-surface-alt: rgba(30, 41, 59, 0.6);
   --bg-surface-sunken: #090E17;
   
-  --ca-border: rgba(255, 255, 255, 0.06);
-  --border-color: rgba(255, 255, 255, 0.06);
-  --border: rgba(255, 255, 255, 0.06);
-  --ca-border-strong: rgba(255, 255, 255, 0.12);
-  --border-strong: rgba(255, 255, 255, 0.12);
+  --ca-border: rgba(0, 0, 0, 0.4);
+  --border-color: rgba(0, 0, 0, 0.4);
+  --border: rgba(0, 0, 0, 0.4);
+  --ca-border-strong: rgba(0, 0, 0, 0.6);
+  --border-strong: rgba(0, 0, 0, 0.6);
   
   --ca-text: #F8FAFC;
   --text-main: #F8FAFC;
@@ -2107,6 +2107,7 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 .settings-drawer .settings-content-area {
   background: var(--settings-content) !important;
 }
+
 
 
 
