@@ -32,6 +32,7 @@ type DashboardProps = {
   skills?: any;
   badges?: any;
   achievements?: any;
+  dynamicMilestones?: any;
   friendState?: any;
   chatState?: any;
   incomingRequestsCount?: any;
@@ -67,7 +68,7 @@ const sectionTitle = {
 
 function DashboardInner({
   profile, progression, goals, onNavigate,
-  projects = [], skills = [], badges = [], achievements = []
+  projects = [], skills = [], badges = [], achievements = [], dynamicMilestones = []
 , onUpdateProfile}: DashboardProps) {
   const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression?.xp || 0);
 
@@ -142,15 +143,25 @@ function DashboardInner({
   const activeProjects = (projects || []).filter((p: any) => p.status !== 'COMPLETED');
   
   const unlockedAchievements = (achievements || []).filter((a: any) => a.unlocked).map((a: any) => ({
-    id: a.id, title: a.title, description: a.description || a.unlockCondition, icon: a.icon, date: a.unlockedAt || a.dateUnlocked, type: 'achievement'
+    id: a.id, title: a.title, description: a.description || a.unlockCondition, icon: a.icon || '??', date: a.unlockedAt || a.dateUnlocked || new window.Date().toISOString(), type: 'achievement'
   }));
   const unlockedBadges = (badges || []).filter((b: any) => b.earned).map((b: any) => ({
-    id: b.id, title: b.title, description: b.requirement || b.description, icon: b.icon, date: b.unlockedAt || b.dateEarned, type: 'badge'
+    id: b.id, title: b.title, description: b.requirement || b.description, icon: b.icon || '??', date: b.unlockedAt || b.dateEarned || new window.Date().toISOString(), type: 'badge'
   }));
-  const recentUnlocks = [...unlockedAchievements, ...unlockedBadges].sort((a, b) => {
-    return new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime();
-  });
+  const unlockedMilestones = (dynamicMilestones || []).filter((m: any) => m.isUnlocked).map((m: any) => ({
+    id: m.id, title: m.title, description: m.description || m.unlockCondition, icon: m.icon || '⭐', date: m.dateUnlocked || new window.Date().toISOString(), type: 'milestone'
+  }));
   
+  // Deduplicate by ID just in case
+  const allUnlocksMap: Record<string, any> = {};
+  [...unlockedAchievements, ...unlockedBadges, ...unlockedMilestones].forEach(item => {
+    if (!allUnlocksMap[item.id]) allUnlocksMap[item.id] = item;
+  });
+
+  const recentUnlocks = Object.values(allUnlocksMap).sort((a: any, b: any) => {
+    return new window.Date(b.date || 0).getTime() - new window.Date(a.date || 0).getTime();
+  });
+
   const totalBadgesAndAchievements = recentUnlocks.length;
   
   const totalProjectsCount = (projects || []).length;
@@ -569,6 +580,11 @@ function DashboardInner({
 export function Dashboard(props: DashboardProps) {
   return <DashErrorBoundary><DashboardInner {...props} /></DashErrorBoundary>;
 }
+
+
+
+
+
 
 
 

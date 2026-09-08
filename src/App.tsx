@@ -1411,7 +1411,7 @@ const completeActiveSession = async () => {
                   <ErrorBoundary>
                   <AnimatePresence mode="wait">
                     {route.view === 'admin_support' && isGlobalAdmin && <AdminSupportDashboard onBack={() => navigate({ view: 'dashboard' })} />}
-                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} onUpdateProfile={(updates) => setProfileState(prev => ({ ...prev, ...updates }))} />}
+                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} achievements={achievementState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} onUpdateProfile={(updates) => setProfileState(prev => ({ ...prev, ...updates }))} />}
                     {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} isCurrentUser={true} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
                     {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
@@ -1953,6 +1953,7 @@ const completeActiveSession = async () => {
 }
 
 export default App
+
 
 
 
