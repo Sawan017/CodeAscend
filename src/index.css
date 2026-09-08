@@ -1404,7 +1404,7 @@ h1, h2, h3, h4 { color: var(--ca-text); }
 [data-theme="dark"], .app-shell.dark {
   /* --bg-main: gradient above */ /* Deep charcoal with blue/green undertone */
   /* --bg-card: gradient above */ /* Dark mode card */
-  --border-color: #2A3138;
+  --border-color: rgba(80, 100, 140, 0.08);
   --text-primary: #EAECEF;
   --text-secondary: #8B949E;
   
@@ -1829,11 +1829,11 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
   --ca-surface-alt: rgba(30, 41, 59, 0.6);
   --bg-surface-sunken: #090E17;
   
-  --ca-border: rgba(0, 0, 0, 0.4);
-  --border-color: rgba(0, 0, 0, 0.4);
-  --border: rgba(0, 0, 0, 0.4);
-  --ca-border-strong: rgba(0, 0, 0, 0.6);
-  --border-strong: rgba(0, 0, 0, 0.6);
+  --ca-border: rgba(80, 100, 140, 0.08);
+  --border-color: rgba(80, 100, 140, 0.08);
+  --border: rgba(80, 100, 140, 0.08);
+  --ca-border-strong: rgba(80, 100, 140, 0.12);
+  --border-strong: rgba(80, 100, 140, 0.12);
   
   --ca-text: #F8FAFC;
   --text-main: #F8FAFC;
@@ -1894,7 +1894,7 @@ body, .world-shell, .app-shell, #root, .rpg-page-container {
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  box-shadow: none !important;
   z-index: 10;
 }
 [data-theme="dark"] .card-animated-border::after,
@@ -1903,7 +1903,7 @@ body, .world-shell, .app-shell, #root, .rpg-page-container {
 [data-theme="dark"] .ach-card::after,
 [data-theme="dark"] .botanical-card::after,
 [data-theme="dark"] .card-premium::after {
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  box-shadow: none !important;
 }
 
 /* DASHBOARD HERO - Visual Centerpiece */
@@ -2114,3 +2114,35 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 
 
 
+
+/* ==========================================================
+   FORCE PREMIUM DARK MODE CARDS (NO GREY/WHITE BORDERS)
+========================================================== */
+[data-theme="dark"] .card-animated-border, 
+[data-theme="dark"] .dashboard-panel, 
+[data-theme="dark"] .quest-card, 
+[data-theme="dark"] .ach-card, 
+[data-theme="dark"] .botanical-card, 
+[data-theme="dark"] .card-premium,
+[data-theme="dark"] .status-card,
+[data-theme="dark"] .dashboard-hero,
+[data-theme="dark"] .dashboard-item,
+[data-theme="dark"] .dashboard-grid > div > div,
+[data-theme="dark"] [style*="var(--bg-surface)"] {
+  border: 1px solid rgba(80, 100, 140, 0.08) !important;
+  background-image: none !important;
+}
+
+[data-theme="dark"] .compact-stats [style*="border-radius: 12px"],
+[data-theme="dark"] .rpg-page-container > div:nth-child(3) > div:first-child > div:first-child,
+[data-theme="dark"] .primary-btn,
+[data-theme="dark"] button[style*="background: '#10B981'"],
+[data-theme="dark"] button[style*="background: '#1677E8'"],
+[data-theme="dark"] button[style*="background: '#3B82F6'"] {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+  border: 1px solid rgba(80, 100, 140, 0.08) !important;
+}
+
+[data-theme="dark"] .rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div {
+  box-shadow: none !important;
+}
