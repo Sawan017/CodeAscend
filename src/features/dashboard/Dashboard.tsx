@@ -475,7 +475,7 @@ function DashboardInner({
           <div style={{ ...card, padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', flex: 1 }}>
             {recentUnlocks.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%' }}>
-                {recentUnlocks.slice(0, 3).map((unlock: any, idx: number) => (
+                {recentUnlocks.slice(0, 5).map((unlock: any, idx: number) => (
                   <div key={unlock.id + idx} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <div style={{ width: 48, height: 48, borderRadius: '14px', background: 'rgba(59,130,246,0.1)', color: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', flexShrink: 0 }}>
                       {unlock.icon || '🏆'}
@@ -486,7 +486,7 @@ function DashboardInner({
                     </div>
                   </div>
                 ))}
-                {recentUnlocks.length > 3 && (
+                {recentUnlocks.length > 5 && (
                    <button onClick={() => onNavigate({ view: 'achievements' })} style={{
                      marginTop: 'auto', background: 'transparent', border: '1px solid var(--border)', padding: '12px',
                      borderRadius: '12px', color: 'var(--text-secondary)', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer'
@@ -569,6 +569,7 @@ function DashboardInner({
 export function Dashboard(props: DashboardProps) {
   return <DashErrorBoundary><DashboardInner {...props} /></DashErrorBoundary>;
 }
+
 
 
 
