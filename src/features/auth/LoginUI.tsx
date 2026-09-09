@@ -393,7 +393,7 @@ export function LoginUI() {
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderRadius: '2px',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
+          border: '1px solid var(--border)',
           boxShadow: '0 30px 60px rgba(0,0,0,0.6)'
         }}
       >
@@ -968,3 +968,4 @@ export function LoginUI() {
     </motion.div>
   )
 }
+
