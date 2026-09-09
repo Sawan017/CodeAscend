@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ArrowLeft, MessageSquare, Plus, Paperclip, Send, CheckCircle } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import ReactMarkdown from 'react-markdown'
@@ -87,7 +87,8 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
         });
         if (invokeErr) {
           console.error("AI function returned error:", invokeErr);
-          await supabase!.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', selectedTicket.id);
+          // DO NOT automatically escalate on API error
+          // await supabase!.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', selectedTicket.id);
         }
       } catch (e) {
         console.error("AI function error:", e);
@@ -407,3 +408,4 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     </div>
   )
 }
+

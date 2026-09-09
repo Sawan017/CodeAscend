@@ -175,9 +175,8 @@ ONLY output valid JSON in this exact format:
       content: sanitizePII(`[TICKET INITIALIZED] Category: ${ticket.category}. Subject: ${ticket.subject}. Description: ${ticket.description}`)
     });
 
-    if (message) {
-      conversationContext.push({ role: 'user', content: sanitizePII(message) });
-    }
+    // The new message is already in the DB, so it's in the messages array. 
+    // No need to manually push `message` again, which caused duplication.
 
     const apiMessages = [
       { role: 'system', content: systemPrompt },
@@ -192,7 +191,7 @@ ONLY output valid JSON in this exact format:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-20b',
+        model: 'llama3-70b-8192',
         messages: apiMessages,
         response_format: { type: "json_object" }
       }),
@@ -215,7 +214,7 @@ ONLY output valid JSON in this exact format:
       jsonContent = JSON.parse(content);
     } catch (e) {
       log("10b. JSON Parse Error: " + e.message);
-      jsonContent = { reply: "I'm having trouble processing that. An official will take over.", escalate: true };
+      jsonContent = { reply: "I'm having trouble processing that. Could you please rephrase?", escalate: false };
     }
 
     log(`11. Inserting AI message... reply: ${jsonContent.reply?.substring(0,20)}...`);
@@ -251,18 +250,18 @@ ONLY output valid JSON in this exact format:
     log("FATAL ERROR CAUGHT: " + error.message);
     console.error("Server-side error log:", error.message, "\nDebug trace:", debugLog.join('\n'));
     
-    // Fallback escalation on error
+    // Fallback on error without immediate escalation
     if (supabase && currentTicketId) {
       log("Attempting to insert error fallback message...");
       const { error: fallbackErr } = await supabase.from('support_messages').insert({
         ticket_id: currentTicketId,
-        sender_type: 'system',
-        message: "Sorry, I'm having trouble processing your request right now. An official will take over shortly."
+        sender_type: 'ai',
+        message: "I'm having trouble responding right now. Please try again in a moment."
       });
       if (fallbackErr) {
          log("Fallback Insert FAILED: " + JSON.stringify(fallbackErr));
       }
-      await supabase.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', currentTicketId);
+      // DO NOT automatically update status to 'waiting_for_official'
     }
     
     // Ensure frontend gets a clean response without leaking internals
