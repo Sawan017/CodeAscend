@@ -326,7 +326,7 @@ export function evaluateDynamicMilestones(progression: Progression, skills: Skil
     } else if (def.id.startsWith('m-xp-')) {
       progressValue = progression.xp
     } else if (def.id.startsWith('m-lvl-')) {
-      progressValue = progression.level || calculateLevel(progression.xp)
+      progressValue = calculateLevel(progression.xp)
     } else if (def.id.startsWith('m-streak-')) {
       progressValue = progression.longestStreak || progression.streak || 0 // use whichever is highest for milestones
     } else if (def.id.startsWith('m-explore-')) {
@@ -454,6 +454,7 @@ export function calculateExternalProjectXP(status: 'in_progress' | 'completed', 
   
   return 0;
 }
+
 
 
 
