@@ -174,25 +174,6 @@ export const badges: Badge[] = [
     requirement: 'Complete your first goal',
   },
   {
-    id: 'level-5',
-    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
-    title: 'LEVEL 5',
-    description: 'Reached level 5.',
-    rarity: 'Uncommon',
-    earned: true,
-    dateEarned: '2026-01-15',
-    requirement: 'Reach level 5',
-  },
-  {
-    id: 'level-10',
-    image: '/assets/badges/badge_chroma_diamond_xp.jpg',
-    title: 'LEVEL 10',
-    description: 'Reached level 10.',
-    rarity: 'Rare',
-    earned: false,
-    requirement: 'Reach level 10',
-  },
-  {
     id: 'project-master',
     image: '/assets/badges/badge_chroma_diamond_xp.jpg',
     title: 'PROJECT MASTER',
@@ -200,16 +181,7 @@ export const badges: Badge[] = [
     rarity: 'Epic',
     earned: false,
     requirement: 'Complete 3 projects',
-  },
-  {
-    id: 'streak-7',
-    image: '/assets/badges/badge_chroma_gold_streak.jpg',
-    title: '7-DAY STREAK',
-    description: 'Maintained a 7-day activity streak.',
-    rarity: 'Uncommon',
-    earned: false,
-    requirement: 'Maintain a 7-day streak',
-  },
+  }
 ]
 
 export const achievements: Achievement[] = [
@@ -271,3 +243,4 @@ export const initialProgression: Progression = {
   longestStreak: 0,
   lastActiveDate: undefined,
 }
+

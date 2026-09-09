@@ -61,11 +61,27 @@ export const milestoneDefinitions: MilestoneDef[] = [
   { id: 'm-xp-50k', title: 'Ascended', description: 'Accumulate 50,000 XP.', category: 'XP', icon: 'Zap', targetValue: 50000, xpReward: 4000, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'diamond' },
   { id: 'm-xp-100k', title: 'Legendary', description: 'Accumulate 100,000 XP.', category: 'XP', icon: 'Crown', targetValue: 100000, xpReward: 10000, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'mythic' },
 
-  // Level Progression
+  // Level Progression (Exactly 21 Level Achievements)
+  { id: 'm-lvl-1', title: 'Initiate', description: 'Reach Level 1.', category: 'XP', icon: 'ChevronUp', targetValue: 1, xpReward: 50, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'bronze' },
   { id: 'm-lvl-5', title: 'Novice', description: 'Reach Level 5.', category: 'XP', icon: 'ChevronUp', targetValue: 5, xpReward: 150, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'bronze' },
   { id: 'm-lvl-10', title: 'Adept', description: 'Reach Level 10.', category: 'XP', icon: 'ChevronUp', targetValue: 10, xpReward: 300, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'silver' },
+  { id: 'm-lvl-15', title: 'Momentum', description: 'Reach Level 15.', category: 'XP', icon: 'ChevronsUp', targetValue: 15, xpReward: 500, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'silver' },
+  { id: 'm-lvl-20', title: 'Getting Serious', description: 'Reach Level 20.', category: 'XP', icon: 'ChevronsUp', targetValue: 20, xpReward: 750, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'gold' },
   { id: 'm-lvl-25', title: 'Expert', description: 'Reach Level 25.', category: 'XP', icon: 'ChevronsUp', targetValue: 25, xpReward: 1000, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'gold' },
+  { id: 'm-lvl-30', title: 'Seasoned Learner', description: 'Reach Level 30.', category: 'XP', icon: 'Award', targetValue: 30, xpReward: 1250, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'gold' },
+  { id: 'm-lvl-35', title: 'On the Rise', description: 'Reach Level 35.', category: 'XP', icon: 'Award', targetValue: 35, xpReward: 1500, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'diamond' },
+  { id: 'm-lvl-40', title: 'Skill Builder', description: 'Reach Level 40.', category: 'XP', icon: 'Award', targetValue: 40, xpReward: 1750, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'diamond' },
+  { id: 'm-lvl-45', title: 'Knowledge Collector', description: 'Reach Level 45.', category: 'XP', icon: 'Trophy', targetValue: 45, xpReward: 2000, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'diamond' },
   { id: 'm-lvl-50', title: 'Master', description: 'Reach Level 50.', category: 'XP', icon: 'ChevronsUp', targetValue: 50, xpReward: 2500, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'diamond' },
+  { id: 'm-lvl-55', title: 'Beyond Halfway', description: 'Reach Level 55.', category: 'XP', icon: 'Trophy', targetValue: 55, xpReward: 2750, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-60', title: 'Elite Learner', description: 'Reach Level 60.', category: 'XP', icon: 'Trophy', targetValue: 60, xpReward: 3000, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-65', title: 'Dedicated Mind', description: 'Reach Level 65.', category: 'XP', icon: 'Trophy', targetValue: 65, xpReward: 3250, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-70', title: 'Knowledge Machine', description: 'Reach Level 70.', category: 'XP', icon: 'Star', targetValue: 70, xpReward: 3500, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-75', title: 'Three Quarters', description: 'Reach Level 75.', category: 'XP', icon: 'Star', targetValue: 75, xpReward: 3750, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-80', title: 'Master in Progress', description: 'Reach Level 80.', category: 'XP', icon: 'Crown', targetValue: 80, xpReward: 4000, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-85', title: 'Nearing Greatness', description: 'Reach Level 85.', category: 'XP', icon: 'Crown', targetValue: 85, xpReward: 4250, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-90', title: 'Legendary Learner', description: 'Reach Level 90.', category: 'XP', icon: 'Crown', targetValue: 90, xpReward: 4500, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
+  { id: 'm-lvl-95', title: 'Almost There', description: 'Reach Level 95.', category: 'XP', icon: 'Crown', targetValue: 95, xpReward: 4750, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
   { id: 'm-lvl-100', title: 'Grandmaster', description: 'Reach Level 100.', category: 'XP', icon: 'Mountain', targetValue: 100, xpReward: 5000, image: '/assets/badges/badge_chroma_gold_streak.jpg', tier: 'mythic' },
 
   // Streaks
@@ -88,3 +104,4 @@ export const milestoneDefinitions: MilestoneDef[] = [
   { id: 'm-spec-2', title: 'All-Rounder', description: 'Master 10 skills and pass 10 coding challenges.', category: 'Special', icon: 'Hexagon', targetValue: 1, xpReward: 1000, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'diamond' },
   { id: 'm-spec-3', title: 'Perfectionist', description: 'Achieve 10 perfect scores and master 5 topics.', category: 'Special', icon: 'Medal', targetValue: 1, xpReward: 2000, image: '/assets/badges/badge_chroma_diamond_xp.jpg', tier: 'mythic' }
 ]
+
