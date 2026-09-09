@@ -28,7 +28,7 @@ export function Avatar({ src, alt, size = 48, isOnline, showStatus = false, styl
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          background: src ? 'var(--surface)' : defaultBg
+          background: src ? 'var(--bg-surface)' : defaultBg
         }}
       >
         {src ? (
@@ -49,7 +49,7 @@ export function Avatar({ src, alt, size = 48, isOnline, showStatus = false, styl
             height: typeof size === 'number' ? `${Math.max(12, size * 0.28)}px` : '14px', 
             background: isOnline ? '#23a559' : '#80848e', // Discord online green or offline gray
             borderRadius: '50%', 
-            border: '2px solid var(--surface-sunken)', 
+            border: '2px solid var(--bg-surface-sunken)', 
             zIndex: 10 
           }} 
           title={isOnline ? "Online" : "Offline"} 
@@ -58,3 +58,4 @@ export function Avatar({ src, alt, size = 48, isOnline, showStatus = false, styl
     </div>
   )
 }
+

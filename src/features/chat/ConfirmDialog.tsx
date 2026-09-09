@@ -23,7 +23,7 @@ export function ConfirmDialog({
       style={{ position: 'fixed', inset: 0, zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(5px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
     >
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px rgba(255,255,255,0.8)', margin: '1rem' }}>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: '16px', width: '100%', maxWidth: '400px', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px rgba(0,0,0,0.3)', margin: '1rem' }}>
         <h3 style={{ margin: '0 0 12px 0', color: '#fff', fontSize: '1.2rem' }}>{title}</h3>
         <p style={{ margin: '0 0 24px 0', color: '#9A958C', fontSize: '0.95rem', lineHeight: 1.5 }}>{message}</p>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
@@ -39,4 +39,5 @@ export function ConfirmDialog({
     document.body
   )
 }
+
 

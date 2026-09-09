@@ -63,7 +63,7 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
           {/* Operative Stats */}
           <div>
             <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 700 }}>Operative Stats</h4>
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', background: 'var(--surface-sunken)', padding: '1rem 1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', background: 'var(--bg-surface-sunken)', padding: '1rem 1.5rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ fontSize: '0.85rem', color: '#aaa' }}>Level</span>
                 <strong style={{ fontSize: '1.25rem', color: 'var(--primary)' }}>{profile.level || 1}</strong>
@@ -75,7 +75,7 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
           {/* Bio */}
           <div>
             <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 700 }}>Bio</h4>
-            <div style={{ background: 'var(--surface-sunken)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            <div style={{ background: 'var(--bg-surface-sunken)', padding: '1.25rem', borderRadius: '12px', border: '1px solid var(--border)' }}>
               {profile.bio ? (
                 <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.6, color: '#ddd', whiteSpace: 'pre-wrap' }}>{profile.bio}</p>
               ) : (
@@ -129,22 +129,22 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
               <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-main)', fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 700 }}>Links</h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {profile.github && (
-                    <a href={sanitizeUrl(profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <a href={sanitizeUrl(profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                       <Code size={16} /> GitHub
                     </a>
                   )}
                   {profile.linkedin && (
-                    <a href={sanitizeUrl(profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <a href={sanitizeUrl(profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                       <Globe size={16} /> LinkedIn
                     </a>
                   )}
                   {profile.portfolio && (
-                    <a href={sanitizeUrl(profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <a href={sanitizeUrl(profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                       <Link size={16} /> Portfolio
                     </a>
                   )}
                   {profile.contactPublic && profile.contact && (
-                    <a href={sanitizeUrl(`mailto:${profile.contact}`)} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)', width: 'max-content' }}>
+                    <a href={sanitizeUrl(`mailto:${profile.contact}`)} className="chip" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)', width: 'max-content' }}>
                     <Mail size={14} /> Email
                   </a>
                 )}
@@ -162,6 +162,7 @@ export function PublicProfileContent({ profile, isOnline, projects = [], skills 
     </div>
   )
 }
+
 
 
 

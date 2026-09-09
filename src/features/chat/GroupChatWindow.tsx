@@ -429,7 +429,7 @@ export function GroupChatWindow({
             maxHeight: '300px',
             overflowY: 'auto',
             zIndex: 10000,
-            boxShadow: '0 8px 24px rgba(255,255,255,0.8)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.25rem'
@@ -489,5 +489,6 @@ export function GroupChatWindow({
     </div>
   )
 }
+
 
 

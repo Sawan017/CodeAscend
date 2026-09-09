@@ -34,7 +34,7 @@ export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
   }
 
   return (
-    <div className="panel" style={{ background: 'var(--surface-sunken)', padding: '1.5rem', border: '1px solid var(--border-strong)' }}>
+    <div className="panel" style={{ background: 'var(--bg-surface-sunken)', padding: '1.5rem', border: '1px solid var(--border-strong)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1rem' }}>
         <div>
           <p className="eyebrow">CURRENT LEVEL</p>
@@ -85,3 +85,4 @@ export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
     </div>
   )
 }
+

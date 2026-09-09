@@ -165,7 +165,7 @@ export function PublicProfileViewer({
           style={{ 
             width: '600px', 
             maxWidth: '100%', 
-            background: 'var(--surface)', 
+            background: 'var(--bg-surface)', 
             borderRadius: '16px', 
             overflow: 'hidden',
             position: 'relative',
@@ -199,7 +199,7 @@ export function PublicProfileViewer({
                   position: 'absolute',
                   top: '1rem',
                   right: '1rem',
-                  background: 'var(--surface-sunken)',
+                  background: 'var(--bg-surface-sunken)',
                   border: 'none',
                   borderRadius: '50%',
                   width: '32px',
@@ -274,7 +274,7 @@ export function PublicProfileViewer({
               <div style={{ padding: '0 1.5rem', position: 'relative' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div style={{ position: 'relative', marginTop: '-40px' }}>
-                    <div style={{ borderRadius: '50%', border: '6px solid var(--surface)', background: 'var(--surface)' }}>
+                    <div style={{ borderRadius: '50%', border: '6px solid var(--bg-surface)', background: 'var(--bg-surface)' }}>
                       <Avatar src={data.profile.avatar} alt={data.profile.displayName} size={92} isOnline={isOnline} showStatus={true} />
                     </div>
                   </div>
@@ -396,7 +396,7 @@ export function PublicProfileViewer({
               <div className="drawer-content" style={{ overflowY: 'auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 
                 {/* Stats Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', background: 'var(--bg-surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '0.25rem' }}>
                       Lvl {data.progression ? calculateLevel(data.progression.xp) : (data.profile?.level || 1)}
@@ -419,7 +419,7 @@ export function PublicProfileViewer({
 
                 {/* About Section & Links */}
                 {(data.profile.bio || (data.profile.contactPublic && data.profile.contact) || data.profile.github || data.profile.linkedin || data.profile.portfolio) && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'var(--surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', background: 'var(--bg-surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
                     {data.profile.bio && (
                       <div>
                         <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 0 0.75rem 0', color: 'var(--text-muted)' }}>
@@ -433,22 +433,22 @@ export function PublicProfileViewer({
                     {((data.profile.contactPublic && data.profile.contact) || data.profile.github || data.profile.linkedin || data.profile.portfolio) && (
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: data.profile.bio ? '0.5rem' : '0' }}>
                         {data.profile.github && (
-                          <a href={sanitizeUrl(data.profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                          <a href={sanitizeUrl(data.profile.github)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                             <Code size={16} /> GitHub
                           </a>
                         )}
                         {data.profile.linkedin && (
-                          <a href={sanitizeUrl(data.profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                          <a href={sanitizeUrl(data.profile.linkedin)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                             <Globe size={16} /> LinkedIn
                           </a>
                         )}
                         {data.profile.portfolio && (
-                          <a href={sanitizeUrl(data.profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                          <a href={sanitizeUrl(data.profile.portfolio)} target="_blank" rel="noreferrer" className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                             <Link size={16} /> Portfolio
                           </a>
                         )}
                         {data.profile.contactPublic && data.profile.contact && (
-                          <a href={sanitizeUrl(`mailto:${data.profile.contact}`)} className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                          <a href={sanitizeUrl(`mailto:${data.profile.contact}`)} className="chip" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', background: 'var(--bg-surface)', border: '1px solid var(--border)' }}>
                             <Mail size={16} /> Email
                           </a>
                         )}
@@ -518,7 +518,7 @@ export function PublicProfileViewer({
                           {displayableSkills.map(s => {
                             const isMastered = s.progress >= 100 || s.status === 'MASTERED'
                             return (
-                              <span key={s.id} className="chip" style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--surface-sunken)', border: '1px solid var(--border)' }}>
+                              <span key={s.id} className="chip" style={{ display: 'inline-flex', alignItems: 'center', background: 'var(--bg-surface-sunken)', border: '1px solid var(--border)' }}>
                                 {s.name}
                                 {isMastered && <span style={{ marginLeft: '6px', background: '#10b981', color: '#000', padding: '1px 5px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 800 }}>M</span>}
                               </span>
@@ -547,7 +547,7 @@ export function PublicProfileViewer({
                       return (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                           {displayableProjects.slice(0, 3).map(p => (
-                            <div key={p.id} style={{ display: 'flex', alignItems: 'center', padding: '0.75rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                            <div key={p.id} style={{ display: 'flex', alignItems: 'center', padding: '0.75rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
                               <span style={{ fontWeight: 500, fontSize: '0.95rem' }}>{p.name}</span>
                             </div>
                           ))}
@@ -566,7 +566,7 @@ export function PublicProfileViewer({
                     </h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                       {data.goals.filter(g => g.status === 'COMPLETED').slice(0, 3).map(g => (
-                        <div key={g.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'var(--surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                        <div key={g.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)' }}>
                           <span style={{ fontWeight: 500 }}>{g.title}</span>
                           <span style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '0.85rem' }}>✓ Completed</span>
                         </div>
@@ -583,3 +583,4 @@ export function PublicProfileViewer({
     </AnimatePresence>
   )
 }
+

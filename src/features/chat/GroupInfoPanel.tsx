@@ -111,7 +111,7 @@ export function GroupInfoPanel({
 
   return (
     <div style={{ position: 'absolute', inset: 0, background: 'var(--ca-surface, #ffffff)', zIndex: 50, display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--surface-sunken)' }}>
+      <div style={{ padding: '20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-surface-sunken)' }}>
         <button className="icon-button" onClick={onClose} style={{ marginLeft: '-0.5rem', color: 'var(--ca-text-secondary, #5A5750)' }}>
           <ChevronLeft size={24} />
         </button>
@@ -287,5 +287,6 @@ export function GroupInfoPanel({
     </div>
   )
 }
+
 
 

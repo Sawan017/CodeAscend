@@ -61,7 +61,7 @@ export function UpdatePasswordUI({ onComplete }: { onComplete: () => void }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           style={{
-            background: 'var(--surface)',
+            background: 'var(--bg-surface)',
             padding: '3rem',
             borderRadius: '24px',
             width: '100%',

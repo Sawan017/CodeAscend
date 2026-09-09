@@ -81,7 +81,7 @@ function MenuItem({ label, icon, onClick, danger, disabled }: { label: string, i
     <button
       style={style}
       onClick={disabled ? undefined : onClick}
-      onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = 'var(--surface-sunken)' }}
+      onMouseEnter={e => { if (!disabled) e.currentTarget.style.background = 'var(--bg-surface-sunken)' }}
       onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
     >
       {icon}
@@ -360,7 +360,7 @@ export function DirectChatPanel({
         {/* Sidebar / Conversation List */}
         <div 
           className={`chat-sidebar ${activeFriendId ? 'mobile-hidden' : ''}`}
-          style={{ width: '320px', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: 'var(--surface-sunken)', flexShrink: 0 }}
+          style={{ width: '320px', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: 'var(--bg-surface-sunken)', flexShrink: 0 }}
         >
           <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border)' }}>
             <h4 style={{ margin: 0 }}>Conversations</h4>
@@ -383,7 +383,7 @@ export function DirectChatPanel({
                     alignItems: 'center', 
                     gap: '1rem', 
                     cursor: 'pointer',
-                    background: activeFriendId === conv.friend.userId ? 'var(--surface)' : 'transparent',
+                    background: activeFriendId === conv.friend.userId ? 'var(--bg-surface)' : 'transparent',
                     borderBottom: '1px solid var(--border)',
                     transition: 'background 0.2s'
                   }}
@@ -431,13 +431,13 @@ export function DirectChatPanel({
         {/* Main Panel (Chat Window or Empty State) */}
         <div 
           className={`chat-main ${!activeFriendId ? 'mobile-hidden' : ''}`} 
-          style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--surface)' }}
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--bg-surface)' }}
         >
           {activeFriendId && activeFriend ? (
             <>
               {/* Header */}
               {selectionMode ? (
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--surface-sunken)' }}>
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-surface-sunken)' }}>
                   <button className="icon-button" onClick={() => { setSelectionMode(false); setSelectedMessageIds(new Set()) }} style={{ marginRight: '-0.5rem' }}>
                     <X size={20} />
                   </button>
@@ -466,7 +466,7 @@ export function DirectChatPanel({
                   )}
                 </div>
               ) : (
-                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--surface-sunken)' }}>
+                <div style={{ padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-surface-sunken)' }}>
                   <button className="icon-button" onClick={() => onSetActiveFriendId(null)} style={{ marginRight: '-0.5rem' }}>
                     <ChevronLeft size={20} />
                   </button>
@@ -704,9 +704,9 @@ export function DirectChatPanel({
               </div>
 
               {/* Input Area */}
-              <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', background: 'var(--surface-sunken)' }}>
+              <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid var(--border)', background: 'var(--bg-surface-sunken)' }}>
                 {editingMessageId && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', padding: '0.5rem', background: 'var(--surface)', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', padding: '0.5rem', background: 'var(--bg-surface)', borderRadius: '0.5rem', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text)' }}>
                       <Edit2 size={14} />
                       <span style={{ fontSize: '0.85rem' }}>Editing message</span>
@@ -726,7 +726,7 @@ export function DirectChatPanel({
                     onChange={(e) => editingMessageId ? setEditDraft(e.target.value) : setDraft(e.target.value)}
                     placeholder={isBlocked ? "Unblock to send messages..." : "Type a message..."}
                     disabled={!!isBlocked}
-                    style={{ flex: 1, background: 'var(--surface)', border: '1px solid var(--border)', padding: '0.75rem 1rem', borderRadius: '2rem', color: 'var(--text-main)', opacity: isBlocked ? 0.5 : 1 }}
+                    style={{ flex: 1, background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '0.75rem 1rem', borderRadius: '2rem', color: 'var(--text-main)', opacity: isBlocked ? 0.5 : 1 }}
                   />
                   <button 
                     type="submit" 
@@ -854,5 +854,6 @@ export function DirectChatPanel({
     </div>
   )
 }
+
 
 

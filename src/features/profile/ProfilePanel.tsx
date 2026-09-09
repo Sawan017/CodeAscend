@@ -86,7 +86,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
                   fontSize: '0.9rem',
                   transition: 'background-color 0.2s'
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = 'var(--surface-sunken)'}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-surface-sunken)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'var(--ca-surface-alt, #f5f5f5)'}
               >
                 <Settings size={16} />
@@ -186,7 +186,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
                 {earnedAchievements.map((ach: any) => (
                   <div key={ach.id} style={{ 
                     padding: '8px 16px', 
-                    background: 'var(--surface-sunken)', 
+                    background: 'var(--bg-surface-sunken)', 
                     border: '1px solid var(--border)', 
                     borderRadius: '100px',
                     display: 'flex',
@@ -276,3 +276,4 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
     </div>
   );
 }
+
