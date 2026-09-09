@@ -1329,6 +1329,56 @@ const completeActiveSession = async () => {
     })
   }
 
+  const getAchievementData = (id: string) => {
+    const found = achievementState.find((a: any) => a.id === id);
+    if (found) return found;
+    
+    const milestones = evaluateDynamicMilestones(progression, skillState);
+    const m: any = milestones.find((x: any) => x.id === id);
+    if (m) {
+      return {
+        id: m.id,
+        title: m.title,
+        description: m.description,
+        unlockCondition: m.unlockCondition || m.description,
+        unlocked: m.isUnlocked,
+        dateUnlocked: m.dateUnlocked,
+        unlockedAt: m.dateUnlocked,
+        image: m.image,
+        icon: m.icon,
+        tier: m.tier,
+        category: m.category,
+        xpReward: m.xpReward
+      };
+    }
+    return { id, title: 'Unknown', description: 'Not found', unlocked: false };
+  };
+
+  const getBadgeData = (id: string) => {
+    const foundBadge = badgeState.find((b: any) => b.id === id);
+    if (foundBadge) return foundBadge;
+    
+    if (id.startsWith('badge-m-')) {
+      const milestoneId = id.replace('badge-m-', '');
+      const milestones = evaluateDynamicMilestones(progression, skillState);
+      const m: any = milestones.find((x: any) => x.id === milestoneId);
+      if (m) {
+        return {
+          id: id,
+          title: m.title,
+          description: m.description,
+          requirement: m.unlockCondition || m.description,
+          earned: m.isUnlocked,
+          dateEarned: m.dateUnlocked,
+          image: m.image,
+          tier: m.tier,
+          rarity: m.tier === 'mythic' ? 'Legendary' : m.tier === 'diamond' ? 'Epic' : m.tier === 'gold' ? 'Rare' : m.tier === 'silver' ? 'Uncommon' : 'Common'
+        };
+      }
+    }
+    return { id, title: 'Unknown Badge', description: 'Badge not found.', rarity: 'Common', earned: false, requirement: 'Unknown' };
+  };
+
   const goBack = () => {
     window.history.back()
     playSoundEffect('click', settings.soundEffects)
@@ -1471,8 +1521,8 @@ const completeActiveSession = async () => {
                     />}
 
                     {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
-                    {route.view === 'achievement_detail' && <AchievementDetail achievement={achievementState.find(a => a.id === route.id)!} onBack={goBack} />}
-                    {route.view === 'badge_detail' && <BadgeDetail badge={badgeState.find(b => b.id === route.id)!} onBack={goBack} />}
+                    {route.view === 'achievement_detail' && <AchievementDetail achievement={getAchievementData(route.id) as any} onBack={goBack} />}
+                    {route.view === 'badge_detail' && <BadgeDetail badge={getBadgeData(route.id) as any} onBack={goBack} />}
                     {route.view === 'chat' && (
                       <ChatPanel 
                         activeUserId={user?.id || ''} 
@@ -1953,6 +2003,9 @@ const completeActiveSession = async () => {
 }
 
 export default App
+
+
+
 
 
 
