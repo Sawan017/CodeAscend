@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { ArrowLeft, MessageSquare, Plus, Paperclip, Send, CheckCircle } from 'lucide-react'
+import { ArrowLeft, MessageSquare, Plus, Paperclip, Send, CheckCircle, Loader2, Check } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../../lib/supabase'
 import ReactMarkdown from 'react-markdown'
 import { formatAppDateTime } from '../../lib/dateFormatting'
@@ -15,6 +16,9 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
   const [sending, setSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [confirmModal, setConfirmModal] = useState<{isOpen: boolean, type: 'close' | 'delete' | null}>({isOpen: false, type: null})
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [successFeedback, setSuccessFeedback] = useState<string | null>(null)
+  const [isExiting, setIsExiting] = useState(false)
 
   useEffect(() => {
     loadTickets()
@@ -103,25 +107,36 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
   
   const executeDeleteTicket = async () => {
     if (!selectedTicket || selectedTicket.status !== 'closed') return;
+    setIsProcessing(true);
     
     // Explicitly enforce status on the client side query too, though RLS protects it
     const { error } = await supabase!.from('support_tickets').delete().eq('id', selectedTicket.id).eq('status', 'closed');
 
     if (error) {
       console.error("Failed to delete ticket:", error);
-      console.error("Error deleting ticket: " + error.message);
+      setIsProcessing(false);
       return;
     }
 
-    // Removed window.alert
-    setSelectedTicket(null);
-    loadTickets();
-    setConfirmModal({isOpen: false, type: null});
+    setSuccessFeedback('Ticket deleted');
+    
+    setTimeout(() => {
+      setIsExiting(true);
+      setTimeout(() => {
+        setSelectedTicket(null);
+        setConfirmModal({isOpen: false, type: null});
+        setIsProcessing(false);
+        setSuccessFeedback(null);
+        setIsExiting(false);
+        loadTickets();
+      }, 300);
+    }, 1000);
   }
 
   
   const executeEndTicket = async () => {
     if (!selectedTicket) return;
+    setIsProcessing(true);
     
     // Insert system message for history BEFORE closing, so RLS allows the insert
     await supabase!.from('support_messages').insert({
@@ -139,12 +154,19 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
 
     if (error) {
       console.error("Failed to close ticket:", error);
+      setIsProcessing(false);
       return;
     }
 
-    loadTickets();
-    setSelectedTicket({ ...selectedTicket, status: 'closed' });
-    setConfirmModal({isOpen: false, type: null});
+    setSuccessFeedback('Ticket ended');
+    
+    setTimeout(() => {
+      setConfirmModal({isOpen: false, type: null});
+      setIsProcessing(false);
+      setSuccessFeedback(null);
+      setSelectedTicket((prev: any) => ({...prev, status: 'closed'}));
+      loadTickets();
+    }, 1000);
   }
 
   const handleConfirmResolved = async (resolved: boolean) => {
@@ -187,7 +209,13 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
 
   if (selectedTicket) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <AnimatePresence>
+      <motion.div 
+        initial={{ opacity: 1, scale: 1, y: 0 }}
+        animate={{ opacity: isExiting ? 0 : 1, scale: isExiting ? 0.95 : 1, y: isExiting ? -10 : 0 }}
+        transition={{ duration: 0.25 }}
+        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+      >
         <div style={{ padding: '1rem', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '1rem', background: 'var(--bg-panel)' }}>
           <button onClick={() => setSelectedTicket(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem' }}>
             <ArrowLeft size={20} />
@@ -327,21 +355,49 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
               <button 
                 onClick={() => setConfirmModal({isOpen: false, type: null})}
-                style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-main)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}
+                disabled={isProcessing}
+                style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-main)', padding: '0.5rem 1rem', borderRadius: '8px', cursor: isProcessing ? 'not-allowed' : 'pointer', opacity: isProcessing ? 0.5 : 1 }}
               >
                 Cancel
               </button>
               <button 
                 onClick={confirmModal.type === 'close' ? executeEndTicket : executeDeleteTicket}
-                style={{ background: '#ef444420', border: '1px solid #ef4444', color: '#ef4444', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}
+                disabled={isProcessing || successFeedback !== null}
+                style={{ 
+                  background: successFeedback ? '#10b98120' : '#ef444420', 
+                  border: `1px solid ${successFeedback ? '#10b981' : '#ef4444'}`, 
+                  color: successFeedback ? '#10b981' : '#ef4444', 
+                  padding: '0.5rem 1rem', 
+                  borderRadius: '8px', 
+                  cursor: (isProcessing || successFeedback !== null) ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  minWidth: '160px',
+                  justifyContent: 'center',
+                  opacity: (isProcessing && !successFeedback) ? 0.7 : 1,
+                  transition: 'all 0.2s'
+                }}
               >
-                {confirmModal.type === 'close' ? 'End & Close Ticket' : 'Delete Ticket'}
+                {successFeedback ? (
+                  <>
+                    <Check size={16} /> {successFeedback}
+                  </>
+                ) : isProcessing ? (
+                  <>
+                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} style={{ display: 'flex' }}>
+                      <Loader2 size={16} />
+                    </motion.div>
+                    {confirmModal.type === 'close' ? 'Ending...' : 'Deleting...'}
+                  </>
+                ) : confirmModal.type === 'close' ? 'End & Close Ticket' : 'Delete Ticket'}
               </button>
             </div>
           </div>
         </div>
       )}
-      </div>
+      </motion.div>
+      </AnimatePresence>
     )
   }
 
