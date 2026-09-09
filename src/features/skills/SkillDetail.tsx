@@ -403,7 +403,7 @@ export function SkillDetail({
                 You already have an active learning session. Complete or cancel the current task before starting another.
               </p>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button onClick={() => setShowBlockDialog(false)} style={{ padding: '14px 28px', background: '#0F172A', color: '#fff', borderRadius: '16px', border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: '1.05rem', boxShadow: '0 8px 16px -4px rgba(15,23,42,0.2)' }}>
+                <button onClick={() => setShowBlockDialog(false)} style={{ padding: '14px 28px', background: 'var(--primary)', color: '#fff', borderRadius: '16px', border: 'none', cursor: 'pointer', fontWeight: 800, fontSize: '1.05rem', boxShadow: '0 8px 16px -4px rgba(15,23,42,0.2)' }}>
                   Understood
                 </button>
               </div>
@@ -415,4 +415,5 @@ export function SkillDetail({
     </motion.div>
   )
 }
+
 

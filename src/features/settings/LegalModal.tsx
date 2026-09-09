@@ -70,7 +70,7 @@ function parseLegalText(markdown: string) {
 const MarkdownComponents = {
   h1: ({node, ...props}: any) => <h1 style={{ fontSize: '1.75rem', color: 'var(--text-main)', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
   h2: ({node, ...props}: any) => <h2 style={{ fontSize: '1.35rem', color: 'var(--text-main)', marginTop: '2rem', marginBottom: '1rem', fontWeight: 700 }} {...props} />,
-  h3: ({node, ...props}: any) => <h3 style={{ fontSize: '1.15rem', color: '#1e293b', marginTop: '1.5rem', marginBottom: '0.75rem', fontWeight: 600 }} {...props} />,
+  h3: ({node, ...props}: any) => <h3 style={{ fontSize: '1.15rem', color: 'var(--text-main)', marginTop: '1.5rem', marginBottom: '0.75rem', fontWeight: 600 }} {...props} />,
   p: ({node, ...props}: any) => <p style={{ fontSize: '0.95rem', color: '#172033', lineHeight: 1.7, margin: '0 0 12px 0' }} {...props} />,
   ul: ({node, ...props}: any) => <ul style={{ margin: '0 0 12px 0', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }} {...props} />,
   ol: ({node, ...props}: any) => <ol style={{ margin: '0 0 12px 0', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '8px' }} {...props} />,
@@ -209,3 +209,4 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
     </AnimatePresence>
   );
 }
+

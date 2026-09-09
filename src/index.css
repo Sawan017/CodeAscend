@@ -35,7 +35,7 @@
   
   --glass: rgba(10, 13, 20, 0.7);
   --glass-strong: rgba(10, 13, 20, 0.9);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(129, 140, 248, 0.08);
 
   --glass-toast: rgba(10, 13, 20, 0.95);
   
@@ -156,7 +156,7 @@ h4 { font-size: 1rem; }
   background: var(--text-main);
   color: var(--bg-base);
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(129, 140, 248, 0.15);
   border: 1px solid transparent;
 }
 
@@ -1404,7 +1404,7 @@ h1, h2, h3, h4 { color: var(--ca-text); }
 [data-theme="dark"], .app-shell.dark {
   /* --bg-main: gradient above */ /* Deep charcoal with blue/green undertone */
   /* --bg-card: gradient above */ /* Dark mode card */
-  --border-color: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(129, 140, 248, 0.08);
   --text-primary: #F3F4F6;
   --text-secondary: #9CA3AF;
   
@@ -1815,25 +1815,25 @@ html[data-theme="light"], body[data-theme="light"], [data-theme="light"], .app-s
 
 /* DARK MODE */
 html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shell.dark {
-  --ca-bg: #0B0D12;
+  --ca-bg: #090A10;
   --bg-main: 
-    radial-gradient(ellipse at 50% 0%, rgba(25, 30, 40, 0.15) 0%, transparent 60%),
-    linear-gradient(180deg, #0B0D12 0%, #080A0E 100%);
-  --bg-base: #0B0D12;
+    radial-gradient(ellipse at 50% 0%, rgba(76, 29, 149, 0.08) 0%, rgba(30, 58, 138, 0.05) 50%, transparent 80%),
+    linear-gradient(180deg, #0A0C16 0%, #06070B 100%);
+  --bg-base: #090A10;
   
-  --ca-surface: #11141B;
-  --bg-card: #171B24;
-  --bg-panel: #171B24;
-  --bg-surface: #1C202B;
+  --ca-surface: #0D101B;
+  --bg-card: #121524;
+  --bg-panel: #121524;
+  --bg-surface: #171A2E;
   
-  --ca-surface-alt: #171B24;
-  --bg-surface-sunken: #12151C;
+  --ca-surface-alt: #121524;
+  --bg-surface-sunken: #0A0C14;
   
-  --ca-border: rgba(255, 255, 255, 0.05);
-  --border-color: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.05);
-  --ca-border-strong: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.1);
+  --ca-border: rgba(129, 140, 248, 0.08);
+  --border-color: rgba(129, 140, 248, 0.08);
+  --border: rgba(129, 140, 248, 0.08);
+  --ca-border-strong: rgba(129, 140, 248, 0.15);
+  --border-strong: rgba(129, 140, 248, 0.15);
   
   --ca-text: #F3F4F6;
   --text-main: #F3F4F6;
@@ -2092,9 +2092,9 @@ html[data-theme="light"], body[data-theme="light"], [data-theme="light"], .app-s
 html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shell.dark {
   /* Using the opaque premium dark background from the main theme */
   --settings-main: var(--bg-main); 
-  --settings-sidebar: #10141D; /* Opaque layered dark surface */
+  --settings-sidebar: #0D101B; /* Opaque layered dark surface */
   --settings-content: var(--bg-main);
-  --settings-card: #171D2B; /* Opaque card surface */
+  --settings-card: #121524; /* Opaque card surface */
 }
 
 /* Override drawer cards when inside settings */
@@ -2129,7 +2129,7 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 [data-theme="dark"] .dashboard-item,
 [data-theme="dark"] .dashboard-grid > div > div,
 [data-theme="dark"] [style*="var(--bg-surface)"] {
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(129, 140, 248, 0.08) !important;
   background-image: none !important;
 }
 
@@ -2140,7 +2140,7 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 [data-theme="dark"] button[style*="background: '#1677E8'"],
 [data-theme="dark"] button[style*="background: '#3B82F6'"] {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(129, 140, 248, 0.08) !important;
 }
 
 [data-theme="dark"] .rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div {
@@ -2149,11 +2149,14 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 
 
 [data-theme="dark"] .premium-hero {
-  background: linear-gradient(135deg, var(--bg-surface) 0%, #171B24 100%) !important;
+  background: linear-gradient(135deg, #11182B 0%, #151433 50%, #1A112A 100%) !important;
   border: 1px solid var(--border) !important;
   box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5) !important;
 }
 [data-theme="dark"] .premium-hero > div:first-child {
-  background: radial-gradient(circle, rgba(99,102,241,0.03) 0%, transparent 70%) !important;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 40%, transparent 70%) !important;
 }
+
+
+
 

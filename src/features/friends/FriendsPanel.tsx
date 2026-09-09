@@ -204,7 +204,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
             <button 
               onClick={handleSearch}
               disabled={isSearching || !searchQuery.trim()}
-              style={{ background: '#1E293B', color: '#fff', border: 'none', padding: '0 24px', borderRadius: '12px', fontWeight: 800, cursor: isSearching ? 'wait' : 'pointer', transition: 'all 0.2s', opacity: (isSearching || !searchQuery.trim()) ? 0.7 : 1 }}
+              style={{ background: 'var(--primary)', color: '#fff', border: 'none', padding: '0 24px', borderRadius: '12px', fontWeight: 800, cursor: isSearching ? 'wait' : 'pointer', transition: 'all 0.2s', opacity: (isSearching || !searchQuery.trim()) ? 0.7 : 1 }}
             >
               {isSearching ? 'Searching...' : 'Search'}
             </button>
@@ -328,5 +328,6 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
     </div>
   )
 }
+
 
 
