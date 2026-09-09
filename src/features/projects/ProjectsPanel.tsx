@@ -66,7 +66,7 @@ export const ProjectsPanel = ({
                   disabled={isSyncingGithub}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '8px',
-                    background: isSyncingGithub ? '#E2E8F0' : '#1E293B',
+                    background: isSyncingGithub ? '#E2E8F0' : 'var(--bg-surface)',
                     color: isSyncingGithub ? '#94A3B8' : '#fff',
                     border: 'none', borderRadius: '12px', padding: '12px 20px',
                     fontSize: '0.95rem', fontWeight: 700, cursor: isSyncingGithub ? 'not-allowed' : 'pointer',
@@ -83,7 +83,7 @@ export const ProjectsPanel = ({
                 onClick={onConnectGithub}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '8px',
-                  background: '#1E293B',
+                  background: 'var(--bg-surface)',
                   color: '#fff',
                   border: 'none', borderRadius: '12px', padding: '12px 20px',
                   fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer',
@@ -190,5 +190,6 @@ export const ProjectsPanel = ({
     </div>
   );
 };
+
 
 

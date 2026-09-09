@@ -193,7 +193,7 @@ export function SkillsPanel({
       <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', padding: '40px 48px', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '48px' }}>
         
         {/* --- HERO / HEADER --- */}
-        <div style={{ 
+        <div className="premium-hero" style={{ 
           background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(139,92,246,0.06) 100%)', 
           borderRadius: '32px', padding: '56px 48px', position: 'relative', overflow: 'hidden',
           border: '1px solid rgba(99,102,241,0.15)',
@@ -638,4 +638,5 @@ let statusBg = 'var(--bg-surface-sunken)';
     </div>
   );
 }
+
 
