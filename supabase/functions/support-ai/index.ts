@@ -134,9 +134,9 @@ FORMATTING RULES (CRITICAL):
 
 ONLY output valid JSON in this exact format:
 {
-  "reply": "Your formatted markdown response to the user",
-  "escalate": boolean,
-  "resolved": boolean
+  "response": "The helpful response to the user",
+  "needsEscalation": false,
+  "escalationReason": null
 }`;
 
     const sanitizePII = (text: string | undefined): string => {
@@ -214,14 +214,14 @@ ONLY output valid JSON in this exact format:
       jsonContent = JSON.parse(content);
     } catch (e) {
       log("10b. JSON Parse Error: " + e.message);
-      jsonContent = { reply: "I'm having trouble processing that. Could you please rephrase?", escalate: false };
+      jsonContent = { response: "I'm having trouble processing that. Could you please rephrase?", needsEscalation: false };
     }
 
-    log(`11. Inserting AI message... reply: ${jsonContent.reply?.substring(0,20)}...`);
+    log(`11. Inserting AI message... reply: ${jsonContent.response?.substring(0,20)}...`);
     const { error: insertErr } = await supabase.from('support_messages').insert({
       ticket_id: ticketId,
       sender_type: 'ai',
-      message: jsonContent.reply || "I am currently offline."
+      message: jsonContent.response || jsonContent.reply || "I am currently offline."
     });
 
     if (insertErr) {
@@ -231,13 +231,13 @@ ONLY output valid JSON in this exact format:
 
     log("12. Inserted AI message successfully.");
 
-    if (jsonContent.escalate) {
-      log("13. Escalating ticket...");
+    if (jsonContent.needsEscalation || jsonContent.escalate) {
+      log(`13. Escalating ticket... Reason: ${jsonContent.escalationReason || 'None given'}`);
       await supabase.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', ticketId);
       await supabase.from('support_messages').insert({
         ticket_id: ticketId,
         sender_type: 'system',
-        message: 'Ticket has been escalated. An Arinova support official will take over when available.'
+        message: `Ticket has been escalated. An Arinova support official will take over when available.\n\nReason: ${jsonContent.escalationReason || 'Automatic AI escalation'}`
       });
     } else if (jsonContent.resolved) {
       log("13. Resolving ticket...");
