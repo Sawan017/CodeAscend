@@ -81,9 +81,7 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
       sender_id: userId,
       sender_type: 'user',
       message: msg
-    })
-
-    // If still in AI mode, trigger AI
+    })    // If still in AI mode, trigger AI
     if (selectedTicket.status === 'ai_assisting') {
       try {
         const { error: invokeErr } = await supabase!.functions.invoke('support-ai', {
@@ -91,11 +89,19 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
         });
         if (invokeErr) {
           console.error("AI function returned error:", invokeErr);
-          // DO NOT automatically escalate on API error
-          // await supabase!.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', selectedTicket.id);
+          await supabase!.from('support_messages').insert({
+            ticket_id: selectedTicket.id,
+            sender_type: 'system',
+            message: "Unable to get a response. Please try again."
+          });
         }
       } catch (e) {
         console.error("AI function error:", e);
+        await supabase!.from('support_messages').insert({
+          ticket_id: selectedTicket.id,
+          sender_type: 'system',
+          message: "Unable to get a response. Please try again."
+        });
       }
     }
     
@@ -464,5 +470,6 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     </div>
   )
 }
+
 
 
