@@ -1407,7 +1407,7 @@ const completeActiveSession = async () => {
             </button>
           </div>
         ) : loading || (user && !dataLoaded) ? (
-          <ArinovaLoader key="loading" />
+          <ArinovaLoader key="loading" theme={settings.theme} />
         ) : isRecoveringPassword ? (
           <UpdatePasswordUI onComplete={() => setIsRecoveringPassword(false)} />
         ) : (!entered && route.view !== 'login') ? (
@@ -1997,6 +1997,7 @@ const completeActiveSession = async () => {
 }
 
 export default App
+
 
 
 
