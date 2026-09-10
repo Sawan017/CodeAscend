@@ -4,7 +4,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
   const [loadingText, setLoadingText] = useState('Connecting to ARINOVA...');
   
-  const isDark = theme === 'dark' || theme === 'midnight' || theme === 'aurora';
+  // Bug 2 Fix: Accurately determine if the theme is dark, even for 'system'
+  const [isSystemDark, setIsSystemDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return true;
+  });
+
+  useEffect(() => {
+    if (theme !== 'system') return;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsSystemDark(media.matches);
+    
+    const listener = (e: MediaQueryListEvent) => setIsSystemDark(e.matches);
+    media.addEventListener('change', listener);
+    return () => media.removeEventListener('change', listener);
+  }, [theme]);
+
+  const isDark = theme === 'dark' || theme === 'midnight' || theme === 'aurora' || (theme === 'system' && isSystemDark);
 
   // --- Theme Variables ---
   const bgMain = isDark ? '#070810' : '#F8F8FC';
@@ -159,13 +177,13 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
           </AnimatePresence>
         </div>
 
-        {/* Elegant Minimal Progress Bar */}
+        {/* Bug 1 Fix: Animated loader reaches end of track */}
         <div style={{ width: '200px', height: '3px', background: progressTrack, borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
           <motion.div
-            initial={{ x: '-100%' }}
-            animate={{ x: '100%' }}
-            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-            style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: progressFill, borderRadius: '3px' }}
+            initial={{ left: '-40%' }}
+            animate={{ left: '100%' }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+            style={{ position: 'absolute', top: 0, width: '40%', height: '100%', background: progressFill, borderRadius: '3px' }}
           />
         </div>
 
