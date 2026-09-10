@@ -84,24 +84,31 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     })    // If still in AI mode, trigger AI
     if (selectedTicket.status === 'ai_assisting') {
       try {
-        const { error: invokeErr } = await supabase!.functions.invoke('support-ai', {
+        const { data, error: invokeErr } = await supabase!.functions.invoke('support-ai', {
           body: { ticketId: selectedTicket.id, message: msg, isNew: false }
         });
+        
+        console.log("COMPLETE invoke response:", { data, invokeErr });
+
         if (invokeErr) {
           console.error("AI function returned error:", invokeErr);
-          await supabase!.from('support_messages').insert({
-            ticket_id: selectedTicket.id,
-            sender_type: 'system',
-            message: "Unable to get a response. Please try again."
+        } else if (data && data.answer) {
+          setMessages(prev => {
+            const exists = prev.some(m => m.message === data.answer && m.sender_type === 'ai');
+            if (exists) return prev;
+            return [...prev, {
+              id: 'temp-' + Date.now(),
+              ticket_id: selectedTicket.id,
+              sender_id: 'ai-system',
+              sender_type: 'ai',
+              message: data.answer,
+              created_at: new Date().toISOString()
+            }];
           });
+          setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
         }
       } catch (e) {
         console.error("AI function error:", e);
-        await supabase!.from('support_messages').insert({
-          ticket_id: selectedTicket.id,
-          sender_type: 'system',
-          message: "Unable to get a response. Please try again."
-        });
       }
     }
     
