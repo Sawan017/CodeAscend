@@ -43,7 +43,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
     }
 
-    log("3.5 Checking Rate Limit...");
+    log("3. Checking Rate Limit...");
     const { data: rlData, error: rlError } = await supabaseAuth.rpc('consume_edge_rate_limit', {
       p_action: 'support_ai',
       p_limit: 10,
@@ -71,112 +71,80 @@ serve(async (req) => {
       .single();
 
     if (ticketErr) {
-       log("Ticket Fetch Error: " + JSON.stringify(ticketErr));
        throw new Error("Ticket fetch failed: " + ticketErr.message);
     }
     if (!ticket) {
-      log("Ticket not found");
       return new Response(JSON.stringify({ error: 'Ticket not found' }), { status: 404, headers: corsHeaders });
     }
 
-    if (ticket.user_id !== user.id) {
-       const { data: official } = await supabase.from('support_officials').select('*').eq('user_id', user.id).single();
-       if (!official) {
-          return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: corsHeaders });
-       }
-    }
-
-    log(`5. Ticket Fetched: ${ticket.subject}`);
-    if (ticket.status === 'closed') {
-      log("Ticket is closed, aborting AI.");
-      return new Response(JSON.stringify({ error: 'Ticket is closed' }), { status: 400, headers: corsHeaders });
-    }
-
+    log("5. Fetching Messages...");
     const { data: messages, error: msgErr } = await supabase
       .from('support_messages')
       .select('*')
       .eq('ticket_id', ticketId)
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: true })
+      .limit(30);
 
     if (msgErr) {
-       log("Messages Fetch Error: " + JSON.stringify(msgErr));
        throw new Error("Messages fetch failed: " + msgErr.message);
     }
     
-    log(`6. Messages Fetched: count=${messages?.length}`);
-
     const groqApiKey = Deno.env.get('GROQ_API_KEY');
-    log(`7. GROQ_API_KEY present: ${!!groqApiKey}`);
     if (!groqApiKey) {
       throw new Error("Missing GROQ_API_KEY in environment");
     }
 
-    const systemPrompt = `You are Arinova's AI Support Assistant.
-You provide proactive, intelligent, and professional tier-1 technical support for the ARINOVA platform.
+    const systemPrompt = `You are Arinova's AI Support Consultant.
+You provide intelligent, natural, and professional tier-1 technical support for the ARINOVA platform.
 
 CRITICAL SUPPORT FLOW & RULES:
-1. Analyze & Solve First: Carefully analyze the user's problem and actively attempt to solve it using the information and context available. Provide clear troubleshooting steps and attempt multiple reasonable solutions.
-2. Ask for Context: Ask for necessary details ONLY if required to solve the issue.
-3. Escalation is a LAST RESORT: NEVER use "connecting you to officials" as a default response, shortcut, or first response. Do NOT escalate unless you have genuinely tried to troubleshoot, the issue requires official backend/human action, or the user explicitly requests a human.
-4. Explain Escalations: If you must escalate, clearly explain in your reply that you attempted to help but the issue requires official assistance. Output escalate: true in the JSON.
-5. Identity: Always act as an AI. NEVER pretend to be a human official.
+1. Be Conversational: If the user says "hello", "hlo", "i want to talk", etc., respond naturally. Greet them and ask how you can help. DO NOT escalate.
+2. Handle Ambiguity: If the user says something ambiguous like "do" or "help", DO NOT escalate. Ask them to clarify what they need help with.
+3. Analyze & Solve First: Understand the problem from the conversation context. Actively attempt to solve it. Provide clear troubleshooting steps.
+4. Escalation is a LAST RESORT: NEVER escalate or use "connecting you to officials" as a default response. Escalate ONLY if:
+   - The issue genuinely requires account-level human intervention (e.g., refunds, backend bugs).
+   - The user explicitly demands a human AFTER you have tried to help.
+5. Identity: Act as an AI consultant. Do not pretend to be human.
 
-FORMATTING RULES (CRITICAL):
-- Use Markdown to structure your responses professionally.
-- Use numbered lists for step-by-step actions/troubleshooting.
-- Use bullet points for listing options, causes, or requirements.
-- Use headings (###) when a response contains multiple logical sections (e.g., "What happened", "What to do", "If the problem continues").
-- Bold important terms and actions.
-- Use inline code (\`\`) for technical values, error codes, and filenames.
-- Do NOT turn every single sentence into a separate paragraph. Group related sentences into a short paragraph.
-- Answer the user's question directly before giving additional explanation.
-- Keep responses concise and avoid giant walls of text.
+FORMATTING RULES:
+- Use Markdown.
+- Use numbered lists for steps.
+- Be concise.
 
-ONLY output valid JSON in this exact format:
+ONLY output valid JSON in this exact format (do not include markdown \`\`\`json wrappers):
 {
-  "response": "The helpful response to the user",
-  "needsEscalation": false,
-  "escalationReason": null
+  "answer": "Your natural response to the user",
+  "should_escalate": false,
+  "reason": null
 }`;
 
-    const sanitizePII = (text: string | undefined): string => {
+    const sanitizePII = (text) => {
       if (!text) return "";
       let s = text;
-      // Emails
       s = s.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]');
-      // Cards
       s = s.replace(/(?:\d[ -]*?){13,19}/g, (match) => {
         const digits = match.replace(/\D/g, '');
         return (digits.length >= 13 && digits.length <= 19) ? '[REDACTED_CARD]' : match;
       });
-      // Phones
       s = s.replace(/(?:(?:\+|00)\d{1,3}[\s-]?)?(?:\(?\d{2,4}\)?[\s-]?)?\d{3,4}[\s-]?\d{3,4}/g, (match) => {
         const digits = match.replace(/\D/g, '');
         return (digits.length >= 7 && digits.length <= 15) ? '[REDACTED_PHONE]' : match;
       });
-      // Identity Numbers (Aadhaar, PAN, SSN pattern approximation)
-      s = s.replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '[REDACTED_ID]');
-      s = s.replace(/\b[A-Z]{5}\d{4}[A-Z]\b/gi, '[REDACTED_ID]');
-      // Secrets/Tokens
-      s = s.replace(/Bearer\s+[A-Za-z0-9\-\._~+\/]+=*/gi, 'Bearer [REDACTED_TOKEN]');
-      s = s.replace(/\b(sk_[a-zA-Z0-9_]{10,})\b/g, '[REDACTED_SECRET]');
-      s = s.replace(/(password|passwd|pwd|secret|token)\s*[:=]\s*(\S+)/gi, '$1: [REDACTED_SECRET]');
       return s;
     };
 
-    const conversationContext = messages?.map((m: any) => {
+    const conversationContext = messages?.map((m) => {
       const role = m.sender_type === 'ai' ? 'assistant' : (m.sender_type === 'user' ? 'user' : 'assistant');
       return { role, content: sanitizePII(m.message) };
     }) || [];
 
-    // Always include the original ticket issue as the starting context
-    conversationContext.unshift({ 
-      role: 'user', 
-      content: sanitizePII(`[TICKET INITIALIZED] Category: ${ticket.category}. Subject: ${ticket.subject}. Description: ${ticket.description}`)
-    });
-
-    // The new message is already in the DB, so it's in the messages array. 
-    // No need to manually push `message` again, which caused duplication.
+    // Provide ticket context at the beginning
+    if (ticket) {
+      conversationContext.unshift({ 
+        role: 'user', 
+        content: sanitizePII(`[SYSTEM: TICKET CREATED] Category: ${ticket.category}. Subject: ${ticket.subject}. Description: ${ticket.description}`)
+      });
+    }
 
     const apiMessages = [
       { role: 'system', content: systemPrompt },
@@ -197,74 +165,63 @@ ONLY output valid JSON in this exact format:
       }),
     });
 
-    log(`9. Groq API Response Status: ${response.status}`);
-    
     if (!response.ok) {
       const errText = await response.text();
-      log(`Groq API Error Text: ${errText}`);
       throw new Error(`Groq API error: ${response.status} ${errText}`);
     }
 
     const data = await response.json();
-    const content = data.choices[0]?.message?.content || '{}';
-    log(`10. Groq API JSON Response parsed. Content length: ${content.length}`);
+    let content = data.choices[0]?.message?.content || '{}';
     
+    // Strip markdown code blocks if the model wrapped it
+    content = content.replace(/^```json/g, '').replace(/```$/g, '').trim();
+
     let jsonContent;
     try {
       jsonContent = JSON.parse(content);
     } catch (e) {
-      log("10b. JSON Parse Error: " + e.message);
-      jsonContent = { response: "I'm having trouble processing that. Could you please rephrase?", needsEscalation: false };
+      jsonContent = { answer: "I'm having trouble processing that. Could you please rephrase?", should_escalate: false };
     }
 
-    log(`11. Inserting AI message... reply: ${jsonContent.response?.substring(0,20)}...`);
+    const finalAnswer = jsonContent.answer || jsonContent.response || "I am currently offline.";
+    const needsEscalation = jsonContent.should_escalate || jsonContent.needsEscalation || jsonContent.escalate === true;
+
+    log(`11. Inserting AI message... reply: ${finalAnswer.substring(0,20)}...`);
     const { error: insertErr } = await supabase.from('support_messages').insert({
       ticket_id: ticketId,
       sender_type: 'ai',
-      message: jsonContent.response || jsonContent.reply || "I am currently offline."
+      message: finalAnswer
     });
 
     if (insertErr) {
-      log("11b. Insert AI Msg Error: " + JSON.stringify(insertErr));
       throw new Error("Insert AI msg error: " + insertErr.message);
     }
 
-    log("12. Inserted AI message successfully.");
-
-    if (jsonContent.needsEscalation || jsonContent.escalate) {
-      log(`13. Escalating ticket... Reason: ${jsonContent.escalationReason || 'None given'}`);
+    if (needsEscalation) {
       await supabase.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', ticketId);
       await supabase.from('support_messages').insert({
         ticket_id: ticketId,
         sender_type: 'system',
-        message: `Ticket has been escalated. An Arinova support official will take over when available.\n\nReason: ${jsonContent.escalationReason || 'Automatic AI escalation'}`
+        message: `Ticket has been escalated. An Arinova support official will take over when available.\n\nReason: ${jsonContent.reason || jsonContent.escalationReason || 'Automatic AI escalation'}`
       });
     } else if (jsonContent.resolved) {
-      log("13. Resolving ticket...");
-      await supabase.from('support_tickets').update({ status: 'resolved', resolved_at: new Date().toISOString() }).eq('id', ticketId);
+      await supabase.from('support_tickets').update({ status: 'closed', resolved_at: new Date().toISOString() }).eq('id', ticketId);
     }
 
-    log("14. Execution Complete. Returning 200 OK.");
     return new Response(JSON.stringify({ success: true, ai_response: jsonContent }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-  } catch (error: any) {
+  } catch (error) {
     log("FATAL ERROR CAUGHT: " + error.message);
     console.error("Server-side error log:", error.message, "\nDebug trace:", debugLog.join('\n'));
     
-    // Fallback on error without immediate escalation
+    // Graceful error handling in case of API failure - no automatic escalation!
     if (supabase && currentTicketId) {
-      log("Attempting to insert error fallback message...");
-      const { error: fallbackErr } = await supabase.from('support_messages').insert({
+      await supabase.from('support_messages').insert({
         ticket_id: currentTicketId,
         sender_type: 'ai',
-        message: "I'm having trouble responding right now. Please try again in a moment."
+        message: "I'm having trouble connecting to my service right now. Please wait a moment and try sending your message again."
       });
-      if (fallbackErr) {
-         log("Fallback Insert FAILED: " + JSON.stringify(fallbackErr));
-      }
-      // DO NOT automatically update status to 'waiting_for_official'
     }
     
-    // Ensure frontend gets a clean response without leaking internals
     return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
