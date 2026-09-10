@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
   const [loadingText, setLoadingText] = useState('Connecting to ARINOVA...');
   
-  // Bug 2 Fix: Accurately determine if the theme is dark, even for 'system'
   const [isSystemDark, setIsSystemDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -28,30 +27,28 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
   const bgMain = isDark ? '#070810' : '#F8F8FC';
   
   // Radials
-  const radial1 = isDark ? 'rgba(91, 108, 255, 0.05)' : 'rgba(91, 95, 239, 0.04)';
-  const radial2 = isDark ? 'rgba(52, 35, 79, 0.06)' : 'rgba(124, 92, 252, 0.03)';
+  const radial1 = isDark ? 'rgba(91, 108, 255, 0.04)' : 'rgba(91, 95, 239, 0.04)';
+  const radial2 = isDark ? 'rgba(33, 23, 47, 0.06)' : 'rgba(124, 92, 252, 0.03)';
   const gridColor = isDark ? 'rgba(255,255,255,0.015)' : 'rgba(0,0,0,0.02)';
   
   // Orbitals
-  const orbit1Track = isDark ? 'rgba(91, 108, 255, 0.15)' : 'rgba(91, 95, 239, 0.15)';
-  const orbit1Accent = isDark ? 'rgba(91, 108, 255, 0.8)' : 'rgba(91, 95, 239, 0.8)';
-  const orbit2Track = isDark ? 'rgba(139, 108, 255, 0.1)' : 'rgba(124, 92, 252, 0.15)';
-  const orbit2Accent = isDark ? 'rgba(139, 108, 255, 0.6)' : 'rgba(124, 92, 252, 0.7)';
+  const orbitTrack = isDark ? 'rgba(139, 108, 255, 0.12)' : 'rgba(91, 95, 239, 0.15)';
+  const orbitAccent = isDark ? '#8B6CFF' : '#5B5FEF';
   
   // Logo center
-  const logoBg = isDark ? 'linear-gradient(135deg, #252044 0%, #34234F 100%)' : 'linear-gradient(135deg, #EEEAF8 0%, #E0D4F5 100%)';
-  const logoBorder = isDark ? 'rgba(139, 108, 255, 0.2)' : 'rgba(124, 92, 252, 0.2)';
-  const logoColor = isDark ? '#fff' : '#5B5FEF';
-  const logoGlowBox = isDark ? '0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(139, 108, 255, 0.1)' : '0 8px 24px rgba(91,95,239,0.15), inset 0 0 20px rgba(255, 255, 255, 0.5)';
+  const logoBg = isDark ? 'linear-gradient(135deg, #181432 0%, #21172F 100%)' : 'linear-gradient(135deg, #EEEAF8 0%, #E0D4F5 100%)';
+  const logoBorder = isDark ? 'rgba(139, 108, 255, 0.25)' : 'rgba(91, 95, 239, 0.2)';
+  const logoColor = isDark ? '#ffffff' : '#1E1B4B';
+  const logoGlowBox = isDark ? '0 12px 32px rgba(0,0,0,0.6), inset 0 0 24px rgba(139, 108, 255, 0.15)' : '0 12px 32px rgba(91,95,239,0.15), inset 0 0 24px rgba(255, 255, 255, 0.6)';
   const behindGlow = isDark ? 'rgba(139, 108, 255, 0.4)' : 'rgba(91, 95, 239, 0.25)';
 
   // Text
   const textBrand = isDark ? '#F2F3F7' : '#1E1B4B';
-  const textStatus = isDark ? '#9DA3B5' : '#64748B';
+  const textStatus = isDark ? '#82899E' : '#64748B';
   
   // Progress bar
-  const progressTrack = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
-  const progressFill = isDark ? 'linear-gradient(90deg, transparent, #8B6CFF, transparent)' : 'linear-gradient(90deg, transparent, #5B5FEF, transparent)';
+  const progressTrack = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const progressFill = isDark ? 'linear-gradient(90deg, transparent, #8B6CFF, #6574FF, transparent)' : 'linear-gradient(90deg, transparent, #5B5FEF, #7C5CFC, transparent)';
 
   useEffect(() => {
     const texts = [
@@ -92,59 +89,60 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
       <div style={{ position: 'absolute', top: '25%', left: '35%', width: '700px', height: '700px', background: `radial-gradient(circle, ${radial2} 0%, transparent 70%)`, filter: 'blur(60px)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`, backgroundSize: '64px 64px', pointerEvents: 'none' }} />
 
-      {/* Main Center Composition - Increased size and spacing */}
+      {/* Main Center Composition */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 10 }}>
         
         {/* Orbital Rings & Logo Area */}
-        <div style={{ position: 'relative', width: '160px', height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '48px' }}>
+        <div style={{ position: 'relative', width: '200px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px' }}>
           
-          {/* Animated SVG Orbitals */}
-          <motion.svg 
-            width="160" height="160" viewBox="0 0 160 160" 
-            style={{ position: 'absolute', inset: 0 }}
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 9, ease: 'linear' }}
+          {/* Animated SVG Orbital - ONE clean elegant track */}
+          <svg 
+            width="200" height="200" viewBox="0 0 200 200" 
+            style={{ position: 'absolute', inset: 0, overflow: 'visible' }}
           >
-            <circle cx="80" cy="80" r="74" fill="none" stroke={orbit1Track} strokeWidth="1" />
-            <circle cx="80" cy="80" r="74" fill="none" stroke={orbit1Accent} strokeWidth="2" strokeDasharray="50 350" strokeLinecap="round" />
-          </motion.svg>
-          
-          <motion.svg 
-            width="160" height="160" viewBox="0 0 160 160" 
-            style={{ position: 'absolute', inset: 0 }}
-            animate={{ rotate: -360 }}
-            transition={{ repeat: Infinity, duration: 14, ease: 'linear' }}
-          >
-            <circle cx="80" cy="80" r="60" fill="none" stroke={orbit2Track} strokeWidth="1" />
-            <circle cx="80" cy="80" r="60" fill="none" stroke={orbit2Accent} strokeWidth="2" strokeDasharray="30 250" strokeLinecap="round" />
-          </motion.svg>
+            {/* Base Complete Orbit */}
+            <circle cx="100" cy="100" r="86" fill="none" stroke={orbitTrack} strokeWidth="2" />
+            
+            {/* Traveling Accent */}
+            <motion.circle 
+              cx="100" cy="100" r="86" 
+              fill="none" 
+              stroke={orbitAccent} 
+              strokeWidth="3" 
+              strokeDasharray="140 400" 
+              strokeLinecap="round" 
+              style={{ originX: '50%', originY: '50%' }}
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
+            />
+          </svg>
 
           {/* Animated Logo Glow */}
           <motion.div
-            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
-            transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
-            style={{ position: 'absolute', width: '80px', height: '80px', background: `radial-gradient(circle, ${behindGlow} 0%, transparent 70%)`, filter: 'blur(12px)' }}
+            animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
+            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
+            style={{ position: 'absolute', width: '90px', height: '90px', background: `radial-gradient(circle, ${behindGlow} 0%, transparent 70%)`, filter: 'blur(16px)' }}
           />
 
-          {/* ARINOVA Logo Center */}
+          {/* ARINOVA Logo Center - Slightly Larger */}
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
+            initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1, ease: 'easeOut' }}
             style={{
-              width: '64px', height: '64px',
+              width: '80px', height: '80px',
               background: logoBg,
               border: `1px solid ${logoBorder}`,
-              borderRadius: '16px',
+              borderRadius: '20px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: logoColor, fontSize: '1.6rem', fontWeight: 900, letterSpacing: '-0.5px',
+              color: logoColor, fontSize: '2rem', fontWeight: 900, letterSpacing: '-0.5px',
               boxShadow: logoGlowBox,
               position: 'relative'
             }}
           >
             <motion.span
-              animate={{ opacity: [0.75, 1, 0.75] }}
-              transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+              animate={{ opacity: [0.8, 1, 0.8] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
             >
               AR
             </motion.span>
@@ -156,13 +154,13 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          style={{ fontSize: '2.2rem', fontWeight: 800, color: textBrand, letterSpacing: '0.25em', marginBottom: '24px' }}
+          style={{ fontSize: '2.4rem', fontWeight: 800, color: textBrand, letterSpacing: '0.3em', marginBottom: '40px' }}
         >
           ARINOVA
         </motion.div>
 
-        {/* Status Text Container - Proper spacing and no overlapping */}
-        <div style={{ height: '30px', position: 'relative', marginBottom: '32px' }}>
+        {/* Status Text Container */}
+        <div style={{ height: '24px', position: 'relative', marginBottom: '24px' }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={loadingText}
@@ -170,18 +168,18 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.4 }}
-              style={{ fontSize: '0.95rem', color: textStatus, fontWeight: 500, letterSpacing: '0.05em', position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}
+              style={{ fontSize: '1.05rem', color: textStatus, fontWeight: 500, letterSpacing: '0.05em', position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', whiteSpace: 'nowrap' }}
             >
               {loadingText}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Bug 1 Fix: Animated loader reaches end of track perfectly without overflowing */}
-        <div style={{ width: '200px', height: '3px', background: progressTrack, borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
+        {/* Horizontal Progress Bar */}
+        <div style={{ width: '280px', height: '3px', background: progressTrack, borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
           <motion.div
             animate={{ x: ['0%', '150%'] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut', repeatType: 'reverse' }}
+            transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut', repeatType: 'reverse' }}
             style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: progressFill, borderRadius: '3px' }}
           />
         </div>
@@ -190,4 +188,3 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
     </motion.div>
   );
 };
-
