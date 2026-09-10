@@ -15,6 +15,7 @@ import { BadgeDetail } from './features/achievements/BadgeDetail'
 import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
 import { SkillsPanel } from './features/skills/SkillsPanel'
+import { ArinovaLoader } from './components/ArinovaLoader'
 
 import { TimelinePanel } from './features/timeline/TimelinePanel'
 import { achievements, badges, goals, projects } from './data/journeyData'
@@ -1406,14 +1407,7 @@ const completeActiveSession = async () => {
             </button>
           </div>
         ) : loading || (user && !dataLoaded) ? (
-          <div key="loading" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw' }}>
-            <div className="loading-pulse" style={{ color: 'var(--cyan)', fontSize: '1.25rem', animation: 'pulse 1.5s infinite', letterSpacing: '0.1em', fontWeight: 500 }}>
-              ESTABLISHING CONNECTION...
-            </div>
-            <div style={{ marginTop: '1rem', width: '120px', height: '2px', background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
-              <motion.div initial={{ x: '-100%' }} animate={{ x: '100%' }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }} style={{ width: '50%', height: '100%', background: 'var(--cyan)' }} />
-            </div>
-          </div>
+          <ArinovaLoader key="loading" />
         ) : isRecoveringPassword ? (
           <UpdatePasswordUI onComplete={() => setIsRecoveringPassword(false)} />
         ) : (!entered && route.view !== 'login') ? (
