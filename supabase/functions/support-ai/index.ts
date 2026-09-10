@@ -175,7 +175,7 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: 'openai/gpt-oss-20b',
         messages: apiMessages,
         response_format: { type: "json_object" }
       }),
@@ -232,6 +232,8 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
     console.error("Server-side error log:", error.message, "\nDebug trace:", debugLog.join('\n'));    return new Response(JSON.stringify({ error: "Internal Server Error", trace: debugLog.join('\n') }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
+
 
 
 
