@@ -205,16 +205,7 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
     const finalAnswer = jsonContent.answer || jsonContent.response || "I am currently offline.";
     const needsEscalation = jsonContent.should_escalate || jsonContent.needsEscalation || jsonContent.escalate === true;
 
-    log(`11. Inserting AI message... reply: ${finalAnswer.substring(0,20)}...`);
-    const { error: insertErr } = await supabase.from('support_messages').insert({
-      ticket_id: ticketId,
-      sender_type: 'ai',
-      message: finalAnswer
-    });
-
-    if (insertErr) {
-      throw new Error("Insert AI msg error: " + insertErr.message);
-    }
+    log(`11. Returning AI message to frontend: ${finalAnswer.substring(0,20)}...`);
 
     if (needsEscalation) {
       await supabase.from('support_tickets').update({ status: 'waiting_for_official' }).eq('id', ticketId);

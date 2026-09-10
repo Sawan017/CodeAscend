@@ -84,28 +84,28 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     })    // If still in AI mode, trigger AI
     if (selectedTicket.status === 'ai_assisting') {
       try {
+        console.log("Message being sent. invoke() called for ticket:", selectedTicket.id);
         const { data, error: invokeErr } = await supabase!.functions.invoke('support-ai', {
           body: { ticketId: selectedTicket.id, message: msg, isNew: false }
         });
         
-        console.log("COMPLETE invoke response:", { data, invokeErr });
+        console.log("invoke() returned. COMPLETE data:", data, "invokeErr:", invokeErr);
 
         if (invokeErr) {
-          console.error("AI function returned error:", invokeErr);
-        } else if (data && data.answer) {
-          setMessages(prev => {
-            const exists = prev.some(m => m.message === data.answer && m.sender_type === 'ai');
-            if (exists) return prev;
-            return [...prev, {
-              id: 'temp-' + Date.now(),
+          console.error("AI function returned error:", invokeErr, "HTTP Status:", invokeErr.status);
+        } else {
+          console.log("Parsed data.answer:", data?.answer);
+          if (data && data.answer) {
+            // Front-end explicitly saves exactly once
+            await supabase!.from('support_messages').insert({
               ticket_id: selectedTicket.id,
-              sender_id: 'ai-system',
               sender_type: 'ai',
-              message: data.answer,
-              created_at: new Date().toISOString()
-            }];
-          });
-          setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+              message: data.answer
+            });
+            // Realtime subscription will seamlessly display it.
+          } else {
+            console.log("No data.answer found in response!");
+          }
         }
       } catch (e) {
         console.error("AI function error:", e);
