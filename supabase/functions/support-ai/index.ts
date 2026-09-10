@@ -138,6 +138,19 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
       return { role, content: sanitizePII(m.message) };
     }) || [];
 
+    // FIX READ-AFTER-WRITE DELAY:
+    // Ensure the new message passed in the request body is included in the context,
+    // but ONLY if it wasn't already caught by the database query above.
+    const lastMsg = conversationContext.length > 0 ? conversationContext[conversationContext.length - 1] : null;
+    const sanitizedIncoming = sanitizePII(message);
+    if (message && (!lastMsg || lastMsg.role !== 'user' || lastMsg.content !== sanitizedIncoming)) {
+      conversationContext.push({
+        role: 'user',
+        content: sanitizedIncoming
+      });
+      log("Appended missing latest user message to context due to DB replication delay.");
+    }
+
     // Provide ticket context at the beginning
     if (ticket) {
       conversationContext.unshift({ 
@@ -231,6 +244,7 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
     return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
 
 
 
