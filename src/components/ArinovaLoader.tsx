@@ -177,13 +177,12 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
           </AnimatePresence>
         </div>
 
-        {/* Bug 1 Fix: Animated loader reaches end of track */}
+        {/* Bug 1 Fix: Animated loader reaches end of track perfectly without overflowing */}
         <div style={{ width: '200px', height: '3px', background: progressTrack, borderRadius: '3px', overflow: 'hidden', position: 'relative' }}>
           <motion.div
-            initial={{ left: '-40%' }}
-            animate={{ left: '100%' }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
-            style={{ position: 'absolute', top: 0, width: '40%', height: '100%', background: progressFill, borderRadius: '3px' }}
+            animate={{ x: ['0%', '150%'] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut', repeatType: 'reverse' }}
+            style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: progressFill, borderRadius: '3px' }}
           />
         </div>
 
@@ -191,3 +190,4 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
     </motion.div>
   );
 };
+
