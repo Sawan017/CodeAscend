@@ -227,23 +227,14 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
       await supabase.from('support_tickets').update({ status: 'closed', resolved_at: new Date().toISOString() }).eq('id', ticketId);
     }
 
-    return new Response(JSON.stringify({ success: true, ai_response: jsonContent }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-  } catch (error) {
+    return new Response(JSON.stringify({ success: true, ai_response: jsonContent }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });  } catch (error) {
     log("FATAL ERROR CAUGHT: " + error.message);
     console.error("Server-side error log:", error.message, "\nDebug trace:", debugLog.join('\n'));
-    
-    // Graceful error handling in case of API failure - no automatic escalation!
-    if (supabase && currentTicketId) {
-      await supabase.from('support_messages').insert({
-        ticket_id: currentTicketId,
-        sender_type: 'ai',
-        message: "I'm having trouble connecting to my service right now. Please wait a moment and try sending your message again."
-      });
-    }
     
     return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
 
 
 
