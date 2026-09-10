@@ -12,10 +12,10 @@ serve(async (req) => {
   let currentTicketId;
   let debugLog = [];
 
-  const log = (msg) => { debugLog.push(msg); console.log(msg); };
-
-  try {
+  const log = (msg) => { debugLog.push(msg); console.log(msg); };  try {
     log("1. Edge Function Invoked");
+    const envKeys = Object.keys(Deno.env.toObject());
+    log("AVAILABLE ENV VARS: " + envKeys.join(', '));
     const body = await req.json();
     const { ticketId, message, isNew } = body;
     currentTicketId = ticketId;
@@ -175,7 +175,7 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama3-70b-8192',
+        model: 'llama-3.1-8b-instant',
         messages: apiMessages,
         response_format: { type: "json_object" }
       }),
@@ -229,11 +229,14 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
 
     return new Response(JSON.stringify({ success: true, ai_response: jsonContent }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });  } catch (error) {
     log("FATAL ERROR CAUGHT: " + error.message);
-    console.error("Server-side error log:", error.message, "\nDebug trace:", debugLog.join('\n'));
-    
-    return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    console.error("Server-side error log:", error.message, "\nDebug trace:", debugLog.join('\n'));    return new Response(JSON.stringify({ error: "Internal Server Error", trace: debugLog.join('\n') }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
+
+
+
+
 
 
 
