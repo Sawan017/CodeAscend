@@ -188,25 +188,25 @@ export function SkillsPanel({
       minHeight: '100%', position: 'relative', overflowX: 'hidden'
     }}>
       {/* Background Ambience */}
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '600px', background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.08) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '600px', background: 'radial-gradient(ellipse at 50% 0%, rgba(var(--secondary-rgb),0.08) 0%, transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', padding: '40px 48px', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '48px' }}>
         
         {/* --- HERO / HEADER --- */}
         <div className="premium-hero" style={{ 
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(var(--secondary-rgb),0.06) 100%)', 
+          background: 'linear-gradient(135deg, rgba(var(--secondary-rgb),0.04) 0%, rgba(var(--secondary-rgb),0.06) 100%)', 
           borderRadius: '32px', padding: '56px 48px', position: 'relative', overflow: 'hidden',
-          border: '1px solid rgba(99,102,241,0.15)',
-          boxShadow: 'inset 0 0 0 1px #fff, 0 24px 48px -12px rgba(99,102,241,0.05)'
+          border: '1px solid rgba(var(--secondary-rgb),0.15)',
+          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05), 0 24px 48px -12px rgba(var(--secondary-rgb),0.05)'
         }}>
           <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(var(--cyan-rgb),0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
           
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ 
-              fontSize: '0.85rem', fontWeight: 800, color: '#6366F1', letterSpacing: '0.15em', 
+              fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)', letterSpacing: '0.15em', 
               textTransform: 'uppercase', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' 
             }}>
-              <div style={{ width: '8px', height: '8px', background: '#6366F1', borderRadius: '50%' }} />
+              <div style={{ width: '8px', height: '8px', background: 'var(--secondary)', borderRadius: '50%' }} />
               BUILD YOUR SKILL TREE
             </div>
             <h1 style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
@@ -228,7 +228,7 @@ export function SkillsPanel({
                 boxShadow: '0 12px 32px -8px rgba(17,24,39,0.08)', flexWrap: 'wrap', gap: '12px',
                 transition: 'all 0.2s'
               }}>
-                <Search size={24} color="#6366F1" />
+                <Search size={24} color="var(--secondary)" />
                 <input 
                   value={globalSearch} onChange={e => setGlobalSearch(e.target.value)}
                   placeholder="Search skills, technologies, or topics..." 
@@ -239,15 +239,15 @@ export function SkillsPanel({
                 <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-main)', padding: '6px', borderRadius: '16px', flexWrap: 'nowrap' }}>
                   <button 
                     onClick={() => setGlobalSearchFilter('all')} 
-                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'all' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'all' ? '#6366F1' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'all' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
+                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'all' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'all' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'all' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
                   >All</button>
                   <button 
                     onClick={() => setGlobalSearchFilter('domains')} 
-                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'domains' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'domains' ? '#6366F1' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'domains' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
+                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'domains' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'domains' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'domains' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
                   >Domains</button>
                   <button 
                     onClick={() => setGlobalSearchFilter('skills')} 
-                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'skills' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'skills' ? '#6366F1' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'skills' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
+                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'skills' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'skills' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'skills' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
                   >Skills</button>
                 </div>
               </div>
@@ -276,8 +276,8 @@ export function SkillsPanel({
                     zIndex: 100
                   }}
                 >
-                  <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#6366F1', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
-                    <BookOpen size={18} color="#6366F1" /> Discovery Results
+                  <div style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
+                    <BookOpen size={18} color="var(--secondary)" /> Discovery Results
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
@@ -297,9 +297,9 @@ export function SkillsPanel({
                           ) : (
                             <button 
                               onClick={() => { onStartPathway?.(p.id); setGlobalSearch(''); }}
-                              style={{ background: '#6366F1', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', width: '100%', boxShadow: '0 8px 16px -4px rgba(99,102,241,0.25)', transition: 'all 0.2s' }}
+                              style={{ background: 'var(--secondary)', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', width: '100%', boxShadow: '0 8px 16px -4px rgba(var(--secondary-rgb),0.25)', transition: 'all 0.2s' }}
                               onMouseEnter={e => e.currentTarget.style.background = '#4F46E5'}
-                              onMouseLeave={e => e.currentTarget.style.background = '#6366F1'}
+                              onMouseLeave={e => e.currentTarget.style.background = 'var(--secondary)'}
                             >Start Domain</button>
                           )}
                         </div>
@@ -336,9 +336,9 @@ export function SkillsPanel({
                                     status: 'LEARNING', 
                                     started: new Date().toISOString().slice(0, 10) 
                                   }); setGlobalSearch(''); }}
-                              style={{ background: 'var(--bg-surface)', color: '#6366F1', border: '1px solid rgba(99,102,241,0.2)', padding: '12px 20px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', width: '100%', transition: 'all 0.2s' }}
-                              onMouseEnter={e => { e.currentTarget.style.background = '#6366F1'; e.currentTarget.style.color = '#fff'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.color = '#6366F1'; }}
+                              style={{ background: 'var(--bg-surface)', color: 'var(--secondary)', border: '1px solid rgba(var(--secondary-rgb),0.2)', padding: '12px 20px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', width: '100%', transition: 'all 0.2s' }}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'var(--secondary)'; e.currentTarget.style.color = '#fff'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.color = 'var(--secondary)'; }}
                             >+ Add to Learning Path</button>
                           )}
                         </div>
@@ -638,6 +638,7 @@ let statusBg = 'var(--bg-surface-sunken)';
     </div>
   );
 }
+
 
 
 

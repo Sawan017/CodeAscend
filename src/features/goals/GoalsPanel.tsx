@@ -120,26 +120,26 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
         )}
       </AnimatePresence>
 
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '500px', background: 'radial-gradient(ellipse at 50% 0%, rgba(99,102,241,0.06) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '500px', background: 'radial-gradient(ellipse at 50% 0%, rgba(var(--secondary-rgb),0.06) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', width: '100%', padding: '40px 48px', position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '48px' }}>
         
         {/* --- HERO / HEADER --- */}
         <div className="premium-hero" style={{ 
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(var(--secondary-rgb),0.06) 100%)', 
+          background: 'linear-gradient(135deg, rgba(var(--secondary-rgb),0.04) 0%, rgba(var(--secondary-rgb),0.06) 100%)', 
           borderRadius: '32px', padding: '48px', position: 'relative', overflow: 'hidden',
-          border: '1px solid rgba(99,102,241,0.15)',
-          boxShadow: 'inset 0 0 0 1px #fff, 0 24px 48px -12px rgba(99,102,241,0.05)',
+          border: '1px solid rgba(var(--secondary-rgb),0.15)',
+          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.05), 0 24px 48px -12px rgba(var(--secondary-rgb),0.05)',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '32px'
         }}>
           <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(var(--cyan-rgb),0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
           
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ 
-              fontSize: '0.85rem', fontWeight: 800, color: '#6366F1', letterSpacing: '0.15em', 
+              fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)', letterSpacing: '0.15em', 
               textTransform: 'uppercase', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' 
             }}>
-              <div style={{ width: '8px', height: '8px', background: '#6366F1', borderRadius: '50%' }} />
+              <div style={{ width: '8px', height: '8px', background: 'var(--secondary)', borderRadius: '50%' }} />
               DASHBOARD
             </div>
             <h1 style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 16px', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
@@ -154,13 +154,13 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                 onClick={() => { setNewTask(prev => ({...prev, targetDate: new Date().toISOString().split('T')[0]})); setIsCreating(true); }} 
                 style={{ 
-                  background: '#6366F1', color: '#fff', border: 'none', padding: '16px 28px', 
+                  background: 'var(--secondary)', color: '#fff', border: 'none', padding: '16px 28px', 
                   borderRadius: '20px', fontWeight: 800, fontSize: '1.05rem', cursor: 'pointer', 
                   display: 'flex', alignItems: 'center', gap: '12px', 
-                  boxShadow: '0 12px 24px -8px rgba(99,102,241,0.4)', transition: 'all 0.2s' 
+                  boxShadow: '0 12px 24px -8px rgba(var(--secondary-rgb),0.4)', transition: 'all 0.2s' 
                 }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.background = '#4F46E5'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = '#6366F1'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.background = 'var(--secondary)'; }}
               >
               <Plus size={22} /> Add To Do
             </motion.button>
@@ -242,7 +242,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                     <span style={{ fontSize: '1.2rem', color: currentMode === 'PRIME' ? 'var(--secondary)' : 'var(--cyan)', fontWeight: 900 }}>{runningSkill.progress || 0}%</span>
                   </div>
                   <div style={{ width: '100%', height: '16px', background: 'var(--bg-surface-sunken)', borderRadius: '8px', overflow: 'hidden', marginBottom: '48px', border: '1px solid var(--border)' }}>
-                    <div style={{ width: `${Math.min(100, runningSkill.progress || 0)}%`, height: '100%', background: currentMode === 'PRIME' ? 'linear-gradient(90deg, var(--secondary), #6366F1)' : 'linear-gradient(90deg, var(--cyan), var(--primary))', borderRadius: '8px' }} />
+                    <div style={{ width: `${Math.min(100, runningSkill.progress || 0)}%`, height: '100%', background: currentMode === 'PRIME' ? 'linear-gradient(90deg, var(--secondary), var(--secondary))' : 'linear-gradient(90deg, var(--cyan), var(--primary))', borderRadius: '8px' }} />
                   </div>
 
                   <div style={{ display: 'flex', gap: '48px', alignItems: 'center', marginTop: 'auto' }}>
@@ -278,7 +278,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
 
                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '40px' }}>
                       {/* PRIME */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'PRIME' ? '2px solid var(--secondary)' : '1px solid transparent', background: currentMode === 'PRIME' ? 'linear-gradient(135deg, rgba(var(--secondary-rgb),0.1) 0%, rgba(99,102,241,0.05) 100%)' : 'transparent' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'PRIME' ? '2px solid var(--secondary)' : '1px solid transparent', background: currentMode === 'PRIME' ? 'linear-gradient(135deg, rgba(var(--secondary-rgb),0.1) 0%, rgba(var(--secondary-rgb),0.05) 100%)' : 'transparent' }}>
                          <div>
                             <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'PRIME' ? 'var(--secondary)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               {currentMode === 'PRIME' && <Target size={16} />} PRIME
@@ -508,5 +508,6 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
     </div>
   );
 };
+
 
 

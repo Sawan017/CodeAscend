@@ -1905,12 +1905,12 @@ body, .world-shell, .app-shell, #root, .rpg-page-container {
   box-shadow: none !important;
   z-index: 10;
 }
-[data-theme="dark"] .card-animated-border::after,
-[data-theme="dark"] .dashboard-panel::after,
-[data-theme="dark"] .quest-card::after,
-[data-theme="dark"] .ach-card::after,
-[data-theme="dark"] .botanical-card::after,
-[data-theme="dark"] .card-premium::after {
+.app-shell.dark .card-animated-border::after,
+.app-shell.dark .dashboard-panel::after,
+.app-shell.dark .quest-card::after,
+.app-shell.dark .ach-card::after,
+.app-shell.dark .botanical-card::after,
+.app-shell.dark .card-premium::after {
   box-shadow: none !important;
 }
 
@@ -2056,9 +2056,9 @@ header, .world-shell > header, .topbar {
   color: var(--text-main) !important;
   background: var(--ca-surface-alt) !important;
 }
-[data-theme="dark"] header, 
-[data-theme="dark"] .world-shell > header,
-[data-theme="dark"] .topbar {
+.app-shell.dark header, 
+.app-shell.dark .world-shell > header,
+.app-shell.dark .topbar {
   background: var(--ca-surface) !important;
   border-bottom: 1px solid var(--border) !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
@@ -2077,13 +2077,13 @@ p {
 
 
 /* Add backdrop blur ONLY to Dark Mode cards for premium glass layering */
-[data-theme="dark"] .card-animated-border, 
-[data-theme="dark"] [style*="var(--bg-surface)"], 
-[data-theme="dark"] .dashboard-panel, 
-[data-theme="dark"] .quest-card, 
-[data-theme="dark"] .ach-card, 
-[data-theme="dark"] .botanical-card, 
-[data-theme="dark"] .card-premium {
+.app-shell.dark .card-animated-border, 
+.app-shell.dark [style*="var(--bg-surface)"], 
+.app-shell.dark .dashboard-panel, 
+.app-shell.dark .quest-card, 
+.app-shell.dark .ach-card, 
+.app-shell.dark .botanical-card, 
+.app-shell.dark .card-premium {
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
 }
@@ -2126,42 +2126,42 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 /* ==========================================================
    FORCE PREMIUM DARK MODE CARDS (NO GREY/WHITE BORDERS)
 ========================================================== */
-[data-theme="dark"] .card-animated-border, 
-[data-theme="dark"] .dashboard-panel, 
-[data-theme="dark"] .quest-card, 
-[data-theme="dark"] .ach-card, 
-[data-theme="dark"] .botanical-card, 
-[data-theme="dark"] .card-premium,
-[data-theme="dark"] .status-card,
-[data-theme="dark"] .dashboard-hero,
-[data-theme="dark"] .dashboard-item,
-[data-theme="dark"] .dashboard-grid > div > div,
-[data-theme="dark"] [style*="var(--bg-surface)"] {
+.app-shell.dark .card-animated-border, 
+.app-shell.dark .dashboard-panel, 
+.app-shell.dark .quest-card, 
+.app-shell.dark .ach-card, 
+.app-shell.dark .botanical-card, 
+.app-shell.dark .card-premium,
+.app-shell.dark .status-card,
+.app-shell.dark .dashboard-hero,
+.app-shell.dark .dashboard-item,
+.app-shell.dark .dashboard-grid > div > div,
+.app-shell.dark [style*="var(--bg-surface)"] {
   border: 1px solid rgba(150, 140, 200, 0.12) !important;
   background-image: none !important;
 }
 
-[data-theme="dark"] .compact-stats [style*="border-radius: 12px"],
-[data-theme="dark"] .rpg-page-container > div:nth-child(3) > div:first-child > div:first-child,
-[data-theme="dark"] .primary-btn,
-[data-theme="dark"] button[style*="background: '#10B981'"],
-[data-theme="dark"] button[style*="background: '#1677E8'"],
-[data-theme="dark"] button[style*="background: '#3B82F6'"] {
+.app-shell.dark .compact-stats [style*="border-radius: 12px"],
+.app-shell.dark .rpg-page-container > div:nth-child(3) > div:first-child > div:first-child,
+.app-shell.dark .primary-btn,
+.app-shell.dark button[style*="background: '#10B981'"],
+.app-shell.dark button[style*="background: '#1677E8'"],
+.app-shell.dark button[style*="background: '#3B82F6'"] {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
   border: 1px solid rgba(150, 140, 200, 0.12) !important;
 }
 
-[data-theme="dark"] .rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div {
+.app-shell.dark .rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div {
   box-shadow: none !important;
 }
 
 
-[data-theme="dark"] .premium-hero {
-  background: linear-gradient(135deg, #0A0D18 0%, #11162A 50%, #19152B 100%) !important;
+.app-shell.dark .premium-hero {
+  background: linear-gradient(135deg, #10121C 0%, #151526 50%, #19152A 100%) !important;
   border: 1px solid var(--border) !important;
   box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5) !important;
 }
-[data-theme="dark"] .premium-hero > div:first-child {
+.app-shell.dark .premium-hero > div:first-child {
   background: radial-gradient(circle, rgba(139, 140, 255, 0.04) 0%, rgba(160, 140, 255, 0.02) 40%, transparent 70%) !important;
 }
 
@@ -2171,12 +2171,15 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 
 
 
-[data-theme="dark"] .nav-item.active {
+.app-shell.dark .nav-item.active {
   background: linear-gradient(90deg, rgba(91, 124, 255, 0.15), rgba(139, 108, 255, 0.1)) !important;
   border-color: rgba(91, 124, 255, 0.3) !important;
   box-shadow: 0 0 12px rgba(91, 124, 255, 0.15) !important;
   color: #fff !important;
 }
+
+
+
 
 
 
