@@ -46,7 +46,7 @@ serve(async (req) => {
     log("3. Checking Rate Limit...");
     const { data: rlData, error: rlError } = await supabaseAuth.rpc('consume_edge_rate_limit', {
       p_action: 'support_ai',
-      p_limit: 10,
+      p_limit: 100,
       p_window_seconds: 3600
     });
     
@@ -150,6 +150,9 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
       { role: 'system', content: systemPrompt },
       ...conversationContext
     ];
+    
+    // Enforce JSON at the end
+    apiMessages.push({ role: 'system', content: 'Remember, you MUST respond ONLY with the required JSON object. No other text.' });
 
     log("8. Calling Groq API...");
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -173,11 +176,14 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
     const data = await response.json();
     let content = data.choices[0]?.message?.content || '{}';
     
-    // Strip markdown code blocks if the model wrapped it
-    content = content.replace(/^```json/g, '').replace(/```$/g, '').trim();
-
     let jsonContent;
     try {
+      // Find the first { and last }
+      const firstBrace = content.indexOf('{');
+      const lastBrace = content.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
+        content = content.substring(firstBrace, lastBrace + 1);
+      }
       jsonContent = JSON.parse(content);
     } catch (e) {
       jsonContent = { answer: "I'm having trouble processing that. Could you please rephrase?", should_escalate: false };
@@ -225,3 +231,6 @@ ONLY output valid JSON in this exact format (do not include markdown \`\`\`json 
     return new Response(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
+
+
