@@ -200,9 +200,9 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     closed: 'Closed'
   }
   const statusColors: any = {
-    ai_assisting: '#3b82f6',
+    ai_assisting: 'var(--primary)',
     waiting_for_official: '#eab308',
-    official_assigned: '#8b5cf6',
+    official_assigned: 'var(--secondary)',
     resolved: '#10b981',
     closed: '#6b7280'
   }
@@ -464,4 +464,5 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     </div>
   )
 }
+
 

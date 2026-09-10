@@ -126,13 +126,13 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
         
         {/* --- HERO / HEADER --- */}
         <div className="premium-hero" style={{ 
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(139,92,246,0.06) 100%)', 
+          background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(var(--secondary-rgb),0.06) 100%)', 
           borderRadius: '32px', padding: '48px', position: 'relative', overflow: 'hidden',
           border: '1px solid rgba(99,102,241,0.15)',
           boxShadow: 'inset 0 0 0 1px #fff, 0 24px 48px -12px rgba(99,102,241,0.05)',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '32px'
         }}>
-          <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+          <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(var(--cyan-rgb),0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
           
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ 
@@ -169,7 +169,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
 
         {/* --- CREATE TASK FORM --- */}
         {isCreating && (
-          <motion.form onSubmit={handleCreate} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ ...cardStyle, border: '2px solid #8B5CF6', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <motion.form onSubmit={handleCreate} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} style={{ ...cardStyle, border: '2px solid var(--secondary)', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
               <input 
                 id="todo-title-input"
@@ -204,7 +204,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} type="button" onClick={() => setIsCreating(false)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--text-muted)', fontWeight: 800, cursor: 'pointer', padding: '12px 24px', borderRadius: '12px', transition: 'all 0.2s' }}>Cancel</motion.button>
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} type="submit" style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 16px -4px rgba(139,92,246,0.3)' }}>Save To Do</motion.button>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} type="submit" style={{ background: 'var(--secondary)', color: '#fff', border: 'none', padding: '12px 32px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 16px -4px rgba(var(--secondary-rgb),0.3)' }}>Save To Do</motion.button>
             </div>
           </motion.form>
         )}
@@ -213,8 +213,8 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           {runningSkill && runningSubtopic ? (
-            <div style={{ ...cardStyle, position: 'relative', overflow: 'hidden', padding: 0, border: `2px solid ${currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)'}`, boxShadow: `0 24px 48px -12px ${currentMode === 'PRIME' ? 'rgba(139,92,246,0.2)' : 'rgba(6,182,212,0.1)'}` }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '8px', height: '100%', background: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)' }} />
+            <div style={{ ...cardStyle, position: 'relative', overflow: 'hidden', padding: 0, border: `2px solid ${currentMode === 'PRIME' ? 'var(--secondary)' : currentMode === 'FOCUSED' ? 'var(--cyan)' : 'var(--text-muted)'}`, boxShadow: `0 24px 48px -12px ${currentMode === 'PRIME' ? 'rgba(var(--secondary-rgb),0.2)' : 'rgba(var(--cyan-rgb),0.1)'}` }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '8px', height: '100%', background: currentMode === 'PRIME' ? 'var(--secondary)' : currentMode === 'FOCUSED' ? 'var(--cyan)' : 'var(--text-muted)' }} />
               
               <div style={{ padding: '40px 48px', display: 'flex', flexWrap: 'wrap', gap: '48px' }}>
                 
@@ -239,10 +239,10 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     <span style={{ fontSize: '0.95rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Task Progress</span>
-                    <span style={{ fontSize: '1.2rem', color: currentMode === 'PRIME' ? '#8B5CF6' : '#06B6D4', fontWeight: 900 }}>{runningSkill.progress || 0}%</span>
+                    <span style={{ fontSize: '1.2rem', color: currentMode === 'PRIME' ? 'var(--secondary)' : 'var(--cyan)', fontWeight: 900 }}>{runningSkill.progress || 0}%</span>
                   </div>
                   <div style={{ width: '100%', height: '16px', background: 'var(--bg-surface-sunken)', borderRadius: '8px', overflow: 'hidden', marginBottom: '48px', border: '1px solid var(--border)' }}>
-                    <div style={{ width: `${Math.min(100, runningSkill.progress || 0)}%`, height: '100%', background: currentMode === 'PRIME' ? 'linear-gradient(90deg, #8B5CF6, #6366F1)' : 'linear-gradient(90deg, #06B6D4, #3B82F6)', borderRadius: '8px' }} />
+                    <div style={{ width: `${Math.min(100, runningSkill.progress || 0)}%`, height: '100%', background: currentMode === 'PRIME' ? 'linear-gradient(90deg, var(--secondary), #6366F1)' : 'linear-gradient(90deg, var(--cyan), var(--primary))', borderRadius: '8px' }} />
                   </div>
 
                   <div style={{ display: 'flex', gap: '48px', alignItems: 'center', marginTop: 'auto' }}>
@@ -251,7 +251,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                          TIMER
                        </div>
                        <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums' }}>
-                         <Clock size={28} color={currentMode === 'PRIME' ? '#8B5CF6' : '#06B6D4'} />
+                         <Clock size={28} color={currentMode === 'PRIME' ? 'var(--secondary)' : 'var(--cyan)'} />
                          {formatTime(activeSessionElapsed)}
                        </div>
                      </div>
@@ -260,7 +260,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px' }}>
                          CURRENT REWARD
                        </div>
-                       <div style={{ fontSize: '2rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(139,92,246,0.3)' : 'none' }}>
+                       <div style={{ fontSize: '2rem', fontWeight: 900, color: currentMode === 'PRIME' ? 'var(--secondary)' : currentMode === 'FOCUSED' ? 'var(--cyan)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontVariantNumeric: 'tabular-nums', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(var(--secondary-rgb),0.3)' : 'none' }}>
                          <Zap size={28} />
                          +{currentXP} XP
                        </div>
@@ -278,27 +278,27 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
 
                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '40px' }}>
                       {/* PRIME */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'PRIME' ? '2px solid #8B5CF6' : '1px solid transparent', background: currentMode === 'PRIME' ? 'linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(99,102,241,0.05) 100%)' : 'transparent' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'PRIME' ? '2px solid var(--secondary)' : '1px solid transparent', background: currentMode === 'PRIME' ? 'linear-gradient(135deg, rgba(var(--secondary-rgb),0.1) 0%, rgba(99,102,241,0.05) 100%)' : 'transparent' }}>
                          <div>
-                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'PRIME' ? 'var(--secondary)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               {currentMode === 'PRIME' && <Target size={16} />} PRIME
                             </div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Within {Math.floor(primeLimit / 60)} mins</div>
                          </div>
-                         <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'PRIME' ? '#8B5CF6' : '#94A3B8', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(139,92,246,0.4)' : 'none' }}>
+                         <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'PRIME' ? 'var(--secondary)' : '#94A3B8', textShadow: currentMode === 'PRIME' ? '0 0 16px rgba(var(--secondary-rgb),0.4)' : 'none' }}>
                             +{primeXP} XP
                          </div>
                       </div>
 
                       {/* FOCUSED */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'FOCUSED' ? '2px solid #06B6D4' : '1px solid transparent', background: currentMode === 'FOCUSED' ? 'linear-gradient(135deg, rgba(6,182,212,0.1) 0%, rgba(59,130,246,0.05) 100%)' : 'transparent', opacity: activeSessionElapsed > primeLimit || currentMode === 'FOCUSED' ? 1 : 0.5 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', borderRadius: '16px', border: currentMode === 'FOCUSED' ? '2px solid var(--cyan)' : '1px solid transparent', background: currentMode === 'FOCUSED' ? 'linear-gradient(135deg, rgba(var(--cyan-rgb),0.1) 0%, rgba(var(--primary-rgb),0.05) 100%)' : 'transparent', opacity: activeSessionElapsed > primeLimit || currentMode === 'FOCUSED' ? 1 : 0.5 }}>
                          <div>
-                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? '#06B6D4' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ fontSize: '1rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? 'var(--cyan)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                               {currentMode === 'FOCUSED' && <Target size={16} />} FOCUSED
                             </div>
                             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Within {Math.floor(focusedLimit / 60)} mins</div>
                          </div>
-                         <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? '#06B6D4' : '#94A3B8', textShadow: currentMode === 'FOCUSED' ? '0 0 16px rgba(6,182,212,0.4)' : 'none' }}>
+                         <div style={{ fontSize: '1.4rem', fontWeight: 900, color: currentMode === 'FOCUSED' ? 'var(--cyan)' : '#94A3B8', textShadow: currentMode === 'FOCUSED' ? '0 0 16px rgba(var(--cyan-rgb),0.4)' : 'none' }}>
                             +{focusedXP} XP
                          </div>
                       </div>
@@ -329,7 +329,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                      ) : (
                        <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }} 
                          onClick={() => setIsVerifying(true)}
-                         style={{ flex: 2, background: currentMode === 'PRIME' ? '#8B5CF6' : currentMode === 'FOCUSED' ? '#06B6D4' : '#10B981', color: '#fff', border: 'none', padding: '18px 24px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', transition: 'all 0.2s', boxShadow: `0 12px 24px -8px ${currentMode === 'PRIME' ? 'rgba(139,92,246,0.4)' : currentMode === 'FOCUSED' ? 'rgba(6,182,212,0.4)' : 'rgba(16,185,129,0.4)'}` }}
+                         style={{ flex: 2, background: currentMode === 'PRIME' ? 'var(--secondary)' : currentMode === 'FOCUSED' ? 'var(--cyan)' : '#10B981', color: '#fff', border: 'none', padding: '18px 24px', borderRadius: '16px', fontWeight: 900, fontSize: '1.05rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', transition: 'all 0.2s', boxShadow: `0 12px 24px -8px ${currentMode === 'PRIME' ? 'rgba(var(--secondary-rgb),0.4)' : currentMode === 'FOCUSED' ? 'rgba(var(--cyan-rgb),0.4)' : 'rgba(16,185,129,0.4)'}` }}
                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.filter = 'brightness(1.1)'; }}
                          onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.filter = 'brightness(1)'; }}
                        >
@@ -508,4 +508,5 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
     </div>
   );
 };
+
 

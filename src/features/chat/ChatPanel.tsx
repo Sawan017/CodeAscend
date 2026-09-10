@@ -54,7 +54,7 @@ export function ChatPanel(props: any) {
           <button 
             onClick={() => handleTabSwitch('friends')}
             style={{ 
-              background: activeTab === 'friends' ? '#8B5CF6' : 'transparent', 
+              background: activeTab === 'friends' ? 'var(--secondary)' : 'transparent', 
               color: activeTab === 'friends' ? '#fff' : 'var(--text-muted)', 
               border: 'none', 
               padding: '8px 24px', 
@@ -63,13 +63,13 @@ export function ChatPanel(props: any) {
               fontSize: '0.9rem',
               cursor: 'pointer', 
               transition: 'all 0.2s', 
-              boxShadow: activeTab === 'friends' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' 
+              boxShadow: activeTab === 'friends' ? '0 4px 12px rgba(var(--secondary-rgb), 0.25)' : 'none' 
             }}
           >Connections</button>
           <button 
             onClick={() => handleTabSwitch('direct')}
             style={{ 
-              background: activeTab === 'direct' ? '#8B5CF6' : 'transparent', 
+              background: activeTab === 'direct' ? 'var(--secondary)' : 'transparent', 
               color: activeTab === 'direct' ? '#fff' : 'var(--text-muted)', 
               border: 'none', 
               padding: '8px 24px', 
@@ -78,13 +78,13 @@ export function ChatPanel(props: any) {
               fontSize: '0.9rem',
               cursor: 'pointer', 
               transition: 'all 0.2s', 
-              boxShadow: activeTab === 'direct' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' 
+              boxShadow: activeTab === 'direct' ? '0 4px 12px rgba(var(--secondary-rgb), 0.25)' : 'none' 
             }}
           >Messages</button>
           <button 
             onClick={() => handleTabSwitch('groups')}
             style={{ 
-              background: activeTab === 'groups' ? '#8B5CF6' : 'transparent', 
+              background: activeTab === 'groups' ? 'var(--secondary)' : 'transparent', 
               color: activeTab === 'groups' ? '#fff' : 'var(--text-muted)', 
               border: 'none', 
               padding: '8px 24px', 
@@ -93,7 +93,7 @@ export function ChatPanel(props: any) {
               fontSize: '0.9rem',
               cursor: 'pointer', 
               transition: 'all 0.2s', 
-              boxShadow: activeTab === 'groups' ? '0 4px 12px rgba(139, 92, 246, 0.25)' : 'none' 
+              boxShadow: activeTab === 'groups' ? '0 4px 12px rgba(var(--secondary-rgb), 0.25)' : 'none' 
             }}
           >Groups</button>
         </div>
@@ -114,7 +114,7 @@ export function ChatPanel(props: any) {
             <div className={'chat-sidebar ' + (isGroupActive ? 'mobile-hidden' : '')} style={{ width: '320px', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: 'var(--bg-surface-sunken)', flexShrink: 0 }}>
               <div style={{ padding: '24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h4 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)', fontWeight: 800 }}>Groups</h4>
-                <button onClick={() => setCreateModalOpen(true)} style={{ background: '#8B5CF6', color: '#fff', padding: '8px', borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)' }}>
+                <button onClick={() => setCreateModalOpen(true)} style={{ background: 'var(--secondary)', color: '#fff', padding: '8px', borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(var(--secondary-rgb), 0.3)' }}>
                   <Plus size={18} />
                 </button>
               </div>
@@ -205,6 +205,7 @@ export function ChatPanel(props: any) {
     </div>
   )
 }
+
 
 
 

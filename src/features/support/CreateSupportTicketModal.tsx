@@ -131,7 +131,7 @@ export function CreateSupportTicketModal({ isOpen, onClose, userId, onSuccess }:
           >
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)' }}>
-                <AlertTriangle size={20} color="#3b82f6" /> Create Support Ticket
+                <AlertTriangle size={20} color="var(--primary)" /> Create Support Ticket
               </h3>
               <button onClick={handleClose} disabled={loading} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={20} /></button>
             </div>
@@ -176,7 +176,7 @@ export function CreateSupportTicketModal({ isOpen, onClose, userId, onSuccess }:
                   </div>
                   
                   <div style={{ marginTop: '0.5rem' }}>
-                    <button className="primary-btn" onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: '0.875rem', display: 'flex', justifyContent: 'center', background: '#3b82f6', color: '#fff', border: 'none' }}>
+                    <button className="primary-btn" onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: '0.875rem', display: 'flex', justifyContent: 'center', background: 'var(--primary)', color: '#fff', border: 'none' }}>
                       {loading ? 'Submitting...' : 'Create Ticket'}
                     </button>
                   </div>
@@ -189,3 +189,4 @@ export function CreateSupportTicketModal({ isOpen, onClose, userId, onSuccess }:
     </AnimatePresence>
   )
 }
+

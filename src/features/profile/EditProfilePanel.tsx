@@ -418,7 +418,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                           padding: '0.4rem 0.75rem',
                           borderRadius: '20px',
                           border: `1px solid var(--primary)`,
-                          background: 'rgba(59, 130, 246, 0.1)',
+                          background: 'rgba(var(--primary-rgb), 0.1)',
                           cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -554,7 +554,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                           padding: '0.4rem 0.75rem',
                           borderRadius: '8px',
                           border: `1px solid var(--primary)`,
-                          background: 'rgba(59, 130, 246, 0.1)',
+                          background: 'rgba(var(--primary-rgb), 0.1)',
                           cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
@@ -579,3 +579,4 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
     </motion.div>
   )
 }
+

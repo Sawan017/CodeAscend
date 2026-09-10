@@ -36,7 +36,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
         {/* Banner Area */}
         <div style={{ 
           height: '140px', 
-          background: profile.banner ? `url(${profile.banner}) center/cover` : 'linear-gradient(to right, var(--primary, #3b82f6), var(--ca-green, #0d9488))',
+          background: profile.banner ? `url(${profile.banner}) center/cover` : 'linear-gradient(to right, var(--primary, var(--primary)), var(--ca-green, #0d9488))',
           position: 'relative'
         }} />
         
@@ -55,7 +55,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
               justifyContent: 'center', 
               fontSize: '2.5rem', 
               fontWeight: 800, 
-              color: 'var(--primary, #3b82f6)', 
+              color: 'var(--primary, var(--primary))', 
               overflow: 'hidden',
               boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
               position: 'relative',
@@ -102,13 +102,13 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ca-text-muted, #9A958C)', fontSize: '0.95rem', flexWrap: 'wrap' }}>
               <span>@{profile.username || profile.arinova_id || profile.login_id || 'user'}</span>
               <span>•</span>
-              <span style={{ color: 'var(--primary, #3b82f6)', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.85rem' }}>
+              <span style={{ color: 'var(--primary, var(--primary))', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.85rem' }}>
                 {profile.title || 'Developer'}
               </span>
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
-              <div style={{ background: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary, #3b82f6)', padding: '4px 10px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 700 }}>
+              <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary, var(--primary))', padding: '4px 10px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 700 }}>
                 Level {level}
               </div>
               <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--ca-text-secondary, #5A5750)' }}>
@@ -117,7 +117,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
             </div>
             
             <div style={{ width: '100%', maxWidth: '300px', height: '6px', background: 'var(--ca-surface-raised, #e5e7eb)', borderRadius: '100px', overflow: 'hidden', marginTop: '8px' }}>
-              <div style={{ width: `${progressPercent}%`, height: '100%', background: 'var(--primary, #3b82f6)', borderRadius: '100px' }} />
+              <div style={{ width: `${progressPercent}%`, height: '100%', background: 'var(--primary, var(--primary))', borderRadius: '100px' }} />
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
           {/* About / Bio */}
           <div style={{ background: 'var(--ca-surface, #ffffff)', borderRadius: '16px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ca-text, #1E1D1B)' }}>
-              <BookOpen size={20} color="var(--primary, #3b82f6)" />
+              <BookOpen size={20} color="var(--primary, var(--primary))" />
               About
             </h2>
             <p style={{ margin: 0, color: 'var(--ca-text-secondary, #5A5750)', fontSize: '0.95rem', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
@@ -158,7 +158,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
                   <div key={skill.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', fontWeight: 600, color: 'var(--ca-text, #1E1D1B)' }}>
                       <span>{skill.name}</span>
-                      <span style={{ color: 'var(--primary, #3b82f6)' }}>Lv. {Math.floor(skill.progress / 20) + 1}</span>
+                      <span style={{ color: 'var(--primary, var(--primary))' }}>Lv. {Math.floor(skill.progress / 20) + 1}</span>
                     </div>
                     <div style={{ width: '100%', height: '8px', background: 'var(--ca-surface-raised, #e5e7eb)', borderRadius: '100px', overflow: 'hidden' }}>
                       <div style={{ width: `${skill.progress}%`, height: '100%', background: 'var(--ca-green, #0d9488)', borderRadius: '100px' }} />
@@ -214,7 +214,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ background: 'var(--ca-surface, #ffffff)', borderRadius: '16px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
             <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ca-text, #1E1D1B)' }}>
-              <Shield size={20} color="var(--primary, #3b82f6)" />
+              <Shield size={20} color="var(--primary, var(--primary))" />
               Adventurer Stats
             </h2>
             
@@ -241,7 +241,7 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary, #3b82f6)' }}>
+                <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(var(--primary-rgb), 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary, var(--primary))' }}>
                   <Target size={24} />
                 </div>
                 <div>
@@ -276,4 +276,5 @@ export function ProfilePanel({ profile, progression, skills, achievements, goals
     </div>
   );
 }
+
 

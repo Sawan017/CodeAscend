@@ -99,7 +99,7 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
         {/* --- TASK TIMING --- */}
         <div style={{ background: 'var(--bg-surface)', borderRadius: '16px', padding: '16px 20px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', color: '#06B6D4' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', color: 'var(--cyan)' }}>
               <Clock size={16} />
               <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Task Timing</span>
             </div>
@@ -110,7 +110,7 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
           
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>Baseline Target</div>
-            <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#06B6D4', lineHeight: 1, display: 'flex', alignItems: 'baseline', justifyContent: 'flex-end', gap: '4px' }}>
+            <div style={{ fontSize: '2.2rem', fontWeight: 900, color: 'var(--cyan)', lineHeight: 1, display: 'flex', alignItems: 'baseline', justifyContent: 'flex-end', gap: '4px' }}>
               {baselineTime} <span style={{ fontSize: '1rem', color: '#38BDF8' }}>min</span>
             </div>
           </div>
@@ -135,24 +135,24 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
             </div>
 
             {/* FOCUSED */}
-            <div className="reward-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', transition: 'all 0.2s', borderLeft: '4px solid #06B6D4', height: '60px' }}>
+            <div className="reward-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', transition: 'all 0.2s', borderLeft: '4px solid var(--cyan)', height: '60px' }}>
               <div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0369A1', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>FOCUSED</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>Complete under {focusedTime} min</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#06B6D4', textShadow: '0 0 12px rgba(6,182,212,0.3)' }}>+{focusedXP} XP</div>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: 'var(--cyan)', textShadow: '0 0 12px rgba(var(--cyan-rgb),0.3)' }}>+{focusedXP} XP</div>
               </div>
             </div>
 
             {/* EXTENDED */}
-            <div className="reward-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '12px', transition: 'all 0.2s', borderLeft: '4px solid #8B5CF6', height: '60px' }}>
+            <div className="reward-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '12px', transition: 'all 0.2s', borderLeft: '4px solid var(--secondary)', height: '60px' }}>
               <div>
                 <div style={{ fontSize: '0.95rem', fontWeight: 900, color: '#6D28D9', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>EXTENDED</div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>Complete at your own pace</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#8B5CF6' }}>+{baseXP} XP</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--secondary)' }}>+{baseXP} XP</div>
               </div>
             </div>
           </div>
@@ -164,7 +164,7 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
           onClick={onStart}
           style={{ 
             width: '100%', 
-            background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', 
+            background: 'linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%)', 
             color: 'white', 
             padding: '0 20px',
             height: '54px', 
@@ -174,7 +174,7 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', 
             cursor: 'pointer', 
             fontSize: '1.1rem', 
-            boxShadow: '0 8px 16px -8px rgba(6,182,212,0.4)',
+            boxShadow: '0 8px 16px -8px rgba(var(--cyan-rgb),0.4)',
             transition: 'all 0.2s',
             marginTop: '4px'
           }}
@@ -195,7 +195,7 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
         .start-task-btn:hover {
           transform: translateY(-2px);
           filter: brightness(1.1);
-          box-shadow: 0 12px 24px -8px rgba(6,182,212,0.5) !important;
+          box-shadow: 0 12px 24px -8px rgba(var(--cyan-rgb),0.5) !important;
         }
         .start-task-btn:active {
           transform: translateY(1px);
@@ -205,3 +205,4 @@ export function LearningSession({ subtopic, teachingMinutes, solvingBaselineMinu
     </div>
   )
 }
+

@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MessageSquare, Star } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
@@ -65,7 +65,7 @@ export function SubmitFeedbackModal({ isOpen, onClose, userId }: SubmitFeedbackM
           >
             <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-main)' }}>
-                <MessageSquare size={20} color="#8b5cf6" /> Submit Feedback
+                <MessageSquare size={20} color="var(--secondary)" /> Submit Feedback
               </h3>
               <button onClick={onClose} disabled={loading} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={20} /></button>
             </div>
@@ -110,7 +110,7 @@ export function SubmitFeedbackModal({ isOpen, onClose, userId }: SubmitFeedbackM
                   </div>
                   
                   <div style={{ marginTop: '0.5rem' }}>
-                    <button className="primary-btn" onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: '0.875rem', display: 'flex', justifyContent: 'center', background: '#8b5cf6', color: '#fff', border: 'none' }}>
+                    <button className="primary-btn" onClick={handleSubmit} disabled={loading} style={{ width: '100%', padding: '0.875rem', display: 'flex', justifyContent: 'center', background: 'var(--secondary)', color: '#fff', border: 'none' }}>
                       {loading ? 'Submitting...' : 'Submit Feedback'}
                     </button>
                   </div>
@@ -123,3 +123,4 @@ export function SubmitFeedbackModal({ isOpen, onClose, userId }: SubmitFeedbackM
     </AnimatePresence>
   )
 }
+

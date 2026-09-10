@@ -121,8 +121,8 @@ export function CreateGroupModal({
           transition: border-color 0.2s, box-shadow 0.2s;
         }
         .cg-input:focus {
-          border-color: var(--primary, #3b82f6);
-          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+          border-color: var(--primary, var(--primary));
+          box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.15);
         }
         .cg-input::placeholder {
           color: var(--ca-text-muted, #9A958C);
@@ -171,7 +171,7 @@ export function CreateGroupModal({
                 width: '26px',
                 height: '26px',
                 borderRadius: '50%',
-                background: 'var(--primary, #3b82f6)',
+                background: 'var(--primary, var(--primary))',
                 border: '2px solid var(--ca-surface, #ffffff)',
                 display: 'flex',
                 alignItems: 'center',
@@ -221,7 +221,7 @@ export function CreateGroupModal({
             </div>
           )}
 
-          <button onClick={handleSubmit} disabled={!name.trim() || creating} style={{ width: '100%', padding: '12px', background: (!name.trim() || creating) ? 'var(--ca-surface-alt, #e5e7eb)' : 'var(--primary, #3b82f6)', color: (!name.trim() || creating) ? 'var(--ca-text-muted, #9A958C)' : '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 600, marginTop: '8px', cursor: (!name.trim() || creating) ? 'not-allowed' : 'pointer', opacity: creating ? 0.7 : 1, transition: 'background-color 0.2s', boxShadow: (!name.trim() || creating) ? 'none' : '0 2px 8px rgba(0,0,0,0.1)' }}>
+          <button onClick={handleSubmit} disabled={!name.trim() || creating} style={{ width: '100%', padding: '12px', background: (!name.trim() || creating) ? 'var(--ca-surface-alt, #e5e7eb)' : 'var(--primary, var(--primary))', color: (!name.trim() || creating) ? 'var(--ca-text-muted, #9A958C)' : '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 600, marginTop: '8px', cursor: (!name.trim() || creating) ? 'not-allowed' : 'pointer', opacity: creating ? 0.7 : 1, transition: 'background-color 0.2s', boxShadow: (!name.trim() || creating) ? 'none' : '0 2px 8px rgba(0,0,0,0.1)' }}>
             {creating ? 'Creating...' : 'Create Group'}
           </button>
         </div>
@@ -230,5 +230,6 @@ export function CreateGroupModal({
     portalTarget
   )
 }
+
 
 

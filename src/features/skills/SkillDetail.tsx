@@ -55,8 +55,8 @@ export function SkillDetail({
   }
 
   const statusLabel = skill.progress >= 100 ? 'COMPLETED' : ((skill.progress || 0) > 0 ? 'IN PROGRESS' : 'ADDED');
-  const statusColor = skill.progress >= 100 ? '#3EA354' : ((skill.progress || 0) > 0 ? '#8B5CF6' : '#5A5750');
-  const statusBg = skill.progress >= 100 ? 'rgba(62,163,84,0.1)' : ((skill.progress || 0) > 0 ? 'rgba(139,92,246,0.1)' : 'var(--border)');
+  const statusColor = skill.progress >= 100 ? '#3EA354' : ((skill.progress || 0) > 0 ? 'var(--secondary)' : '#5A5750');
+  const statusBg = skill.progress >= 100 ? 'rgba(62,163,84,0.1)' : ((skill.progress || 0) > 0 ? 'rgba(var(--secondary-rgb),0.1)' : 'var(--border)');
 
   // Get primary domain for context
   const primaryDomain = PATHWAY_REGISTRY.find(p => p.id === canonicalSkill?.primaryDomainId);
@@ -84,8 +84,8 @@ export function SkillDetail({
       }}
     >
       {/* --- LAYER 1: AMBIENT PAGE BACKGROUND --- */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '700px', background: 'radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.08) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'absolute', top: '10%', left: '0%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '700px', background: 'radial-gradient(ellipse at 50% 0%, rgba(var(--secondary-rgb),0.08) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '10%', left: '0%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(var(--primary-rgb),0.05) 0%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'absolute', top: '40%', right: '0%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(236,72,153,0.03) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0 }} />
 
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem', position: 'relative', zIndex: 10 }}>
@@ -95,14 +95,14 @@ export function SkillDetail({
           onClick={onBack} 
           style={{ 
             background: 'var(--bg-surface)', backdropFilter: 'blur(12px)',
-            border: '1px solid var(--border)', color: '#3B82F6', 
+            border: '1px solid var(--border)', color: 'var(--primary)', 
             cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', 
             fontSize: '0.95rem', fontWeight: 800, padding: '10px 20px', borderRadius: '999px', 
             marginBottom: '3rem', transition: 'all 0.2s',
-            boxShadow: '0 4px 12px rgba(59,130,246,0.08)'
+            boxShadow: '0 4px 12px rgba(var(--primary-rgb),0.08)'
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface-hover)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(59,130,246,0.15)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(59,130,246,0.08)'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface-hover)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(var(--primary-rgb),0.15)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(var(--primary-rgb),0.08)'; }}
         >
           <ArrowLeft size={18} /> Return to Skills
         </button>
@@ -111,21 +111,21 @@ export function SkillDetail({
         <div style={{ 
           display: 'flex', flexWrap: 'wrap', gap: '40px', justifyContent: 'space-between', alignItems: 'center', 
           marginBottom: '4rem', background: 'var(--bg-surface)', 
-          padding: '48px', borderRadius: '32px', border: '1px solid rgba(139,92,246,0.15)', 
-          boxShadow: '0 24px 64px -16px rgba(59,130,246,0.12), inset 0 0 0 1px var(--border)', 
+          padding: '48px', borderRadius: '32px', border: '1px solid rgba(var(--secondary-rgb),0.15)', 
+          boxShadow: '0 24px 64px -16px rgba(var(--primary-rgb),0.12), inset 0 0 0 1px var(--border)', 
           position: 'relative', overflow: 'hidden' 
         }}>
           {/* Subtle hero decorative shape */}
-          <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '60%', height: '140%', background: 'linear-gradient(135deg, transparent 0%, rgba(139,92,246,0.04) 100%)', transform: 'rotate(-15deg)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '60%', height: '140%', background: 'linear-gradient(135deg, transparent 0%, rgba(var(--secondary-rgb),0.04) 100%)', transform: 'rotate(-15deg)', pointerEvents: 'none' }} />
           
           <div style={{ position: 'relative', zIndex: 1, flex: '1', minWidth: '300px' }}>
             {primaryDomain && (
               <div style={{ 
-                fontSize: '0.9rem', fontWeight: 800, color: '#8B5CF6', letterSpacing: '0.15em', 
+                fontSize: '0.9rem', fontWeight: 800, color: 'var(--secondary)', letterSpacing: '0.15em', 
                 textTransform: 'uppercase', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' 
               }}>
-                <div style={{ width: '24px', height: '24px', background: 'rgba(139,92,246,0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Target size={14} color="#8B5CF6" />
+                <div style={{ width: '24px', height: '24px', background: 'rgba(var(--secondary-rgb),0.1)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Target size={14} color="var(--secondary)" />
                 </div>
                 {primaryDomain.name}
               </div>
@@ -161,7 +161,7 @@ export function SkillDetail({
           
           {/* MASTERY AREA */}
           <div style={{ position: 'relative', zIndex: 1, flex: '0 0 auto', minWidth: '250px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', padding: '24px', background: 'var(--bg-surface-sunken)', borderRadius: '24px', border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '5rem', fontWeight: 900, color: '#3B82F6', lineHeight: 1, letterSpacing: '-0.04em', textShadow: '0 8px 24px rgba(59,130,246,0.15)' }}>
+            <div style={{ fontSize: '5rem', fontWeight: 900, color: 'var(--primary)', lineHeight: 1, letterSpacing: '-0.04em', textShadow: '0 8px 24px rgba(var(--primary-rgb),0.15)' }}>
               {skill.progress || 0}%
             </div>
             <div style={{ fontSize: '1.1rem', color: 'var(--text-main)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '8px' }}>
@@ -172,7 +172,7 @@ export function SkillDetail({
                 initial={{ width: 0 }} 
                 animate={{ width: `${Math.min(100, skill.progress || 0)}%` }} 
                 transition={{ duration: 1, ease: 'easeOut' }} 
-                style={{ height: '100%', background: 'linear-gradient(90deg, #3B82F6, #8B5CF6)', borderRadius: '999px' }} 
+                style={{ height: '100%', background: 'linear-gradient(90deg, var(--primary), var(--secondary))', borderRadius: '999px' }} 
               />
             </div>
           </div>
@@ -187,8 +187,8 @@ export function SkillDetail({
               fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 40px 0', 
               display: 'flex', alignItems: 'center', gap: '16px' 
             }}>
-              <div style={{ width: '48px', height: '48px', background: 'linear-gradient(135deg, rgba(59,130,246,0.15), rgba(139,92,246,0.15))', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BookOpen size={24} color="#3B82F6" />
+              <div style={{ width: '48px', height: '48px', background: 'linear-gradient(135deg, rgba(var(--primary-rgb),0.15), rgba(var(--secondary-rgb),0.15))', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BookOpen size={24} color="var(--primary)" />
               </div>
               Skill Curriculum
               <span style={{ fontSize: '1.1rem', color: 'var(--text-muted)', fontWeight: 600, marginLeft: 'auto', background: 'var(--bg-surface-sunken)', padding: '6px 16px', borderRadius: '999px' }}>
@@ -200,7 +200,7 @@ export function SkillDetail({
               {canonicalSkill.curriculum.map((c: any, i) => (
                 <div key={i} style={{ 
                   background: 'transparent', borderRadius: '24px', 
-                  borderLeft: '6px solid #3B82F6', borderTop: '1px solid var(--border)',
+                  borderLeft: '6px solid var(--primary)', borderTop: '1px solid var(--border)',
                   borderRight: '1px solid var(--border)', borderBottom: '1px solid var(--border)',
                   padding: '32px' 
                 }}>
@@ -226,11 +226,11 @@ export function SkillDetail({
                         <div 
                           key={j}
                           className="card-animated-border"
-                          style={{ '--card-accent': '#8B5CF6', background: 'var(--bg-surface)', borderRadius: '20px', padding: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(15,23,42,0.03)', cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', overflow: 'hidden' } as React.CSSProperties}
+                          style={{ '--card-accent': 'var(--secondary)', background: 'var(--bg-surface)', borderRadius: '20px', padding: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(15,23,42,0.03)', cursor: 'pointer', transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', overflow: 'hidden' } as React.CSSProperties}
                           onMouseEnter={e => {
                             e.currentTarget.style.transform = 'translateY(-4px)';
-                            e.currentTarget.style.boxShadow = '0 16px 32px -8px rgba(139,92,246,0.15)';
-                            e.currentTarget.style.borderColor = '#8B5CF6';
+                            e.currentTarget.style.boxShadow = '0 16px 32px -8px rgba(var(--secondary-rgb),0.15)';
+                            e.currentTarget.style.borderColor = 'var(--secondary)';
                             e.currentTarget.style.background = 'var(--bg-surface-hover)';
                           }}
                           onMouseLeave={e => {
@@ -278,8 +278,8 @@ export function SkillDetail({
           }}>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 24px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', background: 'rgba(139,92,246,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <FileText size={20} color="#8B5CF6" />
+                <div style={{ width: '40px', height: '40px', background: 'rgba(var(--secondary-rgb),0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <FileText size={20} color="var(--secondary)" />
                 </div>
                 Notes & Learnings
               </div>
@@ -291,7 +291,7 @@ export function SkillDetail({
                     background: 'var(--bg-surface-sunken)', color: 'var(--text-muted)', border: '1px solid var(--border)', 
                     cursor: 'pointer', transition: 'all 0.2s' 
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.borderColor = '#8B5CF6'; e.currentTarget.style.color = '#8B5CF6'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-surface)'; e.currentTarget.style.borderColor = 'var(--secondary)'; e.currentTarget.style.color = 'var(--secondary)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >
                   Edit Notes
@@ -313,7 +313,7 @@ export function SkillDetail({
                 />
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                   <button onClick={() => setIsEditingNotes(false)} style={{ padding: '12px 24px', background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border)', borderRadius: '12px', cursor: 'pointer', fontWeight: 800 }}>Cancel</button>
-                  <button onClick={handleSaveNotes} style={{ padding: '12px 24px', background: '#3B82F6', color: '#fff', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 800, boxShadow: '0 8px 16px -4px rgba(59,130,246,0.3)' }}>Save Notes</button>
+                  <button onClick={handleSaveNotes} style={{ padding: '12px 24px', background: 'var(--primary)', color: '#fff', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 800, boxShadow: '0 8px 16px -4px rgba(var(--primary-rgb),0.3)' }}>Save Notes</button>
                 </div>
               </div>
             ) : (
@@ -415,5 +415,6 @@ export function SkillDetail({
     </motion.div>
   )
 }
+
 
 

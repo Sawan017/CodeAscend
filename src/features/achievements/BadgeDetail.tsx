@@ -41,7 +41,7 @@ export function BadgeDetail({
           width: '600px', height: '600px', 
           background: badge.rarity === 'Legendary' ? 'radial-gradient(circle, rgba(234,179,8,0.15) 0%, rgba(0,0,0,0) 70%)' :
                       badge.rarity === 'Epic' ? 'radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(0,0,0,0) 70%)' :
-                      badge.rarity === 'Rare' ? 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%)' :
+                      badge.rarity === 'Rare' ? 'radial-gradient(circle, rgba(var(--primary-rgb),0.15) 0%, rgba(0,0,0,0) 70%)' :
                       'radial-gradient(circle, rgba(161,161,170,0.15) 0%, rgba(0,0,0,0) 70%)',
           pointerEvents: 'none', zIndex: 0
         }} />
@@ -129,3 +129,4 @@ export function BadgeDetail({
     </motion.div>
   )
 }
+

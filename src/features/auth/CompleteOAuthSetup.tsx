@@ -299,7 +299,7 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
               marginTop: '0.5rem',
               width: '100%',
               padding: '0.875rem',
-              background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+              background: 'linear-gradient(135deg, var(--primary) 0%, #2563eb 100%)',
               color: 'var(--text-main)',
               border: 'none',
               borderRadius: '8px',
@@ -325,3 +325,4 @@ export function CompleteOAuthSetup({ onComplete }: CompleteOAuthSetupProps) {
     </div>
   )
 }
+

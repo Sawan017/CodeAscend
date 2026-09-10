@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Search, ChevronRight, HelpCircle, ChevronLeft } from 'lucide-react'
 
@@ -113,7 +113,7 @@ export function HelpCenterModal({ isOpen, onClose }: HelpCenterModalProps) {
                     <ChevronLeft size={20} />
                   </button>
                 ) : (
-                  <HelpCircle size={22} color="#3b82f6" />
+                  <HelpCircle size={22} color="var(--primary)" />
                 )}
                 <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)' }}>
                   {activeCategory || 'Help Center'}
@@ -220,3 +220,4 @@ export function HelpCenterModal({ isOpen, onClose }: HelpCenterModalProps) {
     </AnimatePresence>
   )
 }
+

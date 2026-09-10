@@ -203,15 +203,15 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
   }, [tickets, searchQuery, statusFilter])
 
   const statusColors: any = {
-    ai_assisting: '#3b82f6',
+    ai_assisting: 'var(--primary)',
     waiting_for_official: '#eab308',
-    official_assigned: '#8b5cf6',
+    official_assigned: 'var(--secondary)',
     resolved: '#10b981',
     closed: '#6b7280',
     // Feedback
     new: '#ef4444',
-    reviewed: '#3b82f6',
-    planned: '#8b5cf6',
+    reviewed: 'var(--primary)',
+    planned: 'var(--secondary)',
     implemented: '#10b981',
     rejected: '#6b7280'
   }
@@ -558,3 +558,4 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
     </div>
   )
 }
+

@@ -13,15 +13,15 @@
   --bg-surface: #0a0d14; 
   --bg-surface-sunken: #05070a;
   
-  --primary: #3b82f6; /* Blue 500 */
+  --primary: #3b82f6; --primary-rgb: 59, 130, 246;
   --primary-hover: #60a5fa; /* Blue 400 */
-  --secondary: #8b5cf6; /* Violet 500 */
+  --secondary: #8b5cf6; --secondary-rgb: 139, 92, 246;
   
   --accent-gamification: #a855f7; /* Purple 500 */
   --accent-gamification-glow: #c084fc;
   --accent-social: #14b8a6; /* Teal 500 */
   
-  --cyan: #06b6d4; /* Cyan 500 */
+  --cyan: #06b6d4; --cyan-rgb: 6, 182, 212;
   --gold: #eab308; /* Yellow 500 */
   --green: #10b981; /* Emerald 500 */
   
@@ -35,7 +35,7 @@
   
   --glass: rgba(10, 13, 20, 0.7);
   --glass-strong: rgba(10, 13, 20, 0.9);
-  --glass-border: rgba(150, 150, 180, 0.10);
+  --glass-border: rgba(150, 140, 200, 0.12);
 
   --glass-toast: rgba(10, 13, 20, 0.95);
   
@@ -156,7 +156,7 @@ h4 { font-size: 1rem; }
   background: var(--text-main);
   color: var(--bg-base);
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(150, 150, 180, 0.15);
+  box-shadow: 0 4px 12px rgba(150, 140, 200, 0.16);
   border: 1px solid transparent;
 }
 
@@ -1404,7 +1404,7 @@ h1, h2, h3, h4 { color: var(--ca-text); }
 [data-theme="dark"], .app-shell.dark {
   /* --bg-main: gradient above */ /* Deep charcoal with blue/green undertone */
   /* --bg-card: gradient above */ /* Dark mode card */
-  --border-color: rgba(150, 150, 180, 0.10);
+  --border-color: rgba(150, 140, 200, 0.12);
   --text-primary: #F2F3F7;
   --text-secondary: #9DA3B5;
   
@@ -1815,25 +1815,25 @@ html[data-theme="light"], body[data-theme="light"], [data-theme="light"], .app-s
 
 /* DARK MODE */
 html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shell.dark {
-  --ca-bg: #080A10;
+  --ca-bg: #080910;
   --bg-main: 
-    radial-gradient(ellipse at 50% 0%, rgba(91, 124, 255, 0.04) 0%, rgba(139, 108, 255, 0.03) 50%, transparent 80%),
-    linear-gradient(180deg, #0A0D15 0%, #07090F 100%);
-  --bg-base: #080A10;
+    radial-gradient(ellipse at 50% 0%, rgba(17, 20, 38, 0.6) 0%, rgba(23, 19, 41, 0.3) 50%, transparent 80%),
+    linear-gradient(180deg, #080910 0%, #050508 100%);
+  --bg-base: #080910;
   
-  --ca-surface: #0D1018;
-  --bg-card: #141824;
-  --bg-panel: #141824;
-  --bg-surface: #191D2A;
+  --ca-surface: rgba(255, 255, 255, 0.03);
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-panel: rgba(255, 255, 255, 0.04);
+  --bg-surface: rgba(255, 255, 255, 0.05);
   
-  --ca-surface-alt: #141824;
-  --bg-surface-sunken: #10131C;
+  --ca-surface-alt: rgba(255, 255, 255, 0.035);
+  --bg-surface-sunken: rgba(0, 0, 0, 0.2);
   
-  --ca-border: rgba(150, 150, 180, 0.10);
-  --border-color: rgba(150, 150, 180, 0.10);
-  --border: rgba(150, 150, 180, 0.10);
-  --ca-border-strong: rgba(150, 150, 180, 0.15);
-  --border-strong: rgba(150, 150, 180, 0.15);
+  --ca-border: rgba(150, 140, 200, 0.12);
+  --border-color: rgba(150, 140, 200, 0.12);
+  --border: rgba(150, 140, 200, 0.12);
+  --ca-border-strong: rgba(150, 140, 200, 0.16);
+  --border-strong: rgba(150, 140, 200, 0.16);
   
   --ca-text: #F2F3F7;
   --text-main: #F2F3F7;
@@ -1845,11 +1845,15 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
   
   --primary-accent: #5B7CFF;
   --primary: #5B7CFF;
+    --primary-rgb: 91, 124, 255;
   --primary-hover: #7B9CFF; 
   --primary-accent-light: rgba(91, 124, 255, 0.12);
   --secondary-accent: #8B6CFF;
   --secondary: #8B6CFF;
+    --secondary-rgb: 139, 108, 255;
   --accent-gamification: #A56CFF;
+    --cyan: #5B7CFF;
+    --cyan-rgb: 91, 124, 255;
   
   --card-shadow: 0 4px 12px rgba(0,0,0,0.3);
   --card-shadow-hover: 0 8px 24px rgba(0,0,0,0.5);
@@ -2096,9 +2100,9 @@ html[data-theme="light"], body[data-theme="light"], [data-theme="light"], .app-s
 html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shell.dark {
   /* Using the opaque premium dark background from the main theme */
   --settings-main: var(--bg-main); 
-  --settings-sidebar: #0D1018; /* Opaque layered dark surface */
+  --settings-sidebar: rgba(8, 9, 16, 0.95); /* Opaque layered dark surface */
   --settings-content: var(--bg-main);
-  --settings-card: #141824; /* Opaque card surface */
+  --settings-card: rgba(255, 255, 255, 0.04); /* Opaque card surface */
 }
 
 /* Override drawer cards when inside settings */
@@ -2133,7 +2137,7 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 [data-theme="dark"] .dashboard-item,
 [data-theme="dark"] .dashboard-grid > div > div,
 [data-theme="dark"] [style*="var(--bg-surface)"] {
-  border: 1px solid rgba(150, 150, 180, 0.10) !important;
+  border: 1px solid rgba(150, 140, 200, 0.12) !important;
   background-image: none !important;
 }
 
@@ -2144,7 +2148,7 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 [data-theme="dark"] button[style*="background: '#1677E8'"],
 [data-theme="dark"] button[style*="background: '#3B82F6'"] {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
-  border: 1px solid rgba(150, 150, 180, 0.10) !important;
+  border: 1px solid rgba(150, 140, 200, 0.12) !important;
 }
 
 [data-theme="dark"] .rpg-page-container > div:nth-child(3) > div:nth-child(2) > div:nth-child(2) > div {
@@ -2153,12 +2157,12 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
 
 
 [data-theme="dark"] .premium-hero {
-  background: linear-gradient(135deg, #0B0E16 0%, #10162A 50%, #17152A 100%) !important;
+  background: linear-gradient(135deg, #0A0D18 0%, #11162A 50%, #19152B 100%) !important;
   border: 1px solid var(--border) !important;
   box-shadow: 0 24px 48px -12px rgba(0,0,0,0.5) !important;
 }
 [data-theme="dark"] .premium-hero > div:first-child {
-  background: radial-gradient(circle, rgba(91, 124, 255, 0.05) 0%, rgba(139, 108, 255, 0.04) 40%, transparent 70%) !important;
+  background: radial-gradient(circle, rgba(139, 140, 255, 0.04) 0%, rgba(160, 140, 255, 0.02) 40%, transparent 70%) !important;
 }
 
 
@@ -2173,4 +2177,6 @@ html[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"], .app-shel
   box-shadow: 0 0 12px rgba(91, 124, 255, 0.15) !important;
   color: #fff !important;
 }
+
+
 

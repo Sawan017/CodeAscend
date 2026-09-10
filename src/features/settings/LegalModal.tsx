@@ -153,7 +153,7 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
                     padding: '1.25rem', background: '#eff6ff', border: '1px solid #bfdbfe', 
                     borderRadius: '12px', marginBottom: '2.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-start'
                   }}>
-                    <Info size={24} color="#3b82f6" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <Info size={24} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
                     <div style={{ color: '#1e3a8a', fontSize: '0.95rem', lineHeight: 1.6 }}>
                       <ReactMarkdown components={{...MarkdownComponents, p: ({node, ...props}: any) => <p style={{ margin: 0 }} {...props} />}}>{parsed.notice}</ReactMarkdown>
                     </div>
@@ -209,4 +209,5 @@ export function LegalModal({ isOpen, onClose, title, content }: LegalModalProps)
     </AnimatePresence>
   );
 }
+
 

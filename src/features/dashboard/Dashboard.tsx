@@ -341,7 +341,7 @@ function DashboardInner({
                     <span style={{ color: 'var(--text-main)' }}>{activeSkill.progress || 0}%</span>
                   </div>
                   <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden', marginBottom: '32px' }}>
-                    <div style={{ width: (activeSkill.progress || 0) + '%', height: '100%', background: '#3B82F6', borderRadius: '4px' }} />
+                    <div style={{ width: (activeSkill.progress || 0) + '%', height: '100%', background: 'var(--primary)', borderRadius: '4px' }} />
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
@@ -366,9 +366,9 @@ function DashboardInner({
                 <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>Ready to start learning?</h4>
                 <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.95rem', maxWidth: '280px' }}>Choose a skill from the academy and begin your journey.</p>
                 <button onClick={() => onNavigate({ view: 'learning' })} style={{
-                  background: '#3B82F6', color: '#fff', border: 'none', padding: '12px 28px',
+                  background: 'var(--primary)', color: '#fff', border: 'none', padding: '12px 28px',
                   borderRadius: '12px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', marginTop: '12px',
-                  boxShadow: '0 4px 14px rgba(59,130,246,0.3)'
+                  boxShadow: '0 4px 14px rgba(var(--primary-rgb),0.3)'
                 }}>Browse Skills</button>
               </div>
             )}
@@ -434,11 +434,11 @@ function DashboardInner({
         {/* Skill Mastery */}
         <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div className="transparent-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '4px' }}>
-            <h3 style={sectionTitle}><Star size={16} color="#8B5CF6" /> SKILL MASTERY</h3>
+            <h3 style={sectionTitle}><Star size={16} color="var(--secondary)" /> SKILL MASTERY</h3>
             {pinnedSkillIds.length >= 5 ? (
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }} title="Maximum of 5 skills can be pinned. Unpin a skill to add another.">Max 5 skills pinned</span>
             ) : (
-              <button onClick={() => setShowSkillPicker(true)} style={{ background: 'transparent', border: 'none', color: '#8B5CF6', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button onClick={() => setShowSkillPicker(true)} style={{ background: 'transparent', border: 'none', color: 'var(--secondary)', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Plus size={16} /> Add Skill
               </button>
             )}
@@ -450,7 +450,7 @@ function DashboardInner({
                 <div key={skill.id} style={{ display: "flex", flexDirection: "column", gap: "12px", cursor: "pointer", transition: "all 0.2s" }} onClick={() => onNavigate({ view: "skill_detail", id: skill.id })}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(139,92,246,0.1)', color: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(var(--secondary-rgb),0.1)', color: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Star size={18} />
                       </div>
                       <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-main)' }}>{skill.name}</span>
@@ -463,13 +463,13 @@ function DashboardInner({
                     </div>
                   </div>
                   <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: skill.progress + '%', height: '100%', background: '#8B5CF6', borderRadius: '4px' }} />
+                    <div style={{ width: skill.progress + '%', height: '100%', background: 'var(--secondary)', borderRadius: '4px' }} />
                   </div>
                 </div>
               ))
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px', padding: '16px 0', justifyContent: 'center', flex: 1 }}>
-                <div style={{ width: 56, height: 56, background: 'rgba(139,92,246,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8B5CF6' }}>
+                <div style={{ width: 56, height: 56, background: 'rgba(var(--secondary-rgb),0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--secondary)' }}>
                   <Star size={28} />
                 </div>
                 <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>No skills to show yet.</h4>
@@ -482,7 +482,7 @@ function DashboardInner({
         {/* Recent Achievements */}
         <motion.div variants={fadeInUp} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div className="transparent-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '4px' }}>
-            <h3 style={sectionTitle}><Trophy size={16} color="#3B82F6" /> RECENT ACHIEVEMENTS</h3>
+            <h3 style={sectionTitle}><Trophy size={16} color="var(--primary)" /> RECENT ACHIEVEMENTS</h3>
           </div>
           <div style={{ ...card, padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', flex: 1 }}>
             {recentUnlocks.length > 0 ? (
@@ -507,13 +507,13 @@ function DashboardInner({
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px', padding: '16px 0', justifyContent: 'center', flex: 1 }}>
-                <div style={{ width: 56, height: 56, background: 'rgba(59,130,246,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3B82F6' }}>
+                <div style={{ width: 56, height: 56, background: 'rgba(var(--primary-rgb),0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
                   <Trophy size={28} />
                 </div>
                 <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-main)', margin: 0 }}>Your first achievement is waiting.</h4>
                 <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem', maxWidth: '240px' }}>Complete a milestone to unlock it.</p>
                 <button onClick={() => onNavigate({ view: 'achievements' })} style={{
-                  background: 'rgba(59,130,246,0.1)', color: '#3B82F6', border: 'none', padding: '12px 28px',
+                  background: 'rgba(var(--primary-rgb),0.1)', color: 'var(--primary)', border: 'none', padding: '12px 28px',
                   borderRadius: '12px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', marginTop: '8px',
                 }}>View Achievements</button>
               </div>
@@ -548,7 +548,7 @@ function DashboardInner({
                 return (
                   <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: '12px', background: 'var(--bg-base)', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'rgba(139,92,246,0.1)', color: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 32, height: 32, borderRadius: '8px', background: 'rgba(var(--secondary-rgb),0.1)', color: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Star size={16} />
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -557,9 +557,9 @@ function DashboardInner({
                       </div>
                     </div>
                     {isPinned ? (
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#8B5CF6', padding: '6px 12px', background: 'rgba(139,92,246,0.1)', borderRadius: '6px' }}>Pinned</span>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--secondary)', padding: '6px 12px', background: 'rgba(var(--secondary-rgb),0.1)', borderRadius: '6px' }}>Pinned</span>
                     ) : (
-                      <button onClick={() => handlePinSkill(s.id)} style={{ background: 'transparent', border: '1px solid #8B5CF6', color: '#8B5CF6', padding: '6px 12px', borderRadius: '6px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>Pin</button>
+                      <button onClick={() => handlePinSkill(s.id)} style={{ background: 'transparent', border: '1px solid var(--secondary)', color: 'var(--secondary)', padding: '6px 12px', borderRadius: '6px', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer' }}>Pin</button>
                     )}
                   </div>
                 )
@@ -581,6 +581,7 @@ function DashboardInner({
 export function Dashboard(props: DashboardProps) {
   return <DashErrorBoundary><DashboardInner {...props} /></DashErrorBoundary>;
 }
+
 
 
 

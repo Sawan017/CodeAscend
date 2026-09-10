@@ -130,7 +130,7 @@ export function AgeVerificationModal({
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '1rem' }}>
-              <div style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', padding: '1rem', borderRadius: '50%' }}>
+              <div style={{ background: 'rgba(var(--primary-rgb), 0.1)', color: 'var(--primary)', padding: '1rem', borderRadius: '50%' }}>
                 <Calendar size={32} />
               </div>
               <h2 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--ca-text)' }}>Age Verification Required</h2>
@@ -210,4 +210,5 @@ export function AgeVerificationModal({
     </AnimatePresence>
   )
 }
+
 

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const content = 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Trophy, Target, Lock, Award, Flame } from 'lucide-react';
@@ -79,7 +81,7 @@ export const AchievementsPanel = ({
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style dangerouslySetInnerHTML={{ __html: \\\
         .ach-card {
           background: var(--bg-card);
           border-radius: 16px;
@@ -120,7 +122,7 @@ export const AchievementsPanel = ({
           box-shadow: none;
           border-color: var(--border) !important;
         }
-      ` }} />
+      \\\ }} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '40px' }}>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{
@@ -149,9 +151,9 @@ export const AchievementsPanel = ({
               style={{
                 padding: '4px 12px', borderRadius: '16px',
                 border: '1px solid',
-                borderColor: activeCategory === c ? 'var(--cyan)' : 'var(--border-strong)',
-                background: activeCategory === c ? 'rgba(var(--cyan-rgb),0.1)' : 'transparent',
-                color: activeCategory === c ? 'var(--cyan)' : 'var(--text-muted)',
+                borderColor: activeCategory === c ? '#06B6D4' : 'var(--border-strong)',
+                background: activeCategory === c ? 'rgba(6,182,212,0.1)' : 'transparent',
+                color: activeCategory === c ? '#06B6D4' : 'var(--text-muted)',
                 fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer',
                 whiteSpace: 'nowrap'
               }}
@@ -162,7 +164,7 @@ export const AchievementsPanel = ({
         </div>
 
         {/* 1. ACHIEVEMENT PROGRESS (ALL LOCKED/IN-PROGRESS ITEMS) */}
-        <h3 style={{ ...sectionTitle, margin: 0 }}><Target size={16} color="var(--primary)" /> ACHIEVEMENT PROGRESS</h3>
+        <h3 style={{ ...sectionTitle, margin: 0 }}><Target size={16} color="#3B82F6" /> ACHIEVEMENT PROGRESS</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
           {unifiedProgressItems.map((item: any, i: number) => {
             const hasProgress = item.targetValue !== undefined;
@@ -270,4 +272,5 @@ export const AchievementsPanel = ({
     </>
   );
 };
-
+;
+fs.writeFileSync('src/features/achievements/AchievementsPanel.tsx', content);

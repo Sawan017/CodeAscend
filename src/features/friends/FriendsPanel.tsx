@@ -116,19 +116,19 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
         <div style={{ display: 'flex', gap: '8px', background: 'var(--bg-surface)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)' }}>
           <button 
             onClick={() => setActiveTab('connections')}
-            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'connections' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'connections' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'connections' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'connections' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'connections' ? 'var(--secondary)' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'connections' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
           >
             Connections ({friends.length})
           </button>
           <button 
             onClick={() => setActiveTab('find')}
-            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'find' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'find' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'find' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'find' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'find' ? 'var(--secondary)' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'find' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
           >
             Find People
           </button>
           <button 
             onClick={() => setActiveTab('requests')}
-            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'requests' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'requests' ? '#8B5CF6' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'requests' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeTab === 'requests' ? 'var(--bg-surface)' : 'transparent', color: activeTab === 'requests' ? 'var(--secondary)' : '#5A5750', fontWeight: 800, fontSize: '0.9rem', cursor: 'pointer', boxShadow: activeTab === 'requests' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             Requests 
             {incoming.length > 0 && (
@@ -146,14 +146,14 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
         <div>
           {friends.length === 0 ? (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ background: 'var(--bg-card)', borderRadius: '20px', border: '1px dashed var(--border-strong)', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(var(--secondary-rgb), 0.1)', color: 'var(--secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
                 <Users size={32} />
               </div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '1.4rem', color: 'var(--text-main)', fontWeight: 900 }}>No connections yet</h3>
               <p style={{ margin: '0 0 24px 0', color: 'var(--text-main)', maxWidth: '400px', lineHeight: 1.5 }}>Your network is empty. Search for other developers by their username or ARINOVA ID to start collaborating.</p>
               <button 
                 onClick={() => setActiveTab('find')}
-                style={{ background: '#8B5CF6', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem' }}
+                style={{ background: 'var(--secondary)', color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem' }}
               >
                 <Search size={18} /> Find People
               </button>
@@ -172,7 +172,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                     <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 600 }}>@{friend.login_id || friend.username} ? Lvl {friend.level}</p>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <button onClick={() => onMessage(friend.userId)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: '#8B5CF6', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Message">
+                    <button onClick={() => onMessage(friend.userId)} style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', color: 'var(--secondary)', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Message">
                       <MessageSquare size={16} />
                     </button>
                     <button onClick={() => onRemove(friend.userId)} style={{ background: '#FEF2F2', border: '1px solid rgba(239, 68, 68, 0.1)', color: '#EF4444', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }} title="Remove Connection">
@@ -241,7 +241,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
                       ) : (
                         <button 
                           onClick={() => handleSendRequest(profile.userId)}
-                          style={{ background: '#8B5CF6', color: '#fff', border: 'none', width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
+                          style={{ background: 'var(--secondary)', color: '#fff', border: 'none', width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
                           title="Connect"
                         >
                           <UserPlus size={18} />
@@ -328,6 +328,7 @@ export function FriendsPanel({ friendState, incomingRequests, onAccept, onReject
     </div>
   )
 }
+
 
 
 

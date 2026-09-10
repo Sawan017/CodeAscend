@@ -1,4 +1,4 @@
-﻿import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Trash2, Bell, MessageSquare, UserPlus, Users, Award, Brain, AtSign } from 'lucide-react'
 
 export type NotificationType = 'message' | 'friend_request' | 'group_activity' | 'mention' | 'achievement' | 'learning'
@@ -88,7 +88,7 @@ export function NotificationsPanel({
             <div style={{ display: 'flex', gap: '1rem', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border)' }}>
               <button 
                 onClick={onMarkAllRead}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(59,130,246,0.1)', color: 'var(--primary)', border: '1px solid rgba(59,130,246,0.2)', padding: '0.6rem', borderRadius: '8px', cursor: 'pointer' }}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', background: 'rgba(var(--primary-rgb),0.1)', color: 'var(--primary)', border: '1px solid rgba(var(--primary-rgb),0.2)', padding: '0.6rem', borderRadius: '8px', cursor: 'pointer' }}
               >
                 <Check size={16} /> Mark all read
               </button>
@@ -159,3 +159,4 @@ export function NotificationsPanel({
     </AnimatePresence>
   )
 }
+

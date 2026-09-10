@@ -81,9 +81,9 @@ export function GoalDetail({
           <button 
             onClick={() => setIsEditing(!isEditing)}
             style={{
-              background: 'rgba(59, 130, 246, 0.1)',
+              background: 'rgba(var(--primary-rgb), 0.1)',
               color: 'var(--primary)',
-              border: '1px solid rgba(59, 130, 246, 0.2)',
+              border: '1px solid rgba(var(--primary-rgb), 0.2)',
               padding: '0.5rem 1.25rem',
               borderRadius: '12px',
               cursor: 'pointer',
@@ -232,3 +232,4 @@ export function GoalDetail({
     </motion.div>
   )
 }
+

@@ -87,7 +87,7 @@ export function AddMembersModal({
             <div style={{ padding: '10px', textAlign: 'center', color: '#9A958C' }}>No available friends to add.</div>
           ) : (
             availableFriends.map(f => (
-              <div key={f.userId} onClick={() => toggleFriend(f.userId)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', borderRadius: '6px', background: selectedFriends.includes(f.userId) ? 'rgba(6, 182, 212, 0.1)' : 'transparent', cursor: 'pointer', transition: 'all 0.2s' }}>
+              <div key={f.userId} onClick={() => toggleFriend(f.userId)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px', borderRadius: '6px', background: selectedFriends.includes(f.userId) ? 'rgba(var(--cyan-rgb), 0.1)' : 'transparent', cursor: 'pointer', transition: 'all 0.2s' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Avatar src={f.avatar} size={32} />
                   <span style={{ color: '#fff', fontSize: '0.9rem' }}>{f.displayName}</span>
@@ -106,5 +106,6 @@ export function AddMembersModal({
     document.body
   )
 }
+
 
 

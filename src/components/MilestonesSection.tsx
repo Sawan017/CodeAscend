@@ -66,8 +66,8 @@ export function MilestonesSection({ dynamicMilestones, displayedIds, maxVisible 
                     alignItems: 'center', 
                     gap: '0.5rem', 
                     padding: '0.4rem 0.75rem', 
-                    background: 'rgba(59, 130, 246, 0.1)', 
-                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    background: 'rgba(var(--primary-rgb), 0.1)', 
+                    border: '1px solid rgba(var(--primary-rgb), 0.2)',
                     borderRadius: '16px',
                     color: 'var(--text)',
                     width: 'max-content'
@@ -117,3 +117,4 @@ export function MilestonesSection({ dynamicMilestones, displayedIds, maxVisible 
     </div>
   )
 }
+

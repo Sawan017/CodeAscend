@@ -44,13 +44,13 @@ export function TopBar({
 
   const SECTION_COLORS: Record<string, { hex: string, rgb: string }> = {
     'dashboard': { hex: '#3EA354', rgb: '62, 163, 84' },
-    'learning': { hex: '#3B82F6', rgb: '59, 130, 246' },
+    'learning': { hex: 'var(--primary)', rgb: '59, 130, 246' },
     'projects': { hex: '#F59E0B', rgb: '245, 158, 11' },
     'achievements': { hex: '#EAB308', rgb: '234, 179, 8' },
-    'chat': { hex: '#8B5CF6', rgb: '139, 92, 246' },
+    'chat': { hex: 'var(--secondary)', rgb: '139, 92, 246' },
     'goals': { hex: '#14B8A6', rgb: '20, 184, 166' },
-    'todo': { hex: '#8B5CF6', rgb: '139, 92, 246' },
-    'future': { hex: '#06B6D4', rgb: '6, 182, 212' },
+    'todo': { hex: 'var(--secondary)', rgb: '139, 92, 246' },
+    'future': { hex: 'var(--cyan)', rgb: '6, 182, 212' },
     'career_world': { hex: '#F43F5E', rgb: '244, 63, 94' },
     'admin_support': { hex: '#F59E0B', rgb: '245, 158, 11' },
   }
@@ -277,17 +277,17 @@ export function TopBar({
               onClick={onOpenActiveSession}
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
-                background: 'linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%)', 
+                background: 'linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%)', 
                 border: '1px solid rgba(255,255,255,0.2)',
                 color: '#fff', padding: '10px 18px', borderRadius: '100px',
                 fontSize: '0.9rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s',
-                boxShadow: '0 8px 16px -4px rgba(6,182,212,0.4)',
+                boxShadow: '0 8px 16px -4px rgba(var(--cyan-rgb),0.4)',
                 backdropFilter: 'blur(8px)',
                 letterSpacing: '0.05em',
                 whiteSpace: 'nowrap'
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px -4px rgba(6,182,212,0.5)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 16px -4px rgba(6,182,212,0.4)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 24px -4px rgba(var(--cyan-rgb),0.5)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 16px -4px rgba(var(--cyan-rgb),0.4)'; }}
             >
               <PlayCircle size={16} fill="rgba(255,255,255,0.2)" />
               {sessionText}
@@ -298,4 +298,5 @@ export function TopBar({
     </header>
   )
 }
+
 

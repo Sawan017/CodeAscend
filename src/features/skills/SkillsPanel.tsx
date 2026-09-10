@@ -194,12 +194,12 @@ export function SkillsPanel({
         
         {/* --- HERO / HEADER --- */}
         <div className="premium-hero" style={{ 
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(139,92,246,0.06) 100%)', 
+          background: 'linear-gradient(135deg, rgba(99,102,241,0.04) 0%, rgba(var(--secondary-rgb),0.06) 100%)', 
           borderRadius: '32px', padding: '56px 48px', position: 'relative', overflow: 'hidden',
           border: '1px solid rgba(99,102,241,0.15)',
           boxShadow: 'inset 0 0 0 1px #fff, 0 24px 48px -12px rgba(99,102,241,0.05)'
         }}>
-          <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+          <div style={{ position: 'absolute', top: '-50%', right: '-10%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(var(--cyan-rgb),0.08) 0%, transparent 70%)', filter: 'blur(40px)' }} />
           
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div style={{ 
@@ -288,7 +288,7 @@ export function SkillsPanel({
                         <div key={p.id} style={{ padding: '24px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(17,24,39,0.03)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <div>
-                              <span style={{ fontSize: '0.75rem', color: '#06B6D4', background: 'rgba(6,182,212,0.1)', padding: '6px 12px', borderRadius: '999px', fontWeight: 800 }}>DOMAIN</span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--cyan)', background: 'rgba(var(--cyan-rgb),0.1)', padding: '6px 12px', borderRadius: '999px', fontWeight: 800 }}>DOMAIN</span>
                               <h3 style={{ margin: '8px 0 0', fontSize: '1.25rem', color: 'var(--text-main)', fontWeight: 900 }}>{p.name}</h3>
                             </div>
                           </div>
@@ -318,7 +318,7 @@ export function SkillsPanel({
                         <div key={s.id} style={{ padding: '24px', background: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(17,24,39,0.03)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
                             <div>
-                              <span style={{ fontSize: '0.75rem', color: '#8B5CF6', background: 'rgba(139,92,246,0.1)', padding: '6px 12px', borderRadius: '999px', fontWeight: 800 }}>SKILL</span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--secondary)', background: 'rgba(var(--secondary-rgb),0.1)', padding: '6px 12px', borderRadius: '999px', fontWeight: 800 }}>SKILL</span>
                               <h3 style={{ margin: '8px 0 0', fontSize: '1.25rem', color: 'var(--text-main)', fontWeight: 900 }}>{s.canonicalName || s.name}</h3>
                               <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '6px', fontWeight: 600 }}>{domain?.name}</div>
                             </div>
@@ -358,8 +358,8 @@ export function SkillsPanel({
         {activePathways.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
-              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#06B6D4', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                 <div style={{ width: '8px', height: '8px', background: '#06B6D4', borderRadius: '50%' }} />
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--cyan)', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                 <div style={{ width: '8px', height: '8px', background: 'var(--cyan)', borderRadius: '50%' }} />
                  YOUR DOMAINS
               </div>
               <h2 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>
@@ -382,12 +382,12 @@ export function SkillsPanel({
                     boxShadow: '0 12px 32px -8px rgba(17,24,39,0.05)', position: 'relative', overflow: 'hidden', padding: '40px'
                   }}>
                     {/* Accent Left Border */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '8px', background: '#06B6D4' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '8px', background: 'var(--cyan)' }} />
                     
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
                       <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#06B6D4', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                          <Target size={16} color="#06B6D4" />
+                        <div style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--cyan)', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                          <Target size={16} color="var(--cyan)" />
                           DOMAIN CONTAINER
                         </div>
                         <h3 style={{ margin: '0', fontSize: '2rem', color: 'var(--text-main)', fontWeight: 900, letterSpacing: '-0.02em' }}>{def.name}</h3>
@@ -412,7 +412,7 @@ export function SkillsPanel({
                             border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s', 
                             boxShadow: '0 4px 12px rgba(17,24,39,0.02)', display: 'flex', flexDirection: 'column', gap: '16px' 
                           }}
-                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(6,182,212,0.15)'; e.currentTarget.style.borderColor = '#06B6D4'; }}
+                          onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(var(--cyan-rgb),0.15)'; e.currentTarget.style.borderColor = 'var(--cyan)'; }}
                           onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(17,24,39,0.02)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -427,8 +427,8 @@ let statusBg = 'var(--bg-surface-sunken)';
                                 statusBg = '#DCFCE7';
                               } else if ((skill.progress || 0) > 0) {
                                 statusLabel = 'IN PROGRESS';
-                                statusColor = '#06B6D4';
-                                statusBg = 'rgba(6,182,212,0.1)';
+                                statusColor = 'var(--cyan)';
+                                statusBg = 'rgba(var(--cyan-rgb),0.1)';
                               }
                               return (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -443,7 +443,7 @@ let statusBg = 'var(--bg-surface-sunken)';
                             })()}
                           </div>
                           <div style={{ width: '100%', height: '8px', background: 'var(--bg-surface-sunken)', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{ width: `${Math.min(100, skill.progress || 0)}%`, height: '100%', background: 'linear-gradient(90deg, #06B6D4, #3B82F6)', borderRadius: '4px' }} />
+                            <div style={{ width: `${Math.min(100, skill.progress || 0)}%`, height: '100%', background: 'linear-gradient(90deg, var(--cyan), var(--primary))', borderRadius: '4px' }} />
                           </div>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                             <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>{skill.subtopics?.length || 0} Subtopics</span>
@@ -503,7 +503,7 @@ let statusBg = 'var(--bg-surface-sunken)';
                                 ) : isStarted ? (
                                   <button style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '8px 16px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer', color: 'var(--text-muted)' }} onClick={() => handleStartSkillInDomain(s, pid)}>Add to Domain</button>
                                 ) : (
-                                  <button style={{ background: '#06B6D4', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }} onClick={() => handleStartSkillInDomain(s, pid)}>Start Learning</button>
+                                  <button style={{ background: 'var(--cyan)', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '10px', fontWeight: 800, cursor: 'pointer' }} onClick={() => handleStartSkillInDomain(s, pid)}>Start Learning</button>
                                 )}
                               </div>
                             )
@@ -522,8 +522,8 @@ let statusBg = 'var(--bg-surface-sunken)';
         {/* --- INDEPENDENT SKILLS --- */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px' }}>
-            <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#8B5CF6', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}>
-               <div style={{ width: '8px', height: '8px', background: '#8B5CF6', borderRadius: '50%' }} />
+            <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--secondary)', letterSpacing: '0.1em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}>
+               <div style={{ width: '8px', height: '8px', background: 'var(--secondary)', borderRadius: '50%' }} />
                YOUR LEARNING QUEUE
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>
@@ -539,12 +539,12 @@ let statusBg = 'var(--bg-surface-sunken)';
             boxShadow: '0 12px 32px -8px rgba(17,24,39,0.05)', position: 'relative', overflow: 'hidden', padding: '40px'
           }}>
             {/* Accent Left Border */}
-            <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '8px', background: '#8B5CF6' }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: '8px', background: 'var(--secondary)' }} />
 
             {standaloneSkills.length === 0 ? (
               <div style={{ padding: '60px 32px', textAlign: 'center', background: 'var(--bg-surface)', borderRadius: '24px', border: '1px dashed var(--border-strong)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '64px', height: '64px', background: 'rgba(139,92,246,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Target size={32} color="#8B5CF6" />
+                <div style={{ width: '64px', height: '64px', background: 'rgba(var(--secondary-rgb),0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Target size={32} color="var(--secondary)" />
                 </div>
                 <div>
                   <div style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-main)', marginBottom: '8px' }}>No independent skills yet</div>
@@ -561,7 +561,7 @@ let statusBg = 'var(--bg-surface-sunken)';
                       border: '1px solid var(--border)', cursor: 'pointer', transition: 'all 0.2s', 
                       boxShadow: '0 4px 12px rgba(17,24,39,0.02)', display: 'flex', flexDirection: 'column', gap: '16px' 
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(139,92,246,0.15)'; e.currentTarget.style.borderColor = '#8B5CF6'; }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 24px -8px rgba(var(--secondary-rgb),0.15)'; e.currentTarget.style.borderColor = 'var(--secondary)'; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(17,24,39,0.02)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -576,8 +576,8 @@ let statusBg = 'var(--bg-surface-sunken)';
                           statusBg = '#DCFCE7';
                         } else if ((skill.progress || 0) > 0) {
                           statusLabel = 'IN PROGRESS';
-                          statusColor = '#8B5CF6';
-                          statusBg = 'rgba(139,92,246,0.1)';
+                          statusColor = 'var(--secondary)';
+                          statusBg = 'rgba(var(--secondary-rgb),0.1)';
                         }
                         return (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -592,7 +592,7 @@ let statusBg = 'var(--bg-surface-sunken)';
                       })()}
                     </div>
                     <div style={{ width: '100%', height: '8px', background: 'var(--bg-surface-sunken)', borderRadius: '4px', overflow: 'hidden' }}>
-                      <div style={{ width: `${Math.min(100, skill.progress || 0)}%`, height: '100%', background: 'linear-gradient(90deg, #8B5CF6, #3B82F6)', borderRadius: '4px' }} />
+                      <div style={{ width: `${Math.min(100, skill.progress || 0)}%`, height: '100%', background: 'linear-gradient(90deg, var(--secondary), var(--primary))', borderRadius: '4px' }} />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                       <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>{skill.subtopics?.length || 0} Subtopics</span>
@@ -638,5 +638,6 @@ let statusBg = 'var(--bg-surface-sunken)';
     </div>
   );
 }
+
 
 

@@ -78,7 +78,7 @@ Rules:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-oss-20b',
+        model: 'llama3-70b-8192',
         messages,
         response_format: { type: "json_object" }
       }),

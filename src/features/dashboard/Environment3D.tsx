@@ -87,7 +87,7 @@ export const Environment3D: React.FC = () => {
           <>
             <MovingStars />
             {/* Subtle moonlight */}
-            <directionalLight position={[10, 20, -10]} intensity={0.6} color="#8b5cf6" />
+            <directionalLight position={[10, 20, -10]} intensity={0.6} color="var(--secondary)" />
             <directionalLight position={[-10, 10, 10]} intensity={0.2} color="#4c1d95" />
             {/* Ambient magic dust for night */}
             <Sparkles count={100} scale={50} size={2} speed={0.2} opacity={0.3} color="#A7F3D0" />
@@ -119,3 +119,4 @@ export const Environment3D: React.FC = () => {
     </div>
   );
 };
+

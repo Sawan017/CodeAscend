@@ -35,7 +35,7 @@ function ParticleField() {
       <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
         <PointMaterial
           transparent
-          color="#06b6d4" // Cyan matching the premium theme
+          color="var(--cyan)" // Cyan matching the premium theme
           size={0.03}
           sizeAttenuation={true}
           depthWrite={false}
@@ -55,3 +55,4 @@ export default function AmbientBackground() {
     </div>
   )
 }
+

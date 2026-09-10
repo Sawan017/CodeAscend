@@ -129,9 +129,9 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         style={{
           background: 'linear-gradient(145deg, rgba(10,13,20,0.9) 0%, rgba(10,13,20,0.6) 100%)',
-          border: `1px solid ${phase === 'coding' ? 'rgba(139,92,246,0.5)' : 'rgba(6,182,212,0.5)'}`,
+          border: `1px solid ${phase === 'coding' ? 'rgba(var(--secondary-rgb),0.5)' : 'rgba(var(--cyan-rgb),0.5)'}`,
           borderRadius: '24px', padding: '2.5rem', maxWidth: '700px', width: '90%',
-          position: 'relative', boxShadow: `0 25px 50px -12px ${phase === 'coding' ? 'rgba(168,85,247,0.2)' : 'rgba(6,182,212,0.2)'}`,
+          position: 'relative', boxShadow: `0 25px 50px -12px ${phase === 'coding' ? 'rgba(168,85,247,0.2)' : 'rgba(var(--cyan-rgb),0.2)'}`,
           overflow: 'hidden'
         }}
       >
@@ -147,7 +147,7 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: phase === 'coding' ? 'rgba(168,85,247,0.1)' : 'rgba(6,182,212,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${phase === 'coding' ? 'rgba(168,85,247,0.2)' : 'rgba(6,182,212,0.2)'}` }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: phase === 'coding' ? 'rgba(168,85,247,0.1)' : 'rgba(var(--cyan-rgb),0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${phase === 'coding' ? 'rgba(168,85,247,0.2)' : 'rgba(var(--cyan-rgb),0.2)'}` }}>
             {phase === 'theory' ? <BookOpen size={24} color="var(--cyan)" /> : <Code size={24} color="#a855f7" />}
           </div>
           <div>
@@ -163,7 +163,7 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
           <div style={{ flex: 1, height: '4px', background: phase === 'coding' ? '#a855f7' : 'rgba(255,255,255,0.1)', borderRadius: '2px', transition: 'background 0.3s', boxShadow: phase === 'coding' ? '0 0 10px #a855f7' : 'none' }}></div>
         </div>
 
-        <div style={{ marginBottom: '2rem', padding: '1.5rem', background: phase === 'theory' ? 'rgba(6,182,212,0.05)' : 'rgba(168,85,247,0.05)', borderRadius: '16px', border: `1px solid ${phase === 'theory' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)'}` }}>
+        <div style={{ marginBottom: '2rem', padding: '1.5rem', background: phase === 'theory' ? 'rgba(var(--cyan-rgb),0.05)' : 'rgba(168,85,247,0.05)', borderRadius: '16px', border: `1px solid ${phase === 'theory' ? 'rgba(var(--cyan-rgb),0.1)' : 'rgba(168,85,247,0.1)'}` }}>
           <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem', fontWeight: 600 }}>
             Active Protocol: <span style={{ color: '#fff' }}>{activeSession.subtopic.title}</span>
           </p>
@@ -175,7 +175,7 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
         <AnimatePresence mode="wait">
           {step === 'loading_question' && (
             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ textAlign: 'center', padding: '3rem 0' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: phase === 'theory' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: phase === 'theory' ? 'rgba(var(--cyan-rgb),0.1)' : 'rgba(168,85,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
                 <RefreshCw size={28} className="spin" style={{ color: phase === 'theory' ? 'var(--cyan)' : '#a855f7' }} />
               </div>
               <p style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 500, margin: 0, letterSpacing: '0.05em' }}>Synthesizing Evaluation Matrix...</p>
@@ -272,7 +272,7 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
                 <button 
                   onClick={handleSubmit} 
                   disabled={!answer.trim()}
-                  style={{ padding: '0.85rem 1.5rem', background: phase === 'coding' ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)' : 'linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%)', color: phase === 'coding' ? '#fff' : '#000', border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 700, cursor: answer.trim() ? 'pointer' : 'not-allowed', display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: !answer.trim() ? 0.5 : 1, transition: 'transform 0.2s', boxShadow: phase === 'coding' ? '0 4px 15px rgba(168,85,247,0.4)' : '0 4px 15px rgba(6,182,212,0.4)' }}
+                  style={{ padding: '0.85rem 1.5rem', background: phase === 'coding' ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)' : 'linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%)', color: phase === 'coding' ? '#fff' : '#000', border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 700, cursor: answer.trim() ? 'pointer' : 'not-allowed', display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: !answer.trim() ? 0.5 : 1, transition: 'transform 0.2s', boxShadow: phase === 'coding' ? '0 4px 15px rgba(168,85,247,0.4)' : '0 4px 15px rgba(var(--cyan-rgb),0.4)' }}
                   onMouseEnter={(e) => { if (answer.trim()) e.currentTarget.style.transform = 'translateY(-2px)' }} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                 >
                   <Send size={16} /> Submit Analysis
@@ -283,7 +283,7 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
 
           {step === 'evaluating' && (
             <motion.div key="evaluating" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ textAlign: 'center', padding: '3rem 0' }}>
-              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: phase === 'theory' ? 'rgba(6,182,212,0.1)' : 'rgba(168,85,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: phase === 'theory' ? 'rgba(var(--cyan-rgb),0.1)' : 'rgba(168,85,247,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
                 <BrainCircuit size={40} className="pulse" style={{ color: phase === 'theory' ? 'var(--cyan)' : '#a855f7' }} />
               </div>
               <p style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 500, letterSpacing: '0.05em', margin: 0 }}>Processing Submission...</p>
@@ -369,3 +369,4 @@ export function KnowledgeCheckModal({ activeSession, onPass, onCancel }: Knowled
     </div>
   )
 }
+
