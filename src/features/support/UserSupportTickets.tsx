@@ -55,7 +55,13 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     const sub = supabase!
       .channel(`public:support_messages:${selectedTicket.id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'support_messages', filter: `ticket_id=eq.${selectedTicket.id}` }, (payload) => {
-        setMessages(prev => [...prev, payload.new])
+        setMessages(prev => {
+          // If the payload is already in our list (e.g., we manually added the AI answer just now), ignore it
+          if (prev.some(m => m.id === payload.new.id || (m.sender_type === 'ai' && m.message === payload.new.message))) {
+             return prev;
+          }
+          return [...prev, payload.new];
+        })
         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
       })
       .subscribe()
@@ -76,22 +82,24 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     const msg = newMessage.trim()
     setNewMessage('')
     
+    // Save user message to database
     await supabase!.from('support_messages').insert({
       ticket_id: selectedTicket.id,
       sender_id: userId,
       sender_type: 'user',
       message: msg
-    })    // If still in AI mode, trigger AI
+    })
+
+    // If AI is assisting, we invoke the edge function.
     if (selectedTicket.status === 'ai_assisting') {
       try {
-        console.log("Message being sent. invoke() called for ticket:", selectedTicket.id);
-        const { data, error: invokeErr } = await supabase!.functions.invoke('support-ai', {
-          body: { ticketId: selectedTicket.id, message: msg, isNew: false }
+        const { data, error } = await supabase!.functions.invoke('support-ai', {
+          body: { ticketId: selectedTicket.id, message: msg }
         });
 
-        if (invokeErr) {
-          console.error("SUPPORT AI ERROR:", invokeErr);
-          throw invokeErr;
+        if (error) {
+          console.error("SUPPORT AI ERROR:", error);
+          throw error;
         }
 
         if (!data?.answer) {
@@ -99,21 +107,19 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
           throw new Error("Support AI returned no answer");
         }
         
-        // Use direct functions.invoke() result to display the AI response immediately
-        setMessages(prev => {
-          // Avoid duplicate display if Realtime already caught it
-          if (prev.some(m => m.message === data.answer && m.sender_type === 'ai')) {
-            return prev;
-          }
-          return [...prev, {
-            id: 'temp-' + Date.now(),
+        // Display exactly one AI message from the invoke result
+        setMessages(prev => [
+          ...prev, 
+          {
+            id: 'temp-ai-' + Date.now(),
             ticket_id: selectedTicket.id,
-            sender_id: 'ai-system',
+            sender_id: null,
             sender_type: 'ai',
             message: data.answer,
             created_at: new Date().toISOString()
-          }];
-        });
+          }
+        ]);
+        
         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
       } catch (e) {
