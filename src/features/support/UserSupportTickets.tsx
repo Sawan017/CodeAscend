@@ -88,25 +88,34 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
         const { data, error: invokeErr } = await supabase!.functions.invoke('support-ai', {
           body: { ticketId: selectedTicket.id, message: msg, isNew: false }
         });
-        
-        console.log("invoke() returned. COMPLETE data:", data, "invokeErr:", invokeErr);
 
         if (invokeErr) {
-          console.error("AI function returned error:", invokeErr, "HTTP Status:", invokeErr.status);
-        } else {
-          console.log("Parsed data.answer:", data?.answer);
-          if (data && data.answer) {
-            // Front-end explicitly saves exactly once
-            await supabase!.from('support_messages').insert({
-              ticket_id: selectedTicket.id,
-              sender_type: 'ai',
-              message: data.answer
-            });
-            // Realtime subscription will seamlessly display it.
-          } else {
-            console.log("No data.answer found in response!");
-          }
+          console.error("SUPPORT AI ERROR:", invokeErr);
+          throw invokeErr;
         }
+
+        if (!data?.answer) {
+          console.error("INVALID SUPPORT AI RESPONSE:", data);
+          throw new Error("Support AI returned no answer");
+        }
+        
+        // Use direct functions.invoke() result to display the AI response immediately
+        setMessages(prev => {
+          // Avoid duplicate display if Realtime already caught it
+          if (prev.some(m => m.message === data.answer && m.sender_type === 'ai')) {
+            return prev;
+          }
+          return [...prev, {
+            id: 'temp-' + Date.now(),
+            ticket_id: selectedTicket.id,
+            sender_id: 'ai-system',
+            sender_type: 'ai',
+            message: data.answer,
+            created_at: new Date().toISOString()
+          }];
+        });
+        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+
       } catch (e) {
         console.error("AI function error:", e);
       }
