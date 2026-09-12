@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+﻿import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertCircle } from 'lucide-react'
 
@@ -22,10 +24,21 @@ export function ConfirmDialog({
   onConfirm,
   onCancel
 }: ConfirmDialogProps) {
-  return (
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isOpen]);
+
+  const modalContent = (
     <AnimatePresence>
       {isOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -91,5 +104,11 @@ export function ConfirmDialog({
         </div>
       )}
     </AnimatePresence>
-  )
+  );
+
+  if (typeof document !== 'undefined') {
+    const targetNode = document.getElementById('app-shell-root') || document.body;
+    return createPortal(modalContent, targetNode);
+  }
+  return modalContent;
 }

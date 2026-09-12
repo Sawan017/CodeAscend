@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MessageSquare, Star } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { CustomSelect } from '../../components/CustomSelect';
 
 interface SubmitFeedbackModalProps {
   isOpen: boolean
@@ -79,11 +80,7 @@ export function SubmitFeedbackModal({ isOpen, onClose, userId }: SubmitFeedbackM
                   
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Feedback Type</label>
-                    <select value={feedbackType} onChange={e => setFeedbackType(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}>
-                      <option>Feature Request</option>
-                      <option>General Feedback</option>
-                      <option>UI/UX Suggestion</option>
-                    </select>
+                    <CustomSelect value={feedbackType} onChange={setFeedbackType} options={[{value: 'bug', label: 'Report a Bug'},{value: 'feature', label: 'Feature Request'},{value: 'improvement', label: 'Improvement'},{value: 'other', label: 'Other'}]} />
                   </div>
 
                   <div>

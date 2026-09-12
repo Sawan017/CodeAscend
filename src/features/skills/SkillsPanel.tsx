@@ -239,15 +239,15 @@ export function SkillsPanel({
                 <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-main)', padding: '6px', borderRadius: '16px', flexWrap: 'nowrap' }}>
                   <button 
                     onClick={() => setGlobalSearchFilter('all')} 
-                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'all' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'all' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'all' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
+                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'all' ? 'var(--bg-surface)' : 'transparent', color: globalSearchFilter === 'all' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'all' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
                   >All</button>
                   <button 
                     onClick={() => setGlobalSearchFilter('domains')} 
-                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'domains' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'domains' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'domains' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
+                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'domains' ? 'var(--bg-surface)' : 'transparent', color: globalSearchFilter === 'domains' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'domains' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
                   >Domains</button>
                   <button 
                     onClick={() => setGlobalSearchFilter('skills')} 
-                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'skills' ? '#FFFFFF' : 'transparent', color: globalSearchFilter === 'skills' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'skills' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
+                    style={{ padding: '8px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', background: globalSearchFilter === 'skills' ? 'var(--bg-surface)' : 'transparent', color: globalSearchFilter === 'skills' ? 'var(--secondary)' : '#64748B', border: 'none', boxShadow: globalSearchFilter === 'skills' ? '0 4px 12px rgba(17,24,39,0.05)' : 'none' }}
                   >Skills</button>
                 </div>
               </div>

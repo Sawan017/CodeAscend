@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, RefreshCw, AlertTriangle, ArrowLeft, X, Paperclip, Send, User, Zap } from 'lucide-react'
-import { supabase } from '../../lib/supabase'
-import { formatAppDateTime } from '../../lib/dateFormatting'
-import { CustomSelect } from '../../components/CustomSelect';
+import { Search, RefreshCw, AlertTriangle, ArrowLeft, X, Paperclip, Send, User, Zap, Trash2 } from 'lucide-react'
+import { ConfirmDialog } from '../../../components/ConfirmDialog'
+import { useToasts } from '../../../hooks/useToasts'
+import { supabase } from '../../../lib/supabase'
+import { formatAppDateTime } from '../../../lib/dateFormatting'
+import { CustomSelect } from '../../../components/CustomSelect';
 
-export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
+export function AdminSupportView() {
   const [activeTab, setActiveTab] = useState<'tickets' | 'feedback' | 'officials'>('tickets')
   
   const [tickets, setTickets] = useState<any[]>([])
@@ -17,6 +19,7 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
   const [statusFilter, setStatusFilter] = useState('all')
 
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [messages, setMessages] = useState<any[]>([])
   const [notes, setNotes] = useState<any[]>([])
   const [newMessage, setNewMessage] = useState('')
@@ -25,6 +28,7 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
   const [myOfficialStatus, setMyOfficialStatus] = useState<any>(null)
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { push } = useToasts()
   
   const [stats, setStats] = useState({
     tickets: { waiting: 0, active: 0, resolved: 0 },
@@ -38,30 +42,43 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
       const authUser = (await supabase!.auth.getUser()).data.user
       if (!authUser) throw new Error('Not authenticated')
 
-      const [ticketsRes, feedbackRes, officialsRes, meRes] = await Promise.all([
-        supabase!.from('support_tickets').select('*, profiles!support_tickets_user_id_fkey(data)').order('created_at', { ascending: false }),
-        supabase!.from('support_feedback').select('*, profiles(data)').order('created_at', { ascending: false }),
-        supabase!.from('support_officials').select('*, profiles(data)'),
-        supabase!.from('support_officials').select('*').eq('user_id', authUser.id).single()
+      const [usersRes, supportRes] = await Promise.all([
+        supabase!.rpc('admin_get_users'),
+        supabase!.rpc('admin_get_support_data')
       ])
 
-      if (ticketsRes.error) throw ticketsRes.error
-      if (feedbackRes.error) throw feedbackRes.error
+      if (supportRes.error) throw supportRes.error
+      if (usersRes.error) throw usersRes.error
 
-      setTickets(ticketsRes.data || [])
-            setOfficials(officialsRes.data || [])
-      if (meRes.data) setMyOfficialStatus(meRes.data)
+      const userLookup = {};
+      if (usersRes.data) {
+        usersRes.data.forEach(u => {
+          userLookup[u.user_id] = u.display_name || u.username || 'Unknown';
+        });
+      }
+
+      const ticketsData = supportRes.data.tickets || [];
+      const feedbackData = supportRes.data.feedback || [];
+      const officialsData = supportRes.data.officials || [];
+
+      const ticketsWithProfiles = ticketsData.map(t => ({...t, profiles: { data: { displayName: userLookup[t.user_id] || 'Unknown' } } }));
+      const feedbackWithProfiles = feedbackData.map(f => ({...f, profiles: { data: { displayName: userLookup[f.user_id] || 'Unknown' } } }));
+      const officialsWithProfiles = officialsData.map(o => ({...o, profiles: { data: { displayName: userLookup[o.user_id] || 'Official' } } }));
+
+      setTickets(ticketsWithProfiles);
+      setOfficials(officialsWithProfiles);
+      if (supportRes.data.me) setMyOfficialStatus(supportRes.data.me)
 
       // Calculate stats
       const tStats = { waiting: 0, active: 0, resolved: 0 }
-      ;(ticketsRes.data || []).forEach(t => {
+      ticketsData.forEach(t => {
         if (t.status === 'ai_assisting' || t.status === 'waiting_for_official') tStats.waiting++
         else if (t.status === 'official_assigned') tStats.active++
         else if (t.status === 'resolved') tStats.resolved++
       })
 
       const fStats = { new: 0, reviewed: 0, planned: 0, implemented: 0 }
-      ;(feedbackRes.data || []).forEach(f => {
+      feedbackData.forEach(f => {
         if (f.status === 'new') fStats.new++
         else if (f.status === 'reviewed') fStats.reviewed++
         else if (f.status === 'planned') fStats.planned++
@@ -94,6 +111,12 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (!selectedTicket) {
+      setShowDeleteConfirm(false);
+    }
+  }, [selectedTicket])
+
   // Load messages and notes for selected ticket
   useEffect(() => {
     if (!selectedTicket) return
@@ -119,13 +142,24 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
   }, [selectedTicket?.id])
 
   const loadTicketDetails = async (ticketId: string) => {
-    const { data: msgData } = await supabase!.from('support_messages').select('*').eq('ticket_id', ticketId).order('created_at', { ascending: true })
-    if (msgData) setMessages(msgData)
-    
-    const { data: noteData } = await supabase!.from('support_internal_notes').select('*, profiles(data)').eq('ticket_id', ticketId).order('created_at', { ascending: true })
-    if (noteData) setNotes(noteData)
-    
-    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }), 100)
+    try {
+      const { data, error } = await supabase!.rpc('admin_get_ticket_details', { p_ticket_id: ticketId });
+      if (error) throw error;
+
+      setMessages(data.messages || []);
+
+      const { data: nUsers } = await supabase!.rpc('admin_get_users');
+      let nLookup = {};
+      if (nUsers) nUsers.forEach(u => nLookup[u.user_id] = u.display_name || u.username);
+      
+      const noteData = data.notes || [];
+      const notesWithProfiles = noteData.map(n => ({...n, profiles: { data: { displayName: nLookup[n.official_id] || 'Official' } } }));
+      setNotes(notesWithProfiles);
+      
+      setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }), 100);
+    } catch (e: any) {
+      console.error(e);
+    }
   }
 
   const toggleAvailability = async () => {
@@ -156,13 +190,28 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
         setSelectedTicket({ ...selectedTicket, status: 'official_assigned', assigned_official_id: myOfficialStatus.user_id })
       }
     } catch (e: any) {
-      alert(e.message)
+      push(e.message)
     }
   }
   
+  const handleDeleteTicket = async () => {
+    if (!selectedTicket) return
+    const { error } = await supabase!.rpc('admin_delete_ticket', { p_ticket_id: selectedTicket.id })
+    if (error) {
+      push('Failed to delete ticket: ' + error.message)
+      return
+    }
+    setSelectedTicket(null)
+    loadData()
+  }
+
   const handleUpdateTicketStatus = async (status: string) => {
     if (!selectedTicket) return
-    await supabase!.from('support_tickets').update({ status, updated_at: new Date().toISOString() }).eq('id', selectedTicket.id)
+    const { error } = await supabase!.rpc('admin_update_ticket_status', { p_ticket_id: selectedTicket.id, p_status: status })
+    if (error) {
+      push('Failed to update ticket: ' + error.message)
+      return
+    }
     setSelectedTicket({ ...selectedTicket, status })
     loadData()
   }
@@ -172,12 +221,7 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
     const msg = newMessage.trim()
     setNewMessage('')
     
-    await supabase!.from('support_messages').insert({
-      ticket_id: selectedTicket.id,
-      sender_id: myOfficialStatus.user_id,
-      sender_type: 'official',
-      message: msg
-    })
+    await supabase!.rpc('admin_send_support_message', { p_ticket_id: selectedTicket.id, p_message: msg })
   }
 
   const handleAddInternalNote = async () => {
@@ -185,11 +229,7 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
     const noteText = newNote.trim()
     setNewNote('')
     
-    await supabase!.from('support_internal_notes').insert({
-      ticket_id: selectedTicket.id,
-      official_id: myOfficialStatus.user_id,
-      note: noteText
-    })
+    await supabase!.rpc('admin_add_internal_note', { p_ticket_id: selectedTicket.id, p_note: noteText })
   }
 
   const filteredTickets = useMemo(() => {
@@ -236,7 +276,7 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem 2rem', borderBottom: '1px solid var(--border)', background: 'var(--bg-panel)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => {}} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <ArrowLeft size={24} />
           </button>
           <h2 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -297,6 +337,17 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
       </div>
 
       {/* Filters and Tabs */}
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Delete Support Ticket"
+        message="Are you sure you want to permanently delete this ticket?"
+        subMessage="This will also delete all associated messages, internal notes, and attachments. This action cannot be undone."
+        confirmLabel="Delete Ticket"
+        cancelLabel="Cancel"
+        onConfirm={handleDeleteTicket}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
+
       <div style={{ padding: '1.5rem 2rem 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button 
@@ -339,7 +390,7 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
         ) : activeTab === 'tickets' ? (
           <div style={{ display: 'grid', gap: '1rem' }}>
             {filteredTickets.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No tickets found.</div>
+              <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>No escalated tickets.</div>
             ) : filteredTickets.map(t => (
               <div 
                 key={t.id} 
@@ -489,7 +540,18 @@ export function AdminSupportDashboard({ onBack }: { onBack: () => void }) {
                     <CustomSelect value={selectedTicket.status} onChange={(v) => handleUpdateTicketStatus(v)} options={[{value: 'ai_assisting', label: 'AI Assisting'},{value: 'waiting_for_official', label: 'Waiting'},{value: 'official_assigned', label: 'Active'},{value: 'resolved', label: 'Resolved'},{value: 'closed', label: 'Closed'}]} />
                   </div>
                   
-                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                    <button 
+                      onClick={() => setShowDeleteConfirm(true)}
+                      style={{ width: '100%', padding: '0.75rem', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = '#ef4444'; }}
+                    >
+                      <Trash2 size={16} /> Delete Ticket
+                    </button>
+                  </div>
+                  
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
                     <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.5rem' }}>Internal Admin Notes</label>
                     <div style={{ flex: 1, overflowY: 'auto', background: 'var(--bg-surface-sunken)', borderRadius: '8px', border: '1px solid var(--border)', padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       {notes.map(note => (

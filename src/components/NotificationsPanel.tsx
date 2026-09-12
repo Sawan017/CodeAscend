@@ -22,6 +22,7 @@ export function NotificationsPanel({
   onMarkRead, 
   onMarkAllRead, 
   onClearAll,
+  onDelete,
   onNavigate 
 }: { 
   open: boolean
@@ -30,6 +31,7 @@ export function NotificationsPanel({
   onMarkRead: (id: string) => void
   onMarkAllRead: () => void
   onClearAll: () => void
+  onDelete: (id: string) => void
   onNavigate: (type: string | null, id: string | null) => void
 }) {
 
@@ -145,9 +147,33 @@ export function NotificationsPanel({
                           {new Date(n.created_at).toLocaleString()}
                         </span>
                       </div>
-                      {!n.read && (
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)', marginTop: '0.25rem' }} />
-                      )}
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(n.id);
+                          }}
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'var(--text-muted)',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '4px',
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.color = 'var(--danger)'}
+                          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                          title="Dismiss notification"
+                        >
+                          <X size={14} />
+                        </button>
+                        {!n.read && (
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>

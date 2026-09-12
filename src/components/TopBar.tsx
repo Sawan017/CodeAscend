@@ -52,7 +52,7 @@ export function TopBar({
     'todo': { hex: 'var(--secondary)', rgb: '139, 92, 246' },
     'future': { hex: 'var(--cyan)', rgb: '6, 182, 212' },
     'career_world': { hex: '#F43F5E', rgb: '244, 63, 94' },
-    'admin_support': { hex: '#F59E0B', rgb: '245, 158, 11' },
+    'admin_console': { hex: '#F59E0B', rgb: '245, 158, 11' },
   }
 
   return (
@@ -89,7 +89,8 @@ export function TopBar({
       </div>
 
       {/* ── Nav Tabs ── */}
-      <nav style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '4px', flex: 1, minWidth: 0 }}>
+      <nav style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '4px', flex: 1, minWidth: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
+        <style>{`.hide-scrollbar::-webkit-scrollbar { display: none; }`}</style>
         {sections.map((section) => {
           const Icon = section.icon
           const active = isActive(section.id)
@@ -139,39 +140,46 @@ export function TopBar({
           )
         })}
 
-        {isGlobalAdmin && (
+        
+      </nav>
+      
+      {isGlobalAdmin && (
+        <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '16px', marginLeft: '8px', borderLeft: '1px solid var(--border)', flexShrink: 0 }}>
+{isGlobalAdmin && (
           <button
-            onClick={() => onSelectSection?.('admin_support' as any)}
+            onClick={() => onSelectSection?.('admin_console' as any)}
             style={{
               display: 'flex', alignItems: 'center', gap: '8px',
               padding: '8px 14px',
-              background: activeView === 'admin_support' ? 'rgba(245, 158, 11, 0.12)' : 'transparent',
+              background: activeView === 'admin_console' ? 'rgba(245, 158, 11, 0.12)' : 'transparent',
               border: '1px solid',
-              borderColor: activeView === 'admin_support' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
+              borderColor: activeView === 'admin_console' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
               borderRadius: '10px',
-              color: activeView === 'admin_support' ? '#d97706' : '#9A958C',
-              fontSize: '0.85rem', fontWeight: activeView === 'admin_support' ? 700 : 600,
+              color: activeView === 'admin_console' ? '#d97706' : '#9A958C',
+              fontSize: '0.85rem', fontWeight: activeView === 'admin_console' ? 700 : 600,
               cursor: 'pointer', position: 'relative',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={e => {
-              if (activeView !== 'admin_support') {
+              if (activeView !== 'admin_console') {
                 e.currentTarget.style.background = 'var(--bg-surface-sunken)'
                 e.currentTarget.style.color = 'var(--text-main)'
               }
             }}
             onMouseLeave={e => {
-              if (activeView !== 'admin_support') {
+              if (activeView !== 'admin_console') {
                 e.currentTarget.style.background = 'transparent'
                 e.currentTarget.style.color = '#9A958C'
               }
             }}
           >
-            <Shield size={16} strokeWidth={activeView === 'admin_support' ? 2.5 : 2} />
+            <Shield size={16} strokeWidth={activeView === 'admin_console' ? 2.5 : 2} />
             <span className="topnav-label">Admin</span>
           </button>
         )}
-      </nav>
+        </div>
+      )}
+  
       {/* --- Right controls --- */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, marginLeft: '16px', position: 'relative' }}>
 

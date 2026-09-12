@@ -6,7 +6,7 @@ export type GoalPriority = 'High' | 'Medium' | 'Low'
 export type GoalDifficulty = 'Easy' | 'Normal' | 'Hard' | 'Expert' | 'Extreme'
 export type ProjectStatus = 'PLANNING' | 'BUILDING' | 'COMPLETED'
 export type BadgeRarity = 'Common' | 'Uncommon' | 'Rare' | 'Epic' | 'Legendary'
-export type ThemeMode = 'dark' | 'light'
+export type ThemeMode = 'dark' | 'light' | 'system' | 'midnight' | 'aurora'
 export type NameTier = 'Novice' | 'Adept' | 'Expert' | 'Veteran' | 'Master' | 'Legend' | 'Mythic'
 
 export type TopicSize = 'Tiny' | 'Small' | 'Medium' | 'Large' | 'Very Large'
@@ -334,7 +334,7 @@ export interface ChatState {
 
 
 
-export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string } | { view: 'admin_support' };
+export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string } | { view: 'admin_console' };
 
 export interface PathwayDefinition {
   id: string

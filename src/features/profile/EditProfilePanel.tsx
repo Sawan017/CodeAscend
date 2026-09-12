@@ -5,6 +5,7 @@ import { uploadProfileImage } from '../../lib/storage_upload'
 import type { UserProfile } from '../../types'
 import { supabase } from '../../lib/supabase'
 import { Avatar } from '../../components/Avatar'
+import { CustomSelect } from '../../components/CustomSelect';
 
 type EditProfilePanelProps = {
   dynamicMilestones?: any[];
@@ -472,15 +473,7 @@ export function EditProfilePanel({ profile, achievements = [], skills = [], dyna
                         </div>
                         <div style={{ position: 'relative' }}>
                           <ArrowUpDown size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--ca-text-muted, #9A958C)', pointerEvents: 'none' }} />
-                          <select
-                            value={achSort}
-                            onChange={(e) => setAchSort(e.target.value as 'default'|'asc'|'desc')}
-                            style={{ ...inputStyle, marginTop: 0, padding: '0.4rem 1rem 0.4rem 2rem', fontSize: '0.85rem', appearance: 'none', cursor: 'pointer', width: '100%', boxSizing: 'border-box' }}
-                          >
-                            <option value="default">Default</option>
-                            <option value="asc">Lowest XP</option>
-                            <option value="desc">Highest XP</option>
-                          </select>
+                          <CustomSelect value={achSort} onChange={(v) => setAchSort(v as any)} options={[{value: 'default', label: 'Default'},{value: 'asc', label: 'Lowest XP'},{value: 'desc', label: 'Highest XP'}]} />
                         </div>
                       </div>
                       <div style={{ maxHeight: '320px', overflowY: 'auto', overflowX: 'hidden' }}>

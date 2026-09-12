@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { ArrowLeft, Trash2, CheckCircle, Target, Clock, AlertCircle } from 'lucide-react'
 import type { Goal } from '../../types'
+import { CustomSelect } from '../../components/CustomSelect';
 
 type GoalDetailProps = {
   goal: Goal
@@ -142,11 +143,7 @@ export function GoalDetail({
               <input value={editTitle} onChange={e => setEditTitle(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px', fontSize: '2rem' }} />
               <textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px', minHeight: '100px' }} />
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <select value={editPriority} onChange={e => setEditPriority(e.target.value as import('../../types').GoalPriority)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px' }}>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                </select>
+                <CustomSelect value={editPriority} onChange={(v) => setEditPriority(v as any)} options={[{value: 'LOW', label: 'Low Priority'},{value: 'MEDIUM', label: 'Medium Priority'},{value: 'HIGH', label: 'High Priority'},{value: 'URGENT', label: 'Urgent'}]} style={{ minWidth: '160px' }} />
                 <input type="date" value={editTargetDate} onChange={e => setEditTargetDate(e.target.value)} style={{ padding: '0.5rem', background: 'var(--bg-surface-sunken)', color: 'white', border: '1px solid var(--border-strong)', borderRadius: '8px' }} />
               </div>
               <button onClick={handleSave} style={{ background: 'var(--primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: '8px', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>Save Changes</button>

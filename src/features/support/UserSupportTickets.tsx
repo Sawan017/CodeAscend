@@ -79,46 +79,75 @@ export function UserSupportTickets({ userId, onBack }: { userId: string, onBack:
     if (!newMessage.trim() || !selectedTicket) return
     setSending(true)
     
+    const msgId = crypto.randomUUID();
+    console.log(`[SUPPORT] SEND ${msgId}`);
+    
     const msg = newMessage.trim()
     setNewMessage('')
     
-    // Save user message to database
-    await supabase!.from('support_messages').insert({
+    // Insert with explicit ID to ensure exactly one insertion
+    const { error: insertErr } = await supabase!.from('support_messages').insert({
+      id: msgId,
       ticket_id: selectedTicket.id,
       sender_id: userId,
       sender_type: 'user',
       message: msg
-    })
+    });
 
-    // If AI is assisting, we invoke the edge function.
+    if (insertErr) {
+      console.error("Failed to save user message:", insertErr);
+      setSending(false);
+      return;
+    }
+
     if (selectedTicket.status === 'ai_assisting') {
       try {
-        const { data, error } = await supabase!.functions.invoke('support-ai', {
-          body: { ticketId: selectedTicket.id, message: msg }
+        console.log(`[SUPPORT] AI REQUEST ${msgId}`);
+        
+        const { data, error } = await supabase!.functions.invoke("support-ai", {
+          body: {
+            ticketId: selectedTicket.id,
+            messageId: msgId,
+            message: msg
+          }
         });
 
         if (error) {
-          console.error("SUPPORT AI ERROR:", error);
+          console.error("[ARINOVA SUPPORT] INVOKE ERROR:", error);
           throw error;
+        }
+        
+        if (data?.error) {
+          console.error("[ARINOVA SUPPORT] EDGE FUNCTION ERROR:", data.error);
+          if (data.trace) console.error("Trace:\n", data.trace);
+          throw new Error(data.error);
         }
 
         if (!data?.answer) {
-          console.error("INVALID SUPPORT AI RESPONSE:", data);
           throw new Error("Support AI returned no answer");
         }
         
-        // Display exactly one AI message from the invoke result
-        setMessages(prev => [
-          ...prev, 
-          {
-            id: 'temp-ai-' + Date.now(),
-            ticket_id: selectedTicket.id,
-            sender_id: null,
-            sender_type: 'ai',
-            message: data.answer,
-            created_at: new Date().toISOString()
-          }
-        ]);
+        console.log(`[SUPPORT] AI RESPONSE ${msgId}`);
+        
+        // Use the ID returned from the edge function to avoid duplicate realtime rendering
+        const aiMessageId = data.id || ('temp-ai-' + Date.now());
+        
+        setMessages(prev => {
+          // Strict deduplication by ID
+          if (prev.some(m => m.id === aiMessageId)) return prev;
+          
+          return [
+            ...prev, 
+            {
+              id: aiMessageId,
+              ticket_id: selectedTicket.id,
+              sender_id: null,
+              sender_type: 'ai',
+              message: data.answer,
+              created_at: new Date().toISOString()
+            }
+          ];
+        });
         
         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 

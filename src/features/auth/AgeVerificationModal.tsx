@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertTriangle, Calendar, CheckCircle } from 'lucide-react'
 import { verifyAge } from '../../lib/api'
+import { CustomSelect } from '../../components/CustomSelect';
 
 export function AgeVerificationModal({ 
   isOpen, 
@@ -150,33 +151,9 @@ export function AgeVerificationModal({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.9rem', color: 'var(--ca-text)', fontWeight: 500 }}>Date of Birth</label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <select
-                    value={month}
-                    onChange={e => setMonth(e.target.value)}
-                    disabled={loading}
-                    style={{ flex: 2, padding: '0.875rem', borderRadius: '8px', border: '1px solid var(--ca-border-strong)', background: 'var(--ca-bg)', color: 'var(--ca-text)', fontSize: '1rem', outline: 'none' }}
-                  >
-                    <option value="">Month</option>
-                    {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                  </select>
-                  <select
-                    value={day}
-                    onChange={e => setDay(e.target.value)}
-                    disabled={loading}
-                    style={{ flex: 1, padding: '0.875rem', borderRadius: '8px', border: '1px solid var(--ca-border-strong)', background: 'var(--ca-bg)', color: 'var(--ca-text)', fontSize: '1rem', outline: 'none' }}
-                  >
-                    <option value="">Day</option>
-                    {days.map(d => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                  <select
-                    value={year}
-                    onChange={e => setYear(e.target.value)}
-                    disabled={loading}
-                    style={{ flex: 1.5, padding: '0.875rem', borderRadius: '8px', border: '1px solid var(--ca-border-strong)', background: 'var(--ca-bg)', color: 'var(--ca-text)', fontSize: '1rem', outline: 'none' }}
-                  >
-                    <option value="">Year</option>
-                    {years.map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
+                  <CustomSelect value={month} onChange={setMonth} placeholder="Month" menuMaxHeight="150px" options={Array.from({length: 12}, (_, i) => ({ value: (i+1).toString().padStart(2, '0'), label: new Date(2000, i, 1).toLocaleString('default', { month: 'long' }) }))} />
+                  <CustomSelect value={day} onChange={setDay} placeholder="Day" menuMaxHeight="150px" options={Array.from({length: 31}, (_, i) => ({ value: (i+1).toString().padStart(2, '0'), label: (i+1).toString() }))} />
+                  <CustomSelect value={year} onChange={setYear} placeholder="Year" menuMaxHeight="150px" options={Array.from({length: 100}, (_, i) => ({ value: (currentYear - i).toString(), label: (currentYear - i).toString() }))} />
                 </div>
               </div>
 

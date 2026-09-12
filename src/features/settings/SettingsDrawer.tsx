@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { CustomSelect } from '../../components/CustomSelect'
 import { 
   LogOut, X, Mail, Shield, CheckCircle, Trash2, AlertTriangle, 
   UserCircle, Palette, Bell, Lock, Globe, HardDrive, HelpCircle
@@ -210,16 +211,7 @@ function DataRightsRequestForm({ userId }: { userId: string }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
       {error && <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.82rem' }}>{error}</div>}
       {success && <div style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', padding: '0.5rem 0.75rem', borderRadius: '6px', fontSize: '0.82rem' }}>Request submitted successfully. We will respond within the applicable timeframe.</div>}
-      <select value={requestType} onChange={e => setRequestType(e.target.value)} style={selectStyle}>
-        <option value="access">Access / Information</option>
-        <option value="correction">Correction</option>
-        <option value="erasure">Erasure / Deletion</option>
-        <option value="portability">Data Portability / Export</option>
-        <option value="withdrawal">Withdrawal of Consent</option>
-        <option value="grievance">Formal Grievance</option>
-        <option value="nomination">Nomination Related</option>
-        <option value="other">Other</option>
-      </select>
+      <CustomSelect value={requestType} onChange={setRequestType} options={[{value: 'download', label: 'Download My Data'},{value: 'delete', label: 'Delete My Account'}]} />
       <textarea placeholder="Describe your request..." value={description} onChange={e => setDescription(e.target.value)} rows={3} style={{ ...selectStyle, resize: 'vertical', fontFamily: 'inherit' }} />
       <button className="secondary-btn" disabled={submitting || !description.trim()} onClick={handleSubmit} style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', alignSelf: 'flex-start', opacity: submitting || !description.trim() ? 0.6 : 1 }}>{submitting ? 'Submitting...' : 'Submit Request'}</button>
     </div>
@@ -926,14 +918,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                     <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Profile Visibility</span>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control who can view your profile.</span>
                   </div>
-                  <select 
-                    value={settings.profileVisibility || 'public'}
-                    onChange={(e) => onSettingsChange({ ...settings, profileVisibility: e.target.value as 'public' | 'private' | 'friends' })}
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-muted)', outline: 'none' }}
-                  >
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                  </select>
+                  <CustomSelect value={settings.profileVisibility || 'public'} onChange={(v) => onSettingsChange({ ...settings, profileVisibility: v as 'public' | 'private' | 'friends' })} options={[{value: 'public', label: 'Public'},{value: 'private', label: 'Private'}]} />
                 
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
@@ -991,9 +976,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Theme</span>
       <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Select the visual theme for the application.</span>
     </div>
-    <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.theme} onChange={(event) => onSettingsChange({ ...settings, theme: event.target.value as ThemeMode })}>
-                {themeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-              </select>
+    <CustomSelect value={settings.theme} onChange={(v) => onSettingsChange({ ...settings, theme: v as any })} options={[{value: 'dark', label: 'Dark Mode'},{value: 'light', label: 'Light Mode'},{value: 'system', label: 'System Match'}]} />
   </div>
             </div>
             
@@ -1005,12 +988,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
       <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Animations</span>
       <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Control the intensity of UI animations.</span>
     </div>
-    <select style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }} value={settings.animationIntensity} onChange={(event) => onSettingsChange({ ...settings, animationIntensity: event.target.value as Settings['animationIntensity'] })}>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="off">Off</option>
-                  </select>
+    <CustomSelect value={settings.animationIntensity} onChange={(v) => onSettingsChange({ ...settings, animationIntensity: v as any })} options={[{value: 'full', label: 'Full (Cinematic)'},{value: 'reduced', label: 'Reduced'},{value: 'none', label: 'None (Instant)'}]} />
   </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', paddingRight: '2rem' }}>
@@ -1153,15 +1131,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                     <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Notification Sound</span>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Choose the alert sound for new notifications.</span>
                   </div>
-                  <select 
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                    value={settings.notificationSound || 'default'}
-                    onChange={(e) => onSettingsChange({ ...settings, notificationSound: e.target.value })}
-                  >
-                    <option value="default">Default (Chime)</option>
-                    <option value="pop">Pop</option>
-                    <option value="none">None</option>
-                  </select>
+                  <CustomSelect value={settings.notificationSound || 'default'} onChange={(v) => onSettingsChange({ ...settings, notificationSound: v })} options={[{value: 'default', label: 'Default (Chime)'},{value: 'pop', label: 'Pop'},{value: 'none', label: 'None'}]} />
                 
                 
                 </div>
@@ -1252,16 +1222,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {socialUpdating === 'whoCanFriendRequest' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
-                    <select 
-                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                      value={settings.whoCanFriendRequest || (settings.allowFriendRequests === false ? 'none' : 'everyone')}
-                      onChange={(e) => handleSocialSettingChange('whoCanFriendRequest', e.target.value, 'allowFriendRequests', e.target.value !== 'none')}
-                      disabled={socialUpdating === 'whoCanFriendRequest'}
-                    >
-                      <option value="everyone">Everyone</option>
-                      <option value="friends_of_friends">Friends of Friends</option>
-                      <option value="none">No One</option>
-                    </select>
+                    <CustomSelect value={settings.whoCanFriendRequest || (settings.allowFriendRequests === false ? 'none' : 'everyone')} onChange={(v) => handleSocialSettingChange('whoCanFriendRequest', v, 'allowFriendRequests', v !== 'none')} options={[{value: 'everyone', label: 'Everyone'},{value: 'friends_of_friends', label: 'Friends of Friends'},{value: 'none', label: 'No One'}]} />
                   
                 </div>
                 </div>
@@ -1272,15 +1233,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {socialUpdating === 'whoCanMessage' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
-                    <select 
-                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                      value={settings.whoCanMessage || (settings.allowMessages === false ? 'friends' : 'everyone')}
-                      onChange={(e) => handleSocialSettingChange('whoCanMessage', e.target.value, 'allowMessages', true)}
-                      disabled={socialUpdating === 'whoCanMessage'}
-                    >
-                      <option value="everyone">Everyone</option>
-                      <option value="friends">Friends Only</option>
-                    </select>
+                    <CustomSelect value={settings.whoCanMessage || (settings.allowMessages === false ? 'friends' : 'everyone')} onChange={(v) => handleSocialSettingChange('whoCanMessage', v, 'allowMessages', true)} options={[{value: 'everyone', label: 'Everyone'},{value: 'friends', label: 'Friends Only'}]} />
                   
                 </div>
                 </div>
@@ -1291,15 +1244,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     {socialUpdating === 'whoCanGroup' && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Saving...</span>}
-                    <select 
-                      style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                      value={settings.whoCanGroup || 'everyone'}
-                      onChange={(e) => handleSocialSettingChange('whoCanGroup', e.target.value)}
-                      disabled={socialUpdating === 'whoCanGroup'}
-                    >
-                      <option value="everyone">Everyone</option>
-                      <option value="friends">Friends Only</option>
-                    </select>
+                    <CustomSelect value={settings.whoCanGroup || 'everyone'} onChange={(v) => handleSocialSettingChange('whoCanGroup', v)} options={[{value: 'everyone', label: 'Everyone'},{value: 'friends', label: 'Friends Only'}]} />
                   
                 </div>
                 </div>
@@ -1321,50 +1266,15 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Language</label>
-                  <select 
-                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
-                    value={settings.language || 'en-US'}
-                    onChange={(e) => onSettingsChange({ ...settings, language: e.target.value })}
-                  >
-                    <option value="en-US">English (US)</option>
-                    <option value="en-GB">English (UK)</option>
-                    <option value="es-ES">Spanish</option>
-                    <option value="fr-FR">French</option>
-                  </select>
+                  <CustomSelect value={settings.language || 'en-US'} onChange={(v) => onSettingsChange({ ...settings, language: v })} options={[{value: 'en-US', label: 'English (US)'},{value: 'en-GB', label: 'English (UK)'},{value: 'es-ES', label: 'Spanish'},{value: 'fr-FR', label: 'French'}]} />
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Region</label>
-                  <select 
-                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
-                    value={settings.region || 'US'}
-                    onChange={(e) => onSettingsChange({ ...settings, region: e.target.value })}
-                  >
-                    <option value="US">United States</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="CA">Canada</option>
-                    <option value="AU">Australia</option>
-                    <option value="IN">India</option>
-                  </select>
+                  <CustomSelect value={settings.region || 'US'} onChange={(v) => onSettingsChange({ ...settings, region: v })} options={[{value: 'US', label: 'United States'},{value: 'GB', label: 'United Kingdom'},{value: 'CA', label: 'Canada'},{value: 'AU', label: 'Australia'},{value: 'IN', label: 'India'}]} />
                 </div>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Time Zone</label>
-                  <select 
-                    style={{ width: '100%', padding: '0.85rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem', outline: 'none' }}
-                    value={settings.timezone || 'auto'}
-                    onChange={(e) => onSettingsChange({ ...settings, timezone: e.target.value })}
-                  >
-                    <option value="auto">Automatic (Local)</option>
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">Eastern Time (US/Canada)</option>
-                    <option value="America/Chicago">Central Time (US/Canada)</option>
-                    <option value="America/Denver">Mountain Time (US/Canada)</option>
-                    <option value="America/Los_Angeles">Pacific Time (US/Canada)</option>
-                    <option value="Europe/London">London (GMT)</option>
-                    <option value="Europe/Paris">Paris (CET)</option>
-                    <option value="Asia/Tokyo">Tokyo (JST)</option>
-                    <option value="Asia/Kolkata">India (IST)</option>
-                    <option value="Australia/Sydney">Sydney (AEST)</option>
-                  </select>
+                  <CustomSelect value={settings.timezone || 'auto'} onChange={(v) => onSettingsChange({ ...settings, timezone: v })} options={[{value: 'auto', label: 'Automatic (Local)'},{value: 'UTC', label: 'UTC'},{value: 'America/New_York', label: 'Eastern Time (US/Canada)'},{value: 'America/Chicago', label: 'Central Time (US/Canada)'},{value: 'America/Denver', label: 'Mountain Time (US/Canada)'},{value: 'America/Los_Angeles', label: 'Pacific Time (US/Canada)'},{value: 'Europe/London', label: 'London (GMT)'},{value: 'Europe/Paris', label: 'Paris (CET)'},{value: 'Asia/Tokyo', label: 'Tokyo (JST)'},{value: 'Asia/Kolkata', label: 'India (IST)'},{value: 'Australia/Sydney', label: 'Sydney (AEST)'}]} />
                 </div>
               </div>
             </div>
@@ -1377,15 +1287,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                     <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Date Format</span>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Choose how dates are displayed across the app.</span>
                   </div>
-                  <select 
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                    value={settings.dateFormat || 'MM/DD/YYYY'}
-                    onChange={(e) => onSettingsChange({ ...settings, dateFormat: e.target.value })}
-                  >
-                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                  </select>
+                  <CustomSelect value={settings.dateFormat || 'MM/DD/YYYY'} onChange={(v) => onSettingsChange({ ...settings, dateFormat: v })} options={[{value: 'MM/DD/YYYY', label: 'MM/DD/YYYY'},{value: 'DD/MM/YYYY', label: 'DD/MM/YYYY'},{value: 'YYYY-MM-DD', label: 'YYYY-MM-DD'}]} />
                 
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
@@ -1393,14 +1295,7 @@ export function SettingsDrawer({ open, onClose, settings, onSettingsChange, onSi
                     <span style={{ color: 'var(--text-main)', fontWeight: 500, fontSize: '1.05rem' }}>Time Format</span>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.4 }}>Choose between 12-hour and 24-hour time display.</span>
                   </div>
-                  <select 
-                    style={{ padding: '0.5rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}
-                    value={settings.timeFormat || '12h'}
-                    onChange={(e) => onSettingsChange({ ...settings, timeFormat: e.target.value })}
-                  >
-                    <option value="12h">12-hour (AM/PM)</option>
-                    <option value="24h">24-hour</option>
-                  </select>
+                  <CustomSelect value={settings.timeFormat || '12h'} onChange={(v) => onSettingsChange({ ...settings, timeFormat: v })} options={[{value: '12h', label: '12-hour (AM/PM)'},{value: '24h', label: '24-hour'}]} />
                 
                 </div>
               </div>

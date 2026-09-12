@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { calculateMinimumVerificationTime } from '../../lib/progression';
 import { KnowledgeCheckModal } from '../../components/KnowledgeCheckModal';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { CustomSelect } from '../../components/CustomSelect';
 
 export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessionElapsed = 0, onCancelSession, onCompleteSession, onAddGoal, onUpdateGoal, onRemoveGoal, onCompleteGoal, onNavigate }: any) => {
   const [isCreating, setIsCreating] = useState(false);
@@ -195,11 +196,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                 onClick={() => { try { (document.getElementById('todo-priority-input') as any)?.showPicker(); } catch(e) { document.getElementById('todo-priority-input')?.focus(); } }}
                 style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)', padding: '12px 20px', borderRadius: '12px', border: '1px solid var(--border)', cursor: 'pointer' }}>
                 <AlertCircle size={18} color="var(--text-muted)" />
-                <select id="todo-priority-input" value={newTask.priority} onChange={e => setNewTask(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: 'var(--text-main)', outline: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }}>
-                  <option value="Low">Low Priority</option>
-                  <option value="Medium">Medium Priority</option>
-                  <option value="High">High Priority</option>
-                </select>
+                <CustomSelect value={newTask.priority} onChange={(v) => setNewTask(prev => ({...prev, priority: v}))} options={[{value: 'LOW', label: 'Low'},{value: 'MEDIUM', label: 'Medium'},{value: 'HIGH', label: 'High'},{value: 'URGENT', label: 'Urgent'}]} style={{ minWidth: '100px' }} />
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '16px' }}>
@@ -429,11 +426,7 @@ export const GoalsPanel = ({ goals = [], skills = [], activeSession, activeSessi
                           onClick={() => document.getElementById(`edit-priority-${task.id}`)?.focus()}
                           style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-surface)', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer' }}>
                           <AlertCircle size={14} color="var(--text-muted)" />
-                          <select id={`edit-priority-${task.id}`} value={editTaskData.priority} onChange={e => setEditTaskData(prev => ({...prev, priority: e.target.value}))} onClick={e => e.stopPropagation()} style={{ border: 'none', background: 'transparent', color: 'var(--text-main)', outline: 'none', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}>
-                            <option value="Low">Low Priority</option>
-                            <option value="Medium">Medium Priority</option>
-                            <option value="High">High Priority</option>
-                          </select>
+                          <CustomSelect value={editTaskData.priority} onChange={(v) => setEditTaskData(prev => ({...prev, priority: v}))} options={[{value: 'LOW', label: 'Low'},{value: 'MEDIUM', label: 'Medium'},{value: 'HIGH', label: 'High'},{value: 'URGENT', label: 'Urgent'}]} style={{ minWidth: '100px' }} />
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>

@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, AlertTriangle, Paperclip, CheckCircle } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import { CustomSelect } from '../../components/CustomSelect';
 
 interface CreateSupportTicketModalProps {
   isOpen: boolean
@@ -150,12 +151,7 @@ export function CreateSupportTicketModal({ isOpen, onClose, userId, onSuccess }:
                   
                   <div>
                     <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Category</label>
-                    <select value={category} onChange={e => setCategory(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-main)', outline: 'none' }}>
-                      <option>Bug / Glitch</option>
-                      <option>Account Issue</option>
-                      <option>Payment / Billing</option>
-                      <option>Other</option>
-                    </select>
+                    <CustomSelect value={category} onChange={setCategory} options={[{value: 'ACCOUNT', label: 'Account Issue'},{value: 'BILLING', label: 'Billing & Subscriptions'},{value: 'TECHNICAL', label: 'Technical Support'},{value: 'REPORT', label: 'Report a User'},{value: 'OTHER', label: 'Other / General Inquiry'}]} />
                   </div>
                   
                   <div>

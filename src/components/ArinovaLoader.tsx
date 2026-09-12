@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
-  const [loadingText, setLoadingText] = useState('Connecting to ARINOVA...');
-  
   const [isSystemDark, setIsSystemDark] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -50,6 +48,22 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
   const progressTrack = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const progressFill = isDark ? 'linear-gradient(90deg, transparent, #8B6CFF, #6574FF, transparent)' : 'linear-gradient(90deg, transparent, #5B5FEF, #7C5CFC, transparent)';
 
+  const [loadingText, setLoadingText] = useState('Connecting to ARINOVA...');
+  const [techText, setTechText] = useState('C');
+
+  useEffect(() => {
+    const techs = [
+      'C', 'C++', 'Java', 'JS', 'TS', 'SQL', 
+      'Git', 'HTML', 'CSS', 'PHP', 'Go', 'Rust', 'C#'
+    ];
+    let i = 1;
+    const interval = setInterval(() => {
+      setTechText(techs[i % techs.length]);
+      i++;
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+  
   useEffect(() => {
     const texts = [
       'Establishing secure connection...',
@@ -57,7 +71,7 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
       'Preparing your workspace...',
       'Almost ready...'
     ];
-    let i = 0;
+    let i = 1;
     const interval = setInterval(() => {
       setLoadingText(texts[i % texts.length]);
       i++;
@@ -65,6 +79,7 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
     return () => clearInterval(interval);
   }, []);
 
+  
   return (
     <motion.div
       key="premium-loading"
@@ -96,26 +111,26 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
         <div style={{ position: 'relative', width: '200px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '32px' }}>
           
           {/* Animated SVG Orbital - ONE clean elegant track */}
-          <svg 
+          <motion.svg 
             width="200" height="200" viewBox="0 0 200 200" 
-            style={{ position: 'absolute', inset: 0, overflow: 'visible' }}
+            style={{ position: 'absolute', inset: 0 }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
           >
-            {/* Base Complete Orbit */}
+            {/* Base Complete Orbit - (Does not rotate, but is a full circle so rotation is invisible) */}
             <circle cx="100" cy="100" r="86" fill="none" stroke={orbitTrack} strokeWidth="2" />
             
             {/* Traveling Accent */}
-            <motion.circle 
+            <circle 
               cx="100" cy="100" r="86" 
               fill="none" 
               stroke={orbitAccent} 
-              strokeWidth="3" 
-              strokeDasharray="140 400" 
+              strokeWidth="4" 
+              strokeDasharray="100 440" 
               strokeLinecap="round" 
-              style={{ originX: '50%', originY: '50%' }}
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 4, ease: 'linear' }}
+              style={{ filter: 'drop-shadow(0 0 6px rgba(139, 108, 255, 0.4))' }}
             />
-          </svg>
+          </motion.svg>
 
           {/* Animated Logo Glow */}
           <motion.div
@@ -125,28 +140,67 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
           />
 
           {/* ARINOVA Logo Center - Slightly Larger */}
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1, ease: 'easeOut' }}
+          <div
             style={{
               width: '80px', height: '80px',
               background: logoBg,
               border: `1px solid ${logoBorder}`,
               borderRadius: '20px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: logoColor, fontSize: '2rem', fontWeight: 900, letterSpacing: '-0.5px',
               boxShadow: logoGlowBox,
-              position: 'relative'
+              position: 'relative',
+              overflow: 'hidden',
+              zIndex: 10
             }}
           >
-            <motion.span
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-            >
-              AR
-            </motion.span>
-          </motion.div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={techText}
+                initial={{ opacity: 0, y: 15, filter: 'blur(6px)' }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0, 
+                  filter: 'blur(0px)',
+                  textShadow: [
+                    "0 0 0px rgba(139,108,255,0)",
+                    "0 0 16px rgba(139,108,255,0.9)",
+                    "0 0 4px rgba(139,108,255,0.3)"
+                  ]
+                }}
+                exit={{ opacity: 0, y: -15, filter: 'blur(2px)' }}
+                transition={{ 
+                  duration: 0.5, 
+                  ease: [0.25, 0.1, 0.25, 1],
+                  textShadow: { duration: 0.8, ease: "easeOut" }
+                }}
+                style={{ 
+                  position: 'absolute',
+                  fontSize: '1.25rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.5px',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                <motion.div
+                  initial={{ backgroundPosition: '-150% 50%' }}
+                  animate={{ backgroundPosition: '150% 50%' }}
+                  transition={{ duration: 0.8, delay: 0.1, ease: "easeInOut" }}
+                  style={{
+                    background: isDark 
+                      ? 'linear-gradient(90deg, rgba(255,255,255,0.85) 0%, #ffffff 40%, #A78BFF 50%, #ffffff 60%, rgba(255,255,255,0.85) 100%)'
+                      : 'linear-gradient(90deg, rgba(30,27,75,0.85) 0%, #1E1B4B 40%, #5B5FEF 50%, #1E1B4B 60%, rgba(30,27,75,0.85) 100%)',
+                    backgroundSize: '200% auto',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    display: 'inline-block',
+                    padding: '0 4px'
+                  }}
+                >
+                  {techText}
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Wordmark */}

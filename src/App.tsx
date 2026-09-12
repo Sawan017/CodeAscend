@@ -10,7 +10,7 @@ import { Toasts } from './components/Toasts'
 import { Celebration } from './components/Celebration'
 import { GoalsPanel } from './features/goals/GoalsPanel'
 import { Dashboard } from './features/dashboard/Dashboard'
-import { AdminSupportDashboard } from './features/admin/AdminSupportDashboard'
+import { AdminConsole } from './features/admin/AdminConsole'
 import { BadgeDetail } from './features/achievements/BadgeDetail'
 import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
@@ -30,6 +30,7 @@ import { CompleteOAuthSetup } from './features/auth/CompleteOAuthSetup'
 import { calculateLevel, computeStreak, XP_REWARDS, evaluateAchievementsAndBadges, evaluateDynamicMilestones, generateTimelineEvents, generateFutureMilestones } from './lib/progression'
 import { playSoundEffect } from './lib/sound'
 import { useAuth } from './lib/auth'
+import { BanScreen } from './features/auth/BanScreen'
 import { usePersist } from './hooks/usePersist'
 import { supabase } from './lib/supabase'
 import { fetchAllUserData, saveAchievements, saveBadges, saveGoals, saveProfile, saveProjects, saveProgressionData, saveSettings, saveSkills, fetchIncomingMessages, fetchSocialNetwork, acceptFriendRequest, rejectFriendRequest, removeFriend, sendFriendRequest, lookupLoginIdByAuthUserId, sendChatMessage } from './lib/api'
@@ -89,12 +90,14 @@ export const CONFIG = {
 }
 
 function App() {
+
   const { user, loading, isConfigured, signOut, isRecoveringPassword, setIsRecoveringPassword } = useAuth()
   const hydratedFromRemote = useRef(false)
   const { toasts, push, dismiss } = useToasts()
   const [entered, setEntered] = useState(false)
   const [needsAgeVerification, setNeedsAgeVerification] = useState(false)
   const [checkingAge, setCheckingAge] = useState(true)
+  const [banStatus, setBanStatus] = useState<{ isBanned: boolean, isSuspended: boolean, expiresAt: string | null, reason: string | null, isPermanent: boolean } | null>(null)
 
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
@@ -132,6 +135,21 @@ function App() {
   const clearAllNotifications = async () => {
     setNotifications([]);
     if (supabase && user) await supabase.from('notifications').delete().eq('user_id', user.id);
+  }
+
+  const deleteNotification = async (id: string) => {
+    // Optimistic UI update
+    const previous = [...notifications];
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    
+    if (supabase && user) {
+      const { error } = await supabase.from('notifications').delete().eq('id', id).eq('user_id', user.id);
+      if (error) {
+        console.error("Failed to delete notification:", error);
+        // Revert on failure
+        setNotifications(previous);
+      }
+    }
   }
 
   const handleNotificationNavigate = (type: string | null, id: string | null) => {
@@ -284,6 +302,28 @@ function App() {
   const [achievementState, setAchievementState] = useState(initialData.achievements)
   const [badgeState, setBadgeState] = useState(initialData.badges)
   const [settings, setSettings] = useState<Settings>(initialData.settings)
+  const [activeTheme, setActiveTheme] = useState<'dark' | 'light' | 'midnight' | 'aurora'>('dark');
+
+  useEffect(() => {
+    if (settings.theme === 'system') {
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      setActiveTheme(media.matches ? 'dark' : 'light');
+      
+      const listener = (e: MediaQueryListEvent) => {
+        setActiveTheme(e.matches ? 'dark' : 'light');
+      };
+      
+      media.addEventListener('change', listener);
+      return () => media.removeEventListener('change', listener);
+    } else {
+      setActiveTheme(settings.theme === 'light' ? 'light' : (settings.theme === 'midnight' ? 'midnight' : (settings.theme === 'aurora' ? 'aurora' : 'dark')));
+    }
+  }, [settings.theme]);
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', activeTheme);
+  }, [activeTheme]);
+
 
   useEffect(() => {
     if (!user || !supabase) return;
@@ -344,7 +384,7 @@ function App() {
       setIsGlobalAdmin(!!data)
     }
     checkAdmin()
-  }, [])
+  }, [user?.id])
 
 
   useEffect(() => {
@@ -1387,12 +1427,20 @@ const completeActiveSession = async () => {
 
   return (
     <MotionConfig reducedMotion={settings.reducedMotion ? 'always' : 'user'}>
-      <div className={`app-shell ${settings.theme} ${settings.reducedMotion ? 'reduced-motion' : 'animation-' + (settings.animationIntensity || 'high')}`}>
+      <div id="app-shell-root" className={`app-shell ${activeTheme} ${settings.reducedMotion ? 'reduced-motion' : 'animation-' + (settings.animationIntensity || 'high')}`}>
       <div className="noise" />
       <div className="aurora aura-a" />
       <div className="aurora aura-b" />
       <AnimatePresence mode="wait">
-        {CONFIG.MAINTENANCE_MODE ? (
+        {(banStatus?.isBanned || banStatus?.isSuspended) ? (
+          <BanScreen 
+            type={banStatus.isBanned ? 'BANNED' : 'SUSPENDED'}
+            reason={banStatus.reason} 
+            expiresAt={banStatus.expiresAt} 
+            isPermanent={banStatus.isPermanent} 
+            onSignOut={() => signOut(false)} 
+          />
+        ) : CONFIG.MAINTENANCE_MODE ? (
           <div key="maintenance" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', width: '100vw', gap: '1.5rem', textAlign: 'center', padding: '2rem' }}>
             <div style={{ color: 'var(--cyan)', fontSize: '3rem', fontWeight: 800 }}>ARINOVA</div>
             <div style={{ color: 'var(--text-main)', fontSize: '1.5rem', fontWeight: 600 }}>System Maintenance</div>
@@ -1407,7 +1455,7 @@ const completeActiveSession = async () => {
             </button>
           </div>
         ) : loading || (user && !dataLoaded) ? (
-          <ArinovaLoader key="loading" theme={settings.theme} />
+          <ArinovaLoader key="loading" theme={activeTheme} />
         ) : isRecoveringPassword ? (
           <UpdatePasswordUI onComplete={() => setIsRecoveringPassword(false)} />
         ) : (!entered && route.view !== 'login') ? (
@@ -1454,7 +1502,7 @@ const completeActiveSession = async () => {
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <ErrorBoundary>
                   <AnimatePresence mode="wait">
-                    {route.view === 'admin_support' && isGlobalAdmin && <AdminSupportDashboard onBack={() => navigate({ view: 'dashboard' })} />}
+                    {route.view === 'admin_console' && isGlobalAdmin && <AdminConsole onBack={() => navigate({ view: 'dashboard' })} />}
                     {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} achievements={achievementState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} onUpdateProfile={(updates) => setProfileState(prev => ({ ...prev, ...updates }))} />}
                     {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} isCurrentUser={true} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
                     {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
@@ -1631,7 +1679,7 @@ const completeActiveSession = async () => {
                         </div>
                       </div>
                     )}
-                    {!['admin_support', 'dashboard', 'profile', 'edit_profile', 'projects', 'project_detail', 'learning', 'skill_detail', 'goals', 'todo', 'achievements', 'achievement_detail', 'badge_detail', 'friends', 'chat', 'future', 'career_world'].includes(route.view) && (
+                    {!['admin_console', 'dashboard', 'profile', 'edit_profile', 'projects', 'project_detail', 'learning', 'skill_detail', 'goals', 'todo', 'achievements', 'achievement_detail', 'badge_detail', 'friends', 'chat', 'future', 'career_world'].includes(route.view) && (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '1rem', color: 'var(--text-muted)' }}>
                         <h1 style={{ fontSize: '4rem', color: 'var(--text-main)', margin: 0, fontWeight: 800 }}>404</h1>
                         <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>The requested sector could not be located.</p>
@@ -1683,6 +1731,7 @@ const completeActiveSession = async () => {
         onMarkRead={markNotificationRead}
         onMarkAllRead={markAllNotificationsRead}
         onClearAll={clearAllNotifications}
+        onDelete={deleteNotification}
         onNavigate={handleNotificationNavigate}
       />
       <SettingsDrawer 
