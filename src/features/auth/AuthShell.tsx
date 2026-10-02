@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform } from 'framer-motion'
 import { Code2 } from 'lucide-react'
 import type { Progression } from '../../types'
 
-import { CinematicWorld } from '../landing/CinematicWorld/CinematicWorld'
+import { CinematicWorld } from '../landing/CinematicWorld'
 import { useEffect } from 'react'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'

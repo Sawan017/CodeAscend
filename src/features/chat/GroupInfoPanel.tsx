@@ -7,7 +7,7 @@ import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember } from '../../hooks/useGroupChat'
 import { supabase } from '../../lib/supabase'
 import { AddMembersModal } from './AddMembersModal'
-import { ConfirmDialog } from './ConfirmDialog'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { uploadProfileImage } from '../../lib/storage_upload'
 
 export function GroupInfoPanel({
@@ -264,10 +264,10 @@ export function GroupInfoPanel({
       )}
       
       {leaveConfirmOpen && (
-        <ConfirmDialog
-          title="Leave Group"
+        <ConfirmDialog isOpen={true}
+        title="Leave Group"
           message="Are you sure you want to leave this group? You won't be able to send or receive new messages."
-          confirmText="Leave Group"
+          confirmLabel="Leave Group"
           danger
           onConfirm={onLeaveGroup}
           onCancel={() => setLeaveConfirmOpen(false)}
@@ -275,10 +275,10 @@ export function GroupInfoPanel({
       )}
       
       {deleteConfirmOpen && (
-        <ConfirmDialog
-          title="Delete Group"
+        <ConfirmDialog isOpen={true}
+        title="Delete Group"
           message="Are you sure you want to completely delete this group? This action cannot be undone."
-          confirmText="Delete Group"
+          confirmLabel="Delete Group"
           danger
           onConfirm={onDeleteGroup}
           onCancel={() => setDeleteConfirmOpen(false)}
@@ -287,6 +287,7 @@ export function GroupInfoPanel({
     </div>
   )
 }
+
 
 
 

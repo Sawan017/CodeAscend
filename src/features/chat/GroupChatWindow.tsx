@@ -9,7 +9,7 @@ import { Avatar } from '../../components/Avatar'
 import type { ChatGroup, ChatGroupMember, ChatGroupMessage } from '../../hooks/useGroupChat'
 import { supabase } from '../../lib/supabase'
 import { GroupInfoPanel } from './GroupInfoPanel'
-import { ConfirmDialog } from './ConfirmDialog'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 
 
 type ContextMenuState = {
@@ -474,10 +474,10 @@ export function GroupChatWindow({
         document.body
       )}
       {clearConfirmOpen && (
-        <ConfirmDialog
-          title="Clear Chat"
+        <ConfirmDialog isOpen={true}
+        title="Clear Chat"
           message="Are you sure you want to clear this chat history for yourself? This will hide past messages but won't delete them for other members."
-          confirmText="Clear Chat"
+          confirmLabel="Clear Chat"
           danger
           onConfirm={() => {
             onClearChat?.()
@@ -489,6 +489,7 @@ export function GroupChatWindow({
     </div>
   )
 }
+
 
 
 

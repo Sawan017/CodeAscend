@@ -1,4 +1,4 @@
-﻿import { useEffect } from 'react'
+import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AlertCircle, Loader2 } from 'lucide-react'
@@ -13,6 +13,7 @@ type ConfirmDialogProps = {
   onConfirm: () => void;
   onCancel: () => void;
   isProcessing?: boolean;
+  danger?: boolean;
 }
 
 export function ConfirmDialog({
