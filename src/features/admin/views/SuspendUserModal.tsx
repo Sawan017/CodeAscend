@@ -2,7 +2,7 @@ import { formatAppDateTime } from '../../../lib/dateFormatting';
 ﻿import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PauseCircle, X } from 'lucide-react';
+import {  PauseCircle, X , Loader2 } from 'lucide-react';
 import { CustomSelect } from '../../../components/CustomSelect';
 
 type SuspendUserModalProps = {
@@ -81,7 +81,7 @@ export function SuspendUserModal({ isOpen, onClose, onConfirm, isProcessing, tar
                 </div>
                 <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>Suspend User</h2>
               </div>
-              <button onClick={onClose} disabled={isProcessing} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <button onClick={() => { if (!isProcessing) onClose(); }} disabled={isProcessing} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={20} />
               </button>
             </div>
@@ -156,7 +156,7 @@ export function SuspendUserModal({ isOpen, onClose, onConfirm, isProcessing, tar
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
               <button 
-                onClick={onClose}
+                onClick={() => { if (!isProcessing) onClose(); }}
                 disabled={isProcessing}
                 className="secondary-btn"
                 style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}
@@ -175,10 +175,9 @@ export function SuspendUserModal({ isOpen, onClose, onConfirm, isProcessing, tar
                   borderRadius: '8px',
                   fontWeight: 600,
                   cursor: (isProcessing || !isReady) ? 'not-allowed' : 'pointer',
-                  opacity: (isProcessing || !isReady) ? 0.5 : 1
-                }}
+                  opacity: (isProcessing || !isReady) ? 0.5 : 1, display: 'flex', alignItems: 'center' }}
               >
-                {isProcessing ? 'Processing...' : 'Suspend User'}
+                {isProcessing && <Loader2 size={16} style={{ animation: 'spin 1s linear infinite', marginRight: '8px' }} />}{isProcessing ? 'Processing...' : 'Suspend User'}
               </button>
             </div>
           </motion.div>

@@ -1,3 +1,4 @@
+import { calculateLevel } from '../../lib/progression'
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
@@ -209,26 +210,26 @@ export function BotanicalHub({ profile, progression, projects, goals, skills, ba
                       <div>
                          <p style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Growth Stage</p>
                          <h3 style={{ fontSize: '2rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            Level {safeProgression.level} <FlowerIcon size={24} />
+                            Level {calculateLevel(safeProgression)} <FlowerIcon size={24} />
                          </h3>
                       </div>
                       
                       <div style={{ flex: 1, maxWidth: '500px' }}>
                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '1rem', textTransform: 'uppercase' }}>
                             <span>Experience Root</span>
-                            <span>{safeProgression.xp} / {(safeProgression.level || 1) * 1000} XP</span>
+                            <span>{safeProgression.xp} / {(calculateLevel(safeProgression) || 1) * 1000} XP</span>
                          </div>
                          <div style={{ height: '1px', width: '100%', background: 'var(--border-color)', position: 'relative' }}>
                             <motion.div 
                               initial={{ width: 0 }} 
-                              animate={{ width: `${Math.min(100, (safeProgression.xp / ((safeProgression.level || 1) * 1000)) * 100)}%` }} 
+                              animate={{ width: `${Math.min(100, (safeProgression.xp / ((calculateLevel(safeProgression) || 1) * 1000)) * 100)}%` }} 
                               transition={{ delay: 0.5, duration: 1.5, ease: 'easeOut' }}
                               style={{ position: 'absolute', left: 0, top: '-0.5px', height: '2px', background: 'var(--accent-bloom)' }} 
                             />
                             {/* Tiny progress bud */}
                             <motion.div 
                               initial={{ left: 0, opacity: 0 }} 
-                              animate={{ left: `${Math.min(100, (safeProgression.xp / ((safeProgression.level || 1) * 1000)) * 100)}%`, opacity: 1 }} 
+                              animate={{ left: `${Math.min(100, (safeProgression.xp / ((calculateLevel(safeProgression) || 1) * 1000)) * 100)}%`, opacity: 1 }} 
                               transition={{ delay: 0.5, duration: 1.5, ease: 'easeOut' }}
                               style={{ position: 'absolute', top: '-3px', transform: 'translateX(-50%)', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-bloom)' }}
                             />

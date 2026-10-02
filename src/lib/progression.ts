@@ -89,14 +89,20 @@ function xpForLevel(level: number): number {
   return Math.floor(XP_BASE * Math.pow(level - 1, XP_EXPONENT))
 }
 
-export function calculateLevel(xp: number): number {
-  let level = 1
-  while (xp >= xpForLevel(level + 1)) level++
-  return level
+export function calculateLevel(prog: any): number {
+  if (typeof prog === 'object' && prog !== null && prog.is_god_mode && prog.level !== undefined) {
+    return prog.level;
+  }
+  const xp = (typeof prog === 'object' && prog !== null) ? prog.xp : prog;
+  if (typeof xp !== 'number' || isNaN(xp)) return 1;
+  let level = 1;
+  while (xp >= xpForLevel(level + 1)) level++;
+  return level;
 }
 
-export function calculateProgressToNextLevel(xp: number) {
-  const level = calculateLevel(xp)
+export function calculateProgressToNextLevel(prog: any) {
+  const level = calculateLevel(prog);
+  const xp = (typeof prog === 'object' && prog !== null) ? prog.xp : prog;
   const currentFloor = xpForLevel(level)
   const nextFloor = xpForLevel(level + 1)
   const progress = nextFloor > currentFloor
@@ -177,7 +183,7 @@ export function evaluateAchievementsAndBadges(
   achievements: Achievement[],
   badges: Badge[]
 ) {
-  const currentLevel = calculateLevel(progression.xp)
+  const currentLevel = calculateLevel(progression)
   const completedGoalsCount = Math.max(progression.goalsCompleted || 0, goals.filter((g) => g.status?.toUpperCase() === "COMPLETED").length)
   const completedProjectsCount = Math.max(progression.projectsCompleted || 0, projects.filter((p) => p.completed || p.status?.toUpperCase() === "COMPLETED").length)
   
@@ -235,41 +241,6 @@ export function evaluateAchievementsAndBadges(
     }
   })
 
-  // 4. BADGE REWARD: Every unlocked achievement automatically awards its corresponding badge
-  updatedAchievements.forEach(ach => {
-    if (ach.unlocked) {
-      const badgeId = `badge-ach-${ach.id}`;
-      let existingBadge = updatedBadges.find(b => b.id === badgeId);
-      
-      if (!existingBadge) {
-        existingBadge = {
-          id: badgeId,
-          image: ach.image,
-          icon: ach.icon,
-          title: ach.title,
-          description: ach.description,
-          rarity: "Epic",
-          earned: true,
-          dateEarned: ach.dateUnlocked || todayStr,
-          requirement: ach.unlockCondition,
-          
-        } as any;
-        updatedBadges.push(existingBadge);
-        
-        // Only trigger popup notification if the achievement ITSELF was just unlocked this session
-        if (newUnlockedAchievements.some(na => na.id === ach.id)) {
-          newEarnedBadges.push(existingBadge);
-        }
-      } else if (!existingBadge.earned) {
-        existingBadge.earned = true;
-        existingBadge.dateEarned = ach.dateUnlocked || todayStr;
-        if (newUnlockedAchievements.some(na => na.id === ach.id)) {
-          newEarnedBadges.push(existingBadge);
-        }
-      }
-    }
-  })
-
   const hasRetroactiveChanges = JSON.stringify(badges) !== JSON.stringify(updatedBadges) || JSON.stringify(achievements) !== JSON.stringify(updatedAchievements);
   return {
     updatedBadges,
@@ -291,7 +262,7 @@ export function calculateMinimumVerificationTime(primeLimitSeconds: number): num
   return Math.max(5 * 60, Math.min(45 * 60, minSeconds));
 }
 
-export function evaluateDynamicMilestones(progression: Progression, skills: Skill[]): DynamicMilestone[] {
+export function evaluateDynamicMilestones(progression: Progression, skills: Skill[], achievements?: Achievement[]): DynamicMilestone[] {
   const masteredSkills = skills.filter((s) => s.status?.toUpperCase() === 'MASTERED').length
   const topicsMastered = skills.reduce((total, skill) => {
     if (!skill.subtopics) return total
@@ -326,7 +297,9 @@ export function evaluateDynamicMilestones(progression: Progression, skills: Skil
     } else if (def.id.startsWith('m-xp-')) {
       progressValue = progression.xp
     } else if (def.id.startsWith('m-lvl-')) {
-      progressValue = calculateLevel(progression.xp)
+      // REMOVED: Level milestones are now handled as REAL achievements inside public.achievements,
+      // per the user's explicit request to not use dynamic/parallel systems.
+      progressValue = calculateLevel(progression)
     } else if (def.id.startsWith('m-streak-')) {
       progressValue = progression.longestStreak || progression.streak || 0 // use whichever is highest for milestones
     } else if (def.id.startsWith('m-explore-')) {
@@ -345,7 +318,7 @@ export function evaluateDynamicMilestones(progression: Progression, skills: Skil
       ...def,
       progressValue,
       isUnlocked,
-      dateUnlocked: isUnlocked ? todayStr : undefined // Ideally read from stored list to not overwrite dates, but this is a purely derived state for now
+      dateUnlocked: isUnlocked ? (achievements?.find(a => a.id === def.id)?.dateUnlocked || todayStr) : undefined // Use real DB date if exists to not overwrite dates, but this is a purely derived state for now
     }
   })
 }

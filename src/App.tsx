@@ -10,7 +10,9 @@ import { Toasts } from './components/Toasts'
 import { Celebration } from './components/Celebration'
 import { GoalsPanel } from './features/goals/GoalsPanel'
 import { Dashboard } from './features/dashboard/Dashboard'
+
 import { AdminConsole } from './features/admin/AdminConsole'
+
 import { BadgeDetail } from './features/achievements/BadgeDetail'
 import { ProfilePanel } from './features/profile/ProfilePanel'
 import { ProjectsPanel } from './features/projects/ProjectsPanel'
@@ -294,7 +296,7 @@ function App() {
     }
   })
 
-  const prevLevelRef = useRef(calculateLevel(initialData.progression.xp))
+  const prevLevelRef = useRef(calculateLevel(initialData.progression))
   const [progression, setProgression] = useState<Progression>(initialData.progression)
   const [goalState, setGoalState] = useState(initialData.goals)
   const [skillState, setSkillState] = useState<Skill[]>(initialData.skills)
@@ -995,7 +997,7 @@ const completeActiveSession = async () => {
       return
     }
 
-    const level = calculateLevel(progression.xp)
+    const level = calculateLevel(progression)
 
     if (!hasSyncedInitialLevel.current) {
       // First time dataLoaded is true, silently synchronize the level ref.
@@ -1374,7 +1376,7 @@ const completeActiveSession = async () => {
     const found = achievementState.find((a: any) => a.id === id);
     if (found) return found;
     
-    const milestones = evaluateDynamicMilestones(progression, skillState);
+    const milestones = evaluateDynamicMilestones(progression, skillState, achievementState);
     const m: any = milestones.find((x: any) => x.id === id);
     if (m) {
       return {
@@ -1401,7 +1403,7 @@ const completeActiveSession = async () => {
     
     if (id.startsWith('badge-m-')) {
       const milestoneId = id.replace('badge-m-', '');
-      const milestones = evaluateDynamicMilestones(progression, skillState);
+      const milestones = evaluateDynamicMilestones(progression, skillState, achievementState);
       const m: any = milestones.find((x: any) => x.id === milestoneId);
       if (m) {
         return {
@@ -1424,6 +1426,8 @@ const completeActiveSession = async () => {
     window.history.back()
     playSoundEffect('click', settings.soundEffects)
   }
+
+  const isPrivileged = !!isGlobalAdmin;
 
   return (
     <MotionConfig reducedMotion={settings.reducedMotion ? 'always' : 'user'}>
@@ -1472,8 +1476,7 @@ const completeActiveSession = async () => {
           <OnboardingScreen onComplete={handleOnboardingComplete} />
         ) : (
           <motion.main key="world" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="world-shell">
-            <Suspense fallback={null}>
-            </Suspense>
+            <Suspense fallback={null}></Suspense>
             <TopBar 
               progression={progression} 
               profile={profileState} 
@@ -1502,10 +1505,12 @@ const completeActiveSession = async () => {
                 <motion.section ref={contentRef} className="content-card" initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
                   <ErrorBoundary>
                   <AnimatePresence mode="wait">
-                    {route.view === 'admin_console' && isGlobalAdmin && <AdminConsole onBack={() => navigate({ view: 'dashboard' })} />}
-                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} achievements={achievementState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} onUpdateProfile={(updates) => setProfileState(prev => ({ ...prev, ...updates }))} />}
+                    
+                    {route.view === 'admin_console' && isPrivileged && <AdminConsole onBack={() => navigate({ view: 'dashboard' })} />}
+
+                    {route.view === 'dashboard' && <Dashboard profile={profileState} progression={progression} projects={projectState} goals={goalState} skills={skillState} badges={badgeState} achievements={achievementState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState, achievementState)} friendState={friendState} chatState={chatState} incomingRequestsCount={incomingRequests.length} unreadMessagesCount={incomingMessages.filter(m => !chatState.mutedUsers?.includes(m.senderId) && new Date(m.timestamp) > new Date(chatState.lastRead[m.senderId] || '1970-01-01')).length} onNavigate={navigate} onUpdateProfile={(updates) => setProfileState(prev => ({ ...prev, ...updates }))} />}
                     {route.view === 'profile' && <ProfilePanel profile={profileState} progression={progression} skills={skillState} achievements={achievementState} goals={goalState} isCurrentUser={true} onEditProfile={() => navigate({ view: 'edit_profile' })} />}
-                    {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
+                    {route.view === 'edit_profile' && <EditProfilePanel profile={profileState} achievements={achievementState} badges={badgeState} projects={projectState} skills={skillState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState, achievementState)} userId={user?.id} onClose={() => navigate({ view: 'profile' })} onProfileChange={setProfileState} onSaveProfile={async (updatedProfile) => {
                       setProfileState(updatedProfile)
                       if (typeof window !== 'undefined') {
                         window.localStorage.setItem('futureme-profile', JSON.stringify(updatedProfile))
@@ -1562,7 +1567,7 @@ const completeActiveSession = async () => {
                       onSelectGoal={() => {}} 
                     />}
 
-                    {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState)} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
+                    {route.view === 'achievements' && <AchievementsPanel achievements={achievementState} badges={badgeState} dynamicMilestones={evaluateDynamicMilestones(progression, skillState, achievementState)} onSelectAchievement={(id) => navigate({ view: 'achievement_detail', id })} onSelectBadge={(id) => navigate({ view: 'badge_detail', id })} />}
                     {route.view === 'achievement_detail' && <AchievementDetail achievement={getAchievementData(route.id) as any} onBack={goBack} />}
                     {route.view === 'badge_detail' && <BadgeDetail badge={getBadgeData(route.id) as any} onBack={goBack} />}
                     {route.view === 'chat' && (
@@ -2039,7 +2044,7 @@ const completeActiveSession = async () => {
       />
       <Toasts toasts={toasts} onDismiss={dismiss} hasActiveSession={!!activeSession} />
       <AgeVerificationModal isOpen={needsAgeVerification} onSuccess={() => setNeedsAgeVerification(false)} />
-      {dataLoaded && <Celebration xp={progression.xp} />}
+      {dataLoaded && <Celebration progression={progression} />}
       </div>
     </MotionConfig>
   )

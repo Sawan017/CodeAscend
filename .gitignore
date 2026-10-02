@@ -47,3 +47,8 @@ inventory.json
 # Local AI artifacts & temp files
 walkthrough.md
 supabase/.temp/
+
+# Root level scratch scripts
+/*.sql
+/*.txt
+/*.js

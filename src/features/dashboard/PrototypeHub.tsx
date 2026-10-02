@@ -1,3 +1,4 @@
+import { calculateLevel } from '../../lib/progression'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 import { Rocket, Folder, BookOpen, Target, Award, MessageSquare, User, Hexagon, Activity } from 'lucide-react'
@@ -117,8 +118,8 @@ export function PrototypeHub({ profile, progression, projects, goals, skills, ba
                  
                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '240px', height: '240px', background: '#050505', border: '1px solid rgba(255,68,0,0.5)', borderRadius: '50%', position: 'relative', zIndex: 2, boxShadow: '0 0 60px rgba(255,68,0,0.1), inset 0 0 40px rgba(255,68,0,0.05)' }}>
                     <span style={{ fontSize: '0.7rem', color: '#ff4400', textTransform: 'uppercase', letterSpacing: '0.3em', position: 'absolute', top: '2rem' }}>Rank</span>
-                    <span style={{ fontSize: '7rem', fontWeight: 300, fontFamily: 'monospace', color: '#fff', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.1)' }}>{safeProgression.level}</span>
-                    <span style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.2em', position: 'absolute', bottom: '2.5rem' }}>{safeProgression.xp} / {(safeProgression.level || 1) * 1000} XP</span>
+                    <span style={{ fontSize: '7rem', fontWeight: 300, fontFamily: 'monospace', color: '#fff', lineHeight: 1, textShadow: '0 0 20px rgba(255,255,255,0.1)' }}>{calculateLevel(safeProgression)}</span>
+                    <span style={{ fontSize: '0.7rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.2em', position: 'absolute', bottom: '2.5rem' }}>{safeProgression.xp} / {(calculateLevel(safeProgression) || 1) * 1000} XP</span>
                  </div>
               </motion.div>
            </div>

@@ -35,30 +35,65 @@ export function AdminUsersView() {
   }, []);
 
   const executeAction = async () => {
+    if (isProcessing) return; // Prevent double clicks
     if (!confirmState) return;
-    setIsProcessing(true);
-    const { userId, action } = confirmState;
     
-    const { error } = await supabase.rpc('admin_set_user_status', {
-      target_user_id: userId,
-      new_status: action,
-      reason: 'Admin action from console'
-    });
+    console.log('[REVOKE] START');
+    const { userId, action } = confirmState;
+    console.log('[REVOKE] TARGET USER:', userId);
+    console.log('[REVOKE] NEW STATUS:', action);
+    
+    setIsProcessing(true);
+    let success = false;
+    
+    try {
+      console.log('[REVOKE] CALLING BACKEND (admin_set_user_status)');
+      const { data, error } = await supabase.rpc('admin_set_user_status', {
+        target_user_id: userId,
+        new_status: action,
+        reason: 'Admin action from console'
+      });
+      
+      console.log('[REVOKE] BACKEND RESPONSE:', { data, error });
 
-    if (error) {
-      push(`Error: ${error.message}`);
-    } else {
-      push('User status updated successfully');
-      loadUsers();
+      if (error) {
+        console.error('[REVOKE] BACKEND ERROR:', error);
+        push(`Error: ${error.message}`);
+      } else {
+        console.log('[REVOKE] DATABASE UPDATE APPARENTLY SUCCESSFUL, VERIFYING...');
+        
+        // VERIFY: Fetch user identity directly
+        const { data: verifyData, error: verifyError } = await supabase.from('user_identities').select('status, banned_at, ban_expires_at, suspended_until').eq('user_id', userId).single();
+        console.log('[REVOKE] VERIFICATION RESULT:', { verifyData, verifyError });
+        
+        if (verifyData?.status === 'ACTIVE' && !verifyData?.banned_at && !verifyData?.suspended_until) {
+          console.log('[REVOKE] VERIFIED ACTIVE.');
+          push('User status updated successfully');
+          success = true;
+          loadUsers();
+        } else {
+          console.error('[REVOKE] VERIFICATION FAILED! RESTRICTION STILL ACTIVE.', verifyData);
+          push('Failed to verify status update. DB restriction may still be active.');
+        }
+      }
+    } catch (err: any) {
+      console.error('[REVOKE] UNEXPECTED EXCEPTION:', err);
+      push(`Unexpected Error: ${err.message}`);
+    } finally {
+      setIsProcessing(false);
+      console.log('[REVOKE] FINAL CLEANUP COMPLETE');
+      if (success) {
+        setConfirmState(null);
+      }
     }
-    setIsProcessing(false);
-    setConfirmState(null);
   };
 
   
   const executeBan = async (durationHours: number | null, reason: string) => {
+    if (isProcessing) return;
     if (!banState) return;
     setIsProcessing(true);
+    let success = false;
     const { user_id: userId } = banState;
     
     let expiresAt = null;
@@ -68,21 +103,29 @@ export function AdminUsersView() {
       expiresAt = d.toISOString();
     }
     
-    const { error } = await supabase.rpc('admin_set_user_status', {
-      target_user_id: userId,
-      new_status: 'BANNED',
-      reason: reason || 'Admin action from console',
-      p_ban_expires_at: expiresAt
-    });
+    try {
+      const { error } = await supabase.rpc('admin_set_user_status', {
+        target_user_id: userId,
+        new_status: 'BANNED',
+        reason: reason || 'Admin action from console',
+        p_ban_expires_at: expiresAt
+      });
 
-    if (error) {
-      push(`Error: ${error.message}`);
-    } else {
-      push('User has been banned');
-      loadUsers();
+      if (error) {
+        push(`Error: ${error.message}`);
+      } else {
+        push('User has been banned');
+        success = true;
+        loadUsers();
+      }
+    } catch (err: any) {
+      push(`Unexpected Error: ${err.message}`);
+    } finally {
+      setIsProcessing(false);
+      if (success) {
+        setBanState(null);
+      }
     }
-    setIsProcessing(false);
-    setBanState(null);
   };
 
   
@@ -153,10 +196,11 @@ export function AdminUsersView() {
         title={confirmState?.action === 'ACTIVE' ? "Restore User" : "Suspend User"}
         message={confirmState?.action === 'ACTIVE' ? "Are you sure you want to restore this user's access to ARINOVA?" : "Are you sure you want to temporarily suspend this user?"}
         subMessage={confirmState?.action === 'ACTIVE' ? '' : "This action will be logged in the admin audit trail."}
-        confirmLabel={isProcessing ? "Processing..." : "Confirm"}
+        confirmLabel={isProcessing ? (users.find(u => u.user_id === confirmState?.userId)?.status === 'BANNED' ? 'Unbanning...' : 'Restoring...') : 'Confirm'}
         cancelLabel="Cancel"
         onConfirm={executeAction}
         onCancel={() => { if (!isProcessing) setConfirmState(null) }}
+        isProcessing={isProcessing}
       />
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -224,10 +268,21 @@ export function AdminUsersView() {
                 <td style={{ padding: '1rem' }}>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <button 
-                      className="primary-btn" 
+                      className="secondary-btn" 
                       title="Manage User Data"
                       onClick={() => setSelectedUserId(u.user_id)}
-                      style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '8px' }}
+                      style={{ 
+                        padding: '0.5rem 1rem', 
+                        fontSize: '0.85rem', 
+                        fontWeight: 600, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '0.5rem', 
+                        borderRadius: '8px',
+                        color: 'var(--text-main)', 
+                        background: 'rgba(150, 140, 200, 0.1)',
+                        border: '1px solid rgba(150, 140, 200, 0.2)'
+                      }}
                     >
                       <Shield size={16} /> Manage
                     </button>

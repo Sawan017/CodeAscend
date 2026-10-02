@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { calculateProgressToNextLevel } from '../lib/progression'
 
-export function Celebration({ xp }: { xp: number }) {
-  const { level } = calculateProgressToNextLevel(xp)
+export function Celebration({ progression }: { progression: any }) {
+  const { level } = calculateProgressToNextLevel(progression)
   const [prevLevel, setPrevLevel] = useState(level)
   const [show, setShow] = useState(false)
 

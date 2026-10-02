@@ -60,7 +60,7 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
     const interval = setInterval(() => {
       setTechText(techs[i % techs.length]);
       i++;
-    }, 2000);
+    }, 1200);
     return () => clearInterval(interval);
   }, []);
   
@@ -91,11 +91,9 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100vh',
-        width: '100vw',
+        position: 'fixed',
+        top: 0, left: 0, right: 0, bottom: 0,
         background: bgMain,
-        position: 'relative',
-        overflow: 'hidden',
         zIndex: 9999
       }}
     >
@@ -149,55 +147,32 @@ export const ArinovaLoader = ({ theme = 'dark' }: { theme?: string }) => {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: logoGlowBox,
               position: 'relative',
-              overflow: 'hidden',
               zIndex: 10
             }}
           >
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
               <motion.div
                 key={techText}
-                initial={{ opacity: 0, y: 15, filter: 'blur(6px)' }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0, 
-                  filter: 'blur(0px)',
-                  textShadow: [
-                    "0 0 0px rgba(139,108,255,0)",
-                    "0 0 16px rgba(139,108,255,0.9)",
-                    "0 0 4px rgba(139,108,255,0.3)"
-                  ]
-                }}
-                exit={{ opacity: 0, y: -15, filter: 'blur(2px)' }}
-                transition={{ 
-                  duration: 0.5, 
-                  ease: [0.25, 0.1, 0.25, 1],
-                  textShadow: { duration: 0.8, ease: "easeOut" }
-                }}
+                initial={{ opacity: 0, filter: 'blur(4px)', scale: 0.95 }}
+                animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
+                exit={{ opacity: 0, filter: 'blur(2px)', scale: 1.05 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
                 style={{ 
                   position: 'absolute',
-                  fontSize: '1.25rem',
+                  fontSize: '1.15rem',
                   fontWeight: 800,
                   letterSpacing: '0.5px',
-                  whiteSpace: 'nowrap'
+                  whiteSpace: 'nowrap',
+                  color: logoColor,
+                  textShadow: isDark ? '0 0 12px rgba(255,255,255,0.4)' : '0 0 12px rgba(30,27,75,0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '100%'
                 }}
               >
-                <motion.div
-                  initial={{ backgroundPosition: '-150% 50%' }}
-                  animate={{ backgroundPosition: '150% 50%' }}
-                  transition={{ duration: 0.8, delay: 0.1, ease: "easeInOut" }}
-                  style={{
-                    background: isDark 
-                      ? 'linear-gradient(90deg, rgba(255,255,255,0.85) 0%, #ffffff 40%, #A78BFF 50%, #ffffff 60%, rgba(255,255,255,0.85) 100%)'
-                      : 'linear-gradient(90deg, rgba(30,27,75,0.85) 0%, #1E1B4B 40%, #5B5FEF 50%, #1E1B4B 60%, rgba(30,27,75,0.85) 100%)',
-                    backgroundSize: '200% auto',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    display: 'inline-block',
-                    padding: '0 4px'
-                  }}
-                >
-                  {techText}
-                </motion.div>
+                {techText}
               </motion.div>
             </AnimatePresence>
           </div>

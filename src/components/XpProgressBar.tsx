@@ -2,12 +2,13 @@ import { motion } from 'framer-motion'
 import { calculateProgressToNextLevel } from '../lib/progression'
 
 type XpProgressBarProps = {
+  progression?: any;
   xp: number
   compact?: boolean
 }
 
-export function XpProgressBar({ xp, compact = false }: XpProgressBarProps) {
-  const { level, currentXp, requiredXp, progress } = calculateProgressToNextLevel(xp)
+export function XpProgressBar({ xp, progression, compact = false }: XpProgressBarProps) {
+  const { level, currentXp, requiredXp, progress } = calculateProgressToNextLevel(progression || xp)
   const remaining = requiredXp - currentXp
 
   if (compact) {

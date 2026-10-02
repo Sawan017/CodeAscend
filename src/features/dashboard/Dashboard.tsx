@@ -71,7 +71,7 @@ function DashboardInner({
   profile, progression, goals, onNavigate,
   projects = [], skills = [], badges = [], achievements = [], dynamicMilestones = []
 , onUpdateProfile}: DashboardProps) {
-  const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression?.xp || 0);
+  const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression || 0);
 
   const [showSkillPicker, setShowSkillPicker] = React.useState(false);
   const [skillSearch, setSkillSearch] = React.useState('');

@@ -1,4 +1,6 @@
-import { PlayCircle, Settings as SettingsIcon, Bell, Shield } from 'lucide-react'
+import { PlayCircle, Settings as SettingsIcon, Bell, Shield, MoreHorizontal } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import type { Progression, UserProfile, ActiveSessionState, SectionId } from '../types'
 import type { House } from 'lucide-react'
 import { XpProgressBar } from './XpProgressBar'
@@ -27,6 +29,7 @@ export function TopBar({
   activeSession, activeSessionElapsed, onOpenActiveSession,
   sections = [], activeView = 'dashboard', onSelectSection, chatUnread = 0, isGlobalAdmin = false,
 }: TopBarProps) {
+  const isPrivileged = !!isGlobalAdmin;
   const formatTime = (totalSeconds: number) => {
     const m = Math.floor(Math.abs(totalSeconds) / 60)
     const s = Math.abs(totalSeconds) % 60
@@ -41,6 +44,49 @@ export function TopBar({
   }
 
   const isActive = (id: string) => activeView === id || activeView.startsWith(id.replace('s', ''))
+
+  
+
+
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(e.target as Node)) {
+        setShowMoreMenu(false);
+      }
+    };
+    if (showMoreMenu) window.addEventListener('mousedown', handleClickOutside);
+    return () => window.removeEventListener('mousedown', handleClickOutside);
+  }, [showMoreMenu]);
+
+  let visibleSections = sections;
+  let overflowSections: NavSection[] = [];
+  
+
+  if (isPrivileged) {
+    if (windowWidth > 1300) {
+      visibleSections = sections;
+    } else if (windowWidth > 1050) {
+      visibleSections = sections.slice(0, 4);
+      overflowSections = sections.slice(4);
+    } else if (windowWidth > 850) {
+      visibleSections = sections.slice(0, 2);
+      overflowSections = sections.slice(2);
+    } else {
+      visibleSections = sections.slice(0, 1);
+      overflowSections = sections.slice(1);
+      
+    }
+  }
 
   const SECTION_COLORS: Record<string, { hex: string, rgb: string }> = {
     'dashboard': { hex: '#3EA354', rgb: '62, 163, 84' },
@@ -91,7 +137,7 @@ export function TopBar({
       {/* ── Nav Tabs ── */}
       <nav style={{ display: 'flex', alignItems: 'center', height: '100%', gap: '4px', flex: 1, minWidth: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none', msOverflowStyle: 'none' }} className="hide-scrollbar">
         <style>{`.hide-scrollbar::-webkit-scrollbar { display: none; }`}</style>
-        {sections.map((section) => {
+        {visibleSections.map((section) => {
           const Icon = section.icon
           const active = isActive(section.id)
           const theme = SECTION_COLORS[section.id] || SECTION_COLORS['dashboard']
@@ -143,48 +189,13 @@ export function TopBar({
         
       </nav>
       
-      {isGlobalAdmin && (
-        <div style={{ display: 'flex', alignItems: 'center', paddingLeft: '16px', marginLeft: '8px', borderLeft: '1px solid var(--border)', flexShrink: 0 }}>
-{isGlobalAdmin && (
-          <button
-            onClick={() => onSelectSection?.('admin_console' as any)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '8px',
-              padding: '8px 14px',
-              background: activeView === 'admin_console' ? 'rgba(245, 158, 11, 0.12)' : 'transparent',
-              border: '1px solid',
-              borderColor: activeView === 'admin_console' ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-              borderRadius: '10px',
-              color: activeView === 'admin_console' ? '#d97706' : '#9A958C',
-              fontSize: '0.85rem', fontWeight: activeView === 'admin_console' ? 700 : 600,
-              cursor: 'pointer', position: 'relative',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={e => {
-              if (activeView !== 'admin_console') {
-                e.currentTarget.style.background = 'var(--bg-surface-sunken)'
-                e.currentTarget.style.color = 'var(--text-main)'
-              }
-            }}
-            onMouseLeave={e => {
-              if (activeView !== 'admin_console') {
-                e.currentTarget.style.background = 'transparent'
-                e.currentTarget.style.color = '#9A958C'
-              }
-            }}
-          >
-            <Shield size={16} strokeWidth={activeView === 'admin_console' ? 2.5 : 2} />
-            <span className="topnav-label">Admin</span>
-          </button>
-        )}
-        </div>
-      )}
+      
   
       {/* --- Right controls --- */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, marginLeft: '16px', position: 'relative' }}>
 
         <div style={{ display: 'none' }} className="desktop-only-xp">
-          <XpProgressBar xp={progression.xp} compact={true} />
+          <XpProgressBar xp={progression.xp} progression={progression} compact={true} />
         </div>
         <style>{`
           @media (min-width: 900px) {
@@ -246,7 +257,9 @@ export function TopBar({
           </button>
         )}
 
-        {/* Profile avatar */}
+        {/* Profile avatar & Control Bar */}
+        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Profile avatar */}
         <div
           style={{
             width: '38px', height: '38px', borderRadius: '50%',
@@ -267,7 +280,57 @@ export function TopBar({
             profile.displayName?.charAt(0)?.toUpperCase() || 'U'
           )}
         </div>
-
+          {isPrivileged && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectSection?.('admin_console' as any);
+              }}
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 28px)',
+                right: 0,
+                height: '38px',
+                padding: '0 16px',
+                borderRadius: '19px',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-strong)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: 'var(--text-main)',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                letterSpacing: '0.05em',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                whiteSpace: 'nowrap',
+                zIndex: 100
+              }}
+              onMouseEnter={(e) => { 
+                e.currentTarget.style.background = 'var(--bg-surface-sunken)';
+                e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => { 
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.borderColor = 'var(--border-strong)';
+                e.currentTarget.style.transform = 'none';
+              }}
+              onMouseDown={(e) => {
+                e.currentTarget.style.transform = 'translateY(1px)';
+              }}
+              onMouseUp={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+            >
+              <Shield size={16} color="#f59e0b" />
+              <span>CONTROL</span>
+            </button>
+          )}
+        </div>
+        
         {/* Floating Active Task container */}
         {activeSession && (
           <div style={{

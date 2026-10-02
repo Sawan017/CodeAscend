@@ -231,6 +231,7 @@ export interface XPTransaction {
 }
 
 export interface Progression {
+  is_god_mode?: boolean
   xp: number
   level: number
   projectsCompleted: number
@@ -334,7 +335,7 @@ export interface ChatState {
 
 
 
-export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string } | { view: 'admin_console' };
+export type Route = { view: SectionId } | { view: 'project_detail', id: string } | { view: 'skill_detail', id: string } | { view: 'achievement_detail', id: string } | { view: 'badge_detail', id: string } | { view: 'admin_console' } | { view: 'admin_dashboard' } | { view: 'admin_users' } | { view: 'admin_support' } | { view: 'admin_logs' } | { view: 'admin_orphans' };
 
 export interface PathwayDefinition {
   id: string

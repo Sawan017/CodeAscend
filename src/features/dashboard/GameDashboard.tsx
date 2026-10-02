@@ -1,3 +1,4 @@
+import { calculateLevel } from '../../lib/progression'
 import { motion } from 'framer-motion';
 import { Shield, Sparkles, Sword, Play, Check, MapPin, Lock, Compass, Code } from 'lucide-react';
 
@@ -6,7 +7,7 @@ export function GameDashboard({ profile, progression, skills }: any) {
   const safeProgression = progression || { level: 1, xp: 0, streak: 1, achievements: 0 };
   const safeSkills = skills || [];
   
-  const nextLevelXP = (safeProgression.level || 1) * 1000;
+  const nextLevelXP = (calculateLevel(safeProgression) || 1) * 1000;
   const xpPercent = Math.min(100, Math.max(0, (safeProgression.xp / nextLevelXP) * 100));
   const masteredCount = safeSkills.filter((s:any)=>s.progress===100).length;
 
@@ -20,7 +21,7 @@ export function GameDashboard({ profile, progression, skills }: any) {
             </div>
             <div>
                <div className="hud-name">{safeProfile.displayName}</div>
-               <div className="hud-title">Level {safeProgression.level} · Explorer</div>
+               <div className="hud-title">Level {calculateLevel(safeProgression)} · Explorer</div>
             </div>
          </div>
          
@@ -30,12 +31,12 @@ export function GameDashboard({ profile, progression, skills }: any) {
                <span><strong>{safeProgression.xp.toLocaleString()}</strong> / {nextLevelXP.toLocaleString()} XP</span>
             </div>
             <div className="xp-middle">
-               <span className="xp-label">LV {safeProgression.level}</span>
+               <span className="xp-label">LV {calculateLevel(safeProgression)}</span>
                <div className="xp-track">
                   <motion.div className="xp-fill" initial={{ width: 0 }} animate={{ width: `${xpPercent}%` }} transition={{ duration: 1.5, ease: 'easeOut' }} />
                </div>
                <div className="xp-milestone" />
-               <span className="xp-label" style={{color: 'var(--text-muted)' }}>LV {safeProgression.level + 1}</span>
+               <span className="xp-label" style={{color: 'var(--text-muted)' }}>LV {calculateLevel(safeProgression) + 1}</span>
             </div>
          </div>
          

@@ -399,7 +399,7 @@ export function PublicProfileViewer({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', background: 'var(--bg-surface-sunken)', padding: '1.5rem', borderRadius: '12px' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)', marginBottom: '0.25rem' }}>
-                      Lvl {data.progression ? calculateLevel(data.progression.xp) : (data.profile?.level || 1)}
+                      Lvl {data.progression ? calculateLevel(data.progression) : (data.profile?.level || 1)}
                     </div>
                     <div className="muted" style={{ fontSize: '0.85rem' }}>LEVEL</div>
                   </div>

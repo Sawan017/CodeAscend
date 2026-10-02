@@ -1,7 +1,7 @@
-import { useEffect } from 'react'
-﻿import { createPortal } from 'react-dom'
+﻿import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Loader2 } from 'lucide-react'
 
 type ConfirmDialogProps = {
   isOpen: boolean;
@@ -12,6 +12,7 @@ type ConfirmDialogProps = {
   cancelLabel?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  isProcessing?: boolean;
 }
 
 export function ConfirmDialog({
@@ -22,7 +23,8 @@ export function ConfirmDialog({
   confirmLabel = 'Confirm',
   cancelLabel = 'Cancel',
   onConfirm,
-  onCancel
+  onCancel,
+  isProcessing = false
 }: ConfirmDialogProps) {
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +46,9 @@ export function ConfirmDialog({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
-            onClick={onCancel}
+            onClick={() => {
+              if (!isProcessing) onCancel();
+            }}
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -78,14 +82,16 @@ export function ConfirmDialog({
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
               <button 
-                onClick={onCancel}
+                onClick={() => { if (!isProcessing) onCancel(); }}
                 className="secondary-btn"
-                style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem' }}
+                disabled={isProcessing}
+                style={{ padding: '0.6rem 1.2rem', fontSize: '0.9rem', opacity: isProcessing ? 0.5 : 1, cursor: isProcessing ? 'not-allowed' : 'pointer' }}
               >
                 {cancelLabel}
               </button>
               <button 
-                onClick={() => { onConfirm(); onCancel(); }}
+                onClick={() => { if (!isProcessing) onConfirm(); }}
+                disabled={isProcessing}
                 style={{
                   padding: '0.6rem 1.2rem',
                   fontSize: '0.9rem',
@@ -94,9 +100,14 @@ export function ConfirmDialog({
                   border: 'none',
                   borderRadius: '8px',
                   fontWeight: 600,
-                  cursor: 'pointer'
+                  cursor: isProcessing ? 'not-allowed' : 'pointer',
+                  opacity: isProcessing ? 0.7 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
                 }}
               >
+                {isProcessing && <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />}
                 {confirmLabel}
               </button>
             </div>

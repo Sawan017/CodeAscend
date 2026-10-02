@@ -28,7 +28,7 @@ export const AppLayout = ({
   children, route, onNavigate, profile, progression,
   unreadCount, onOpenSettings, onOpenNotifications
 }: AppLayoutProps) => {
-  const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression.xp);
+  const { level, currentXp, progress, requiredXp } = calculateProgressToNextLevel(progression);
 
   return (
     <div className="rpg-app-root">
